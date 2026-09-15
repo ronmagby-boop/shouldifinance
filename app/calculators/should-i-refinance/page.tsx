@@ -80,7 +80,7 @@ export default function ShouldIRefinance() {
     }
 
     const newBalances: number[] = [newLoanAmount];
-    nBal = newLoanAmount;
+    let nBal = newLoanAmount;
     for (let i = 0; i < newN; i++) {
       const intPmt = nBal * newR;
       const prinPmt = Math.min(newPayment + extraPmt - intPmt, nBal);
