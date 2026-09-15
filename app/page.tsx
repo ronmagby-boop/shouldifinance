@@ -52,17 +52,34 @@ export default function Home() {
         )}
       </nav>
 
-      {/* HERO — white left panel, photo right */}
-      <section className="pt-14 md:pt-12 min-h-[500px] md:min-h-[560px] flex flex-col md:flex-row">
-        {/* LEFT — white text panel */}
-        <div className="w-full md:w-1/2 bg-white flex items-center px-6 md:px-16 py-12 md:py-0">
+      {/* HERO — full width with blended photo */}
+      <section className="pt-14 relative min-h-[480px] md:min-h-[540px] flex items-center overflow-hidden bg-white">
+        {/* Photo — full right side */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/hero.jpg"
+            alt="Family looking at sunset over a city"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Gradient — blends photo to white on the left */}
+          <div className="absolute inset-0"
+            style={{background: "linear-gradient(to right, white 35%, rgba(255,255,255,0.95) 45%, rgba(255,255,255,0.5) 60%, rgba(255,255,255,0) 80%)"}}
+          ></div>
+          {/* Also fade top and bottom slightly */}
+          <div className="absolute inset-0"
+            style={{background: "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 20%, transparent 80%, rgba(255,255,255,0.3) 100%)"}}
+          ></div>
+        </div>
+
+        {/* Text content — left side */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 py-16 md:py-20">
           <div className="max-w-lg">
             <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-4">Financial Tools &amp; Guidance</p>
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
               Better questions.<br />
               <span className="text-green-600">Smarter decisions.</span>
             </h1>
-            <p className="text-sm md:text-base text-gray-500 leading-relaxed mb-7 max-w-md">
+            <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-7 max-w-sm">
               Whether you're buying a home, refinancing, investing, or just trying to make smarter money moves — we give you the tools, answers and insights to help you decide.
             </p>
             <a href="#calculators"
@@ -70,14 +87,6 @@ export default function Home() {
               🧮 Explore Our Calculators →
             </a>
           </div>
-        </div>
-        {/* RIGHT — hero photo */}
-        <div className="w-full md:w-1/2 h-64 md:h-auto relative overflow-hidden">
-          <img
-            src="/hero.jpg"
-            alt="Family looking at sunset over a city"
-            className="w-full h-full object-cover object-center"
-          />
         </div>
       </section>
 
