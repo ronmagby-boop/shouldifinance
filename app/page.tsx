@@ -11,19 +11,23 @@ const CATEGORY_SECTIONS: { category: Category; icon: string; blurb: string; id: 
   { category: "Personal finance", icon: "💸", blurb: "Debt, savings, and the numbers that tie it all together.", id: "personal-finance" },
 ];
 
-// The illustration's own mint backdrop carries a diagonal gradient — its crop
-// corners run #bdeee4 (top-left) to #a7e2d6 (top-right) to #d5f8f1 (bottom-left)
-// — so no flat section colour can meet it without a seam. Fade all four edges
-// into the section colour instead, so the join is never a hard line.
+// hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
+// #cdeee7 / #cceee7 / #cdeee7 / #ccede7, averaging the #CCEEE7 the section uses.
+// Even so the edges are faded rather than butted against the section colour: a
+// 2/255 step still reads as a line across a long edge, and the fade costs nothing.
 //
-// Stops are measured against the artwork's content box. The crop leaves 24.3%
-// clear background on the left, 7.3% on top and 9.0% on the bottom, so those
-// three stops never bite into the phone. The right has 0% clear — the plant's
-// leaves run to the pixel edge — so that fade is held to 6%, which softens the
-// outermost leaf tips without eating the plant (12% visibly hollows it out).
+// Stops are measured against the artwork box (x 306..1024, y 42..627). The 8/5
+// crop keeps 14.3% clear background on the left and right and 6.7% on top, so
+// those three fades never touch the phone, plant or floating icons.
+//
+// The bottom is the tight one: the source is cropped hard there, with the phone's
+// solid base reaching row 625 of 628 — 0.3% off the edge. So the bottom fade is
+// only 2%, just enough to kill the straight cut. Checked at 3x against 0% and 5%:
+// 0% leaves a visible line across the box, 5% dissolves the phone's base and the
+// plant pot, 2% softens the cut while both stay crisp.
 const HERO_MASK = [
-  "linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%)",
-  "linear-gradient(to bottom, transparent 0%, #000 6%, #000 93%, transparent 100%)",
+  "linear-gradient(to right, transparent 0%, #000 11%, #000 89%, transparent 100%)",
+  "linear-gradient(to bottom, transparent 0%, #000 5%, #000 98%, transparent 100%)",
 ].join(", ");
 
 // Two gradients intersected: any pixel transparent in either layer is hidden.
@@ -97,7 +101,7 @@ export default function Home() {
 
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
-      <section className="pt-14 bg-[#CCF1EA]">
+      <section className="pt-14 bg-[#CCEEE7]">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-16 flex flex-col md:flex-row md:items-center gap-8 md:gap-10">
 
           {/* Text */}
@@ -116,13 +120,15 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Illustration — the source art is 2:1 with an empty left half, so the
-              box crops to the right of it and the phone reads large instead of
-              floating in dead space. The mask on this wrapper dissolves all four
-              edges into the section colour — see HERO_MASK for how the stops were
-              measured. */}
+          {/* Illustration — one 8/5 box at every width, so a single crop serves
+              both layouts. 8/5 is narrower than the source's 1.873, meaning the
+              full height is always kept and only the art's empty left margin is
+              trimmed; object-position 95% then centres the artwork in the frame,
+              leaving the phone, plant and floating icons whole. The mask on this
+              wrapper dissolves all four edges into the section colour — see
+              HERO_MASK for how the stops were measured. */}
           <div
-            className="relative w-full md:flex-1 aspect-[4/3] md:aspect-[5/4] md:max-w-lg"
+            className="relative w-full md:flex-1 aspect-[8/5] md:max-w-lg"
             style={HERO_MASK_STYLE}
           >
             <Image
@@ -131,7 +137,7 @@ export default function Home() {
               fill
               preload
               sizes="(max-width: 768px) 100vw, 45vw"
-              className="object-cover object-right"
+              className="object-cover object-[95%_center]"
             />
           </div>
         </div>
