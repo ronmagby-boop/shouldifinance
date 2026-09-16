@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
+import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 
 export default function ShouldIRefinance() {
   const [currentBalance, setCurrentBalance] = useState<number | "">(0);
@@ -144,7 +145,7 @@ export default function ShouldIRefinance() {
 
   return (
     <main className="min-h-screen bg-white font-sans">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
         <nav className="flex items-center justify-between px-5 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
           <Link href="/"><Image src="/logo.png" alt="ShouldIFinance logo" width={100} height={32} priority /></Link>
@@ -166,6 +167,12 @@ export default function ShouldIRefinance() {
           <span>Real estate</span><span>›</span>
           <span className="text-gray-900">Should I refinance?</span>
         </div>
+
+        <div className="md:grid md:grid-cols-[220px_minmax(0,1fr)]">
+        <CalculatorSidebar />
+
+        <div className="min-w-0">
+        <CalculatorBrowseMobile />
 
         <div className="px-5 py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Refinance tools</p>
@@ -384,15 +391,22 @@ export default function ShouldIRefinance() {
 
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50">
             <div className="flex justify-around">
-              {[{icon:"🏠",label:"Real estate"},{icon:"📈",label:"Investing"},{icon:"🚗",label:"Auto"},{icon:"📝",label:"Blog"}].map(item => (
-                <button key={item.label} className="flex flex-col items-center gap-1 px-3 py-1">
+              {[
+                { icon: "🏠", label: "Real estate", href: "/calculators#real-estate" },
+                { icon: "📈", label: "Investing", href: "/calculators#investing" },
+                { icon: "🚗", label: "Auto", href: "/calculators#auto" },
+                { icon: "🧮", label: "All", href: "/calculators" },
+              ].map(item => (
+                <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1">
                   <span className="text-lg">{item.icon}</span>
                   <span className="text-xs text-gray-500">{item.label}</span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
           <div className="md:hidden h-16"></div>
+        </div>
+        </div>
         </div>
       </div>
     </main>

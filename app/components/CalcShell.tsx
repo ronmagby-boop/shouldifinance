@@ -3,13 +3,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { related, type Category } from "../lib/calculators";
+import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 
 const CATEGORY_HREF: Record<Category, string> = {
-  "Real estate": "/#calculators",
-  Investing: "/#calculators",
-  Auto: "/#calculators",
-  "Personal finance": "/#calculators",
+  "Real estate": "/calculators#real-estate",
+  Investing: "/calculators#investing",
+  Auto: "/calculators#auto",
+  "Personal finance": "/calculators#personal-finance",
 };
+
+const NAV_LINKS = [
+  { label: "Calculators", href: "/calculators" },
+  { label: "Real estate", href: "/calculators#real-estate" },
+  { label: "Investing", href: "/calculators#investing" },
+  { label: "Auto", href: "/calculators#auto" },
+  { label: "Personal finance", href: "/calculators#personal-finance" },
+];
+
+// Bottom bar keeps its original four slots; the three category tabs now reach
+// the real /calculators anchors instead of the homepage.
+const BOTTOM_NAV = [
+  { icon: "🏠", label: "Real estate", href: "/calculators#real-estate" },
+  { icon: "📈", label: "Investing", href: "/calculators#investing" },
+  { icon: "🚗", label: "Auto", href: "/calculators#auto" },
+  { icon: "🧮", label: "All", href: "/calculators" },
+];
 
 export type CalcShellProps = {
   slug: string;
@@ -45,16 +63,18 @@ export default function CalcShell({
 
   return (
     <main className="min-h-screen bg-white font-sans">
-      <div className="max-w-5xl mx-auto">
+      {/* Widened from max-w-5xl to make room for the sidebar rail without
+          narrowing the calculator itself (1280 - 220 rail > the old 1024). */}
+      <div className="max-w-7xl mx-auto">
         {/* NAV */}
         <nav className="flex items-center justify-between gap-3 px-5 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
           <Link href="/" className="flex-shrink-0">
             <Image src="/logo.png" alt="ShouldIFinance logo" width={100} height={32} priority />
           </Link>
           <div className="hidden md:flex gap-6">
-            {["Calculators", "Real estate", "Investing", "Blog", "About"].map((l) => (
-              <Link key={l} href="/#calculators" className="text-sm text-gray-500 hover:text-gray-900">
-                {l}
+            {NAV_LINKS.map((l) => (
+              <Link key={l.label} href={l.href} className="text-sm text-gray-500 hover:text-gray-900">
+                {l.label}
               </Link>
             ))}
           </div>
@@ -80,9 +100,10 @@ export default function CalcShell({
 
         {menuOpen && (
           <div className="md:hidden bg-white border-b border-gray-100 px-5 py-3 flex flex-col">
-            {["Calculators", "Real estate", "Investing", "Blog", "About"].map((l) => (
-              <Link key={l} href="/#calculators" className="text-sm text-gray-700 py-2.5 border-b border-gray-50">
-                {l}
+            {NAV_LINKS.map((l) => (
+              <Link key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
+                className="text-sm text-gray-700 py-2.5 border-b border-gray-50">
+                {l.label}
               </Link>
             ))}
           </div>
@@ -100,6 +121,12 @@ export default function CalcShell({
           <span>›</span>
           <span className="text-gray-900">{crumb}</span>
         </div>
+
+        <div className="md:grid md:grid-cols-[220px_minmax(0,1fr)]">
+        <CalculatorSidebar activeSlug={slug} />
+
+        <div className="min-w-0">
+        <CalculatorBrowseMobile activeSlug={slug} />
 
         <div className="px-5 py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">{eyebrow}</p>
@@ -135,17 +162,14 @@ export default function CalcShell({
             {disclaimer}
           </div>
         </div>
+        </div>
+        </div>
 
         {/* MOBILE BOTTOM NAV */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50">
           <div className="flex justify-around">
-            {[
-              { icon: "🏠", label: "Real estate" },
-              { icon: "📈", label: "Investing" },
-              { icon: "🚗", label: "Auto" },
-              { icon: "📝", label: "Blog" },
-            ].map((item) => (
-              <Link key={item.label} href="/#calculators" className="flex flex-col items-center gap-1 px-3 py-1">
+            {BOTTOM_NAV.map((item) => (
+              <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1">
                 <span className="text-lg">{item.icon}</span>
                 <span className="text-xs text-gray-500">{item.label}</span>
               </Link>

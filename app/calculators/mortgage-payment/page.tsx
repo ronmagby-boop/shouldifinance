@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 
 export default function MortgageCalculator() {
   const [price, setPrice] = useState(400000);
@@ -92,43 +93,13 @@ export default function MortgageCalculator() {
           <span className="text-gray-900">Mortgage payment</span>
         </div>
 
-        <div className="flex flex-col md:grid md:grid-cols-[220px_1fr]">
+        <div className="flex flex-col md:grid md:grid-cols-[220px_minmax(0,1fr)]">
 
-          {/* SIDEBAR — desktop only */}
-          <div className="hidden md:block border-r border-gray-100 py-6">
-            <div className="px-4 mb-4">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Real estate</p>
-              {[
-                { label: "Mortgage payment", active: true },
-                { label: "Should I refinance?" },
-                { label: "Rent vs. buy" },
-                { label: "How much can I afford?" },
-                { label: "Extra payments" },
-                { label: "VA recoup" },
-                { label: "Pay off debt" },
-                { label: "Loan estimate compare" },
-                { label: "Effective interest rate" },
-              ].map((item) => (
-                <div key={item.label} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs cursor-pointer mb-0.5 ${item.active ? "bg-green-50 text-green-800 font-medium" : "text-gray-500 hover:bg-gray-50"}`}>
-                  {item.label}
-                </div>
-              ))}
-            </div>
-            <div className="px-4 mb-4">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Investing</p>
-              {["Compound interest", "Retirement savings", "Dollar-cost averaging", "Investment growth"].map((label) => (
-                <div key={label} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs cursor-pointer mb-0.5 text-gray-500 hover:bg-gray-50">{label}</div>
-              ))}
-            </div>
-            <div className="px-4">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Auto</p>
-              {["Lease vs. buy", "Loan vs. cash", "EV savings"].map((label) => (
-                <div key={label} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs cursor-pointer mb-0.5 text-gray-500 hover:bg-gray-50">{label}</div>
-              ))}
-            </div>
-          </div>
+          <CalculatorSidebar />
 
           {/* MAIN CONTENT */}
+          <div className="min-w-0">
+          <CalculatorBrowseMobile />
           <div className="px-5 md:px-8 py-6 md:py-8">
 
             <div className="mb-6">
@@ -299,16 +270,22 @@ export default function MortgageCalculator() {
             </div>
 
           </div>
+          </div>
         </div>
 
         {/* MOBILE BOTTOM NAV */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50">
           <div className="flex justify-around">
-            {[{ icon: "🏠", label: "Real estate" },{ icon: "📈", label: "Investing" },{ icon: "🚗", label: "Auto" },{ icon: "📝", label: "Blog" }].map((item) => (
-              <button key={item.label} className="flex flex-col items-center gap-1 px-3 py-1">
+            {[
+              { icon: "🏠", label: "Real estate", href: "/calculators#real-estate" },
+              { icon: "📈", label: "Investing", href: "/calculators#investing" },
+              { icon: "🚗", label: "Auto", href: "/calculators#auto" },
+              { icon: "🧮", label: "All", href: "/calculators" },
+            ].map((item) => (
+              <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1">
                 <span className="text-lg">{item.icon}</span>
                 <span className="text-xs text-gray-500">{item.label}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
