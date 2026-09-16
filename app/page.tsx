@@ -11,6 +11,33 @@ const CATEGORY_SECTIONS: { category: Category; icon: string; blurb: string; id: 
   { category: "Personal finance", icon: "💸", blurb: "Debt, savings, and the numbers that tie it all together.", id: "personal-finance" },
 ];
 
+// The illustration's own mint backdrop carries a diagonal gradient — its crop
+// corners run #bdeee4 (top-left) to #a7e2d6 (top-right) to #d5f8f1 (bottom-left)
+// — so no flat section colour can meet it without a seam. Fade all four edges
+// into the section colour instead, so the join is never a hard line.
+//
+// Stops are measured against the artwork's content box. The crop leaves 24.3%
+// clear background on the left, 7.3% on top and 9.0% on the bottom, so those
+// three stops never bite into the phone. The right has 0% clear — the plant's
+// leaves run to the pixel edge — so that fade is held to 6%, which softens the
+// outermost leaf tips without eating the plant (12% visibly hollows it out).
+const HERO_MASK = [
+  "linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%)",
+  "linear-gradient(to bottom, transparent 0%, #000 6%, #000 93%, transparent 100%)",
+].join(", ");
+
+// Two gradients intersected: any pixel transparent in either layer is hidden.
+const HERO_MASK_STYLE: React.CSSProperties = {
+  maskImage: HERO_MASK,
+  WebkitMaskImage: HERO_MASK,
+  maskComposite: "intersect",
+  WebkitMaskComposite: "source-in",
+  maskSize: "100% 100%",
+  WebkitMaskSize: "100% 100%",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+};
+
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Calculators", href: "#all-calculators" },
   { label: "Real estate", href: "#real-estate" },
@@ -70,7 +97,7 @@ export default function Home() {
 
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
-      <section className="pt-14 bg-[#CBF4EB]">
+      <section className="pt-14 bg-[#CCF1EA]">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-16 flex flex-col md:flex-row md:items-center gap-8 md:gap-10">
 
           {/* Text */}
@@ -91,8 +118,13 @@ export default function Home() {
 
           {/* Illustration — the source art is 2:1 with an empty left half, so the
               box crops to the right of it and the phone reads large instead of
-              floating in dead space. */}
-          <div className="relative w-full md:flex-1 aspect-[4/3] md:aspect-[5/4] md:max-w-lg">
+              floating in dead space. The mask on this wrapper dissolves all four
+              edges into the section colour — see HERO_MASK for how the stops were
+              measured. */}
+          <div
+            className="relative w-full md:flex-1 aspect-[4/3] md:aspect-[5/4] md:max-w-lg"
+            style={HERO_MASK_STYLE}
+          >
             <Image
               src="/hero.png"
               alt="Phone showing a portfolio allocation chart alongside a financial checklist"
