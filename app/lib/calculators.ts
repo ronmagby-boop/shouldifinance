@@ -253,6 +253,22 @@ export const CALCULATORS: Calc[] = [
   },
 ];
 
+/**
+ * Category display data, shared by the homepage nav and the /calculators index
+ * so the two can never drift apart. `id` doubles as the anchor on /calculators.
+ */
+export const CATEGORY_SECTIONS: {
+  category: Category;
+  icon: string;
+  blurb: string;
+  id: string;
+}[] = [
+  { category: "Real estate", icon: "🏠", blurb: "Buying, refinancing, and everything that comes with a mortgage.", id: "real-estate" },
+  { category: "Investing", icon: "📈", blurb: "Growing what you have and planning for what comes next.", id: "investing" },
+  { category: "Auto", icon: "🚗", blurb: "What a car really costs, from the lot to the day you sell it.", id: "auto" },
+  { category: "Personal finance", icon: "💸", blurb: "Debt, savings, and the numbers that tie it all together.", id: "personal-finance" },
+];
+
 export const bySlug = (slug: string): Calc | undefined =>
   CALCULATORS.find((c) => c.slug === slug);
 

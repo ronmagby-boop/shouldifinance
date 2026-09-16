@@ -1,15 +1,8 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { byCategory, CALCULATORS, type Category } from "./lib/calculators";
-
-const CATEGORY_SECTIONS: { category: Category; icon: string; blurb: string; id: string }[] = [
-  { category: "Real estate", icon: "🏠", blurb: "Buying, refinancing, and everything that comes with a mortgage.", id: "real-estate" },
-  { category: "Investing", icon: "📈", blurb: "Growing what you have and planning for what comes next.", id: "investing" },
-  { category: "Auto", icon: "🚗", blurb: "What a car really costs, from the lot to the day you sell it.", id: "auto" },
-  { category: "Personal finance", icon: "💸", blurb: "Debt, savings, and the numbers that tie it all together.", id: "personal-finance" },
-];
+import { CALCULATORS, CATEGORY_SECTIONS } from "./lib/calculators";
 
 // hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
 // #cdeee7 / #cceee7 / #cdeee7 / #ccede7, averaging the #CCEEE7 the section uses.
@@ -42,17 +35,74 @@ const HERO_MASK_STYLE: React.CSSProperties = {
   WebkitMaskRepeat: "no-repeat",
 };
 
+// Every nav target now lives on /calculators — the homepage no longer carries a
+// full listing, so these are real routes rather than same-page anchors.
 const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "Calculators", href: "#all-calculators" },
-  { label: "Real estate", href: "#real-estate" },
-  { label: "Investing", href: "#investing" },
-  { label: "Auto", href: "#auto" },
-  { label: "Personal finance", href: "#personal-finance" },
+  { label: "Calculators", href: "/calculators" },
+  ...CATEGORY_SECTIONS.map(s => ({ label: s.category, href: `/calculators#${s.id}` })),
 ];
+
+function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+function EnvelopeIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2.5" y="5" width="19" height="14" rx="2.5" />
+      <path d="m3 7 8.1 5.6a1.6 1.6 0 0 0 1.8 0L21 7" />
+    </svg>
+  );
+}
+
+/** Clipboard-with-checklist — stands in for the guides and checklists on offer. */
+function ChecklistIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor"
+      strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M17 7h-3a3 3 0 0 0-3 3v28a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3V10a3 3 0 0 0-3-3h-3" />
+      <rect x="17" y="4" width="14" height="6" rx="2" />
+      <path d="m17.5 20.5 2.5 2.5 4.5-4.5" />
+      <path d="m17.5 30.5 2.5 2.5 4.5-4.5" />
+      <path d="M29 20h5M29 31h5" />
+    </svg>
+  );
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
+  // Nav search: matches the display name, full title and the SEO keywords, so
+  // "house" finds "How much house can I afford?" and "PMI" finds the mortgage tool.
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return CALCULATORS.filter(c =>
+      c.nav.toLowerCase().includes(q) ||
+      c.title.toLowerCase().includes(q) ||
+      c.category.toLowerCase().includes(q) ||
+      c.keywords.some(k => k.toLowerCase().includes(q)),
+    ).slice(0, 8);
+  }, [query]);
+
+  const closeSearch = () => { setSearchOpen(false); setQuery(""); };
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeSearch(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
 
   const calculators = [
     { icon: "🏦", bg: "bg-blue-50", title: "Mortgage Calculator", desc: "Find out what you can afford and estimate your payments.", href: "/calculators/mortgage-payment" },
@@ -78,31 +128,103 @@ export default function Home() {
             ))}
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <button className="text-gray-400 hover:text-gray-700 p-2">🔍</button>
-            <button className="bg-green-700 text-white text-sm font-semibold rounded-full px-5 py-2 hover:bg-green-800 transition-colors">
-              Get Free Resources
+            <button
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search calculators"
+              className="text-gray-400 hover:text-green-700 p-2 rounded-full hover:bg-gray-50 transition-colors">
+              <SearchIcon className="w-5 h-5" />
             </button>
+            <a href="#resources"
+              className="bg-green-700 text-white text-sm font-semibold rounded-full px-5 py-2 hover:bg-green-800 transition-colors">
+              Get Free Resources
+            </a>
           </div>
-          <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+          <div className="md:hidden flex items-center gap-1">
+            <button
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search calculators"
+              className="text-gray-400 hover:text-green-700 p-2">
+              <SearchIcon className="w-5 h-5" />
+            </button>
+          <button className="flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             <span className={`block w-6 h-0.5 bg-gray-900 transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`}></span>
             <span className={`block w-6 h-0.5 bg-gray-900 ${menuOpen ? "opacity-0" : ""}`}></span>
             <span className={`block w-6 h-0.5 bg-gray-900 transition-all ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
           </button>
+          </div>
         </div>
         {menuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 flex flex-col gap-2">
             {NAV_LINKS.map(l => (
               <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)} className="text-sm text-gray-700 py-2.5 border-b border-gray-50 font-medium">{l.label}</a>
             ))}
-            <button className="w-full bg-green-700 text-white rounded-full py-3 text-sm font-semibold mt-3">Get Free Resources</button>
+            <a href="#resources" onClick={() => setMenuOpen(false)}
+              className="w-full text-center bg-green-700 text-white rounded-full py-3 text-sm font-semibold mt-3">
+              Get Free Resources
+            </a>
           </div>
         )}
       </nav>
 
+      {/* SEARCH OVERLAY */}
+      {searchOpen && (
+        <div className="fixed inset-0 z-[60] bg-gray-900/40 backdrop-blur-sm px-4 pt-20 md:pt-28"
+          onClick={closeSearch}>
+          <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 px-4 border-b border-gray-100">
+              <SearchIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <input
+                autoFocus
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder={`Search ${CALCULATORS.length} calculators…`}
+                className="flex-1 py-4 text-sm focus:outline-none"
+              />
+              <button onClick={closeSearch} aria-label="Close search"
+                className="text-xs font-semibold text-gray-400 hover:text-gray-700 px-2 py-1">
+                ESC
+              </button>
+            </div>
+
+            <div className="max-h-[50vh] overflow-y-auto">
+              {query.trim() === "" ? (
+                <p className="px-4 py-6 text-sm text-gray-400">
+                  Start typing to find a calculator — try “mortgage”, “retirement” or “car”.
+                </p>
+              ) : results.length === 0 ? (
+                <div className="px-4 py-6">
+                  <p className="text-sm text-gray-500 mb-3">
+                    No calculator matches “{query}”.
+                  </p>
+                  <Link href="/calculators" onClick={closeSearch}
+                    className="text-sm text-green-700 font-semibold hover:underline">
+                    Browse all {CALCULATORS.length} calculators →
+                  </Link>
+                </div>
+              ) : (
+                results.map(c => (
+                  <Link key={c.slug} href={`/calculators/${c.slug}`} onClick={closeSearch}
+                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
+                    <div className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center text-base flex-shrink-0`}>
+                      {c.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors">{c.nav}</p>
+                      <p className="text-xs text-gray-500 truncate">{c.category} · {c.desc}</p>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
       <section className="pt-14 bg-[#CCEEE7]">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-16 flex flex-col md:flex-row md:items-center gap-8 md:gap-10">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 md:py-12 flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
 
           {/* Text */}
           <div className="w-full md:flex-1 max-w-lg">
@@ -111,13 +233,13 @@ export default function Home() {
               Better questions.<br />
               <span className="text-green-700">Smarter decisions.</span>
             </h1>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-7 max-w-sm">
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-6 max-w-sm">
               Whether you&apos;re buying a home, refinancing, investing, or just trying to make smarter money moves — we give you the tools, answers and insights to help you decide.
             </p>
-            <a href="#calculators"
+            <Link href="/calculators"
               className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
               🧮 Explore Our Calculators →
-            </a>
+            </Link>
           </div>
 
           {/* Illustration — one 8/5 box at every width, so a single crop serves
@@ -153,7 +275,7 @@ export default function Home() {
               { icon: "👥", num: "Expert", label: "Real-World Advice" },
               { icon: "🛡️", num: "Trusted", label: "For Every Stage of Life" },
             ].map((s) => (
-              <div key={s.label} className="flex items-center gap-3 px-4 md:px-8 py-4">
+              <div key={s.label} className="flex items-center gap-3 px-4 md:px-8 py-3">
                 <span className="text-xl md:text-2xl">{s.icon}</span>
                 <div>
                   <div className="text-sm md:text-base font-bold text-gray-900">{s.num}</div>
@@ -165,107 +287,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* POPULAR TOOLS */}
-      <section id="calculators" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-gray-50">
+      {/* POPULAR TOOLS — the six featured tools only; the full list lives on /calculators */}
+      <section id="calculators" className="py-8 md:py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="flex items-end justify-between mb-6 md:mb-8">
+          <div className="flex items-end justify-between mb-5 md:mb-6">
             <div>
               <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Popular Tools</p>
               <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
                 Get answers to your biggest<br className="hidden md:block" /> financial questions.
               </h2>
             </div>
-            <a href="#all-calculators" className="hidden md:flex items-center gap-1 text-sm text-green-700 font-semibold hover:underline whitespace-nowrap ml-4">
+            <Link href="/calculators" className="hidden md:flex items-center gap-1 text-sm text-green-700 font-semibold hover:underline whitespace-nowrap ml-4">
               View All {CALCULATORS.length} Calculators →
-            </a>
+            </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {calculators.map((calc) => (
               <Link key={calc.title} href={calc.href}
-                className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:border-green-100 transition-all group cursor-pointer">
-                <div className={`w-14 h-14 ${calc.bg} rounded-full flex items-center justify-center text-2xl mb-4`}>
-                  {calc.icon}
+                className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 hover:shadow-lg hover:border-green-100 transition-all group cursor-pointer">
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`w-11 h-11 ${calc.bg} rounded-full flex items-center justify-center text-xl`}>
+                    {calc.icon}
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-green-800 bg-green-50 border border-green-100 rounded-full px-2 py-1">
+                    ★ Most Popular
+                  </span>
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">{calc.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed mb-5">{calc.desc}</p>
-                <div className="w-9 h-9 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-green-700 group-hover:border-green-700 group-hover:text-white transition-all text-sm font-bold">
+                <h3 className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-green-700 transition-colors">{calc.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed mb-3">{calc.desc}</p>
+                <div className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-green-700 group-hover:border-green-700 group-hover:text-white transition-all text-sm font-bold">
                   →
                 </div>
               </Link>
             ))}
           </div>
-          <div className="text-center mt-6 md:hidden">
-            <a href="#all-calculators" className="text-sm text-green-700 font-semibold hover:underline">
+          <div className="text-center mt-5 md:hidden">
+            <Link href="/calculators" className="text-sm text-green-700 font-semibold hover:underline">
               View All {CALCULATORS.length} Calculators →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ALL CALCULATORS — every tool, grouped by category */}
-      <section id="all-calculators" className="py-12 md:py-16 bg-white scroll-mt-16">
-        <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="mb-8">
-            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Every Calculator</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
-              All {CALCULATORS.length} free financial calculators.
-            </h2>
-            <p className="text-sm text-gray-500 leading-relaxed max-w-xl">
-              No sign-up, no email required. Every tool runs in your browser and loads sample numbers
-              if you just want to see how it works.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 mb-10">
-            {CATEGORY_SECTIONS.map(s => (
-              <a key={s.id} href={`#${s.id}`}
-                className="inline-flex items-center gap-2 text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100 rounded-full px-4 py-2 hover:border-green-200 hover:text-green-700 transition-colors">
-                <span>{s.icon}</span>
-                {s.category}
-                <span className="text-gray-400">{byCategory(s.category).length}</span>
-              </a>
-            ))}
-          </div>
-
-          <div className="space-y-12">
-            {CATEGORY_SECTIONS.map(section => (
-              <div key={section.id} id={section.id} className="scroll-mt-16">
-                <div className="flex items-start gap-3 mb-5 pb-3 border-b border-gray-100">
-                  <span className="text-2xl">{section.icon}</span>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-gray-900">{section.category}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">{section.blurb}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                  {byCategory(section.category).map(calc => (
-                    <Link key={calc.slug} href={`/calculators/${calc.slug}`}
-                      className="group bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-green-100 transition-all flex items-start gap-4">
-                      <div className={`w-11 h-11 ${calc.bg} rounded-xl flex items-center justify-center text-lg flex-shrink-0`}>
-                        {calc.icon}
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
-                          {calc.nav}
-                        </h4>
-                        <p className="text-xs text-gray-500 leading-relaxed">{calc.desc}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
+            </Link>
           </div>
         </div>
       </section>
 
       {/* SOCIAL PROOF BAR */}
-      <section className="bg-[#1a2744] py-10">
+      <section className="bg-[#1a2744] py-7 md:py-8">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-0 md:divide-x md:divide-white/10">
             {[
               { icon: "👥", num: "200K+", label: "Monthly Visitors" },
-              { icon: "📄", num: "1,000+", label: "Articles & Guides" },
+              { icon: "📄", num: "100+", label: "Articles & Guides" },
               { icon: "🧮", num: "25+", label: "Calculators & Tools" },
               { icon: "📅", num: "Updated Weekly", label: "New Content & Insights" },
             ].map((s) => (
@@ -281,14 +351,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* EMAIL SIGNUP */}
-      <section className="py-12 md:py-16 bg-white">
+      {/* EMAIL SIGNUP — target of the nav's "Get Free Resources" button */}
+      <section id="resources" className="py-8 md:py-12 bg-white scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-16">
+          <div className="bg-gray-50 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-10">
             <div className="flex-1 w-full">
-              <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-3xl mb-5">📬</div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">Get Free Financial Resources</h2>
-              <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-md">
+              <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-3 text-green-700">
+                <EnvelopeIcon className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Get Free Financial Resources</h2>
+              <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-md">
                 Join our newsletter and get our top financial guides, checklists and tips delivered to your inbox.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 max-w-md">
@@ -303,13 +375,13 @@ export default function Home() {
                   Subscribe
                 </button>
               </div>
-              <div className="flex items-center gap-5 mt-4">
+              <div className="flex items-center gap-5 mt-3">
                 <span className="text-xs text-gray-400">✅ No spam</span>
                 <span className="text-xs text-gray-400">✅ Unsubscribe anytime</span>
               </div>
             </div>
-            <div className="hidden md:flex w-44 h-44 bg-green-50 rounded-3xl items-center justify-center flex-shrink-0">
-              <span className="text-7xl">📚</span>
+            <div className="hidden md:flex w-36 h-36 bg-green-50 rounded-3xl items-center justify-center flex-shrink-0 text-green-700">
+              <ChecklistIcon className="w-20 h-20" />
             </div>
           </div>
         </div>
@@ -317,41 +389,38 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer className="bg-[#1a2744] text-white">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-12">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 md:py-10">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
             <div className="max-w-xs">
-              <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-4">
+              <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
                 <Image src="/logo.png" alt="ShouldIFinance logo" width={236} height={150} className="h-10 w-auto" />
               </span>
               <p className="text-xs text-gray-400 leading-relaxed">Better Questions. Smarter Decisions. Free financial tools for every stage of life.</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm w-full md:w-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-sm w-full md:w-auto">
               <div>
-                <p className="font-bold text-white mb-4 text-sm">Tools</p>
+                <p className="font-bold text-white mb-3 text-sm">Tools</p>
                 {[
-                  { label: "All calculators", href: "#all-calculators" },
-                  { label: "Real estate", href: "#real-estate" },
-                  { label: "Investing", href: "#investing" },
-                  { label: "Auto", href: "#auto" },
-                  { label: "Personal finance", href: "#personal-finance" },
+                  { label: "All calculators", href: "/calculators" },
+                  ...CATEGORY_SECTIONS.map(s => ({ label: s.category, href: `/calculators#${s.id}` })),
                 ].map(l => (
-                  <a key={l.label} href={l.href} className="block text-gray-400 hover:text-white mb-2.5 text-xs transition-colors">{l.label}</a>
+                  <Link key={l.label} href={l.href} className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l.label}</Link>
                 ))}
               </div>
               <div>
-                <p className="font-bold text-white mb-4 text-sm">Learn</p>
+                <p className="font-bold text-white mb-3 text-sm">Learn</p>
                 {["Articles","Guides","Blog","FAQ"].map(l => (
-                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2.5 text-xs transition-colors">{l}</a>
+                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
                 ))}
               </div>
               <div>
-                <p className="font-bold text-white mb-4 text-sm">Company</p>
+                <p className="font-bold text-white mb-3 text-sm">Company</p>
                 {["About","Contact","Disclaimer","Privacy"].map(l => (
-                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2.5 text-xs transition-colors">{l}</a>
+                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
                 ))}
               </div>
               <div>
-                <p className="font-bold text-white mb-4 text-sm">Follow Us</p>
+                <p className="font-bold text-white mb-3 text-sm">Follow Us</p>
                 <div className="flex gap-3">
                   <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
                     className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors text-xs font-bold">
@@ -365,7 +434,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
             <div className="flex gap-5">
               {["Privacy Policy","Terms of Use","Disclaimer"].map(l => (
@@ -380,12 +449,12 @@ export default function Home() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50 shadow-lg">
         <div className="flex justify-around">
           {CATEGORY_SECTIONS.map(item => (
-            <a key={item.id} href={`#${item.id}`} className="flex flex-col items-center gap-1 px-3 py-1">
+            <Link key={item.id} href={`/calculators#${item.id}`} className="flex flex-col items-center gap-1 px-3 py-1">
               <span className="text-xl">{item.icon}</span>
               <span className="text-xs text-gray-500 whitespace-nowrap">
                 {item.category === "Personal finance" ? "Money" : item.category}
               </span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
