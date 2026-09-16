@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 
 export default function MortgageCalculator() {
@@ -13,7 +13,6 @@ export default function MortgageCalculator() {
   const [ins, setIns] = useState(120);
   const [hoa, setHoa] = useState(0);
   const [pmi, setPmi] = useState(0.5);
-  const [results, setResults] = useState<any>(null);
 
   const fmt = (v: number) => "$" + Math.round(Math.abs(v)).toLocaleString();
   const fmtK = (v: number) => {
@@ -21,7 +20,7 @@ export default function MortgageCalculator() {
     return n >= 1000000 ? "$" + (n / 1000000).toFixed(2) + "M" : "$" + n.toLocaleString();
   };
 
-  useEffect(() => {
+  const results = useMemo(() => {
     const loan = Math.max(0, price - down);
     const r = rate / 100 / 12;
     const n = term * 12;
@@ -37,7 +36,7 @@ export default function MortgageCalculator() {
     const intRatio = Math.round((totalInt / totalCost) * 100);
 
     // Amortization
-    const amortRows = [];
+    const amortRows: { yr: number; yearPrin: number; yearInt: number; bal: number; equity: number }[] = [];
     let bal = loan;
     const years = Math.min(5, Math.floor(n / 12));
     for (let yr = 1; yr <= years; yr++) {
@@ -52,7 +51,7 @@ export default function MortgageCalculator() {
       amortRows.push({ yr, yearPrin, yearInt, bal, equity: price - bal });
     }
 
-    setResults({ total, pi, taxMo, pmiMo, totalInt, totalCost, payoffStr, intRatio, loan, amortRows });
+    return { total, pi, taxMo, pmiMo, totalInt, totalCost, payoffStr, intRatio, loan, amortRows };
   }, [price, down, rate, term, tax, ins, hoa, pmi]);
 
   const syncFromAmt = (val: number) => {
@@ -238,7 +237,7 @@ export default function MortgageCalculator() {
                     </div>
 
                     <div className="bg-green-50 border border-green-100 rounded-lg p-3 text-xs text-green-800 leading-relaxed">
-                      At <strong>{rate}%</strong> for <strong>{term} years</strong>, you'll pay <strong>{fmtK(results.totalInt)}</strong> in interest — <strong>{results.intRatio}%</strong> of your total loan cost.
+                      At <strong>{rate}%</strong> for <strong>{term} years</strong>, you&apos;ll pay <strong>{fmtK(results.totalInt)}</strong> in interest — <strong>{results.intRatio}%</strong> of your total loan cost.
                       {results.pmiMo > 0 && ` You're paying ${fmt(results.pmiMo)}/mo in PMI — drops once you reach 20% equity.`}
                       {results.pmiMo === 0 && ` No PMI — your down payment is 20% or more.`}
                     </div>
@@ -262,7 +261,7 @@ export default function MortgageCalculator() {
                     </tr>
                   </thead>
                   <tbody>
-                    {results?.amortRows.map((row: any) => (
+                    {results.amortRows.map((row) => (
                       <tr key={row.yr} className="hover:bg-gray-50 border-b border-gray-50">
                         <td className="px-3 py-2 text-gray-900">Year {row.yr}</td>
                         <td className="px-3 py-2 text-green-700">{fmt(row.yearPrin)}</td>

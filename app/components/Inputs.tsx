@@ -1,0 +1,255 @@
+"use client";
+import type { ReactNode } from "react";
+
+/** Inputs stay blank until the user types — never a sticky zero. */
+export type Num = number | "";
+
+export const n = (v: Num): number => (v === "" || Number.isNaN(Number(v)) ? 0 : Number(v));
+export const has = (v: Num): boolean => v !== "" && !Number.isNaN(Number(v));
+
+export const fmt = (v: number): string =>
+  (v < 0 ? "-$" : "$") + Math.round(Math.abs(v)).toLocaleString();
+
+export const fmtK = (v: number): string => {
+  const a = Math.abs(v);
+  const sign = v < 0 ? "-" : "";
+  if (a >= 1_000_000) return `${sign}$${(a / 1_000_000).toFixed(2)}M`;
+  return `${sign}$${Math.round(a).toLocaleString()}`;
+};
+
+export const pct = (v: number, digits = 1): string => `${v.toFixed(digits)}%`;
+
+export const months = (m: number): string => {
+  const total = Math.max(0, Math.round(m));
+  const y = Math.floor(total / 12);
+  const mo = total % 12;
+  if (y === 0) return `${mo} mo`;
+  if (mo === 0) return `${y} yr${y === 1 ? "" : "s"}`;
+  return `${y} yr${y === 1 ? "" : "s"} ${mo} mo`;
+};
+
+const baseInput =
+  "w-full py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 bg-white";
+
+export function NumField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  prefix,
+  suffix,
+  step,
+  hint,
+  action,
+}: {
+  label: string;
+  value: Num;
+  onChange: (v: Num) => void;
+  placeholder?: string;
+  prefix?: string;
+  suffix?: string;
+  step?: number;
+  hint?: string;
+  action?: ReactNode;
+}) {
+  const pad = `${prefix ? "pl-7" : "pl-3"} ${suffix ? (suffix.length > 2 ? "pr-12" : "pr-8") : "pr-3"}`;
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1.5">
+        {label}
+        {action}
+      </label>
+      <div className="relative">
+        {prefix && (
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
+            {prefix}
+          </span>
+        )}
+        <input
+          type="number"
+          inputMode="decimal"
+          value={value}
+          step={step}
+          placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value === "" ? "" : +e.target.value)}
+          className={`${baseInput} ${pad}`}
+        />
+        {suffix && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
+            {suffix}
+          </span>
+        )}
+      </div>
+      {hint && <p className="text-xs text-gray-400 mt-1 leading-relaxed">{hint}</p>}
+    </div>
+  );
+}
+
+export function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  hint?: string;
+}) {
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1.5">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${baseInput} px-3`}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {hint && <p className="text-xs text-gray-400 mt-1 leading-relaxed">{hint}</p>}
+    </div>
+  );
+}
+
+export function Toggle({
+  checked,
+  onChange,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children: ReactNode;
+}) {
+  return (
+    <label className="flex items-start gap-2 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 w-4 h-4 accent-green-700 flex-shrink-0"
+      />
+      <span className="text-xs text-gray-500 leading-relaxed">{children}</span>
+    </label>
+  );
+}
+
+/** Bordered white card used for every input group and results panel. */
+export function Card({
+  title,
+  badge,
+  badgeTone = "gray",
+  children,
+  className = "",
+}: {
+  title?: string;
+  badge?: string;
+  badgeTone?: "gray" | "green" | "blue" | "amber";
+  children: ReactNode;
+  className?: string;
+}) {
+  const tones: Record<string, string> = {
+    gray: "bg-gray-100 text-gray-500",
+    green: "bg-green-50 text-green-700",
+    blue: "bg-blue-50 text-blue-600",
+    amber: "bg-amber-50 text-amber-700",
+  };
+  return (
+    <div className={`border border-gray-200 rounded-2xl p-5 ${className}`}>
+      {(title || badge) && (
+        <div className="flex items-center justify-between gap-2 mb-5">
+          {title && <p className="text-sm font-medium text-gray-900">{title}</p>}
+          {badge && <span className={`text-xs rounded-full px-3 py-1 whitespace-nowrap ${tones[badgeTone]}`}>{badge}</span>}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+/** Small label/value tile used inside results panels. */
+export function Stat({
+  label,
+  value,
+  sub,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  tone?: "default" | "green" | "amber" | "red";
+}) {
+  const tones = {
+    default: "text-gray-900",
+    green: "text-green-700",
+    amber: "text-amber-600",
+    red: "text-red-600",
+  };
+  return (
+    <div className="bg-white border border-gray-100 rounded-xl p-3">
+      <p className="text-xs text-gray-400 mb-0.5 leading-snug">{label}</p>
+      <p className={`text-sm font-medium ${tones[tone]}`}>{value}</p>
+      {sub && <p className="text-xs text-gray-400 mt-0.5 leading-snug">{sub}</p>}
+    </div>
+  );
+}
+
+/** The big headline number at the top of a results panel. */
+export function Headline({
+  label,
+  value,
+  unit,
+  tone = "green",
+}: {
+  label: string;
+  value: string;
+  unit?: string;
+  tone?: "green" | "red" | "gray";
+}) {
+  const tones = { green: "text-green-700", red: "text-red-600", gray: "text-gray-900" };
+  return (
+    <>
+      <p className="text-xs text-gray-400 mb-1">{label}</p>
+      <p className={`text-3xl font-medium mb-5 tracking-tight break-words ${tones[tone]}`}>
+        {value}
+        {unit && <span className="text-sm text-gray-400 font-normal">{unit}</span>}
+      </p>
+    </>
+  );
+}
+
+/** Coloured takeaway box under the results. */
+export function Takeaway({
+  tone = "green",
+  children,
+}: {
+  tone?: "green" | "amber" | "blue" | "red";
+  children: ReactNode;
+}) {
+  const tones = {
+    green: "bg-green-50 border-green-100 text-green-800",
+    amber: "bg-amber-50 border-amber-100 text-amber-800",
+    blue: "bg-blue-50 border-blue-100 text-blue-800",
+    red: "bg-red-50 border-red-100 text-red-700",
+  };
+  return (
+    <div className={`border rounded-xl p-3 text-xs leading-relaxed ${tones[tone]}`}>{children}</div>
+  );
+}
+
+/** Placeholder shown before the user has entered enough to calculate. */
+export function EmptyState({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-10 px-4">
+      <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-base mb-3">
+        🧮
+      </div>
+      <p className="text-sm text-gray-400 leading-relaxed max-w-xs">{children}</p>
+    </div>
+  );
+}

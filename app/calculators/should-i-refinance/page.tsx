@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 
 export default function ShouldIRefinance() {
@@ -13,9 +13,7 @@ export default function ShouldIRefinance() {
   const [financeClosing, setFinanceClosing] = useState(false);
   const [newRate, setNewRate] = useState<number | "">(0);
   const [newTerm, setNewTerm] = useState<number | "">(30);
-  const [extraPayment, setExtraPayment] = useState<number | "">("" as any);
-  const [results, setResults] = useState<any>(null);
-  const [showExample, setShowExample] = useState(false);
+  const [extraPayment, setExtraPayment] = useState<number | "">("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const fmt = (v: number) => "$" + Math.round(Math.abs(v)).toLocaleString();
@@ -34,14 +32,13 @@ export default function ShouldIRefinance() {
     setFinanceClosing(false);
     setNewRate(6.5);
     setNewTerm(30);
-    setExtraPayment("" as any);
-    setShowExample(true);
+    setExtraPayment("");
   };
 
   const n = (v: number | "") => (v === "" ? 0 : +v);
 
-  useEffect(() => {
-    if (!n(currentBalance) && !n(currentRate) && !n(currentPayment)) return;
+  const results = useMemo(() => {
+    if (!n(currentBalance) && !n(currentRate) && !n(currentPayment)) return null;
 
     const currentR = n(currentRate) / 100 / 12;
     const currentN = n(yearsLeft) * 12;
@@ -55,7 +52,7 @@ export default function ShouldIRefinance() {
       ? newLoanAmount * newR * Math.pow(1 + newR, newN) / (Math.pow(1 + newR, newN) - 1)
       : newLoanAmount / newN;
     const monthlySavings = n(currentPayment) - newPayment;
-    const extraPmt = n(extraPayment) || (results ? Math.max(0, Math.round(monthlySavings)) : 0);
+    const extraPmt = n(extraPayment);
     const breakEvenMonths = monthlySavings > 0 ? Math.ceil(outOfPocket / monthlySavings) : null;
 
     let newInterestSameHorizon = 0;
@@ -89,12 +86,12 @@ export default function ShouldIRefinance() {
       if (nBal <= 0) break;
     }
 
-    setResults({
+    return {
       interestLeft, newLoanAmount, newPayment, monthlySavings,
       breakEvenMonths, outOfPocket, interestSaved,
       currentBalances, newBalances, currentN, newN,
       suggestedExtra: Math.max(0, Math.round(monthlySavings)),
-    });
+    };
   }, [currentBalance, currentRate, yearsLeft, currentPayment, cashOut, closingCosts, financeClosing, newRate, newTerm, extraPayment]);
 
   useEffect(() => {
@@ -104,7 +101,7 @@ export default function ShouldIRefinance() {
     if (!ctx) return;
     const { currentBalances, newBalances, currentN, newN } = results;
     const maxMonths = Math.max(currentN, newN);
-    const maxBal = Math.max(n(currentBalance), results.newLoanAmount);
+    const maxBal = Math.max(currentBalances[0], results.newLoanAmount);
     const dpr = window.devicePixelRatio || 1;
     canvas.width = canvas.offsetWidth * dpr;
     canvas.height = canvas.offsetHeight * dpr;
@@ -134,7 +131,8 @@ export default function ShouldIRefinance() {
       data.forEach((val, i) => {
         const x = pad.left + (i / maxMonths) * chartW;
         const y = pad.top + chartH - (val / maxBal) * chartH;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       });
       ctx.stroke(); ctx.setLineDash([]);
     };
@@ -172,7 +170,7 @@ export default function ShouldIRefinance() {
         <div className="px-5 py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Refinance tools</p>
           <h1 className="text-2xl font-medium text-gray-900 mb-2">Should I Refinance?</h1>
-          <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you're considering. We'll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>
+          <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you&apos;re considering. We&apos;ll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>
 
           {/* TWO COLUMN ON DESKTOP, STACKED ON MOBILE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -334,8 +332,8 @@ export default function ShouldIRefinance() {
               </div>
             </div>
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 leading-relaxed">
-              <strong>⚠ The "reset the clock" caveat</strong><br />
-              A new loan restarts amortization, so comparing full lifetime interest on a fresh {n(newTerm)}-year loan against one you're partway through isn't apples-to-apples. Below we compare interest paid over the same {n(yearsLeft)}-year horizon — that's the fairer number if you plan to stay put.
+              <strong>⚠ The &quot;reset the clock&quot; caveat</strong><br />
+              A new loan restarts amortization, so comparing full lifetime interest on a fresh {n(newTerm)}-year loan against one you&apos;re partway through isn&apos;t apples-to-apples. Below we compare interest paid over the same {n(yearsLeft)}-year horizon — that&apos;s the fairer number if you plan to stay put.
             </div>
           </div>
 
