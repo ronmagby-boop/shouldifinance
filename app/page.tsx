@@ -68,18 +68,19 @@ export default function Home() {
         )}
       </nav>
 
-      {/* HERO — text stacked above the photo on mobile, photo blended behind it on desktop */}
-      <section className="pt-14 bg-white flex flex-col md:grid md:items-center md:relative md:min-h-[520px] md:overflow-hidden">
+      {/* HERO — light mint band matching the illustration's own background;
+          text on the left, phone illustration on the right, stacked on mobile. */}
+      <section className="pt-14 bg-[#CBF4EB]">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-16 flex flex-col md:flex-row md:items-center gap-8 md:gap-10">
 
-        {/* Text content — solid white behind it on mobile so it stays readable */}
-        <div className="order-1 relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 pt-8 pb-7 md:py-20">
-          <div className="max-w-lg">
-            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-4">Financial Tools &amp; Guidance</p>
+          {/* Text */}
+          <div className="w-full md:flex-1 max-w-lg">
+            <p className="text-xs font-bold text-green-800 uppercase tracking-widest mb-4">Financial Tools &amp; Guidance</p>
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
               Better questions.<br />
-              <span className="text-green-600">Smarter decisions.</span>
+              <span className="text-green-700">Smarter decisions.</span>
             </h1>
-            <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-7 max-w-sm">
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-7 max-w-sm">
               Whether you&apos;re buying a home, refinancing, investing, or just trying to make smarter money moves — we give you the tools, answers and insights to help you decide.
             </p>
             <a href="#calculators"
@@ -87,28 +88,20 @@ export default function Home() {
               🧮 Explore Our Calculators →
             </a>
           </div>
-        </div>
 
-        {/* Photo — its own band on mobile; on desktop it occupies the right side
-            only, so the whole family sits clear of the headline instead of
-            being washed out behind it. */}
-        <div className="order-2 relative w-full h-60 sm:h-72 md:order-none md:absolute md:inset-y-0 md:right-0 md:left-[30%] lg:left-[38%] md:w-auto md:h-auto md:z-0">
-          <Image
-            src="/hero.jpg"
-            alt="Family watching the sunset over a city"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 70vw"
-            className="object-cover object-[58%_center]"
-          />
-          {/* Gradient — softens the photo's left edge into the white (desktop only) */}
-          <div className="hidden md:block absolute inset-0"
-            style={{background: "linear-gradient(to right, white 0%, rgba(255,255,255,0.88) 10%, rgba(255,255,255,0.35) 24%, rgba(255,255,255,0) 42%)"}}
-          ></div>
-          {/* Also fade top and bottom slightly */}
-          <div className="hidden md:block absolute inset-0"
-            style={{background: "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 20%, transparent 80%, rgba(255,255,255,0.3) 100%)"}}
-          ></div>
+          {/* Illustration — the source art is 2:1 with an empty left half, so the
+              box crops to the right of it and the phone reads large instead of
+              floating in dead space. */}
+          <div className="relative w-full md:flex-1 aspect-[4/3] md:aspect-[5/4] md:max-w-lg">
+            <Image
+              src="/hero.png"
+              alt="Phone showing a portfolio allocation chart alongside a financial checklist"
+              fill
+              preload
+              sizes="(max-width: 768px) 100vw, 45vw"
+              className="object-cover object-right"
+            />
+          </div>
         </div>
       </section>
 
