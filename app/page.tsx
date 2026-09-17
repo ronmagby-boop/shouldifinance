@@ -164,19 +164,10 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Primary action first — browsing is what most people want. */}
-          <div className="text-center mb-5 md:mb-6">
-            <Link href="/calculators"
-              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
-              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-              Explore Our Calculators
-              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
-            </Link>
-          </div>
-
-          {/* Search second, for people who already know what they are after.
-              Filters the registry by name, title, category and keywords. */}
-          <div className="max-w-xl mx-auto mb-8 md:mb-10">
+          {/* Search first — the fastest route for anyone who already knows what
+              they are after. Filters the registry by name, title, category and
+              keywords. */}
+          <div className="max-w-xl mx-auto mb-5 md:mb-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
               <input
@@ -219,6 +210,16 @@ export default function Home() {
                 )}
               </div>
             )}
+          </div>
+
+          {/* Browse, for anyone who would rather look around than search. */}
+          <div className="text-center mb-8 md:mb-10">
+            <Link href="/calculators"
+              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
+              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+              Explore Our Calculators
+              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+            </Link>
           </div>
 
           {/* Four category doors; byCategory puts the "Should I ...?" tools first */}
