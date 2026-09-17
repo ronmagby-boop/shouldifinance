@@ -275,10 +275,17 @@ export const CATEGORY_SECTIONS: {
   icon: LucideIcon;
   blurb: string;
   id: string;
+  /**
+   * One accent colour per category, used by the mobile bottom bar, the
+   * /calculators headers and the sidebar. Full class strings, not built by
+   * string concatenation — Tailwind only ships classes it can see in source.
+   */
+  text: string;
+  tint: string;
 }[] = [
-  { category: "Real estate", icon: Home, blurb: "Buying, refinancing, and everything that comes with a mortgage.", id: "real-estate" },
-  { category: "Investing", icon: TrendingUp, blurb: "Growing your money, planning for retirement, and the debt and savings decisions that go with it.", id: "investing" },
-  { category: "Auto", icon: Car, blurb: "What a car really costs, from the lot to the day you sell it.", id: "auto" },
+  { category: "Real estate", icon: Home, blurb: "Buying, refinancing, and everything that comes with a mortgage.", id: "real-estate", text: "text-green-700", tint: "bg-green-50" },
+  { category: "Investing", icon: TrendingUp, blurb: "Growing your money, planning for retirement, and the debt and savings decisions that go with it.", id: "investing", text: "text-blue-600", tint: "bg-blue-50" },
+  { category: "Auto", icon: Car, blurb: "What a car really costs, from the lot to the day you sell it.", id: "auto", text: "text-teal-600", tint: "bg-teal-50" },
 ];
 
 export const bySlug = (slug: string): Calc | undefined =>

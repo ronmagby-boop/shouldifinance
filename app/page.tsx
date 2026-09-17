@@ -115,7 +115,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 py-2">
           <Link href="/">
-            <Image src="/logo.png" alt="ShouldIFinance logo" width={110} height={36} priority />
+            <Image src="/logo-wide.png" alt="ShouldIFinance" width={2158} height={729} className="h-10 w-auto" priority />
           </Link>
           <div className="hidden md:flex items-center gap-7">
             {NAV_LINKS.map(l => (
@@ -398,7 +398,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
             <div className="max-w-xs">
               <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo.png" alt="ShouldIFinance logo" width={236} height={150} className="h-10 w-auto" />
+                <Image src="/logo-wide.png" alt="ShouldIFinance" width={2158} height={729} className="h-9 w-auto" />
               </span>
               <p className="text-xs text-gray-400 leading-relaxed">Better Questions. Smarter Decisions. Free financial tools for every stage of life.</p>
             </div>

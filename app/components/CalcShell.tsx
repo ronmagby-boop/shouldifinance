@@ -56,9 +56,9 @@ export default function CalcShell({
           narrowing the calculator itself (1280 - 220 rail > the old 1024). */}
       <div className="max-w-7xl mx-auto">
         {/* NAV */}
-        <nav className="flex items-center justify-between gap-3 px-5 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
+        <nav className="flex items-center justify-between gap-3 px-5 py-1.5 md:py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
           <Link href="/" className="flex-shrink-0">
-            <Image src="/logo.png" alt="ShouldIFinance logo" width={100} height={32} priority />
+            <Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority />
           </Link>
           <div className="hidden md:flex gap-6">
             {NAV_LINKS.map((l) => (
@@ -93,7 +93,7 @@ export default function CalcShell({
         )}
 
         {/* BREADCRUMB */}
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
+        <div className="px-5 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-green-700">
             Home
           </Link>
@@ -111,9 +111,9 @@ export default function CalcShell({
         <div className="min-w-0">
         <CalculatorBrowseMobile activeSlug={slug} />
 
-        <div className="px-5 py-6">
+        <div className="px-5 py-4 md:py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">{eyebrow}</p>
-          <h1 className="text-2xl font-medium text-gray-900 mb-2">{title}</h1>
+          <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">{title}</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-4 max-w-2xl">{intro}</p>
 
           {/* Sits directly above the inputs — this is the moment someone decides

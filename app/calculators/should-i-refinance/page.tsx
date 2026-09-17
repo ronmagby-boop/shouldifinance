@@ -150,8 +150,8 @@ export default function ShouldIRefinance() {
     <main className="min-h-screen bg-white font-sans">
       <div className="max-w-7xl mx-auto">
 
-        <nav className="flex items-center justify-between px-5 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
-          <Link href="/"><Image src="/logo.png" alt="ShouldIFinance logo" width={100} height={32} priority /></Link>
+        <nav className="flex items-center justify-between px-5 py-1.5 md:py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
+          <Link href="/"><Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority /></Link>
           <div className="hidden md:flex gap-6">
             <Link href="/calculators" className="text-sm text-gray-500 hover:text-gray-900">Calculators</Link>
             {CATEGORY_SECTIONS.map(c => (
@@ -163,7 +163,7 @@ export default function ShouldIRefinance() {
           </div>
         </nav>
 
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400">
+        <div className="px-5 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-green-700">Home</Link><span>›</span>
           <Link href="/calculators#real-estate" className="hover:text-green-700">Real estate</Link><span>›</span>
           <span className="text-gray-900">Should I refinance?</span>
@@ -175,7 +175,7 @@ export default function ShouldIRefinance() {
         <div className="min-w-0">
         <CalculatorBrowseMobile />
 
-        <div className="px-5 py-6">
+        <div className="px-5 py-4 md:py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Refinance tools</p>
           <h1 className="text-2xl font-medium text-gray-900 mb-2">Should I Refinance?</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you&apos;re considering. We&apos;ll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>

@@ -41,7 +41,8 @@ export default function CalculatorSidebar({ activeSlug }: { activeSlug?: string 
     >
       {CATEGORY_SECTIONS.map(section => (
         <div key={section.id} className="px-4 mb-4 last:mb-0">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+          <p className={`flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide mb-2 ${section.text}`}>
+            <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
             {section.category}
           </p>
           {byCategory(section.category).map(calc => {
@@ -79,7 +80,7 @@ export function CalculatorBrowseMobile({ activeSlug }: { activeSlug?: string }) 
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-controls="mobile-calculator-list"
-        className="w-full flex items-center justify-between gap-3 px-5 py-2.5 text-left"
+        className="w-full flex items-center justify-between gap-3 px-5 py-1.5 text-left"
       >
         <span className="min-w-0">
           <span className="block text-[11px] font-medium text-gray-400 uppercase tracking-wide">
@@ -104,7 +105,7 @@ export function CalculatorBrowseMobile({ activeSlug }: { activeSlug?: string }) 
         >
           {CATEGORY_SECTIONS.map(section => (
             <div key={section.id} className="pt-3">
-              <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1.5">
+              <p className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide mb-1.5 ${section.text}`}>
                 <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
                 {section.category}
               </p>

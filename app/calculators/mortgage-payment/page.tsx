@@ -97,9 +97,9 @@ export default function MortgageCalculator() {
       <div className="max-w-7xl mx-auto">
 
         {/* NAV */}
-        <nav className="flex items-center justify-between px-5 md:px-8 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
+        <nav className="flex items-center justify-between px-5 md:px-8 py-1.5 md:py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
           <Link href="/">
-            <Image src="/logo.png" alt="ShouldIFinance logo" width={110} height={36} priority />
+            <Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority />
           </Link>
           <div className="hidden md:flex gap-6">
             <Link href="/calculators" className="text-sm text-gray-500 hover:text-gray-900">Calculators</Link>
@@ -112,7 +112,7 @@ export default function MortgageCalculator() {
         </nav>
 
         {/* BREADCRUMB */}
-        <div className="px-5 md:px-8 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400">
+        <div className="px-5 md:px-8 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-green-700">Home</Link>
           <span>›</span>
           <Link href="/calculators#real-estate" className="hover:text-green-700">Real estate calculators</Link>
@@ -127,7 +127,7 @@ export default function MortgageCalculator() {
           {/* MAIN CONTENT */}
           <div className="min-w-0">
           <CalculatorBrowseMobile />
-          <div className="px-5 md:px-8 py-6 md:py-8">
+          <div className="px-5 md:px-8 py-4 md:py-8">
 
             <div className="mb-6">
               <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">Mortgage payment calculator</h1>
