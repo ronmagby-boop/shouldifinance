@@ -89,24 +89,18 @@ export default function Home() {
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
       <section className="pt-14 md:pt-16 bg-[#CCEEE7]">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 md:py-12 flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-6 md:py-9 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
 
           {/* Text */}
           <div className="w-full md:flex-1 max-w-lg">
-            <p className="text-xs font-bold text-green-800 uppercase tracking-widest mb-4">Financial Tools &amp; Guidance</p>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+            <p className="text-xs font-bold text-green-800 uppercase tracking-widest mb-3">Financial Tools &amp; Guidance</p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
               Better questions.<br />
               <span className="text-green-700">Smarter decisions.</span>
             </h1>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-6 max-w-sm">
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed max-w-sm">
               Whether you&apos;re buying a home, refinancing, investing, or just trying to make smarter money moves — we give you the tools, answers and insights to help you decide.
             </p>
-            <Link href="/calculators"
-              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
-              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-              Explore Our Calculators
-              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
-            </Link>
           </div>
 
           {/* Illustration — one 8/5 box at every width, so a single crop serves
@@ -117,7 +111,7 @@ export default function Home() {
               wrapper dissolves all four edges into the section colour — see
               HERO_MASK for how the stops were measured. */}
           <div
-            className="relative w-full md:flex-1 aspect-[8/5] md:max-w-lg"
+            className="relative w-full max-w-sm mx-auto md:mx-0 md:flex-1 aspect-[8/5] md:max-w-md"
             style={HERO_MASK_STYLE}
           >
             <Image
@@ -125,7 +119,7 @@ export default function Home() {
               alt="Phone showing a portfolio allocation chart alongside a financial checklist"
               fill
               preload
-              sizes="(max-width: 768px) 100vw, 45vw"
+              sizes="(max-width: 768px) 90vw, 40vw"
               className="object-cover object-[95%_center]"
             />
           </div>
@@ -170,7 +164,18 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Search — filters the registry by name, title, category and keywords */}
+          {/* Primary action first — browsing is what most people want. */}
+          <div className="text-center mb-5 md:mb-6">
+            <Link href="/calculators"
+              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
+              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+              Explore Our Calculators
+              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+            </Link>
+          </div>
+
+          {/* Search second, for people who already know what they are after.
+              Filters the registry by name, title, category and keywords. */}
           <div className="max-w-xl mx-auto mb-8 md:mb-10">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -259,9 +264,9 @@ export default function Home() {
             })}
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-7">
             <Link href="/calculators"
-              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:underline">
               Explore all {CALCULATORS.length} calculators
               <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
