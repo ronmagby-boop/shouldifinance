@@ -198,18 +198,9 @@ export default function Home() {
 
       {/* DECIDE — search plus the four category doors. Replaces the old
           "Popular Tools" grid; example calculators now live inside each card. */}
-      <section id="calculators" className="py-10 md:py-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
+      <section id="calculators" aria-label="Browse calculators by topic"
+        className="py-10 md:py-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-6 md:mb-8">
-            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Browse by topic</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
-              Where do you want to start?
-            </h2>
-            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-              {CALCULATORS.length} free calculators, grouped into the four areas people ask about most.
-            </p>
-          </div>
-
           {/* Browse, for anyone who would rather look around than search. */}
           <div className="text-center mb-8 md:mb-10">
             <Link href="/calculators"
