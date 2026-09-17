@@ -89,7 +89,7 @@ export default function Home() {
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
       <section className="pt-14 md:pt-16 bg-[#CCEEE7]">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-6 md:py-9 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-7 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
 
           {/* Text */}
           <div className="w-full md:flex-1 max-w-lg">
@@ -98,9 +98,55 @@ export default function Home() {
               Better questions.<br />
               <span className="text-green-700">Smarter decisions.</span>
             </h1>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed max-w-sm">
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-5 max-w-sm">
               Whether you&apos;re buying a home, refinancing, investing, or just trying to make smarter money moves — we give you the tools, answers and insights to help you decide.
             </p>
+
+            {/* Search lives here, in the first thing anyone sees. The results
+                panel is absolutely positioned so opening it never reflows the
+                hero or shoves the illustration down the page. */}
+            <div className="relative max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
+              <input
+                type="search"
+                value={decideQuery}
+                onChange={e => setDecideQuery(e.target.value)}
+                placeholder="What are you trying to decide?"
+                aria-label="Search calculators"
+                className="w-full bg-white border border-gray-200 rounded-full pl-12 pr-4 py-3.5 text-sm shadow-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+              />
+
+              {decideQuery.trim() !== "" && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-30 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
+                  {decideResults.length === 0 ? (
+                    <div className="px-4 py-5">
+                      <p className="text-sm text-gray-500 mb-2">
+                        Nothing matches &ldquo;{decideQuery}&rdquo;.
+                      </p>
+                      <Link href="/calculators" className="text-sm font-semibold text-green-700 hover:underline">
+                        Browse all {CALCULATORS.length} calculators &rarr;
+                      </Link>
+                    </div>
+                  ) : (
+                    decideResults.map(c => (
+                      <Link key={c.slug} href={`/calculators/${c.slug}`}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
+                        <span className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center flex-shrink-0 text-gray-700`}>
+                          <c.icon className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors truncate">
+                            {c.nav}
+                          </span>
+                          <span className="block text-xs text-gray-400">{c.category}</span>
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-green-700 flex-shrink-0" aria-hidden="true" />
+                      </Link>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Illustration — one 8/5 box at every width, so a single crop serves
@@ -155,61 +201,13 @@ export default function Home() {
       <section id="calculators" className="py-10 md:py-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="text-center max-w-2xl mx-auto mb-6 md:mb-8">
-            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Start here</p>
+            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Browse by topic</p>
             <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
-              What are you trying to decide?
+              Where do you want to start?
             </h2>
             <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-              Search {CALCULATORS.length} free calculators, or pick the area you are thinking about.
+              {CALCULATORS.length} free calculators, grouped into the four areas people ask about most.
             </p>
-          </div>
-
-          {/* Search first — the fastest route for anyone who already knows what
-              they are after. Filters the registry by name, title, category and
-              keywords. */}
-          <div className="max-w-xl mx-auto mb-5 md:mb-6">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
-              <input
-                type="search"
-                value={decideQuery}
-                onChange={e => setDecideQuery(e.target.value)}
-                placeholder="What are you trying to decide?"
-                aria-label="Search calculators"
-                className="w-full bg-white border border-gray-200 rounded-full pl-12 pr-4 py-3.5 text-sm shadow-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
-              />
-            </div>
-
-            {decideQuery.trim() !== "" && (
-              <div className="mt-3 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                {decideResults.length === 0 ? (
-                  <div className="px-4 py-5">
-                    <p className="text-sm text-gray-500 mb-2">
-                      Nothing matches &ldquo;{decideQuery}&rdquo;.
-                    </p>
-                    <Link href="/calculators" className="text-sm font-semibold text-green-700 hover:underline">
-                      Browse all {CALCULATORS.length} calculators &rarr;
-                    </Link>
-                  </div>
-                ) : (
-                  decideResults.map(c => (
-                    <Link key={c.slug} href={`/calculators/${c.slug}`}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
-                      <span className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center flex-shrink-0 text-gray-700`}>
-                        <c.icon className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors truncate">
-                          {c.nav}
-                        </span>
-                        <span className="block text-xs text-gray-400">{c.category}</span>
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-green-700 flex-shrink-0" aria-hidden="true" />
-                    </Link>
-                  ))
-                )}
-              </div>
-            )}
           </div>
 
           {/* Browse, for anyone who would rather look around than search. */}
