@@ -104,8 +104,9 @@ export function CalculatorBrowseMobile({ activeSlug }: { activeSlug?: string }) 
         >
           {CATEGORY_SECTIONS.map(section => (
             <div key={section.id} className="pt-3">
-              <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1.5">
-                {section.icon} {section.category}
+              <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1.5">
+                <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
+                {section.category}
               </p>
               {byCategory(section.category).map(calc => {
                 const isActive = calc.slug === active;

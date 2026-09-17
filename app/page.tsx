@@ -2,7 +2,12 @@
 import Image from "next/image";
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import {
+  Calculator, FileText, BadgeCheck, ShieldCheck, Users, CalendarClock,
+  Landmark, House, RefreshCw, PiggyBank, Car, TrendingUp, Star, ArrowRight, Search, CheckCircle2,
+} from "lucide-react";
 import { CALCULATORS, CATEGORY_SECTIONS } from "./lib/calculators";
+import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 
 // hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
 // #cdeee7 / #cceee7 / #cdeee7 / #ccede7, averaging the #CCEEE7 the section uses.
@@ -41,16 +46,6 @@ const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Calculators", href: "/calculators" },
   ...CATEGORY_SECTIONS.map(s => ({ label: s.category, href: `/calculators#${s.id}` })),
 ];
-
-function SearchIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-    </svg>
-  );
-}
 
 function EnvelopeIcon({ className = "" }: { className?: string }) {
   return (
@@ -105,12 +100,12 @@ export default function Home() {
   }, [searchOpen]);
 
   const calculators = [
-    { icon: "🏦", bg: "bg-blue-50", title: "Mortgage Calculator", desc: "Find out what you can afford and estimate your payments.", href: "/calculators/mortgage-payment" },
-    { icon: "🏠", bg: "bg-green-50", title: "Rent vs. Buy", desc: "See which option makes more financial sense for you.", href: "/calculators/rent-vs-buy" },
-    { icon: "🔄", bg: "bg-purple-50", title: "Refinance Calculator", desc: "Find out if refinancing could save you money.", href: "/calculators/should-i-refinance" },
-    { icon: "🐷", bg: "bg-orange-50", title: "Retirement Calculator", desc: "Plan for the future and see how your savings add up.", href: "/calculators/retirement-savings" },
-    { icon: "🚗", bg: "bg-teal-50", title: "Lease vs. Buy", desc: "Compare the true cost of leasing or buying your next car.", href: "/calculators/lease-vs-buy" },
-    { icon: "📈", bg: "bg-emerald-50", title: "Investment Calculator", desc: "See how your money can grow with compound interest.", href: "/calculators/compound-interest" },
+    { icon: Landmark, bg: "bg-blue-50", title: "Mortgage Calculator", desc: "Find out what you can afford and estimate your payments.", href: "/calculators/mortgage-payment" },
+    { icon: House, bg: "bg-green-50", title: "Rent vs. Buy", desc: "See which option makes more financial sense for you.", href: "/calculators/rent-vs-buy" },
+    { icon: RefreshCw, bg: "bg-purple-50", title: "Refinance Calculator", desc: "Find out if refinancing could save you money.", href: "/calculators/should-i-refinance" },
+    { icon: PiggyBank, bg: "bg-orange-50", title: "Retirement Calculator", desc: "Plan for the future and see how your savings add up.", href: "/calculators/retirement-savings" },
+    { icon: Car, bg: "bg-teal-50", title: "Lease vs. Buy", desc: "Compare the true cost of leasing or buying your next car.", href: "/calculators/lease-vs-buy" },
+    { icon: TrendingUp, bg: "bg-emerald-50", title: "Investment Calculator", desc: "See how your money can grow with compound interest.", href: "/calculators/compound-interest" },
   ];
 
   return (
@@ -132,7 +127,7 @@ export default function Home() {
               onClick={() => setSearchOpen(true)}
               aria-label="Search calculators"
               className="text-gray-400 hover:text-green-700 p-2 rounded-full hover:bg-gray-50 transition-colors">
-              <SearchIcon className="w-5 h-5" />
+              <Search className="w-5 h-5" aria-hidden="true" />
             </button>
             <a href="#resources"
               className="bg-green-700 text-white text-sm font-semibold rounded-full px-5 py-2 hover:bg-green-800 transition-colors">
@@ -144,7 +139,7 @@ export default function Home() {
               onClick={() => setSearchOpen(true)}
               aria-label="Search calculators"
               className="text-gray-400 hover:text-green-700 p-2">
-              <SearchIcon className="w-5 h-5" />
+              <Search className="w-5 h-5" aria-hidden="true" />
             </button>
           <button className="flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             <span className={`block w-6 h-0.5 bg-gray-900 transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`}></span>
@@ -173,7 +168,7 @@ export default function Home() {
           <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 px-4 border-b border-gray-100">
-              <SearchIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <Search className="w-5 h-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
               <input
                 autoFocus
                 value={query}
@@ -206,8 +201,8 @@ export default function Home() {
                 results.map(c => (
                   <Link key={c.slug} href={`/calculators/${c.slug}`} onClick={closeSearch}
                     className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
-                    <div className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center text-base flex-shrink-0`}>
-                      {c.icon}
+                    <div className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center flex-shrink-0 text-gray-700`}>
+                      <c.icon className="w-4.5 h-4.5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors">{c.nav}</p>
@@ -238,7 +233,9 @@ export default function Home() {
             </p>
             <Link href="/calculators"
               className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
-              🧮 Explore Our Calculators →
+              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+              Explore Our Calculators
+              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
           </div>
 
@@ -270,13 +267,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
-              { icon: "🧮", num: "25+", label: "Free Calculators" },
-              { icon: "📄", num: "100+", label: "Helpful Articles" },
-              { icon: "👥", num: "Expert", label: "Real-World Advice" },
-              { icon: "🛡️", num: "Trusted", label: "For Every Stage of Life" },
+              { Icon: Calculator, num: "25+", label: "Free Calculators" },
+              { Icon: FileText, num: "100+", label: "Helpful Articles" },
+              { Icon: BadgeCheck, num: "Expert", label: "Real-World Advice" },
+              { Icon: ShieldCheck, num: "Trusted", label: "For Every Stage of Life" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 px-4 md:px-8 py-3">
-                <span className="text-xl md:text-2xl">{s.icon}</span>
+                <span className="w-9 h-9 rounded-xl bg-green-50 text-green-700 flex items-center justify-center flex-shrink-0">
+                  <s.Icon className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+                </span>
                 <div>
                   <div className="text-sm md:text-base font-bold text-gray-900">{s.num}</div>
                   <div className="text-xs text-gray-500">{s.label}</div>
@@ -306,17 +305,17 @@ export default function Home() {
               <Link key={calc.title} href={calc.href}
                 className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 hover:shadow-lg hover:border-green-100 transition-all group cursor-pointer">
                 <div className="flex items-start justify-between mb-3">
-                  <div className={`w-11 h-11 ${calc.bg} rounded-full flex items-center justify-center text-xl`}>
-                    {calc.icon}
+                  <div className={`w-11 h-11 ${calc.bg} rounded-full flex items-center justify-center text-gray-700`}>
+                    <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                   </div>
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-green-800 bg-green-50 border border-green-100 rounded-full px-2 py-1">
-                    ★ Most Popular
+                    <Star className="w-3 h-3 fill-current" aria-hidden="true" /> Most Popular
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-green-700 transition-colors">{calc.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed mb-3">{calc.desc}</p>
-                <div className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-green-700 group-hover:border-green-700 group-hover:text-white transition-all text-sm font-bold">
-                  →
+                <div className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-green-700 group-hover:border-green-700 group-hover:text-white transition-all">
+                  <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
                 </div>
               </Link>
             ))}
@@ -334,13 +333,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-0 md:divide-x md:divide-white/10">
             {[
-              { icon: "👥", num: "200K+", label: "Monthly Visitors" },
-              { icon: "📄", num: "100+", label: "Articles & Guides" },
-              { icon: "🧮", num: "25+", label: "Calculators & Tools" },
-              { icon: "📅", num: "Updated Weekly", label: "New Content & Insights" },
+              { Icon: Users, num: "200K+", label: "Monthly Visitors" },
+              { Icon: FileText, num: "100+", label: "Articles & Guides" },
+              { Icon: Calculator, num: "25+", label: "Calculators & Tools" },
+              { Icon: CalendarClock, num: "Updated Weekly", label: "New Content & Insights" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 md:px-8">
-                <span className="text-2xl opacity-80">{s.icon}</span>
+                <span className="w-9 h-9 rounded-xl bg-white/10 text-green-300 flex items-center justify-center flex-shrink-0">
+                  <s.Icon className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+                </span>
                 <div>
                   <div className="text-sm md:text-base font-bold text-white">{s.num}</div>
                   <div className="text-xs text-gray-400">{s.label}</div>
@@ -376,8 +377,12 @@ export default function Home() {
                 </button>
               </div>
               <div className="flex items-center gap-5 mt-3">
-                <span className="text-xs text-gray-400">✅ No spam</span>
-                <span className="text-xs text-gray-400">✅ Unsubscribe anytime</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> No spam
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> Unsubscribe anytime
+                </span>
               </div>
             </div>
             <div className="hidden md:flex w-36 h-36 bg-green-50 rounded-3xl items-center justify-center flex-shrink-0 text-green-700">
@@ -445,20 +450,8 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* MOBILE BOTTOM NAV */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50 shadow-lg">
-        <div className="flex justify-around">
-          {CATEGORY_SECTIONS.map(item => (
-            <Link key={item.id} href={`/calculators#${item.id}`} className="flex flex-col items-center gap-1 px-3 py-1">
-              <span className="text-xl">{item.icon}</span>
-              <span className="text-xs text-gray-500 whitespace-nowrap">
-                {item.category === "Personal finance" ? "Money" : item.category}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div>
-      <div className="md:hidden h-16"></div>
+      <MobileBottomNav />
+      <MobileBottomNavSpacer />
 
     </main>
   );

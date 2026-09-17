@@ -70,7 +70,7 @@ export default function AllCalculators() {
           {CATEGORY_SECTIONS.map(s => (
             <a key={s.id} href={`#${s.id}`}
               className="inline-flex items-center gap-2 text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100 rounded-full px-4 py-2 hover:border-green-200 hover:text-green-700 transition-colors">
-              <span>{s.icon}</span>
+              <s.icon className="w-3.5 h-3.5" aria-hidden="true" />
               {s.category}
               <span className="text-gray-400">{byCategory(s.category).length}</span>
             </a>
@@ -84,7 +84,9 @@ export default function AllCalculators() {
           {CATEGORY_SECTIONS.map(section => (
             <div key={section.id} id={section.id} className="scroll-mt-20">
               <div className="flex items-start gap-3 mb-4 pb-3 border-b border-gray-100">
-                <span className="text-2xl">{section.icon}</span>
+                <span className="w-9 h-9 rounded-xl bg-green-50 text-green-700 flex items-center justify-center flex-shrink-0">
+                  <section.icon className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+                </span>
                 <div>
                   <h2 className="text-lg font-extrabold text-gray-900">{section.category}</h2>
                   <p className="text-xs text-gray-500 leading-relaxed">{section.blurb}</p>
@@ -97,8 +99,8 @@ export default function AllCalculators() {
                 {byCategory(section.category).map(calc => (
                   <Link key={calc.slug} href={`/calculators/${calc.slug}`}
                     className="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-lg hover:border-green-100 transition-all flex items-start gap-3">
-                    <div className={`w-10 h-10 ${calc.bg} rounded-xl flex items-center justify-center text-lg flex-shrink-0`}>
-                      {calc.icon}
+                    <div className={`w-10 h-10 ${calc.bg} rounded-xl flex items-center justify-center flex-shrink-0 text-gray-700`}>
+                      <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">

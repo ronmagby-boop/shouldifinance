@@ -105,8 +105,8 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="emergency-fund"
-      category="Personal finance"
-      eyebrow="Personal finance tools"
+      category="Investing"
+      eyebrow="Money & savings tools"
       title="Emergency fund calculator"
       crumb="Emergency fund"
       intro="An emergency fund is measured in months, not dollars — it's however long you could keep the lights on with no income. Add up what you'd actually have to keep paying, and see how long it takes to get there."

@@ -2,31 +2,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import { related, type Category } from "../lib/calculators";
+import { Sparkles } from "lucide-react";
+import { CATEGORY_SECTIONS, related, type Category } from "../lib/calculators";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
+import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 
 const CATEGORY_HREF: Record<Category, string> = {
   "Real estate": "/calculators#real-estate",
   Investing: "/calculators#investing",
   Auto: "/calculators#auto",
-  "Personal finance": "/calculators#personal-finance",
 };
 
 const NAV_LINKS = [
   { label: "Calculators", href: "/calculators" },
-  { label: "Real estate", href: "/calculators#real-estate" },
-  { label: "Investing", href: "/calculators#investing" },
-  { label: "Auto", href: "/calculators#auto" },
-  { label: "Personal finance", href: "/calculators#personal-finance" },
-];
-
-// Bottom bar keeps its original four slots; the three category tabs now reach
-// the real /calculators anchors instead of the homepage.
-const BOTTOM_NAV = [
-  { icon: "🏠", label: "Real estate", href: "/calculators#real-estate" },
-  { icon: "📈", label: "Investing", href: "/calculators#investing" },
-  { icon: "🚗", label: "Auto", href: "/calculators#auto" },
-  { icon: "🧮", label: "All", href: "/calculators" },
+  ...CATEGORY_SECTIONS.map(s => ({ label: s.category, href: `/calculators#${s.id}` })),
 ];
 
 export type CalcShellProps = {
@@ -80,12 +69,6 @@ export default function CalcShell({
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={onExample}
-              className="text-xs border border-green-200 text-green-700 rounded-lg px-3 py-1.5 hover:bg-green-50 whitespace-nowrap"
-            >
-              See with example numbers
-            </button>
-            <button
               className="md:hidden flex flex-col gap-1 p-1.5"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
@@ -131,7 +114,17 @@ export default function CalcShell({
         <div className="px-5 py-6">
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">{eyebrow}</p>
           <h1 className="text-2xl font-medium text-gray-900 mb-2">{title}</h1>
-          <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">{intro}</p>
+          <p className="text-sm text-gray-500 leading-relaxed mb-4 max-w-2xl">{intro}</p>
+
+          {/* Sits directly above the inputs — this is the moment someone decides
+              whether to type their own numbers or see it working first. */}
+          <button
+            onClick={onExample}
+            className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"
+          >
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
+            See with example numbers
+          </button>
 
           {children}
 
@@ -147,8 +140,8 @@ export default function CalcShell({
                   href={`/calculators/${card.slug}`}
                   className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block"
                 >
-                  <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center text-base mb-3`}>
-                    {card.icon}
+                  <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
+                    <card.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                   </div>
                   <h3 className="text-sm font-medium text-gray-900 mb-1">{card.nav}</h3>
                   <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
@@ -165,18 +158,8 @@ export default function CalcShell({
         </div>
         </div>
 
-        {/* MOBILE BOTTOM NAV */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50">
-          <div className="flex justify-around">
-            {BOTTOM_NAV.map((item) => (
-              <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1">
-                <span className="text-lg">{item.icon}</span>
-                <span className="text-xs text-gray-500">{item.label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-        <div className="md:hidden h-16" />
+        <MobileBottomNav />
+        <MobileBottomNavSpacer />
       </div>
     </main>
   );

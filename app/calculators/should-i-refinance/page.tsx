@@ -2,7 +2,10 @@
 import Image from "next/image";
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
+import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
+import { CATEGORY_SECTIONS } from "../../lib/calculators";
 
 export default function ShouldIRefinance() {
   const [currentBalance, setCurrentBalance] = useState<number | "">(0);
@@ -150,21 +153,19 @@ export default function ShouldIRefinance() {
         <nav className="flex items-center justify-between px-5 py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
           <Link href="/"><Image src="/logo.png" alt="ShouldIFinance logo" width={100} height={32} priority /></Link>
           <div className="hidden md:flex gap-6">
-            {["Calculators","Real estate","Investing","Blog","About"].map(l => (
-              <a key={l} href="#" className="text-sm text-gray-500 hover:text-gray-900">{l}</a>
+            <Link href="/calculators" className="text-sm text-gray-500 hover:text-gray-900">Calculators</Link>
+            {CATEGORY_SECTIONS.map(c => (
+              <Link key={c.id} href={`/calculators#${c.id}`} className="text-sm text-gray-500 hover:text-gray-900">{c.category}</Link>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={loadExample} className="text-xs border border-green-200 text-green-700 rounded-lg px-3 py-1.5 hover:bg-green-50">
-              See with example numbers
-            </button>
             <Link href="/" className="md:hidden text-sm text-gray-400">← Back</Link>
           </div>
         </nav>
 
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400">
           <Link href="/" className="hover:text-green-700">Home</Link><span>›</span>
-          <span>Real estate</span><span>›</span>
+          <Link href="/calculators#real-estate" className="hover:text-green-700">Real estate</Link><span>›</span>
           <span className="text-gray-900">Should I refinance?</span>
         </div>
 
@@ -178,6 +179,14 @@ export default function ShouldIRefinance() {
           <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Refinance tools</p>
           <h1 className="text-2xl font-medium text-gray-900 mb-2">Should I Refinance?</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you&apos;re considering. We&apos;ll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>
+
+          <button
+            onClick={loadExample}
+            className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"
+          >
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
+            See with example numbers
+          </button>
 
           {/* TWO COLUMN ON DESKTOP, STACKED ON MOBILE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -389,22 +398,8 @@ export default function ShouldIRefinance() {
             Figures are estimates for discussion purposes only. Not a commitment to lend. Actual figures depend on credit, escrow, and underwriting.
           </div>
 
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-50">
-            <div className="flex justify-around">
-              {[
-                { icon: "🏠", label: "Real estate", href: "/calculators#real-estate" },
-                { icon: "📈", label: "Investing", href: "/calculators#investing" },
-                { icon: "🚗", label: "Auto", href: "/calculators#auto" },
-                { icon: "🧮", label: "All", href: "/calculators" },
-              ].map(item => (
-                <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1">
-                  <span className="text-lg">{item.icon}</span>
-                  <span className="text-xs text-gray-500">{item.label}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="md:hidden h-16"></div>
+          <MobileBottomNav />
+          <MobileBottomNavSpacer />
         </div>
         </div>
         </div>
