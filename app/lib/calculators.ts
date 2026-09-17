@@ -5,6 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
+  Scale3d, Split, HandCoins, CarFront,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -211,6 +212,30 @@ export const CALCULATORS: Calc[] = [
     keywords: ["401k early withdrawal", "10% penalty", "IRA withdrawal tax"],
   },
 
+  {
+    slug: "401k-vs-debt-payoff",
+    title: "Should I max out my 401k or pay down debt?",
+    nav: "Should I max my 401k or pay debt?",
+    desc: "Weigh an employer match against the guaranteed return of clearing debt.",
+    icon: Scale3d, bg: "bg-green-50", category: "Money", kind: "should-i",
+    keywords: ["401k or pay off debt", "employer match vs debt", "invest or pay down debt"],
+  },
+  {
+    slug: "roth-vs-traditional",
+    title: "Should I do Roth or Traditional?",
+    nav: "Should I do Roth or Traditional?",
+    desc: "Pay tax now or later, decided by the bracket you expect in retirement.",
+    icon: Split, bg: "bg-blue-50", category: "Money", kind: "should-i",
+    keywords: ["Roth vs traditional 401k", "Roth IRA comparison", "pre-tax vs after-tax retirement"],
+  },
+  {
+    slug: "payoff-house-vs-invest",
+    title: "Should I pay off my house early or invest the difference?",
+    nav: "Should I pay off the house or invest?",
+    desc: "A guaranteed return from prepaying against a riskier one from the market.",
+    icon: HandCoins, bg: "bg-emerald-50", category: "Money", kind: "should-i",
+    keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
+  },
   // ---------- Auto ----------
   {
     slug: "lease-vs-buy",
@@ -277,6 +302,14 @@ export const CALCULATORS: Calc[] = [
     keywords: ["car depreciation", "resale value", "underwater on car loan"],
   },
 
+  {
+    slug: "new-vs-used-car",
+    title: "Should I buy new or used?",
+    nav: "Should I buy new or used?",
+    desc: "Depreciation, interest and repairs over the years you actually keep it.",
+    icon: CarFront, bg: "bg-green-50", category: "Auto", kind: "should-i",
+    keywords: ["new vs used car calculator", "car depreciation comparison", "total cost of ownership"],
+  },
   // ---------- Debt / Money ----------
   {
     slug: "debt-payoff",
