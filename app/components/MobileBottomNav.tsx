@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { House } from "lucide-react";
 import { bySlug, CATEGORY_SECTIONS } from "../lib/calculators";
 
@@ -16,17 +15,6 @@ import { bySlug, CATEGORY_SECTIONS } from "../lib/calculators";
 export default function MobileBottomNav() {
   const pathname = usePathname() ?? "";
 
-  // On /calculators the active category lives in the hash, which usePathname
-  // does not see. Read it after mount only — touching location during render
-  // would not match what the server rendered.
-  const [hash, setHash] = useState("");
-  useEffect(() => {
-    const read = () => setHash(window.location.hash.replace("#", ""));
-    read();
-    window.addEventListener("hashchange", read);
-    return () => window.removeEventListener("hashchange", read);
-  }, [pathname]);
-
   const slug = pathname.match(/^\/calculators\/([^/]+)/)?.[1];
   const activeCategory = slug ? bySlug(slug)?.category : undefined;
   const homeActive = pathname === "/";
@@ -38,7 +26,7 @@ export default function MobileBottomNav() {
       label: s.category,
       href: `/calculators#${s.id}`,
       Icon: s.icon,
-      active: activeCategory === s.category || (pathname === "/calculators" && hash === s.id),
+      active: activeCategory === s.category,
       text: s.text,
       tint: s.tint,
     })),

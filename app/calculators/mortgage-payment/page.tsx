@@ -1,11 +1,11 @@
 "use client";
-import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
-import { CATEGORY_SECTIONS, related } from "../../lib/calculators";
+import SiteNav from "../../components/SiteNav";
+import { related } from "../../lib/calculators";
 
 export default function MortgageCalculator() {
   const [price, setPrice] = useState<number | "">("");
@@ -96,20 +96,7 @@ export default function MortgageCalculator() {
     <main className="min-h-screen bg-white font-sans">
       <div className="max-w-7xl mx-auto">
 
-        {/* NAV */}
-        <nav className="flex items-center justify-between px-5 md:px-8 py-1.5 md:py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
-          <Link href="/">
-            <Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority />
-          </Link>
-          <div className="hidden md:flex gap-6">
-            <Link href="/calculators" className="text-sm text-gray-500 hover:text-gray-900">Calculators</Link>
-            {CATEGORY_SECTIONS.map(c => (
-              <Link key={c.id} href={`/calculators#${c.id}`} className="text-sm text-gray-500 hover:text-gray-900">{c.category}</Link>
-            ))}
-          </div>
-          <button className="hidden md:block text-sm bg-green-800 text-white rounded-lg px-4 py-2 hover:bg-green-900">Subscribe</button>
-          <Link href="/" className="md:hidden text-sm text-gray-500">← Home</Link>
-        </nav>
+        <SiteNav position="sticky" logo="compact" />
 
         {/* BREADCRUMB */}
         <div className="px-5 md:px-8 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">

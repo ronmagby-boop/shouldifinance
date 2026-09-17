@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { byCategory, CALCULATORS, CATEGORY_SECTIONS, SITE } from "../lib/calculators";
+import SiteNav from "../components/SiteNav";
+import MobileBottomNav, { MobileBottomNavSpacer } from "../components/MobileBottomNav";
 
 export const metadata: Metadata = {
   title: `All ${CALCULATORS.length} Free Financial Calculators`,
@@ -29,25 +31,7 @@ export default function AllCalculators() {
   return (
     <main className="min-h-screen bg-white font-sans">
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 py-2">
-          <Link href="/">
-            <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 md:h-12 w-auto" priority />
-          </Link>
-          <div className="hidden md:flex items-center gap-7">
-            {CATEGORY_SECTIONS.map(s => (
-              <a key={s.id} href={`#${s.id}`} className="text-sm text-gray-600 hover:text-green-700 font-medium transition-colors">
-                {s.category}
-              </a>
-            ))}
-          </div>
-          <Link href="/#resources"
-            className="bg-green-700 text-white text-sm font-semibold rounded-full px-5 py-2 hover:bg-green-800 transition-colors">
-            Get Free Resources
-          </Link>
-        </div>
-      </nav>
+      <SiteNav position="sticky" logo="wide" />
 
       {/* HEADER */}
       <section className="bg-[#CCEEE7]">
@@ -141,6 +125,9 @@ export default function AllCalculators() {
           </div>
         </div>
       </footer>
+
+      <MobileBottomNav />
+      <MobileBottomNavSpacer />
     </main>
   );
 }

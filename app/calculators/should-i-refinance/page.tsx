@@ -1,11 +1,10 @@
 "use client";
-import Image from "next/image";
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
-import { CATEGORY_SECTIONS } from "../../lib/calculators";
+import SiteNav from "../../components/SiteNav";
 
 export default function ShouldIRefinance() {
   const [currentBalance, setCurrentBalance] = useState<number | "">(0);
@@ -150,18 +149,7 @@ export default function ShouldIRefinance() {
     <main className="min-h-screen bg-white font-sans">
       <div className="max-w-7xl mx-auto">
 
-        <nav className="flex items-center justify-between px-5 py-1.5 md:py-3 border-b border-gray-100 sticky top-0 bg-white z-50">
-          <Link href="/"><Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority /></Link>
-          <div className="hidden md:flex gap-6">
-            <Link href="/calculators" className="text-sm text-gray-500 hover:text-gray-900">Calculators</Link>
-            {CATEGORY_SECTIONS.map(c => (
-              <Link key={c.id} href={`/calculators#${c.id}`} className="text-sm text-gray-500 hover:text-gray-900">{c.category}</Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/" className="md:hidden text-sm text-gray-400">← Back</Link>
-          </div>
-        </nav>
+        <SiteNav position="sticky" logo="compact" />
 
         <div className="px-5 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-green-700">Home</Link><span>›</span>
