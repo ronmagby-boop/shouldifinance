@@ -69,10 +69,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="extra-payments"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="Extra mortgage payments calculator"
-      crumb="Extra payments"
       intro="Every extra dollar toward principal skips all the interest that dollar would have carried for the rest of the loan. Enter what you could add each month and see the years and interest it erases."
       onExample={loadExample}
       relatedSlugs={["mortgage-payment", "should-i-refinance", "pay-off-debt"]}

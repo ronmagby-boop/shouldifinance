@@ -101,10 +101,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="ev-savings"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="EV vs. gas savings calculator"
-      crumb="EV savings"
       intro="Electric cars usually cost more up front and less to run. Whether that trade works out depends on your electricity rate, your gas price, and how many miles you drive — so put your own numbers in."
       onExample={loadExample}
       relatedSlugs={["total-cost-of-ownership", "depreciation", "auto-affordability"]}

@@ -102,9 +102,9 @@ export default function MortgageCalculator() {
         <div className="px-5 md:px-8 py-1.5 md:py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-xs text-gray-400 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-green-700">Home</Link>
           <span>›</span>
-          <Link href="/calculators#real-estate" className="hover:text-green-700">Real estate calculators</Link>
+          <Link href="/calculators#real-estate" className="hover:text-green-700">Home calculators</Link>
           <span>›</span>
-          <span className="text-gray-900">Mortgage payment</span>
+          <span className="text-gray-900">What&apos;s my mortgage payment?</span>
         </div>
 
         <div className="flex flex-col md:grid md:grid-cols-[220px_minmax(0,1fr)]">
@@ -117,7 +117,7 @@ export default function MortgageCalculator() {
           <div className="px-5 md:px-8 py-4 md:py-8">
 
             <div className="mb-6">
-              <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">Mortgage payment calculator</h1>
+              <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">What&apos;s my mortgage payment?</h1>
               <p className="text-sm text-gray-500 leading-relaxed">Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.</p>
             </div>
 

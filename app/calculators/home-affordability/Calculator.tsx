@@ -101,10 +101,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="home-affordability"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="How much house can I afford?"
-      crumb="How much can I afford?"
       intro="Lenders answer this with two ratios: how much of your income goes to housing, and how much goes to all debt combined. Here are three price points — what's comfortable, what's standard, and what's the ceiling."
       onExample={loadExample}
       relatedSlugs={["mortgage-payment", "rent-vs-buy", "extra-payments"]}

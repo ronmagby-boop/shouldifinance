@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  Calculator, FileText, BadgeCheck, ShieldCheck, Users, CalendarClock,
-  Landmark, House, RefreshCw, PiggyBank, Car, TrendingUp, Star, ArrowRight, CheckCircle2,
+  Calculator, FileText, BadgeCheck, ShieldCheck, CalendarClock,
+  ArrowRight, CheckCircle2, Search, Compass, ClipboardCheck,
 } from "lucide-react";
-import { CALCULATORS, CATEGORY_SECTIONS } from "./lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
 
@@ -67,15 +67,19 @@ function ChecklistIcon({ className = "" }: { className?: string }) {
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [decideQuery, setDecideQuery] = useState("");
 
-  const calculators = [
-    { icon: Landmark, bg: "bg-blue-50", title: "Mortgage Calculator", desc: "Find out what you can afford and estimate your payments.", href: "/calculators/mortgage-payment" },
-    { icon: House, bg: "bg-green-50", title: "Rent vs. Buy", desc: "See which option makes more financial sense for you.", href: "/calculators/rent-vs-buy" },
-    { icon: RefreshCw, bg: "bg-purple-50", title: "Refinance Calculator", desc: "Find out if refinancing could save you money.", href: "/calculators/should-i-refinance" },
-    { icon: PiggyBank, bg: "bg-orange-50", title: "Retirement Calculator", desc: "Plan for the future and see how your savings add up.", href: "/calculators/retirement-savings" },
-    { icon: Car, bg: "bg-teal-50", title: "Lease vs. Buy", desc: "Compare the true cost of leasing or buying your next car.", href: "/calculators/lease-vs-buy" },
-    { icon: TrendingUp, bg: "bg-emerald-50", title: "Investment Calculator", desc: "See how your money can grow with compound interest.", href: "/calculators/compound-interest" },
-  ];
+  // Same matching rules as the nav search, so "pmi" or "car" both work here.
+  const decideResults = useMemo(() => {
+    const q = decideQuery.trim().toLowerCase();
+    if (!q) return [];
+    return CALCULATORS.filter(c =>
+      c.nav.toLowerCase().includes(q) ||
+      c.title.toLowerCase().includes(q) ||
+      c.category.toLowerCase().includes(q) ||
+      c.keywords.some(k => k.toLowerCase().includes(q)),
+    ).slice(0, 6);
+  }, [decideQuery]);
 
   return (
     <main className="min-h-screen bg-white font-sans">
@@ -152,54 +156,206 @@ export default function Home() {
         </div>
       </section>
 
-      {/* POPULAR TOOLS — the six featured tools only; the full list lives on /calculators */}
-      <section id="calculators" className="py-8 md:py-12 bg-gray-50">
+      {/* DECIDE — search plus the four category doors. Replaces the old
+          "Popular Tools" grid; example calculators now live inside each card. */}
+      <section id="calculators" className="py-10 md:py-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="flex items-end justify-between mb-5 md:mb-6">
-            <div>
-              <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Popular Tools</p>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
-                Get answers to your biggest<br className="hidden md:block" /> financial questions.
-              </h2>
+          <div className="text-center max-w-2xl mx-auto mb-6 md:mb-8">
+            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Start here</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+              What are you trying to decide?
+            </h2>
+            <p className="text-sm md:text-base text-gray-500 leading-relaxed">
+              Search {CALCULATORS.length} free calculators, or pick the area you are thinking about.
+            </p>
+          </div>
+
+          {/* Search — filters the registry by name, title, category and keywords */}
+          <div className="max-w-xl mx-auto mb-8 md:mb-10">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
+              <input
+                type="search"
+                value={decideQuery}
+                onChange={e => setDecideQuery(e.target.value)}
+                placeholder="What are you trying to decide?"
+                aria-label="Search calculators"
+                className="w-full bg-white border border-gray-200 rounded-full pl-12 pr-4 py-3.5 text-sm shadow-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+              />
             </div>
-            <Link href="/calculators" className="hidden md:flex items-center gap-1 text-sm text-green-700 font-semibold hover:underline whitespace-nowrap ml-4">
-              View All {CALCULATORS.length} Calculators →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-            {calculators.map((calc) => (
-              <Link key={calc.title} href={calc.href}
-                className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 hover:shadow-lg hover:border-green-100 transition-all group cursor-pointer">
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`w-11 h-11 ${calc.bg} rounded-full flex items-center justify-center text-gray-700`}>
-                    <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
+
+            {decideQuery.trim() !== "" && (
+              <div className="mt-3 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                {decideResults.length === 0 ? (
+                  <div className="px-4 py-5">
+                    <p className="text-sm text-gray-500 mb-2">
+                      Nothing matches &ldquo;{decideQuery}&rdquo;.
+                    </p>
+                    <Link href="/calculators" className="text-sm font-semibold text-green-700 hover:underline">
+                      Browse all {CALCULATORS.length} calculators &rarr;
+                    </Link>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-green-800 bg-green-50 border border-green-100 rounded-full px-2 py-1">
-                    <Star className="w-3 h-3 fill-current" aria-hidden="true" /> Most Popular
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-green-700 transition-colors">{calc.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed mb-3">{calc.desc}</p>
-                <div className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-green-700 group-hover:border-green-700 group-hover:text-white transition-all">
-                  <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
-                </div>
-              </Link>
-            ))}
+                ) : (
+                  decideResults.map(c => (
+                    <Link key={c.slug} href={`/calculators/${c.slug}`}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
+                      <span className={`w-9 h-9 ${c.bg} rounded-lg flex items-center justify-center flex-shrink-0 text-gray-700`}>
+                        <c.icon className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors truncate">
+                          {c.nav}
+                        </span>
+                        <span className="block text-xs text-gray-400">{c.category}</span>
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-green-700 flex-shrink-0" aria-hidden="true" />
+                    </Link>
+                  ))
+                )}
+              </div>
+            )}
           </div>
-          <div className="text-center mt-5 md:hidden">
-            <Link href="/calculators" className="text-sm text-green-700 font-semibold hover:underline">
-              View All {CALCULATORS.length} Calculators →
+
+          {/* Four category doors; byCategory puts the "Should I ...?" tools first */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {CATEGORY_SECTIONS.map(section => {
+              const all = byCategory(section.category);
+              const picks = all.slice(0, 4);
+              return (
+                <div key={section.id}
+                  className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-green-100 transition-all flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className={`w-11 h-11 rounded-xl ${section.tint} ${section.text} flex items-center justify-center flex-shrink-0`}>
+                      <section.icon className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <Link href={`/calculators#${section.id}`}
+                        className="block text-base font-extrabold text-gray-900 hover:text-green-700 transition-colors">
+                        {section.category}
+                      </Link>
+                      <span className="block text-xs text-gray-400">{all.length} calculators</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-1.5 mb-4 flex-1">
+                    {picks.map(c => (
+                      <li key={c.slug}>
+                        <Link href={`/calculators/${c.slug}`}
+                          className="group flex items-start gap-2 text-sm text-gray-600 hover:text-green-700 transition-colors">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-green-600 flex-shrink-0" />
+                          <span className="leading-snug">{c.nav}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link href={`/calculators#${section.id}`}
+                    className={`inline-flex items-center gap-1 text-xs font-bold ${section.text} hover:underline mt-auto`}>
+                    All {section.category.toLowerCase()} calculators
+                    <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.2} aria-hidden="true" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link href="/calculators"
+              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
+              Explore all {CALCULATORS.length} calculators
+              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* FEATURED CALCULATOR SPOTLIGHT */}
+      <section className="py-10 md:py-14 bg-white">
+        <div className="max-w-7xl mx-auto px-5 md:px-8">
+          <div className="rounded-3xl overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-2">
+
+            {/* A mock of the calculator's own output — the figures add to $2,487 */}
+            <div className="bg-[#1a2744] p-6 md:p-10 flex items-center justify-center">
+              <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl p-5">
+                <p className="text-xs text-gray-400 mb-1">Current monthly payment</p>
+                <p className="text-3xl font-extrabold text-green-700 mb-4">
+                  $2,487<span className="text-base font-bold text-gray-400">/mo</span>
+                </p>
+                <div className="space-y-2">
+                  {[
+                    { label: "Principal & interest", value: "$1,847" },
+                    { label: "Property taxes", value: "$400" },
+                    { label: "Insurance", value: "$120" },
+                    { label: "PMI", value: "None" },
+                    { label: "HOA", value: "$120" },
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0">
+                      <span className="text-gray-500">{row.label}</span>
+                      <span className={`font-bold ${row.value === "None" ? "text-green-700" : "text-gray-900"}`}>
+                        {row.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 md:p-10 flex flex-col justify-center">
+              <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Featured calculator</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+                What am I really paying on my mortgage?
+              </h2>
+              <p className="text-sm md:text-base text-gray-500 leading-relaxed mb-6">
+                Your payment is more than principal and interest. Taxes, insurance, PMI and HOA
+                all ride along, and lenders quote them inconsistently. Put your numbers in once
+                and see the whole payment broken out, plus what the loan really costs over its life.
+              </p>
+              <Link href="/calculators/mortgage-payment"
+                className="inline-flex items-center gap-2 self-start bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
+                Run my numbers
+                <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="py-10 md:py-14 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-5 md:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">How it works</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
+              How ShouldIFinance works
+            </h2>
+          </div>
+          <ol className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-5">
+            {[
+              { Icon: Compass, step: "1", title: "Explore", desc: "Choose a topic or search for the decision you are weighing up." },
+              { Icon: Calculator, step: "2", title: "Run the numbers", desc: "Enter your details, or load example numbers to see it working first." },
+              { Icon: ClipboardCheck, step: "3", title: "Get the facts", desc: "Review clear results, with the trade-offs and totals spelled out." },
+              { Icon: CheckCircle2, step: "4", title: "Make the best decision", desc: "Move forward knowing what each option actually costs you." },
+            ].map(s => (
+              <li key={s.step} className="flex flex-col items-center text-center md:items-start md:text-left">
+                <span className="relative w-12 h-12 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center mb-3">
+                  <s.Icon className="w-6 h-6" strokeWidth={1.9} aria-hidden="true" />
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-green-700 text-white text-[10px] font-bold flex items-center justify-center">
+                    {s.step}
+                  </span>
+                </span>
+                <h3 className="text-base font-bold text-gray-900 mb-1.5">{s.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{s.desc}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
       {/* SOCIAL PROOF BAR */}
       <section className="bg-[#1a2744] py-7 md:py-8">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-0 md:divide-x md:divide-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-0 sm:divide-x sm:divide-white/10">
             {[
-              { Icon: Users, num: "200K+", label: "Monthly Visitors" },
               { Icon: FileText, num: "100+", label: "Articles & Guides" },
               { Icon: Calculator, num: "25+", label: "Calculators & Tools" },
               { Icon: CalendarClock, num: "Updated Weekly", label: "New Content & Insights" },

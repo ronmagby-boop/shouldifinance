@@ -117,10 +117,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="required-rate-of-return"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Required rate of return calculator"
-      crumb="Required rate of return"
       intro="Work backwards from the goal. Given what you have, what you can add, and how long you have, this finds the annual return you'd need — and tells you honestly whether that number is realistic."
       onExample={loadExample}
       relatedSlugs={["investment-growth", "compound-interest", "retirement-savings"]}

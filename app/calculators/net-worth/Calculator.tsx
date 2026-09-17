@@ -105,10 +105,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="net-worth"
-      category="Investing"
-      eyebrow="Money & savings tools"
-      title="Net worth calculator"
-      crumb="Net worth"
       intro="Net worth is the one number that captures everything: what you own minus what you owe. Track it once a quarter and the trend tells you more about your finances than any single month of budgeting."
       onExample={loadExample}
       relatedSlugs={["retirement-savings", "debt-payoff", "emergency-fund"]}

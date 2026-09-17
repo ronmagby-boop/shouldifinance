@@ -78,10 +78,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="va-recoup"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="VA loan recoupment calculator"
-      crumb="VA recoup"
       intro="A VA streamline refinance (IRRRL) has a hard rule: the fees have to pay for themselves within 36 months. Enter your numbers to see your recoupment period and whether the loan clears that bar."
       onExample={loadExample}
       relatedSlugs={["should-i-refinance", "mortgage-payment", "loan-estimate-comparison"]}

@@ -113,10 +113,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="lease-vs-buy"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Lease vs. buy calculator"
-      crumb="Lease vs. buy"
       intro="Leasing usually has the lower payment; buying usually has the lower cost. Compare both over the same number of years — including what the car is still worth at the end, which is the part leasing never gives you."
       onExample={loadExample}
       relatedSlugs={["lease-payment", "loan-vs-cash", "total-cost-of-ownership"]}

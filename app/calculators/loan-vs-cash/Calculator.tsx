@@ -93,10 +93,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="loan-vs-cash"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Finance or pay cash?"
-      crumb="Loan vs. cash"
       intro="Paying cash avoids interest. Financing keeps your cash invested. Whichever earns more wins — and with car loan rates where they are, that is usually closer than people expect."
       onExample={loadExample}
       relatedSlugs={["auto-affordability", "lease-vs-buy", "auto-loan-refinance"]}

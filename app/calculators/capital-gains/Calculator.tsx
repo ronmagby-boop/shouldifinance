@@ -84,10 +84,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="capital-gains"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Capital gains tax calculator"
-      crumb="Capital gains"
       intro="The tax on a sale depends on one thing more than any other: whether you held the asset longer than a year. Enter your numbers to see federal, state, and net investment income tax — and what the holding period is worth."
       onExample={loadExample}
       relatedSlugs={["investment-growth", "dividend-reinvestment", "early-withdrawal"]}

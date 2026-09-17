@@ -142,10 +142,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="student-loan-repayment"
-      category="Investing"
-      eyebrow="Money & savings tools"
-      title="Student loan repayment calculator"
-      crumb="Student loans"
       intro="The lowest payment and the lowest cost are almost never the same plan. Compare standard, extended, and income-driven repayment on your actual balance — including what gets forgiven and what that costs in interest."
       onExample={loadExample}
       relatedSlugs={["debt-payoff", "pay-off-debt", "emergency-fund"]}

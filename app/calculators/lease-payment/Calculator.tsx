@@ -97,10 +97,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="lease-payment"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Car lease payment calculator"
-      crumb="Lease payment"
       intro="A lease payment is two numbers added together: depreciation and a finance charge. Once you can build it yourself, you can tell which part of a dealer's quote is negotiable — and which isn't."
       onExample={loadExample}
       relatedSlugs={["lease-vs-buy", "total-cost-of-ownership", "auto-affordability"]}

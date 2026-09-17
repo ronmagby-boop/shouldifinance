@@ -92,10 +92,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="early-withdrawal"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Early withdrawal penalty calculator"
-      crumb="Early withdrawal"
       intro="Taking money out of a retirement account early costs you three times: income tax, a 10% penalty, and every dollar of growth that money would have earned. Here's the full bill."
       onExample={loadExample}
       relatedSlugs={["retirement-savings", "emergency-fund", "capital-gains"]}

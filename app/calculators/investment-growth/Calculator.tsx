@@ -77,10 +77,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="investment-growth"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Investment growth calculator"
-      crumb="Investment growth"
       intro="A projection is only honest if it includes the two things that quietly shrink it: fees and inflation. This one shows the headline number and what that money is actually worth in today's dollars."
       onExample={loadExample}
       relatedSlugs={["compound-interest", "retirement-savings", "required-rate-of-return"]}

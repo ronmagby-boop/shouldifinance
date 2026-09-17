@@ -113,10 +113,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="loan-estimate-comparison"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="Loan estimate comparison"
-      crumb="Loan estimate compare"
       intro="The lowest rate isn't always the cheapest loan. Points and fees can cost more than they save if you move or refinance first. Put three quotes side by side and compare them over the years you'll actually keep the loan."
       onExample={loadExample}
       relatedSlugs={["mortgage-payment", "effective-interest-rate", "should-i-refinance"]}

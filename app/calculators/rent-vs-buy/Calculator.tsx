@@ -131,10 +131,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="rent-vs-buy"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="Rent vs. buy calculator"
-      crumb="Rent vs. buy"
       intro="Buying isn't automatically better — it depends on how long you stay. This compares both paths honestly: the renter invests the down payment and any monthly difference, and the buyer pays every cost of ownership including selling."
       onExample={loadExample}
       relatedSlugs={["mortgage-payment", "home-affordability", "should-i-refinance"]}

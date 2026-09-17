@@ -2,24 +2,18 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { Sparkles } from "lucide-react";
-import { related, type Category } from "../lib/calculators";
+import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import SiteNav from "./SiteNav";
 
-const CATEGORY_HREF: Record<Category, string> = {
-  "Real estate": "/calculators#real-estate",
-  Investing: "/calculators#investing",
-  Auto: "/calculators#auto",
-};
-
 export type CalcShellProps = {
   slug: string;
-  category: Category;
-  eyebrow: string;
-  title: string;
+  /** All three default to the registry, so a rename there flows everywhere. */
+  eyebrow?: string;
+  title?: string;
   intro: string;
-  crumb: string;
+  crumb?: string;
   onExample: () => void;
   relatedSlugs?: string[];
   disclaimer: string;
@@ -32,7 +26,6 @@ export type CalcShellProps = {
  */
 export default function CalcShell({
   slug,
-  category,
   eyebrow,
   title,
   intro,
@@ -43,6 +36,14 @@ export default function CalcShell({
   children,
 }: CalcShellProps) {
   const cards = related(slug, relatedSlugs);
+  // Category comes from the registry rather than a prop, so it cannot drift
+  // out of step with lib/calculators.ts the way the old hardcoded props did.
+  const category = bySlug(slug)?.category ?? "Home";
+  const section = CATEGORY_SECTIONS.find(s => s.category === category);
+  const categoryHref = `/calculators#${section?.id ?? ""}`;
+  const eyebrowText = eyebrow ?? `${category} tools`;
+  const titleText = title ?? bySlug(slug)?.title ?? "";
+  const crumbText = crumb ?? bySlug(slug)?.nav ?? "";
 
   return (
     <main className="min-h-screen bg-white font-sans">
@@ -57,11 +58,11 @@ export default function CalcShell({
             Home
           </Link>
           <span>›</span>
-          <Link href={CATEGORY_HREF[category]} className="hover:text-green-700">
+          <Link href={categoryHref} className="hover:text-green-700">
             {category}
           </Link>
           <span>›</span>
-          <span className="text-gray-900">{crumb}</span>
+          <span className="text-gray-900">{crumbText}</span>
         </div>
 
         <div className="md:grid md:grid-cols-[220px_minmax(0,1fr)]">
@@ -71,8 +72,8 @@ export default function CalcShell({
         <CalculatorBrowseMobile activeSlug={slug} />
 
         <div className="px-5 py-4 md:py-6">
-          <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">{eyebrow}</p>
-          <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">{title}</h1>
+          <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">{eyebrowText}</p>
+          <h1 className="text-xl md:text-2xl font-medium text-gray-900 mb-2">{titleText}</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-4 max-w-2xl">{intro}</p>
 
           {/* Sits directly above the inputs — this is the moment someone decides

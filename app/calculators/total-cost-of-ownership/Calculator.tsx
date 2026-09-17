@@ -105,10 +105,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="total-cost-of-ownership"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Total cost of ownership calculator"
-      crumb="Cost of ownership"
       intro="The sticker price is the smallest part of the story. Depreciation, fuel, insurance, and repairs usually cost more than the payment — here's what the car really costs per year and per mile."
       onExample={loadExample}
       relatedSlugs={["depreciation", "ev-savings", "auto-affordability"]}

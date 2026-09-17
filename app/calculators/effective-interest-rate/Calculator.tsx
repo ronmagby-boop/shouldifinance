@@ -91,10 +91,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="effective-interest-rate"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="Effective interest rate calculator"
-      crumb="Effective interest rate"
       intro="A quoted rate is rarely what you actually pay or earn. Points and fees push a loan's real cost above its rate, and compounding pushes a savings yield above its rate. Both sides are here."
       onExample={loadExample}
       relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "compound-interest"]}

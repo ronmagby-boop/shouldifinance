@@ -142,10 +142,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="debt-payoff"
-      category="Investing"
-      eyebrow="Money & savings tools"
-      title="Debt payoff calculator"
-      crumb="Debt payoff"
       intro="List everything you owe, then add whatever you can put toward it beyond the minimums. We'll run both payoff methods — smallest balance first, or highest rate first — and show what each one costs."
       onExample={loadExample}
       relatedSlugs={["pay-off-debt", "emergency-fund", "student-loan-repayment"]}

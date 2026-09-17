@@ -99,10 +99,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="pay-off-debt"
-      category="Real estate"
-      eyebrow="Real estate tools"
-      title="Pay off debt or invest?"
-      crumb="Pay off debt"
       intro="Paying down a loan is a guaranteed return equal to its interest rate. Investing might do better — or might not. Compare both after tax, and see how much of the answer rests on an assumption."
       onExample={loadExample}
       relatedSlugs={["extra-payments", "debt-payoff", "investment-growth"]}

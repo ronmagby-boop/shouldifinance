@@ -100,10 +100,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="dividend-reinvestment"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Dividend reinvestment (DRIP) calculator"
-      crumb="Dividend reinvestment"
       intro="Every dividend you reinvest buys shares that pay their own dividends. Compare taking the cash against letting it compound — and see what your yield on cost becomes after years of dividend growth."
       onExample={loadExample}
       relatedSlugs={["compound-interest", "investment-growth", "capital-gains"]}

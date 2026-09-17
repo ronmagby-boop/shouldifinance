@@ -6,11 +6,14 @@ import {
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
 } from "lucide-react";
 
+export type Category = "Home" | "Debt" | "Money" | "Auto";
+
 /**
- * Personal finance was folded into Investing — debt, savings and net worth sit
- * alongside the growth tools rather than in a category of their own.
+ * Decision tools ("Should I ...?") versus lookup tools ("What / How ...?").
+ * byCategory sorts decisions first, so the ordering is the same on the
+ * homepage, the /calculators index and the sidebar without anyone repeating it.
  */
-export type Category = "Real estate" | "Investing" | "Auto";
+export type CalcKind = "should-i" | "what-how";
 
 export type Calc = {
   slug: string;
@@ -19,19 +22,20 @@ export type Calc = {
   desc: string;
   /** lucide-react icon component; rendered as <calc.icon className="..." /> */
   icon: LucideIcon;
+  kind: CalcKind;
   bg: string;
   category: Category;
   keywords: string[];
 };
 
 export const CALCULATORS: Calc[] = [
-  // ---------- Real estate ----------
+  // ---------- Home ----------
   {
     slug: "mortgage-payment",
-    title: "Mortgage payment calculator",
-    nav: "Mortgage payment",
+    title: "What's my mortgage payment?",
+    nav: "What's my mortgage payment?",
     desc: "Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.",
-    icon: Landmark, bg: "bg-blue-50", category: "Real estate",
+    icon: Landmark, bg: "bg-blue-50", category: "Home", kind: "what-how",
     keywords: ["mortgage calculator", "monthly payment", "PITI", "PMI"],
   },
   {
@@ -39,229 +43,229 @@ export const CALCULATORS: Calc[] = [
     title: "Should I refinance?",
     nav: "Should I refinance?",
     desc: "See if refinancing saves money, when you break even, and what it costs to reset the clock.",
-    icon: RefreshCw, bg: "bg-purple-50", category: "Real estate",
+    icon: RefreshCw, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["refinance calculator", "break even", "refinance savings"],
   },
   {
     slug: "rent-vs-buy",
-    title: "Rent vs. buy calculator",
-    nav: "Rent vs. buy",
+    title: "Should I rent or buy?",
+    nav: "Should I rent or buy?",
     desc: "Compare the true cost of renting and buying over 5, 10, and 30 years.",
-    icon: Home, bg: "bg-green-50", category: "Real estate",
+    icon: Home, bg: "bg-green-50", category: "Home", kind: "should-i",
     keywords: ["rent vs buy", "should I buy a house", "break even year"],
   },
   {
     slug: "home-affordability",
     title: "How much house can I afford?",
-    nav: "How much can I afford?",
+    nav: "How much house can I afford?",
     desc: "Turn your income, debts, and down payment into a realistic price range.",
-    icon: Wallet, bg: "bg-amber-50", category: "Real estate",
+    icon: Wallet, bg: "bg-amber-50", category: "Home", kind: "what-how",
     keywords: ["home affordability", "how much house can I afford", "debt to income ratio"],
   },
   {
     slug: "extra-payments",
-    title: "Extra mortgage payments calculator",
-    nav: "Extra payments",
+    title: "Should I make extra mortgage payments?",
+    nav: "Should I make extra payments?",
     desc: "See how much time and interest an extra payment each month can save you.",
-    icon: PlusCircle, bg: "bg-emerald-50", category: "Real estate",
+    icon: PlusCircle, bg: "bg-emerald-50", category: "Home", kind: "should-i",
     keywords: ["extra mortgage payment", "pay off mortgage early", "interest saved"],
   },
   {
     slug: "va-recoup",
-    title: "VA loan recoupment calculator",
-    nav: "VA recoup",
+    title: "Will my VA refinance meet the recoupment rule?",
+    nav: "Will my VA refinance recoup?",
     desc: "Check whether a VA IRRRL meets the 36-month recoupment rule.",
-    icon: Medal, bg: "bg-blue-50", category: "Real estate",
+    icon: Medal, bg: "bg-blue-50", category: "Home", kind: "what-how",
     keywords: ["VA IRRRL", "recoupment period", "VA streamline refinance"],
   },
   {
     slug: "pay-off-debt",
-    title: "Pay off debt or invest?",
-    nav: "Pay off debt",
+    title: "Should I pay off debt or invest?",
+    nav: "Should I pay off debt or invest?",
     desc: "Compare the guaranteed return of paying down debt against investing the same money.",
-    icon: Scale, bg: "bg-purple-50", category: "Real estate",
+    icon: Scale, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["pay off debt vs invest", "guaranteed return", "mortgage payoff"],
   },
   {
     slug: "loan-estimate-comparison",
-    title: "Loan estimate comparison",
-    nav: "Loan estimate compare",
+    title: "Which loan estimate is actually cheapest?",
+    nav: "Which lender quote is cheapest?",
     desc: "Put three lender quotes side by side and find the real cost of each.",
-    icon: ClipboardList, bg: "bg-teal-50", category: "Real estate",
+    icon: ClipboardList, bg: "bg-teal-50", category: "Home", kind: "what-how",
     keywords: ["loan estimate comparison", "compare lenders", "closing costs"],
   },
   {
     slug: "effective-interest-rate",
-    title: "Effective interest rate calculator",
-    nav: "Effective interest rate",
+    title: "What interest rate am I really paying?",
+    nav: "What rate am I really paying?",
     desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
-    icon: BarChart3, bg: "bg-amber-50", category: "Real estate",
+    icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
     keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
   },
 
-  // ---------- Investing ----------
+  // ---------- Money ----------
   {
     slug: "compound-interest",
-    title: "Compound interest calculator",
-    nav: "Compound interest",
+    title: "How will compound interest grow my money?",
+    nav: "How will my money grow?",
     desc: "See how your money grows when interest starts earning interest.",
-    icon: TrendingUp, bg: "bg-emerald-50", category: "Investing",
+    icon: TrendingUp, bg: "bg-emerald-50", category: "Money", kind: "what-how",
     keywords: ["compound interest", "investment growth", "compounding frequency"],
   },
   {
     slug: "investment-growth",
-    title: "Investment growth calculator",
-    nav: "Investment growth",
+    title: "What will my investments be worth?",
+    nav: "What will my portfolio be worth?",
     desc: "Project a portfolio with contributions, fees, taxes, and inflation.",
-    icon: Sprout, bg: "bg-green-50", category: "Investing",
+    icon: Sprout, bg: "bg-green-50", category: "Money", kind: "what-how",
     keywords: ["investment growth", "portfolio projection", "real return"],
   },
   {
     slug: "retirement-savings",
-    title: "Retirement savings calculator",
-    nav: "Retirement savings",
+    title: "Am I on track for retirement?",
+    nav: "Am I on track for retirement?",
     desc: "Find out if you are on track and how long your savings will last.",
-    icon: PiggyBank, bg: "bg-orange-50", category: "Investing",
+    icon: PiggyBank, bg: "bg-orange-50", category: "Money", kind: "what-how",
     keywords: ["retirement calculator", "401k projection", "retirement income"],
   },
   {
     slug: "dividend-reinvestment",
-    title: "Dividend reinvestment (DRIP) calculator",
-    nav: "Dividend reinvestment",
+    title: "Should I reinvest my dividends?",
+    nav: "Should I reinvest dividends?",
     desc: "Compare taking dividends as cash against reinvesting every one.",
-    icon: Banknote, bg: "bg-teal-50", category: "Investing",
+    icon: Banknote, bg: "bg-teal-50", category: "Money", kind: "should-i",
     keywords: ["DRIP calculator", "dividend reinvestment", "dividend growth"],
   },
   {
     slug: "dollar-cost-averaging",
-    title: "Dollar-cost averaging calculator",
-    nav: "Dollar-cost averaging",
+    title: "Should I invest all at once or dollar-cost average?",
+    nav: "Should I invest all at once?",
     desc: "Invest all at once or spread it out — see how each plays out.",
-    icon: CalendarDays, bg: "bg-blue-50", category: "Investing",
+    icon: CalendarDays, bg: "bg-blue-50", category: "Money", kind: "should-i",
     keywords: ["dollar cost averaging", "DCA vs lump sum", "average share cost"],
   },
   {
     slug: "capital-gains",
-    title: "Capital gains tax calculator",
-    nav: "Capital gains",
+    title: "What will I owe in capital gains tax?",
+    nav: "What will I owe in capital gains?",
     desc: "Estimate what you will owe on a sale, and what waiting for long-term rates saves.",
-    icon: Receipt, bg: "bg-amber-50", category: "Investing",
+    icon: Receipt, bg: "bg-amber-50", category: "Money", kind: "what-how",
     keywords: ["capital gains tax", "long term vs short term", "investment taxes"],
   },
   {
     slug: "required-rate-of-return",
-    title: "Required rate of return calculator",
-    nav: "Required rate of return",
+    title: "What return do I need to hit my goal?",
+    nav: "What return do I need?",
     desc: "Work out the return you would need to hit a savings goal on time.",
-    icon: Target, bg: "bg-purple-50", category: "Investing",
+    icon: Target, bg: "bg-purple-50", category: "Money", kind: "what-how",
     keywords: ["required rate of return", "savings goal", "target return"],
   },
   {
     slug: "early-withdrawal",
-    title: "Early withdrawal penalty calculator",
-    nav: "Early withdrawal",
+    title: "Should I withdraw from my retirement early?",
+    nav: "Should I withdraw early?",
     desc: "Count the taxes, the 10% penalty, and the growth you would give up.",
-    icon: AlertTriangle, bg: "bg-red-50", category: "Investing",
+    icon: AlertTriangle, bg: "bg-red-50", category: "Money", kind: "should-i",
     keywords: ["401k early withdrawal", "10% penalty", "IRA withdrawal tax"],
   },
 
   // ---------- Auto ----------
   {
     slug: "lease-vs-buy",
-    title: "Lease vs. buy calculator",
-    nav: "Lease vs. buy",
+    title: "Should I lease or buy a car?",
+    nav: "Should I lease or buy?",
     desc: "Compare the true cost of leasing or buying your next car.",
-    icon: Car, bg: "bg-teal-50", category: "Auto",
+    icon: Car, bg: "bg-teal-50", category: "Auto", kind: "should-i",
     keywords: ["lease vs buy", "car lease comparison", "cost of ownership"],
   },
   {
     slug: "loan-vs-cash",
-    title: "Finance or pay cash?",
-    nav: "Loan vs. cash",
+    title: "Should I finance or pay cash?",
+    nav: "Should I finance or pay cash?",
     desc: "Weigh loan interest against what your cash could earn instead.",
-    icon: CreditCard, bg: "bg-blue-50", category: "Auto",
+    icon: CreditCard, bg: "bg-blue-50", category: "Auto", kind: "should-i",
     keywords: ["pay cash or finance", "opportunity cost", "car loan interest"],
   },
   {
     slug: "auto-loan-refinance",
-    title: "Auto loan refinance calculator",
-    nav: "Auto refinance",
+    title: "Should I refinance my car loan?",
+    nav: "Should I refinance my car loan?",
     desc: "See what a lower rate saves on the car loan you already have.",
-    icon: Repeat, bg: "bg-purple-50", category: "Auto",
+    icon: Repeat, bg: "bg-purple-50", category: "Auto", kind: "should-i",
     keywords: ["auto refinance", "car loan refinance savings", "lower car payment"],
   },
   {
     slug: "auto-affordability",
     title: "How much car can I afford?",
-    nav: "Auto affordability",
+    nav: "How much car can I afford?",
     desc: "Set a price range that fits your income and your other bills.",
-    icon: KeyRound, bg: "bg-amber-50", category: "Auto",
+    icon: KeyRound, bg: "bg-amber-50", category: "Auto", kind: "what-how",
     keywords: ["car affordability", "how much car can I afford", "20/4/10 rule"],
   },
   {
     slug: "total-cost-of-ownership",
-    title: "Total cost of ownership calculator",
-    nav: "Cost of ownership",
+    title: "What will this car really cost me?",
+    nav: "What will this car really cost?",
     desc: "Add up depreciation, fuel, insurance, and repairs — the real price of a car.",
-    icon: Calculator, bg: "bg-green-50", category: "Auto",
+    icon: Calculator, bg: "bg-green-50", category: "Auto", kind: "what-how",
     keywords: ["total cost of ownership", "cost per mile", "car ownership costs"],
   },
   {
     slug: "lease-payment",
-    title: "Car lease payment calculator",
-    nav: "Lease payment",
+    title: "What's my car lease payment?",
+    nav: "What's my lease payment?",
     desc: "Build a lease payment from cap cost, residual value, and money factor.",
-    icon: FileText, bg: "bg-blue-50", category: "Auto",
+    icon: FileText, bg: "bg-blue-50", category: "Auto", kind: "what-how",
     keywords: ["lease payment calculator", "money factor", "residual value"],
   },
   {
     slug: "ev-savings",
-    title: "EV vs. gas savings calculator",
-    nav: "EV savings",
+    title: "Should I switch to an electric car?",
+    nav: "Should I switch to an EV?",
     desc: "Compare fuel, maintenance, and incentives for electric and gas.",
-    icon: Plug, bg: "bg-emerald-50", category: "Auto",
+    icon: Plug, bg: "bg-emerald-50", category: "Auto", kind: "should-i",
     keywords: ["EV savings calculator", "electric vs gas cost", "cost per mile"],
   },
   {
     slug: "depreciation",
-    title: "Car depreciation calculator",
-    nav: "Depreciation",
+    title: "What will my car be worth later?",
+    nav: "What will my car be worth?",
     desc: "Track what a vehicle is worth each year, and when you are underwater.",
-    icon: TrendingDown, bg: "bg-red-50", category: "Auto",
+    icon: TrendingDown, bg: "bg-red-50", category: "Auto", kind: "what-how",
     keywords: ["car depreciation", "resale value", "underwater on car loan"],
   },
 
-  // ---------- Personal finance (folded into Investing) ----------
+  // ---------- Debt / Money ----------
   {
     slug: "debt-payoff",
-    title: "Debt payoff calculator",
-    nav: "Debt payoff",
+    title: "Should I use the snowball or avalanche method?",
+    nav: "Should I snowball or avalanche?",
     desc: "Compare the snowball and avalanche methods across all your balances.",
-    icon: Snowflake, bg: "bg-blue-50", category: "Investing",
+    icon: Snowflake, bg: "bg-blue-50", category: "Debt", kind: "should-i",
     keywords: ["debt snowball", "debt avalanche", "debt payoff plan"],
   },
   {
     slug: "emergency-fund",
-    title: "Emergency fund calculator",
-    nav: "Emergency fund",
+    title: "How big should my emergency fund be?",
+    nav: "How big should my emergency fund be?",
     desc: "Size the cushion you need and see how fast you can build it.",
-    icon: LifeBuoy, bg: "bg-teal-50", category: "Investing",
+    icon: LifeBuoy, bg: "bg-teal-50", category: "Money", kind: "what-how",
     keywords: ["emergency fund", "months of expenses", "savings cushion"],
   },
   {
     slug: "student-loan-repayment",
-    title: "Student loan repayment calculator",
-    nav: "Student loans",
+    title: "Which student loan repayment plan should I choose?",
+    nav: "Which student loan plan?",
     desc: "Compare standard, extended, and income-driven repayment side by side.",
-    icon: GraduationCap, bg: "bg-purple-50", category: "Investing",
+    icon: GraduationCap, bg: "bg-purple-50", category: "Debt", kind: "should-i",
     keywords: ["student loan repayment", "income driven repayment", "loan forgiveness"],
   },
   {
     slug: "net-worth",
-    title: "Net worth calculator",
-    nav: "Net worth",
+    title: "What's my net worth?",
+    nav: "What's my net worth?",
     desc: "Add up what you own and what you owe, then project it forward.",
-    icon: Trophy, bg: "bg-amber-50", category: "Investing",
+    icon: Trophy, bg: "bg-amber-50", category: "Money", kind: "what-how",
     keywords: ["net worth calculator", "assets minus liabilities", "track net worth"],
   },
 ];
@@ -274,25 +278,36 @@ export const CATEGORY_SECTIONS: {
   category: Category;
   icon: LucideIcon;
   blurb: string;
-  id: string;
   /**
-   * One accent colour per category, used by the mobile bottom bar, the
-   * /calculators headers and the sidebar. Full class strings, not built by
-   * string concatenation — Tailwind only ships classes it can see in source.
+   * Anchor on /calculators and the tab id in the bottom bar. Deliberately not
+   * derived from `category`: the Home category keeps the id "real-estate" so it
+   * can never collide with a site-home key, and so the original anchor keeps
+   * working. Display name and id are free to differ.
    */
+  id: string;
+  /** One accent colour per category. Full class strings — Tailwind only ships
+   *  classes it can see written out in source. */
   text: string;
   tint: string;
 }[] = [
-  { category: "Real estate", icon: Home, blurb: "Buying, refinancing, and everything that comes with a mortgage.", id: "real-estate", text: "text-green-700", tint: "bg-green-50" },
-  { category: "Investing", icon: TrendingUp, blurb: "Growing your money, planning for retirement, and the debt and savings decisions that go with it.", id: "investing", text: "text-blue-600", tint: "bg-blue-50" },
-  { category: "Auto", icon: Car, blurb: "What a car really costs, from the lot to the day you sell it.", id: "auto", text: "text-teal-600", tint: "bg-teal-50" },
+  { category: "Home",  icon: Home,        id: "real-estate", text: "text-green-700", tint: "bg-green-50",
+    blurb: "Buying, refinancing, and everything that comes with a mortgage." },
+  { category: "Debt",  icon: CreditCard,  id: "debt",  text: "text-amber-700", tint: "bg-amber-50",
+    blurb: "Paying down what you owe, and what it is really costing you." },
+  { category: "Money", icon: TrendingUp,  id: "money", text: "text-blue-600",  tint: "bg-blue-50",
+    blurb: "Growing your savings and planning for what comes next." },
+  { category: "Auto",  icon: Car,         id: "auto",  text: "text-teal-600",  tint: "bg-teal-50",
+    blurb: "What a car really costs, from the lot to the day you sell it." },
 ];
 
 export const bySlug = (slug: string): Calc | undefined =>
   CALCULATORS.find((c) => c.slug === slug);
 
+/** Decision tools first, then lookups; registry order is kept within each group. */
 export const byCategory = (category: Category): Calc[] =>
-  CALCULATORS.filter((c) => c.category === category);
+  CALCULATORS.filter((c) => c.category === category).sort(
+    (a, b) => (a.kind === b.kind ? 0 : a.kind === "should-i" ? -1 : 1),
+  );
 
 /** Up to three sibling calculators to surface at the bottom of a page. */
 export function related(slug: string, picks: string[] = []): Calc[] {
@@ -313,13 +328,14 @@ export function related(slug: string, picks: string[] = []): Calc[] {
 
 export const SITE = "https://shouldifinance.com";
 
-/** Shared metadata builder so every calculator page gets consistent SEO tags. */
-export function calcMetadata(
-  slug: string,
-  title: string,
-  description: string,
-  keywords: string[],
-) {
+/**
+ * Shared metadata builder. Title and keywords come from the registry, so a
+ * rename in CALCULATORS updates the page <title> without touching 29 files.
+ */
+export function calcMetadata(slug: string, description: string) {
+  const calc = bySlug(slug);
+  const title = calc?.title ?? slug;
+  const keywords = calc?.keywords ?? [];
   const url = `${SITE}/calculators/${slug}`;
   return {
     title,

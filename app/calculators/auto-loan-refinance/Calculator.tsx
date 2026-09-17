@@ -84,10 +84,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="auto-loan-refinance"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Auto loan refinance calculator"
-      crumb="Auto refinance"
       intro="Car loans are short, so a refinance has less time to pay off than a mortgage does. Enter your current loan and the offer to see the monthly savings, the real interest savings, and whether a longer term is quietly undoing both."
       onExample={loadExample}
       relatedSlugs={["loan-vs-cash", "auto-affordability", "depreciation"]}

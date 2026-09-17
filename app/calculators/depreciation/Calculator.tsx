@@ -96,10 +96,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="depreciation"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="Car depreciation calculator"
-      crumb="Depreciation"
       intro="Depreciation is the largest cost of owning a car and the only one that never sends a bill. Track what your vehicle is worth each year — and see exactly when the loan balance finally drops below it."
       onExample={loadExample}
       relatedSlugs={["total-cost-of-ownership", "auto-loan-refinance", "lease-vs-buy"]}

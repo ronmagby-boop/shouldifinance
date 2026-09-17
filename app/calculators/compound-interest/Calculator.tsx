@@ -73,10 +73,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="compound-interest"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Compound interest calculator"
-      crumb="Compound interest"
       intro="Compounding is interest earning interest. Enter what you start with and what you add each month — we'll show what it grows into, how much of that is your own money, and how much the market did for you."
       onExample={loadExample}
       relatedSlugs={["investment-growth", "retirement-savings", "dollar-cost-averaging"]}

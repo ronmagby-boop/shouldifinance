@@ -102,10 +102,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="dollar-cost-averaging"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Dollar-cost averaging calculator"
-      crumb="Dollar-cost averaging"
       intro="You have a lump of money. Do you invest it all today, or feed it in over months? Pick a market scenario and see how both strategies play out on exactly the same price path."
       onExample={loadExample}
       relatedSlugs={["compound-interest", "investment-growth", "required-rate-of-return"]}

@@ -115,10 +115,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="retirement-savings"
-      category="Investing"
-      eyebrow="Investing tools"
-      title="Retirement savings calculator"
-      crumb="Retirement savings"
       intro="Two questions matter: what will you have, and how long will it last? This projects your balance to your retirement date, then spends it down at the income you want — in inflation-adjusted dollars."
       onExample={loadExample}
       relatedSlugs={["investment-growth", "compound-interest", "early-withdrawal"]}

@@ -109,10 +109,6 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="auto-affordability"
-      category="Auto"
-      eyebrow="Auto tools"
-      title="How much car can I afford?"
-      crumb="Auto affordability"
       intro="A car payment is only part of the cost — insurance, fuel, and maintenance ride along with it. This works out a price range from your whole transportation budget, not just what a lender will approve."
       onExample={loadExample}
       relatedSlugs={["total-cost-of-ownership", "loan-vs-cash", "lease-vs-buy"]}
