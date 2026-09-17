@@ -115,7 +115,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 py-2">
           <Link href="/">
-            <Image src="/logo-wide.png" alt="ShouldIFinance" width={2158} height={729} className="h-10 w-auto" priority />
+            <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 md:h-12 w-auto" priority />
           </Link>
           <div className="hidden md:flex items-center gap-7">
             {NAV_LINKS.map(l => (
@@ -218,7 +218,7 @@ export default function Home() {
 
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
-      <section className="pt-14 bg-[#CCEEE7]">
+      <section className="pt-14 md:pt-16 bg-[#CCEEE7]">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 md:py-12 flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
 
           {/* Text */}
@@ -353,7 +353,7 @@ export default function Home() {
       </section>
 
       {/* EMAIL SIGNUP — target of the nav's "Get Free Resources" button */}
-      <section id="resources" className="py-8 md:py-12 bg-white scroll-mt-16">
+      <section id="resources" className="py-8 md:py-12 bg-white scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="bg-gray-50 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-10">
             <div className="flex-1 w-full">
@@ -398,7 +398,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
             <div className="max-w-xs">
               <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo-wide.png" alt="ShouldIFinance" width={2158} height={729} className="h-9 w-auto" />
+                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 w-auto" />
               </span>
               <p className="text-xs text-gray-400 leading-relaxed">Better Questions. Smarter Decisions. Free financial tools for every stage of life.</p>
             </div>
