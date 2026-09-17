@@ -137,7 +137,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
-              { Icon: Calculator, num: "25+", label: "Free Calculators" },
+              { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Free Calculators" },
               { Icon: FileText, num: "100+", label: "Helpful Articles" },
               { Icon: BadgeCheck, num: "Expert", label: "Real-World Advice" },
               { Icon: ShieldCheck, num: "Trusted", label: "For Every Stage of Life" },
@@ -357,7 +357,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-0 sm:divide-x sm:divide-white/10">
             {[
               { Icon: FileText, num: "100+", label: "Articles & Guides" },
-              { Icon: Calculator, num: "25+", label: "Calculators & Tools" },
+              { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Calculators & Tools" },
               { Icon: CalendarClock, num: "Updated Weekly", label: "New Content & Insights" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 md:px-8">
