@@ -4,6 +4,7 @@ import {
   BarChart3, TrendingUp, Sprout, PiggyBank, Banknote, CalendarDays, Receipt,
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
+  ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -101,6 +102,47 @@ export const CALCULATORS: Calc[] = [
     desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
     icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
     keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
+  },
+
+  {
+    slug: "va-vs-conventional",
+    title: "Should I use a VA loan or conventional loan?",
+    nav: "Should I use a VA or conventional loan?",
+    desc: "Weigh no money down and no PMI against the VA funding fee.",
+    icon: ShieldCheck, bg: "bg-blue-50", category: "Home", kind: "should-i",
+    keywords: ["VA loan vs conventional", "VA funding fee", "PMI vs funding fee", "no down payment mortgage"],
+  },
+  {
+    slug: "rate-buydown",
+    title: "Should I pay points to buy down my rate?",
+    nav: "Should I pay points?",
+    desc: "Find the month your discount points start paying for themselves.",
+    icon: Percent, bg: "bg-purple-50", category: "Home", kind: "should-i",
+    keywords: ["mortgage points calculator", "discount points break even", "buy down interest rate"],
+  },
+  {
+    slug: "buy-now-or-wait",
+    title: "Should I buy now or wait for rates to drop?",
+    nav: "Should I buy now or wait?",
+    desc: "See how much a home can appreciate before a lower rate stops helping.",
+    icon: Clock, bg: "bg-amber-50", category: "Home", kind: "should-i",
+    keywords: ["buy now or wait for rates", "wait for mortgage rates to drop", "home price appreciation"],
+  },
+  {
+    slug: "buy-now-or-save",
+    title: "Should I buy now or save for a bigger down payment?",
+    nav: "Should I buy now or save more?",
+    desc: "Compare buying now with PMI against waiting to reach a bigger deposit.",
+    icon: Coins, bg: "bg-green-50", category: "Home", kind: "should-i",
+    keywords: ["bigger down payment or buy now", "save for down payment", "PMI vs waiting"],
+  },
+  {
+    slug: "sell-first-or-buy-first",
+    title: "Should I sell my home before buying the next one?",
+    nav: "Should I sell first or buy first?",
+    desc: "Compare the cash each path needs, and the risk that comes with it.",
+    icon: ArrowLeftRight, bg: "bg-teal-50", category: "Home", kind: "should-i",
+    keywords: ["sell before buying", "buy before selling", "bridge loan calculator"],
   },
 
   // ---------- Money ----------
@@ -267,6 +309,31 @@ export const CALCULATORS: Calc[] = [
     desc: "Add up what you own and what you owe, then project it forward.",
     icon: Trophy, bg: "bg-amber-50", category: "Money", kind: "what-how",
     keywords: ["net worth calculator", "assets minus liabilities", "track net worth"],
+  },
+  // ---------- Debt ----------
+  {
+    slug: "debt-consolidation",
+    title: "Should I consolidate my debt?",
+    nav: "Should I consolidate my debt?",
+    desc: "Put up to five balances against one consolidation loan.",
+    icon: Combine, bg: "bg-amber-50", category: "Debt", kind: "should-i",
+    keywords: ["debt consolidation calculator", "consolidation loan", "combine debts"],
+  },
+  {
+    slug: "heloc-debt-payoff",
+    title: "Should I use a HELOC to pay off high-interest debt?",
+    nav: "Should I use a HELOC to pay off debt?",
+    desc: "Trade a high rate for a lower one, secured against your home.",
+    icon: ShieldAlert, bg: "bg-red-50", category: "Debt", kind: "should-i",
+    keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "secured vs unsecured debt"],
+  },
+  {
+    slug: "balance-transfer",
+    title: "Should I do a balance transfer?",
+    nav: "Should I do a balance transfer?",
+    desc: "See what a 0% window saves once the transfer fee is counted.",
+    icon: Shuffle, bg: "bg-purple-50", category: "Debt", kind: "should-i",
+    keywords: ["balance transfer calculator", "0% APR transfer", "credit card transfer fee"],
   },
 ];
 
