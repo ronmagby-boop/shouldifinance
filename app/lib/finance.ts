@@ -54,6 +54,51 @@ export function amortize(
   return { balances, totalInterest, totalPaid, payoffMonths };
 }
 
+/**
+ * Months needed to clear a balance at a fixed payment — the inverse of
+ * payment(). Returns null when the payment does not cover the monthly interest,
+ * because the loan then never amortizes.
+ */
+export function monthsFromPayment(
+  balance: number,
+  annualRate: number,
+  pmt: number,
+): number | null {
+  if (balance <= 0 || pmt <= 0) return null;
+  const r = annualRate / 100 / 12;
+  if (r === 0) return balance / pmt;
+  // A relative epsilon, because balance * r lands a hair under the round
+  // interest-only figure in binary floating point (300000 * 7.5%/12 comes out
+  // as 1874.9999999999998, so a literal $1,875 would slip past a bare <=).
+  if (pmt <= balance * r * (1 + 1e-9)) return null;
+  const months = -Math.log(1 - (r * balance) / pmt) / Math.log(1 + r);
+  // A payment barely above interest-only amortizes only in theory. Past a
+  // century it is not a loan term anyone should be shown.
+  if (!Number.isFinite(months) || months > 1200) return null;
+  return months;
+}
+
+/** Interest paid over the first `months` payments, at a fixed payment. */
+export function interestOver(
+  balance: number,
+  annualRate: number,
+  pmt: number,
+  extra: number,
+  months: number,
+): number {
+  const r = annualRate / 100 / 12;
+  let bal = balance;
+  let total = 0;
+  for (let i = 0; i < months && bal > 0.005; i++) {
+    const interest = bal * r;
+    const principal = Math.min(pmt + extra - interest, bal);
+    if (principal <= 0) return Infinity;
+    total += interest;
+    bal -= principal;
+  }
+  return total;
+}
+
 /** Remaining balance on a loan after a number of payments. */
 export function balanceAfter(
   principal: number,
