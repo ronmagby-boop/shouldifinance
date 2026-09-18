@@ -9,14 +9,24 @@ import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
 
 /**
- * VA funding fee on a purchase loan, as a percent of the loan amount.
- * Rates step down once you put money down, and rise on a later use.
+ * VA funding fee on a purchase loan, as a percent of the base loan amount.
+ * Checked against VA's published schedule, effective 7 April 2023: first use is
+ * 2.15 / 1.5 / 1.25 and subsequent use 3.3 / 1.5 / 1.25 across the under-5%,
+ * 5%-and-over and 10%-and-over down payment tiers.
  */
 function fundingFeeRate(downPct: number, use: string): number {
   if (use === "exempt") return 0;
   if (downPct >= 10) return 1.25;
   if (downPct >= 5) return 1.5;
   return use === "first" ? 2.15 : 3.3;
+}
+
+/** Why the rate above was picked, for the user to check against their own plan. */
+function fundingFeeReason(downPct: number, use: string): string {
+  if (use === "exempt") return "Exempt — no funding fee at any down payment";
+  if (downPct >= 10) return "10% or more down";
+  if (downPct >= 5) return "5% or more down";
+  return use === "first" ? "First use, under 5% down" : "Subsequent use, under 5% down";
 }
 
 /** Typical annual PMI as a percent of the loan, by credit tier. */
@@ -32,6 +42,8 @@ const PMI_BY_TIER: Record<string, number> = {
 export default function Calculator() {
   const [price, setPrice] = useState<Num>("");
   const [down, setDown] = useState<Num>("");
+  /** VA asks for nothing down, but money down buys a cheaper funding fee tier. */
+  const [vaDown, setVaDown] = useState<Num>("");
   const [vaRate, setVaRate] = useState<Num>("");
   const [convRate, setConvRate] = useState<Num>("");
   const [term, setTerm] = useState<Num>("");
@@ -41,6 +53,7 @@ export default function Calculator() {
   const loadExample = () => {
     setPrice(420000);
     setDown(25000);
+    setVaDown(0);
     setVaRate(6.25);
     setConvRate(6.5);
     setTerm(30);
@@ -53,15 +66,22 @@ export default function Calculator() {
     const term_m = Math.round(n(term) * 12);
     if (P <= 0 || term_m <= 0 || n(vaRate) <= 0 || n(convRate) <= 0) return null;
 
-    // VA path: nothing down, so the cash stays in your pocket and the funding
-    // fee is rolled into the loan. No PMI, ever.
-    const feePct = fundingFeeRate(0, use);
-    const fee = P * (feePct / 100);
-    const vaLoan = P + fee;
+    // VA path: any cash down cuts the balance and can drop the funding fee to a
+    // cheaper tier. The fee is charged on the base loan, after the down payment,
+    // and rolled into the balance. No PMI, ever.
+    const vaDownAmt = Math.min(Math.max(0, n(vaDown)), P);
+    const vaDownPct = P > 0 ? (vaDownAmt / P) * 100 : 0;
+    const feePct = fundingFeeRate(vaDownPct, use);
+    const feeReason = fundingFeeReason(vaDownPct, use);
+    const vaBase = Math.max(0, P - vaDownAmt);
+    const fee = vaBase * (feePct / 100);
+    const vaLoan = vaBase + fee;
     const vaPI = payment(vaLoan, n(vaRate), term_m);
     const vaInterest = vaPI * term_m - vaLoan;
-    const vaUpfront = 0;
-    const vaLifetime = vaPI * term_m;
+    const vaUpfront = vaDownAmt;
+    // Counts the down payment as cash out, the same way the conventional side
+    // does, so the two lifetime totals stay comparable.
+    const vaLifetime = vaDownAmt + vaPI * term_m;
 
     // Conventional path: your cash goes in as the down payment, and PMI rides
     // along until the balance reaches 78% of the purchase price.
@@ -92,13 +112,13 @@ export default function Calculator() {
     const vaWins = lifetimeGap > 0;
 
     return {
-      feePct, fee, vaLoan, vaPI, vaInterest, vaUpfront, vaLifetime, vaFirstMonthly,
+      feePct, feeReason, vaDownPct, vaBase, fee, vaLoan, vaPI, vaInterest, vaUpfront, vaLifetime, vaFirstMonthly,
       convDown, convLoan, ltv, pmiAnnualPct, pmiMonthly, pmiMonths, totalPMI,
       convPI, convInterest, convUpfront, convLifetime, convFirstMonthly,
       lifetimeGap: Math.abs(lifetimeGap), vaWins,
       monthlyGap: Math.abs(convFirstMonthly - vaFirstMonthly),
     };
-  }, [price, down, vaRate, convRate, term, tier, use]);
+  }, [price, down, vaDown, vaRate, convRate, term, tier, use]);
 
   return (
     <CalcShell
@@ -112,14 +132,15 @@ export default function Calculator() {
         <Card title="The purchase" badge="SHARED">
           <div className="space-y-4">
             <NumField label="Home price" value={price} onChange={setPrice} placeholder="420000" prefix="$" />
-            <NumField
-              label="Down payment you have"
-              value={down}
-              onChange={setDown}
-              placeholder="25000"
-              prefix="$"
-              hint="Used by the conventional loan. The VA side assumes nothing down, which is the point of the comparison."
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <NumField label="Down payment — VA" value={vaDown} onChange={setVaDown} placeholder="0" prefix="$" />
+              <NumField label="Down payment — conventional" value={down} onChange={setDown} placeholder="25000" prefix="$" />
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Set these independently. VA asks for nothing down, so $0 is the usual case — but money
+              down there buys a cheaper funding fee tier, and the same cash may be worth more on the
+              conventional side, where it cuts PMI instead.
+            </p>
             <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
           </div>
         </Card>
@@ -164,8 +185,13 @@ export default function Calculator() {
               <Headline label="VA loan — lifetime cost" value={fmtK(r.vaLifetime)} tone={r.vaWins ? "green" : "gray"} />
               <div className="grid grid-cols-2 gap-2">
                 <Stat label="Monthly payment" value={`${fmt(r.vaFirstMonthly)}/mo`} />
-                <Stat label="Cash at closing" value={fmt(r.vaUpfront)} tone="green" sub="no down payment" />
-                <Stat label="Funding fee" value={`${fmt(r.fee)} (${r.feePct}%)`} tone="amber" sub="financed into the loan" />
+                <Stat
+                  label="Cash at closing"
+                  value={fmt(r.vaUpfront)}
+                  tone={r.vaUpfront > 0 ? "amber" : "green"}
+                  sub={r.vaUpfront > 0 ? `${Math.floor(r.vaDownPct * 100) / 100}% down` : "no down payment"}
+                />
+                <Stat label="Funding fee" value={`${fmt(r.fee)} (${r.feePct}%)`} tone="amber" sub={r.feeReason} />
                 <Stat label="Total interest" value={fmtK(r.vaInterest)} />
               </div>
             </div>
@@ -187,16 +213,45 @@ export default function Calculator() {
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-            <Takeaway tone={r.vaWins ? "green" : "blue"}>
-              Over the full term the <strong>{r.vaWins ? "VA loan" : "conventional loan"}</strong> costs{" "}
-              <strong>{fmtK(r.lifetimeGap)}</strong> less. The VA route keeps{" "}
-              <strong>{fmt(r.convUpfront)}</strong> in your pocket at closing but finances a{" "}
-              <strong>{fmt(r.fee)}</strong> funding fee, so you start with a bigger balance.
+            <div className="space-y-2">
+              <Takeaway tone={r.vaWins ? "green" : "blue"}>
+                Over the full term the <strong>{r.vaWins ? "VA loan" : "conventional loan"}</strong> costs{" "}
+                <strong>{fmtK(r.lifetimeGap)}</strong> less.{" "}
+                {r.convUpfront > r.vaUpfront ? (
+                  <>
+                    The VA route keeps <strong>{fmt(r.convUpfront - r.vaUpfront)}</strong> more in your
+                    pocket at closing but finances a <strong>{fmt(r.fee)}</strong> funding fee, so you
+                    start with a bigger balance.
+                  </>
+                ) : r.vaUpfront > r.convUpfront ? (
+                  <>
+                    Here the VA side is the one asking for more cash —{" "}
+                    <strong>{fmt(r.vaUpfront - r.convUpfront)}</strong> more — which is what buys the{" "}
+                    {r.feePct}% funding fee tier instead of a higher one.
+                  </>
+                ) : (
+                  <>
+                    Both sides ask for the same <strong>{fmt(r.vaUpfront)}</strong> at closing, so the
+                    difference is the <strong>{fmt(r.fee)}</strong> funding fee against PMI and the rate
+                    gap.
+                  </>
+                )}
+                {r.pmiMonthly > 0 && (
+                  <> The conventional payment drops by <strong>{fmt(r.pmiMonthly)}/mo</strong> once PMI ends after about{" "}
+                    <strong>{fmtMonths(r.pmiMonths)}</strong>.</>
+                )}
+              </Takeaway>
               {r.pmiMonthly > 0 && (
-                <> The conventional payment drops by <strong>{fmt(r.pmiMonthly)}/mo</strong> once PMI ends after about{" "}
-                  <strong>{fmtMonths(r.pmiMonths)}</strong>.</>
+                <Takeaway tone="amber">
+                  <strong>That {fmtMonths(r.pmiMonths)} is automatic termination</strong>, which the
+                  servicer must do at 78% of the <em>original</em> price. You can ask for cancellation
+                  earlier, at 80%, and that arrives sooner. Note that the house appreciating does not
+                  bring the automatic date forward, because the test is against what you paid, not what
+                  the home is now worth — rising value only helps if you request cancellation and the
+                  lender accepts a new appraisal.
+                </Takeaway>
               )}
-            </Takeaway>
+            </div>
           </div>
 
           <ChartCard
