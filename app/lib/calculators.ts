@@ -134,7 +134,7 @@ export const CALCULATORS: Calc[] = [
     slug: "buy-now-or-save",
     title: "Should I buy now or save for a bigger down payment?",
     nav: "Should I buy now or save more?",
-    desc: "Compare buying now with PMI against waiting to reach a bigger deposit.",
+    desc: "Compare buying now with PMI against waiting to reach a bigger down payment.",
     icon: Coins, bg: "bg-green-50", category: "Home", kind: "should-i",
     keywords: ["bigger down payment or buy now", "save for down payment", "PMI vs waiting"],
   },

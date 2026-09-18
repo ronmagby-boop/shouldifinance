@@ -42,7 +42,7 @@ export default function Calculator() {
     const sellFirstShortfall = Math.max(0, downNeeded - sellFirstAvailable);
     const sellFirstCash = Math.max(0, downNeeded - netProceeds);
 
-    // Buy first: you need the deposit before the sale settles, so the proceeds
+    // Buy first: you need the down payment before the sale settles, so the proceeds
     // are not there yet — savings plus a bridge, then the sale repays it.
     const buyFirstAvailable = n(otherCash);
     const buyFirstShortfall = Math.max(0, downNeeded - buyFirstAvailable);
@@ -65,7 +65,7 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="sell-first-or-buy-first"
-      intro="Selling first is cheaper and safer but can leave you without a home for a while. Buying first is smoother to live through but needs the deposit before your equity is free. This works out the cash each path needs."
+      intro="Selling first is cheaper and safer but can leave you without a home for a while. Buying first is smoother to live through but needs the down payment before your equity is free. This works out the cash each path needs."
       onExample={loadExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "rent-vs-buy"]}
       disclaimer="For educational purposes only. Bridge loans, contingent offers and rent-back agreements vary a lot by lender and market, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
@@ -171,7 +171,7 @@ export default function Calculator() {
             <Takeaway tone={needProceeds && r.bridgeNeeded ? "red" : "blue"}>
               {needProceeds && r.bridgeNeeded ? (
                 <>
-                  You said you need the sale proceeds for the deposit, and your savings fall{" "}
+                  You said you need the sale proceeds for the down payment, and your savings fall{" "}
                   <strong>{fmt(r.buyFirstShortfall)}</strong> short of it. Buying first means a bridge loan
                   or a sale contingency — expect the contingency to weaken your offer in a competitive
                   market. Selling first is the realistic path here.
@@ -179,7 +179,7 @@ export default function Calculator() {
               ) : r.canBuyFirstOutright ? (
                 <>
                   Your savings of <strong>{fmt(r.buyFirstAvailable)}</strong> already cover the{" "}
-                  <strong>{fmt(r.downNeeded)}</strong> deposit, so you can buy first without a bridge. That
+                  <strong>{fmt(r.downNeeded)}</strong> down payment, so you can buy first without a bridge. That
                   buys you a clean move and a stronger offer — just make sure you could carry both
                   mortgages for a few months if the sale drags.
                 </>

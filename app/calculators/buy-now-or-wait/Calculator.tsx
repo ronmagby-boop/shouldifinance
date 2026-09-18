@@ -6,7 +6,7 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment, balanceAfter } from "../../lib/finance";
+import { payment, balanceAfter, typicalMonthlyRent } from "../../lib/finance";
 
 export default function Calculator() {
   const [price, setPrice] = useState<Num>("");
@@ -27,7 +27,7 @@ export default function Calculator() {
     setAppr(4);
     setDownPct(10);
     setTerm(30);
-    setRent(2200);
+    setRent(typicalMonthlyRent(420000));
   };
 
   const r = useMemo(() => {
@@ -125,7 +125,7 @@ export default function Calculator() {
               label="Rent while you wait"
               value={rent}
               onChange={setRent}
-              placeholder="2200"
+              placeholder={String(typicalMonthlyRent(n(price) || 420000))}
               prefix="$"
               suffix="/mo"
               hint="You still live somewhere for those months, and this is usually the largest number on this page. Enter 0 only if you really would pay nothing — staying with family, say."

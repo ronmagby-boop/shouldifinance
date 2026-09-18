@@ -6,7 +6,7 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment } from "../../lib/finance";
+import { payment, balanceAfter, typicalMonthlyRent } from "../../lib/finance";
 
 /** Typical annual PMI as a percent of the loan, by loan-to-value band. */
 function pmiRate(ltv: number): number {
@@ -61,6 +61,8 @@ export default function Calculator() {
   const [rateLater, setRateLater] = useState<Num>("");
   const [appr, setAppr] = useState<Num>("");
   const [term, setTerm] = useState<Num>("");
+  /** What the saving household pays to live meanwhile. */
+  const [rent, setRent] = useState<Num>("");
 
   const loadExample = () => {
     setPrice(400000);
@@ -72,6 +74,7 @@ export default function Calculator() {
     setRateLater(6.5);
     setAppr(3);
     setTerm(30);
+    setRent(typicalMonthlyRent(400000));
   };
 
   const r = useMemo(() => {
@@ -83,13 +86,13 @@ export default function Calculator() {
     const dt = Math.min(Math.max(n(dpTarget), 0), 100) / 100;
     if (dt <= dn) return { invalid: true as const };
 
-    // Path A — buy now with the smaller deposit
+    // Path A — buy now with the smaller down payment
     const downNow = P * dn;
     const loanNow = P - downNow;
     const now = run(loanNow, n(rateNow), term_m, P);
     const totalNow = downNow + now.pi * term_m + now.totalPmi;
 
-    // Path B — keep saving until the bigger deposit is covered, while the
+    // Path B — keep saving until the bigger down payment is covered, while the
     // price moves under you.
     const monthlyAppr = Math.pow(1 + n(appr) / 100, 1 / 12);
     let cash = n(savings);
@@ -116,7 +119,17 @@ export default function Calculator() {
     const downLater = futurePrice * dt;
     const loanLater = futurePrice - downLater;
     const later = run(loanLater, n(rateLater), term_m, futurePrice);
-    const totalLater = downLater + later.pi * term_m + later.totalPmi;
+    // Saving is not free: you live somewhere for those months. Leaving it out
+    // was decisive here — the saving advantage is small against a long wait.
+    const rentTotal = Math.max(0, n(rent)) * waitM;
+    const totalLater = rentTotal + downLater + later.pi * term_m + later.totalPmi;
+
+    // Shown, not deducted: totalNow already counts every payment over the term,
+    // and both paths end owning the home outright, so crediting this against the
+    // lifetime total would count the same principal twice.
+    const balAtWait = balanceAfter(loanNow, n(rateNow), term_m, waitM);
+    const principalWhileSaving = Math.max(0, loanNow - balAtWait);
+    const paidWhileSaving = (now.pi + now.pmiMonthly) * waitM;
 
     const totalGap = totalLater - totalNow;
     const savingWins = totalGap < 0;
@@ -126,18 +139,19 @@ export default function Calculator() {
       downNow, loanNow, now, totalNow,
       futurePrice, downLater, loanLater, later, totalLater,
       waitM, totalGap, savingWins,
+      rentTotal, principalWhileSaving, paidWhileSaving,
       priceRise: futurePrice - P,
       monthlyGap: later.pi + later.pmiMonthly - (now.pi + now.pmiMonthly),
     };
-  }, [price, savings, monthlySave, dpNow, dpTarget, rateNow, rateLater, appr, term]);
+  }, [price, savings, monthlySave, dpNow, dpTarget, rateNow, rateLater, appr, term, rent]);
 
   return (
     <CalcShell
       slug="buy-now-or-save"
-      intro="A smaller deposit gets you in sooner but brings PMI and a bigger loan. Saving longer cuts both, while the price you are chasing keeps moving. This works out how long the wait actually takes and what each path costs."
+      intro="Buying sooner with less down means PMI and a bigger loan. Saving longer means a smaller loan and no PMI — but home prices keep rising while you save, so the amount you need keeps growing too. This shows how long the saving actually takes and what each path costs in total."
       onExample={loadExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "buy-now-or-wait"]}
-      disclaimer="For educational purposes only. PMI rates here are typical bands, not a quote, and price growth is an assumption rather than a forecast. Rent paid while saving is not included."
+      disclaimer="For educational purposes only. PMI rates here are typical bands, not a quote, and price growth is an assumption rather than a forecast. Rent while saving is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The home and your cash" badge="SHARED">
@@ -147,6 +161,15 @@ export default function Calculator() {
               <NumField label="Saved so far" value={savings} onChange={setSavings} placeholder="28000" prefix="$" />
               <NumField label="Saving each month" value={monthlySave} onChange={setMonthlySave} placeholder="1500" prefix="$" />
             </div>
+            <NumField
+              label="Rent while you save"
+              value={rent}
+              onChange={setRent}
+              placeholder={String(typicalMonthlyRent(n(price) || 400000))}
+              prefix="$"
+              suffix="/mo"
+              hint="You live somewhere for every month of the wait, and over a saving period this long it is usually the largest number on the page. Enter 0 only if you would genuinely pay nothing."
+            />
             <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
             <NumField
               label="Price growth while you save"
@@ -159,7 +182,7 @@ export default function Calculator() {
           </div>
         </Card>
 
-        <Card title="The two deposits" badge="COMPARE" badgeTone="blue">
+        <Card title="The two down payments" badge="COMPARE" badgeTone="blue">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <NumField label="Buy now with" value={dpNow} onChange={setDpNow} placeholder="7" suffix="%" />
@@ -182,14 +205,14 @@ export default function Calculator() {
       {r && r.invalid ? (
         <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
           <Takeaway tone="red">
-            The target deposit needs to be larger than what you would put down today.
+            The target down payment needs to be larger than what you would put down today.
           </Takeaway>
         </div>
       ) : r && r.unreachable ? (
         <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
           <Takeaway tone="red">
             At <strong>{fmt(n(monthlySave))}</strong> a month you never catch the target — prices are
-            rising at least as fast as you save. Either buy sooner with the smaller deposit, save more
+            rising at least as fast as you save. Either buy sooner with the smaller down payment, save more
             each month, or look at a lower price.
           </Takeaway>
         </div>
@@ -201,8 +224,13 @@ export default function Calculator() {
               <div className="grid grid-cols-2 gap-2">
                 <Stat label="Monthly payment" value={`${fmt(r.now.pi + r.now.pmiMonthly)}/mo`} sub={r.now.pmiMonthly > 0 ? `incl. ${fmt(r.now.pmiMonthly)} PMI` : "no PMI"} />
                 <Stat label="Down payment" value={fmt(r.downNow)} />
-                <Stat label="PMI in total" value={r.now.totalPmi > 0 ? fmtK(r.now.totalPmi) : "None"} tone={r.now.totalPmi > 0 ? "amber" : "green"} />
-                <Stat label="Reach 20% equity" value={fmtMonths(r.now.monthsTo20)} />
+                <Stat
+                  label="PMI in total"
+                  value={r.now.totalPmi > 0 ? fmtK(r.now.totalPmi) : "None"}
+                  sub={r.now.pmiMonths > 0 ? `charged for ${fmtMonths(r.now.pmiMonths)}` : undefined}
+                  tone={r.now.totalPmi > 0 ? "amber" : "green"}
+                />
+                <Stat label="Reach 20% equity" value={fmtMonths(r.now.monthsTo20)} sub="ask to cancel PMI here" />
               </div>
             </div>
 
@@ -213,11 +241,19 @@ export default function Calculator() {
                 <Stat label="Down payment" value={fmt(r.downLater)} sub={`on a ${fmtK(r.futurePrice)} home`} />
                 <Stat label="PMI in total" value={r.later.totalPmi > 0 ? fmtK(r.later.totalPmi) : "None"} tone={r.later.totalPmi > 0 ? "amber" : "green"} />
                 <Stat label="Reach 20% equity" value={r.later.ltv <= 80 ? "Day one" : fmtMonths(r.later.monthsTo20)} tone={r.later.ltv <= 80 ? "green" : "default"} />
+                <Stat label="Rent while saving" value={fmtK(r.rentTotal)} sub={`${fmtMonths(r.waitM)} of paying to live`} tone="amber" />
+                <Stat
+                  label="Equity you'd have by now"
+                  value={fmtK(r.principalWhileSaving)}
+                  sub="if you had bought instead"
+                  tone="green"
+                />
               </div>
             </div>
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+            <div className="space-y-2">
             <Takeaway tone={r.savingWins ? "green" : "amber"}>
               Saving to <strong>{pct(n(dpTarget), 0)}</strong> takes about{" "}
               <strong>{fmtMonths(r.waitM)}</strong>, by which point the home costs{" "}
@@ -229,14 +265,25 @@ export default function Calculator() {
                 <> PMI is real money, but here the price rise outweighs it.</>
               )}
             </Takeaway>
+            {r.now.totalPmi > 0 && (
+              <Takeaway tone="amber">
+                <strong>That {fmtMonths(r.now.pmiMonths)} of PMI is automatic termination</strong>,
+                which the servicer must do at 78% of the <em>original</em> price. You can ask for
+                cancellation earlier, at 80% — {fmtMonths(r.now.monthsTo20)} here. The house
+                appreciating does not bring the automatic date forward, because the test is against
+                what you paid rather than what the home is now worth; rising value only helps if you
+                request cancellation and the lender accepts a new appraisal.
+              </Takeaway>
+            )}
+            </div>
           </div>
 
           <ChartCard
             title="Total cost of each path"
-            footnote="Down payment, principal, interest and PMI over the full term."
+            footnote="Down payment, principal, interest and PMI over the full term, and the rent paid while saving."
           >
             <BarChart
-              ariaLabel="Total cost of buying now compared with saving a bigger deposit"
+              ariaLabel="Total cost of buying now compared with saving a bigger down payment"
               bars={[
                 {
                   label: "Buy now",
@@ -250,6 +297,7 @@ export default function Calculator() {
                 {
                   label: `Save ${fmtMonths(r.waitM)}`,
                   segments: [
+                    { label: "Rent", value: r.rentTotal, color: COLORS.purple },
                     { label: "Down payment", value: r.downLater, color: COLORS.blue },
                     { label: "Principal", value: r.loanLater, color: COLORS.gray },
                     { label: "Interest", value: r.later.interest, color: COLORS.amber },
@@ -262,7 +310,7 @@ export default function Calculator() {
         </>
       ) : (
         <div className="border border-gray-200 rounded-2xl mb-4 bg-gray-50">
-          <EmptyState>Enter the price, your savings and both deposit targets to compare the paths.</EmptyState>
+          <EmptyState>Enter the price, your savings and both down payment targets to compare the paths.</EmptyState>
         </div>
       )}
     </CalcShell>

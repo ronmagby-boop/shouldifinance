@@ -248,3 +248,17 @@ export function ordinaryRate(taxableIncome: number, status: "single" | "married"
   }
   return 37;
 }
+
+/**
+ * A starting-point monthly rent for a home at a given price, for the
+ * calculators that have to charge a waiting household for somewhere to live.
+ *
+ * Rent on an owner-equivalent single-family home typically lands between 0.5%
+ * and 0.7% of value a month; 0.55% is a mid-low figure to start from. Rounded
+ * to $50 so it reads like a rent rather than a computation, and always meant to
+ * be overridden by anyone who knows their own number.
+ */
+export function typicalMonthlyRent(price: number): number {
+  if (price <= 0) return 0;
+  return Math.round((price * 0.0055) / 50) * 50;
+}
