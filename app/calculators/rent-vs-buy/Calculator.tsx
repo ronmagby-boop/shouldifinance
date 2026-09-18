@@ -249,7 +249,11 @@ export default function Calculator() {
                 suffix="%"
                 step={0.5}
                 disabled={!willSell}
-                hint={!willSell ? "Not charged — you plan to stay, so there is no sale." : undefined}
+                hint={
+                  !willSell
+                    ? "Not charged — you plan to stay, so there is no sale."
+                    : "Agent commission, transfer taxes and the usual concessions — commonly 6–9%."
+                }
               />
             </div>
             <Toggle checked={financeClosing} onChange={setFinanceClosing}>

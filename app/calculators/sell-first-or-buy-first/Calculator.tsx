@@ -15,6 +15,9 @@ export default function Calculator() {
   const [newDownPct, setNewDownPct] = useState<Num>("");
   const [otherCash, setOtherCash] = useState<Num>("");
   const [bridgeCost, setBridgeCost] = useState<Num>("");
+  /** Sell-first has its own carrying cost; one shared field only ever charged
+   *  the buy-first side, which made buying first look dearer than it is. */
+  const [tempHousing, setTempHousing] = useState<Num>("");
   const [needProceeds, setNeedProceeds] = useState(true);
 
   const loadExample = () => {
@@ -25,6 +28,7 @@ export default function Calculator() {
     setNewDownPct(20);
     setOtherCash(30000);
     setBridgeCost(9000);
+    setTempHousing(4000);
     setNeedProceeds(true);
   };
 
@@ -37,30 +41,37 @@ export default function Calculator() {
     const netProceeds = V - sellingCosts - n(balance);
     const downNeeded = NP * (Math.min(Math.max(n(newDownPct), 0), 100) / 100);
 
-    // Sell first: the sale closes, then you buy with proceeds plus savings.
+    // Both paths put the SAME down payment on the table. What differs is when
+    // the money has to exist and where it comes from — not the amount.
+    // Sell first: the sale closes, so proceeds fund the down payment first.
     const sellFirstAvailable = netProceeds + n(otherCash);
     const sellFirstShortfall = Math.max(0, downNeeded - sellFirstAvailable);
-    const sellFirstCash = Math.max(0, downNeeded - netProceeds);
+    const fromProceeds = Math.min(Math.max(0, netProceeds), downNeeded);
+    const ownCashSellFirst = Math.max(0, downNeeded - Math.max(0, netProceeds));
 
-    // Buy first: you need the down payment before the sale settles, so the proceeds
-    // are not there yet — savings plus a bridge, then the sale repays it.
+    // Buy first: the equity is still locked in the old home, so the whole down
+    // payment has to come from savings or a bridge before any sale closes.
     const buyFirstAvailable = n(otherCash);
     const buyFirstShortfall = Math.max(0, downNeeded - buyFirstAvailable);
-    const buyFirstCash = downNeeded + n(bridgeCost);
+    const fromSavings = Math.min(n(otherCash), downNeeded);
     const bridgeNeeded = buyFirstShortfall > 0;
 
-    const extraCashToBuyFirst = buyFirstCash - sellFirstCash;
+    // The only genuine dollar difference between the paths: what each one costs
+    // to carry. Everything else is timing.
+    const sellFirstOutlay = downNeeded + n(tempHousing);
+    const buyFirstOutlay = downNeeded + n(bridgeCost);
+    const costDifference = n(bridgeCost) - n(tempHousing);
 
     return {
       sellingCosts, netProceeds, downNeeded,
-      sellFirstAvailable, sellFirstShortfall, sellFirstCash,
-      buyFirstAvailable, buyFirstShortfall, buyFirstCash, bridgeNeeded,
-      extraCashToBuyFirst,
+      sellFirstAvailable, sellFirstShortfall, fromProceeds, ownCashSellFirst,
+      buyFirstAvailable, buyFirstShortfall, fromSavings, bridgeNeeded,
+      sellFirstOutlay, buyFirstOutlay, costDifference,
       equity: V - n(balance),
       canBuyFirstOutright: !bridgeNeeded,
       sellFirstWorks: sellFirstShortfall <= 0,
     };
-  }, [value, balance, sellPct, newPrice, newDownPct, otherCash, bridgeCost]);
+  }, [value, balance, sellPct, newPrice, newDownPct, otherCash, bridgeCost, tempHousing]);
 
   return (
     <CalcShell
@@ -106,14 +117,15 @@ export default function Calculator() {
               prefix="$"
               hint="Cash on hand, not counting anything tied up in the current home."
             />
-            <NumField
-              label="Bridge loan or temporary housing"
-              value={bridgeCost}
-              onChange={setBridgeCost}
-              placeholder="9000"
-              prefix="$"
-              hint="Bridge fees and interest if you buy first, or storage and a short rental if you sell first."
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <NumField label="Bridge cost if you buy first" value={bridgeCost} onChange={setBridgeCost} placeholder="9000" prefix="$" />
+              <NumField label="Housing cost if you sell first" value={tempHousing} onChange={setTempHousing} placeholder="4000" prefix="$" />
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Bridge fees and interest on one side; storage, a short rental or a rent-back on the other.
+              These are the only figures that genuinely differ between the paths — the down payment
+              itself is the same either way.
+            </p>
             <Toggle checked={needProceeds} onChange={setNeedProceeds}>
               I need the sale proceeds to cover the down payment
             </Toggle>
@@ -125,14 +137,23 @@ export default function Calculator() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="border border-gray-200 rounded-2xl p-5 bg-gray-50">
-              <Headline label="Sell first — cash you need" value={fmt(r.sellFirstCash)} tone="green" />
+              <Headline
+                label="Sell first — down payment at closing"
+                value={fmt(r.downNeeded)}
+                tone="green"
+              />
               <div className="grid grid-cols-2 gap-2 mb-3">
-                <Stat label="Proceeds in hand" value={fmt(r.netProceeds)} tone="green" />
-                <Stat label="Down payment needed" value={fmt(r.downNeeded)} />
+                <Stat label="Funded by the sale" value={fmt(r.fromProceeds)} tone="green" sub="already in hand" />
                 <Stat
-                  label="Shortfall after savings"
+                  label="Funded by your cash"
+                  value={r.ownCashSellFirst > 0 ? fmt(r.ownCashSellFirst) : "None needed"}
+                  tone={r.ownCashSellFirst > 0 ? "amber" : "green"}
+                />
+                <Stat
+                  label="Still short"
                   value={r.sellFirstShortfall > 0 ? fmt(r.sellFirstShortfall) : "None"}
                   tone={r.sellFirstShortfall > 0 ? "red" : "green"}
+                  sub={r.sellFirstShortfall > 0 ? "proceeds and savings combined" : "proceeds and savings cover it"}
                 />
                 <Stat label="Typical timeline" value="1–3 months" sub="sale closes, then you buy" />
               </div>
@@ -143,15 +164,19 @@ export default function Calculator() {
             </div>
 
             <div className="border border-gray-200 rounded-2xl p-5 bg-gray-50">
-              <Headline label="Buy first — cash you need" value={fmt(r.buyFirstCash)} tone={r.canBuyFirstOutright ? "green" : "red"} />
+              <Headline
+                label="Buy first — down payment at closing"
+                value={fmt(r.downNeeded)}
+                tone={r.canBuyFirstOutright ? "green" : "red"}
+              />
               <div className="grid grid-cols-2 gap-2 mb-3">
-                <Stat label="Savings available now" value={fmt(r.buyFirstAvailable)} />
-                <Stat label="Down payment needed" value={fmt(r.downNeeded)} />
+                <Stat label="Funded by the sale" value="Nothing yet" tone="amber" sub="equity is locked until you sell" />
+                <Stat label="Funded by your cash" value={fmt(r.fromSavings)} tone={r.canBuyFirstOutright ? "green" : "default"} />
                 <Stat
                   label="Needs a bridge"
                   value={r.bridgeNeeded ? fmt(r.buyFirstShortfall) : "No"}
                   tone={r.bridgeNeeded ? "red" : "green"}
-                  sub={r.bridgeNeeded ? "equity is locked until you sell" : "savings cover it"}
+                  sub={r.bridgeNeeded ? "borrowed until the sale closes" : "savings cover it outright"}
                 />
                 <Stat label="Typical timeline" value="2–4 months" sub="buy, move, then sell" />
               </div>
@@ -163,11 +188,27 @@ export default function Calculator() {
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+            {/* Both paths put the same down payment on the table. The old panel
+                subtracted two different quantities and presented the result as a
+                cost of buying first, which it never was. */}
             <Headline
-              label="Extra cash buying first demands up front"
-              value={fmt(Math.max(0, r.extraCashToBuyFirst))}
-              tone={r.extraCashToBuyFirst > 0 ? "red" : "green"}
+              label={
+                r.costDifference === 0
+                  ? "Cost difference between the paths"
+                  : r.costDifference > 0
+                    ? "Buying first costs more to carry"
+                    : "Selling first costs more to carry"
+              }
+              value={fmt(Math.abs(r.costDifference))}
+              tone={r.costDifference === 0 ? "green" : "gray"}
             />
+            <p className="text-xs text-gray-400 leading-relaxed mb-3">
+              Both paths need the same{" "}
+              <strong className="font-medium text-gray-500">{fmt(r.downNeeded)}</strong> down payment.
+              This is the difference in what each costs to carry — {fmt(n(bridgeCost))} of
+              bridge against {fmt(n(tempHousing))} of temporary housing. The real decision is timing
+              and financing, not the size of the check.
+            </p>
             <Takeaway tone={needProceeds && r.bridgeNeeded ? "red" : "blue"}>
               {needProceeds && r.bridgeNeeded ? (
                 <>
@@ -193,7 +234,7 @@ export default function Calculator() {
             </Takeaway>
           </div>
 
-          <ChartCard title="Cash needed up front" footnote="What you must produce before the keys change hands.">
+          <ChartCard title="Cash needed up front" footnote="The same down payment either way — the bars differ in where the money comes from and when, plus each path's carrying cost.">
             <BarChart
               ariaLabel="Cash needed up front when selling first compared with buying first"
               height={200}
@@ -201,16 +242,17 @@ export default function Calculator() {
                 {
                   label: "Sell first",
                   segments: [
-                    { label: "From proceeds", value: Math.min(r.netProceeds, r.downNeeded), color: COLORS.green },
-                    { label: "From savings", value: r.sellFirstCash, color: COLORS.blue },
+                    { label: "From proceeds", value: r.fromProceeds, color: COLORS.green },
+                    { label: "From savings", value: r.ownCashSellFirst, color: COLORS.blue },
+                    { label: "Carrying cost", value: n(tempHousing), color: COLORS.amber },
                   ],
                 },
                 {
                   label: "Buy first",
                   segments: [
-                    { label: "From savings", value: Math.min(r.buyFirstAvailable, r.downNeeded), color: COLORS.blue },
-                    { label: "Bridge / shortfall", value: r.buyFirstShortfall, color: COLORS.red },
-                    { label: "Bridge cost", value: n(bridgeCost), color: COLORS.amber },
+                    { label: "From savings", value: r.fromSavings, color: COLORS.blue },
+                    { label: "Borrowed on a bridge", value: r.buyFirstShortfall, color: COLORS.red },
+                    { label: "Carrying cost", value: n(bridgeCost), color: COLORS.amber },
                   ],
                 },
               ]}
