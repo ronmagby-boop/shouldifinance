@@ -21,7 +21,7 @@ export default function Calculator() {
     setRate(6.5);
     setYearsLeft(28);
     setExtra(300);
-    setOneTime(5000);
+    setOneTime(0);
     setBiweekly(false);
   };
 
@@ -48,9 +48,6 @@ export default function Calculator() {
     const originalDate = new Date();
     originalDate.setMonth(originalDate.getMonth() + base.payoffMonths);
 
-    // Interest saved per extra dollar paid.
-    const returnOnExtra = totalExtraPaid > 0 ? interestSaved / totalExtraPaid : 0;
-
     return {
       basePayment,
       effectiveExtra,
@@ -59,7 +56,6 @@ export default function Calculator() {
       monthsSaved,
       interestSaved,
       totalExtraPaid,
-      returnOnExtra,
       payoffStr: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       originalStr: originalDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       newPayment: basePayment + effectiveExtra,
@@ -102,10 +98,20 @@ export default function Calculator() {
               prefix="$"
               hint="A bonus or tax refund applied to principal today."
             />
-            <Toggle checked={biweekly} onChange={setBiweekly}>
-              Switch to biweekly payments (half your payment every two weeks — 26 half payments, which is
-              one extra full payment a year)
-            </Toggle>
+            <div className="space-y-2">
+              <Toggle checked={biweekly} onChange={setBiweekly}>
+                Switch to biweekly payments — half your payment every two weeks means 26 half payments a
+                year, or one extra full payment. This adds to the monthly extra above, it does not replace
+                it.
+              </Toggle>
+              {biweekly && r && (
+                <p className="text-xs text-gray-400 leading-relaxed pl-6">
+                  Biweekly adds {fmt(r.basePayment / 12)}/mo
+                  {n(extra) > 0 && <> on top of your {fmt(n(extra))}</>}, so the loan is getting{" "}
+                  {fmt(r.effectiveExtra)}/mo extra.
+                </p>
+              )}
+            </div>
             {r && (
               <>
                 <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -137,27 +143,29 @@ export default function Calculator() {
                 <p className="text-xs text-green-300">over the life of the loan</p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-xs text-gray-400 mb-1">Return on extra payments</p>
-                <p className="text-lg font-medium text-gray-900">${r.returnOnExtra.toFixed(2)}</p>
-                <p className="text-xs text-gray-400 mt-0.5">saved per $1 paid early</p>
+                <p className="text-xs text-gray-400 mb-1">Extra paid in</p>
+                <p className="text-lg font-medium text-gray-900">{fmtK(r.totalExtraPaid)}</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {fmt(r.effectiveExtra)}/mo over {fmtMonths(r.withExtra.payoffMonths)}
+                  {n(oneTime) > 0 && <>, plus {fmtK(n(oneTime))} up front</>}
+                </p>
               </div>
             </div>
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline label="Total interest with extra payments" value={fmtK(r.withExtra.totalInterest)} />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
               <Stat label="Interest without extra" value={fmtK(r.base.totalInterest)} tone="amber" />
               <Stat label="Payoff time" value={fmtMonths(r.withExtra.payoffMonths)} sub={`was ${fmtMonths(r.base.payoffMonths)}`} tone="green" />
-              <Stat label="Extra you'd pay in" value={fmtK(r.totalExtraPaid)} />
               <Stat label="Net benefit" value={fmtK(r.interestSaved)} tone="green" />
             </div>
             <Takeaway>
               Adding <strong>{fmt(r.effectiveExtra)}/mo</strong>
               {n(oneTime) > 0 && <> plus a <strong>{fmt(n(oneTime))}</strong> lump sum</>} clears the loan{" "}
               <strong>{fmtMonths(r.monthsSaved)}</strong> early and saves{" "}
-              <strong>{fmtK(r.interestSaved)}</strong>. Because prepaying is a guaranteed{" "}
-              {n(rate)}% return, it beats any savings account — but not a matched 401(k) contribution.
+              <strong>{fmtK(r.interestSaved)}</strong> — a guaranteed return equal to your{" "}
+              <strong>{n(rate)}%</strong> rate.
             </Takeaway>
           </div>
 
