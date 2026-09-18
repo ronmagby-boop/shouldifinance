@@ -153,6 +153,13 @@ export default function Calculator() {
                     {r.spread > 0 ? "+" : ""}{pct(r.spread, 2)}
                   </span>
                 </div>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  This compares rates only, and charges the tax on your earnings every year. It does not
+                  see {n(fees) > 0 && <>the {fmt(n(fees))} in loan fees, or </>}the fact that the two
+                  sides are taxed on different amounts of gain — financing invests one lump sum, paying
+                  cash builds up monthly. The projection below counts all of that, and is what the
+                  results are based on.
+                </p>
                 <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                   <span className="text-xs text-gray-400">Total interest if you finance</span>
                   <span className="text-sm font-medium text-gray-900">{fmt(r.totalInterest)}</span>
@@ -166,7 +173,7 @@ export default function Calculator() {
       {r ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
-            <div className="grid grid-cols-3 divide-x divide-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Pay cash</p>
                 <p className="text-lg font-medium text-gray-900">{fmtK(r.cashFinal)}</p>
@@ -199,20 +206,45 @@ export default function Calculator() {
               <Stat label="Cash needed today" value={fmtK(r.cashOutlay)} tone="amber" />
               <Stat label="Loan rate vs. after-tax return" value={`${pct(n(rate), 2)} vs ${pct(r.afterTaxReturn, 2)}`} />
             </div>
-            <Takeaway tone={r.spread > 0 ? "blue" : "green"}>
-              {r.spread > 0 ? (
+            {/* Branch on the projection, the same figure the verdict tile uses. The
+                rate line above compares rates alone, so it can point the other way —
+                which used to print "Paying cash wins by" under a tile reading
+                "Financing wins by", both quoting the same dollar figure. */}
+            <Takeaway tone={r.advantage > 0 ? "blue" : "green"}>
+              {r.advantage > 0 ? (
                 <>
-                  Your cash earns <strong>{pct(r.afterTaxReturn, 2)}</strong> after tax while the loan
-                  costs {pct(n(rate), 2)} — a positive spread, so financing leaves you{" "}
-                  <strong>{fmt(Math.abs(r.advantage))}</strong> ahead. This only works if the money
-                  actually stays invested and you can comfortably make the payment.
+                  <strong>Financing wins by {fmt(Math.abs(r.advantage))}.</strong> Your cash earns{" "}
+                  {pct(r.afterTaxReturn, 2)} after tax while the loan costs {pct(n(rate), 2)}.{" "}
+                  {r.spread <= 0 ? (
+                    <>
+                      On rates alone that favours paying cash, but the projection taxes your earnings
+                      once when you sell rather than every year, and here that is enough to turn it
+                      around.
+                    </>
+                  ) : (
+                    <>The gap is wide enough to carry the cost of borrowing.</>
+                  )}{" "}
+                  This only works if the money actually stays invested and you can comfortably make the
+                  payment.
                 </>
               ) : (
                 <>
-                  <strong>Paying cash wins by {fmt(Math.abs(r.advantage))}.</strong> The loan costs{" "}
-                  {pct(n(rate), 2)} while your cash only earns {pct(r.afterTaxReturn, 2)} after tax, so
-                  every month financed is a guaranteed loss of the difference. Keep enough in reserve for
-                  emergencies before writing the check.
+                  <strong>Paying cash wins by {fmt(Math.abs(r.advantage))}.</strong>{" "}
+                  {r.spread > 0 ? (
+                    <>
+                      On rates alone financing looks slightly better — your cash earns{" "}
+                      {pct(r.afterTaxReturn, 2)} after tax against a {pct(n(rate), 2)} loan — but that
+                      margin is too thin to cover{n(fees) > 0 && <> the {fmt(n(fees))} in fees and</>}{" "}
+                      the tax each side actually pays, so paying cash still comes out ahead.
+                    </>
+                  ) : (
+                    <>
+                      The loan costs {pct(n(rate), 2)} while your cash only earns{" "}
+                      {pct(r.afterTaxReturn, 2)} after tax, so every month financed is a guaranteed loss
+                      of the difference.
+                    </>
+                  )}{" "}
+                  Keep enough in reserve for emergencies before writing the check.
                 </>
               )}
             </Takeaway>
