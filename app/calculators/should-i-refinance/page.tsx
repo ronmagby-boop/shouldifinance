@@ -26,6 +26,12 @@ export default function ShouldIRefinance() {
   const [newRate, setNewRate] = useState<Num>("");
   const [newTerm, setNewTerm] = useState<Num>("");
   const [extraPayment, setExtraPayment] = useState<Num>("");
+  /**
+   * False while the extra-payment field still mirrors the suggested saving.
+   * Set once the user types their own figure, so recalculations stop moving it
+   * under them. "Use savings" clears it again.
+   */
+  const [extraDirty, setExtraDirty] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const n = (v: Num) => (v === "" ? 0 : +v);
@@ -42,8 +48,6 @@ export default function ShouldIRefinance() {
     // Derive the payment through the same linked-pair helper the form uses, so
     // the example can never drift out of step with the amortization maths.
     const pay = payFrom(bal, rate, yrs);
-    const newLoan = bal + cash + costs; // costs financed, the default
-    const saving = Math.max(0, Math.round(n(pay) - payment(newLoan, nRate, nTermYears * 12)));
 
     setCurrentBalance(bal);
     setCurrentRate(rate);
@@ -56,8 +60,10 @@ export default function ShouldIRefinance() {
     setNewRate(nRate);
     setNewTerm(nTermYears);
     // Open on the scenario the caveat recommends: the saving redirected to
-    // principal, so total outlay is unchanged from what they pay today.
-    setExtraPayment(saving);
+    // principal, so total outlay is unchanged from what they pay today. Left
+    // untouched, so it keeps tracking the suggestion as inputs change.
+    setExtraDirty(false);
+    setExtraPayment("");
   };
 
   // --- the linked pair -------------------------------------------------
@@ -104,6 +110,31 @@ export default function ShouldIRefinance() {
     n(currentPayment) > 0 &&
     monthsFromPayment(n(currentBalance), n(currentRate), n(currentPayment)) === null;
 
+  /**
+   * The saving a refinance frees up each month. Depends only on the current
+   * payment and the new loan's terms — never on the extra payment — so the
+   * field below can be derived from it without a cycle.
+   */
+  const suggestedExtra = useMemo(() => {
+    const bal = n(currentBalance);
+    const pay = n(currentPayment);
+    const term = n(newTerm);
+    if (bal <= 0 || pay <= 0 || term <= 0) return 0;
+    const newLoan = bal + n(cashOut) + (financeClosing ? n(closingCosts) : 0);
+    const newPay = payment(newLoan, n(newRate), Math.round(term * 12));
+    return Math.max(0, Math.round(pay - newPay));
+  }, [currentBalance, currentPayment, cashOut, closingCosts, financeClosing, newRate, newTerm]);
+
+  /**
+   * What the field shows and the results use. Until the user edits it, this is
+   * the live suggestion, so toggling financing or changing a rate moves it too.
+   * Derived rather than stored, which avoids syncing state inside an effect.
+   */
+  const extraValue: Num = extraDirty ? extraPayment : (suggestedExtra > 0 ? suggestedExtra : "");
+
+  const onExtraChange = (v: Num) => { setExtraDirty(true); setExtraPayment(v); };
+  const useSuggestedExtra = () => { setExtraDirty(false); setExtraPayment(""); };
+
   const results = useMemo(() => {
     const bal = n(currentBalance);
     const rate = n(currentRate);
@@ -128,8 +159,7 @@ export default function ShouldIRefinance() {
     const newN = Math.round(term * 12);
     const newPayment = payment(newLoanAmount, n(newRate), newN);
     const monthlySavings = pay - newPayment;
-    const suggestedExtra = Math.max(0, Math.round(monthlySavings));
-    const extraPmt = n(extraPayment);
+    const extraPmt = n(extraValue);
 
     // Break-even is closing costs over the monthly saving in both states —
     // financing changes when you pay them, not what they cost.
@@ -167,12 +197,12 @@ export default function ShouldIRefinance() {
       curTotalInterest: cur.totalInterest, curPayoffMonths: cur.payoffMonths,
       horizonMonths, horizonYears, curInterestHorizon,
       newLoanAmount, newPayment, outOfPocket,
-      monthlySavings, suggestedExtra, extraPmt, breakEvenMonths,
+      monthlySavings, extraPmt, breakEvenMonths,
       newPayoffMonths: newAmort.payoffMonths, newInterestHorizon, interestDelta,
       currentBalances, newBalances,
       totalOutlay: newPayment + extraPmt,
     };
-  }, [currentBalance, currentRate, yearsLeft, currentPayment, cashOut, closingCosts, financeClosing, newRate, newTerm, extraPayment]);
+  }, [currentBalance, currentRate, yearsLeft, currentPayment, cashOut, closingCosts, financeClosing, newRate, newTerm, extraValue]);
 
   useEffect(() => {
     if (!results || !canvasRef.current) return;
@@ -394,17 +424,17 @@ export default function ShouldIRefinance() {
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5">
                     Extra monthly payment toward principal
-                    {results && results.suggestedExtra > 0 && (
-                      <button onClick={() => setExtraPayment(results.suggestedExtra)} className="ml-2 text-green-700 underline text-xs">
-                        Use savings ({fmt(results.suggestedExtra)}/mo)
+                    {suggestedExtra > 0 && (
+                      <button onClick={useSuggestedExtra} className="ml-2 text-green-700 underline text-xs">
+                        Use savings ({fmt(suggestedExtra)}/mo)
                       </button>
                     )}
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                    <input type="number" value={extraPayment}
-                      placeholder={results ? String(results.suggestedExtra) : "0"}
-                      onChange={e => setExtraPayment(e.target.value === "" ? "" : +e.target.value)}
+                    <input type="number" value={extraValue}
+                      placeholder={suggestedExtra > 0 ? String(suggestedExtra) : "0"}
+                      onChange={e => onExtraChange(e.target.value === "" ? "" : +e.target.value)}
                       className={inputCls + " pl-7 pr-3"} />
                   </div>
                   {results && results.extraPmt > 0 && (
