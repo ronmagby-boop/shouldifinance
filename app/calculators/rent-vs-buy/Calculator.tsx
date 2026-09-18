@@ -30,6 +30,8 @@ export default function Calculator() {
   const [filing, setFiling] = useState("married");
   /** null = follow the horizon; set once the user picks for themselves. */
   const [intentOverride, setIntentOverride] = useState<"sell" | "stay" | null>(null);
+  /** Share of the monthly surplus each household actually invests, 0-100. */
+  const [discipline, setDiscipline] = useState<Num>(50);
 
   const loadExample = () => {
     setPrice(450000);
@@ -52,6 +54,7 @@ export default function Calculator() {
     setCgRate(15);
     setFiling("married");
     setIntentOverride(null);
+    setDiscipline(50);
   };
 
   // Short horizons usually end in a sale; long ones usually do not. The user
@@ -89,6 +92,12 @@ export default function Calculator() {
     let buyerBasis = 0;
     let renterPortfolio = upFront;
     let renterBasis = upFront;
+    // The lump sum always goes in whole; only the monthly surplus is discounted.
+    const renterLump = upFront;
+    let renterMonthlyBasis = 0;
+    let crossoverMonth: number | null = null;
+    let payoffMonth: number | null = null;
+    const invested = Math.min(Math.max(n(discipline), 0), 100) / 100;
     let buyerOutlay = upFront;
     let renterOutlay = 0;
     const monthlyReturn = n(investReturn) / 100 / 12;
@@ -128,21 +137,30 @@ export default function Calculator() {
     for (let m = 1; m <= horizon; m++) {
       const interest = balance * monthlyRate;
       const principal = Math.max(0, Math.min(pi - interest, balance));
+      // Cash P&I actually due: the scheduled payment while a balance remains, a
+      // smaller one in the payoff month, and nothing at all afterwards. Without
+      // this the buyer keeps paying a mortgage they have already retired.
+      const piDue = balance > 0 ? interest + principal : 0;
       balance = Math.max(0, balance - principal);
+      if (payoffMonth === null && balance <= 0) payoffMonth = m;
 
       const taxMo = (homeValue * n(tax)) / 100 / 12;
       const maintMo = (homeValue * n(maintenance)) / 100 / 12;
-      const ownMonthly = pi + taxMo + n(insurance) + n(hoa) + maintMo;
+      const ownMonthly = piDue + taxMo + n(insurance) + n(hoa) + maintMo;
       const rentMonthly = currentRent + n(rentersIns);
       buyerOutlay += ownMonthly;
       renterOutlay += rentMonthly;
 
-      // Whichever household pays less that month invests the difference.
+      // Whichever household pays less that month invests the difference — but
+      // only the share they would realistically keep investing. The same
+      // discipline applies to both sides, so neither is flattered.
       const diff = ownMonthly - rentMonthly;
-      const renterAdd = Math.max(0, diff);
-      const buyerAdd = Math.max(0, -diff);
+      if (crossoverMonth === null && diff < 0) crossoverMonth = m;
+      const renterAdd = Math.max(0, diff) * invested;
+      const buyerAdd = Math.max(0, -diff) * invested;
       renterPortfolio = renterPortfolio * (1 + monthlyReturn) + renterAdd;
       renterBasis += renterAdd;
+      renterMonthlyBasis += renterAdd;
       buyerPortfolio = buyerPortfolio * (1 + monthlyReturn) + buyerAdd;
       buyerBasis += buyerAdd;
 
@@ -177,6 +195,10 @@ export default function Calculator() {
       finalRentPayment: currentRent,
       renterPortfolio,
       renterBasis,
+      renterLump,
+      renterMonthlyBasis,
+      crossoverMonth,
+      payoffMonth,
       renterGain: Math.max(0, renterPortfolio - renterBasis),
       renterTax: final.renterTax,
       buyerPortfolio,
@@ -188,7 +210,7 @@ export default function Calculator() {
       exclusionUsed: final.exclusionUsed,
       firstMonthOwn: pi + (n(price) * n(tax)) / 100 / 12 + n(insurance) + n(hoa) + (n(price) * n(maintenance)) / 100 / 12,
     };
-  }, [price, down, rate, term, tax, insurance, maintenance, hoa, appreciation, closingPct, sellingPct, rent, rentGrowth, rentersIns, investReturn, years, financeClosing, willSell, cgRate, exclusion]);
+  }, [price, down, rate, term, tax, insurance, maintenance, hoa, appreciation, closingPct, sellingPct, rent, rentGrowth, rentersIns, investReturn, years, financeClosing, willSell, cgRate, exclusion, discipline]);
 
   return (
     <CalcShell
@@ -259,6 +281,61 @@ export default function Calculator() {
               step={0.25}
               hint="What the renter earns investing the down payment and any monthly savings."
             />
+            <div>
+              <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                <label htmlFor="discipline" className="block text-xs text-gray-400">
+                  Share of the monthly difference actually invested
+                </label>
+                <span className="text-sm font-medium text-gray-900 tabular-nums shrink-0">
+                  {n(discipline)}%
+                </span>
+              </div>
+              {/* On a phone the presets drop to their own row so the slider keeps the
+                  full width — sharing it left about 137px, which is too fine to drag. */}
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                {/* touch-action: pan-y lets a vertical swipe scroll the page instead of
+                    dragging the thumb, which is the iOS Safari failure mode. The 44px
+                    height is the touch target; the thumb is drawn smaller inside it. */}
+                <input
+                  id="discipline"
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={n(discipline)}
+                  onChange={(e) => setDiscipline(Number(e.target.value))}
+                  style={{ touchAction: "pan-y" }}
+                  aria-label="Share of the monthly difference actually invested"
+                  className="w-full sm:flex-1 min-w-0 h-11 cursor-pointer appearance-none bg-transparent
+                    [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-gray-200
+                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:-mt-[9px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-800 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow
+                    [&::-moz-range-track]:h-1.5 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-gray-200
+                    [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-800 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
+                />
+                <div className="flex gap-1.5 shrink-0 self-start sm:self-auto">
+                  {[0, 50, 100].map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setDiscipline(v)}
+                      aria-pressed={n(discipline) === v}
+                      className={`h-11 w-11 rounded-lg text-xs font-medium tabular-nums transition-colors ${
+                        n(discipline) === v
+                          ? "bg-green-800 text-white"
+                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      }`}
+                    >
+                      {v}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-1.5">
+                This is the single biggest lever on the answer. Whichever side pays less
+                each month only comes out ahead if they actually invest the difference
+                instead of spending it — and the same share is applied to both sides.
+              </p>
+            </div>
             <NumField label="How long you'll stay" value={years} onChange={setYears} placeholder="10" suffix="yrs" />
             <SelectField
               label="At the end of that period"
@@ -307,7 +384,7 @@ export default function Calculator() {
       {r ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
-            <div className="grid grid-cols-3 divide-x divide-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Renting leaves you with</p>
                 <p className="text-lg font-medium text-gray-900">{fmtK(r.finalRent)}</p>
@@ -383,6 +460,8 @@ export default function Calculator() {
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between gap-2"><span className="text-gray-400">Portfolio</span><span className="text-gray-900">{fmtK(r.renterPortfolio)}</span></div>
                   <div className="flex justify-between gap-2"><span className="text-gray-400">Basis (what they put in)</span><span className="text-gray-900">{fmtK(r.renterBasis)}</span></div>
+                  <div className="flex justify-between gap-2 pl-3"><span className="text-gray-400">Day-one lump sum</span><span className="text-gray-500">{fmtK(r.renterLump)}</span></div>
+                  <div className="flex justify-between gap-2 pl-3"><span className="text-gray-400">Monthly contributions at {n(discipline)}%</span><span className="text-gray-500">{fmtK(r.renterMonthlyBasis)}</span></div>
                   <div className="flex justify-between gap-2"><span className="text-gray-400">Unrealised gain</span><span className="text-gray-900">{fmtK(r.renterGain)}</span></div>
                   <div className="flex justify-between gap-2 border-t border-gray-200 pt-1.5">
                     <span className="text-gray-400">{willSell ? `Capital gains tax at ${n(cgRate)}%` : "Not sold, so no tax"}</span>
@@ -434,6 +513,15 @@ export default function Calculator() {
                     sold in a day, the equity cannot.
                   </>
                 )}
+              </Takeaway>
+              <Takeaway tone="amber">
+                <strong>One thing this model cannot see</strong> is whether you would really invest the
+                difference. A mortgage takes the money whether you feel like saving that month or not,
+                while investing the gap every month for {n(years)} years takes a decision you have to keep
+                making. That is what the slider above is for — at{" "}
+                {n(discipline)}% it assumes you invest {n(discipline)} cents of every dollar you save, and
+                it applies the same assumption to whichever side is paying less. Be honest about your own
+                number rather than picking the one that gives the answer you want.
               </Takeaway>
             </div>
           </div>
