@@ -180,7 +180,9 @@ export function Toggle({
   children: ReactNode;
 }) {
   return (
-    <label className="flex items-start gap-2 cursor-pointer">
+    // min-h-11 keeps the whole label a >=44px touch target even when the text is
+    // short enough to fit on one or two lines.
+    <label className="flex items-start gap-2 cursor-pointer min-h-11">
       <input
         type="checkbox"
         checked={checked}

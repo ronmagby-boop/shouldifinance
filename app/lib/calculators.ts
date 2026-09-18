@@ -82,8 +82,9 @@ export const CALCULATORS: Calc[] = [
   },
   {
     slug: "pay-off-debt",
-    title: "Should I pay off debt or invest?",
-    nav: "Should I pay off debt or invest?",
+    // "a debt" is deliberate: this tool compares one debt at a time.
+    title: "Should I pay off a debt or invest?",
+    nav: "Should I pay off a debt or invest?",
     desc: "Compare the guaranteed return of paying down debt against investing the same money.",
     icon: Scale, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["pay off debt vs invest", "guaranteed return", "mortgage payoff"],
