@@ -6,7 +6,7 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment } from "../../lib/finance";
+import { payment, balanceAfter } from "../../lib/finance";
 
 export default function Calculator() {
   const [price, setPrice] = useState<Num>("");
@@ -16,6 +16,8 @@ export default function Calculator() {
   const [appr, setAppr] = useState<Num>("");
   const [downPct, setDownPct] = useState<Num>("");
   const [term, setTerm] = useState<Num>("");
+  /** What the waiting buyer pays to live somewhere meanwhile. */
+  const [rent, setRent] = useState<Num>("");
 
   const loadExample = () => {
     setPrice(420000);
@@ -25,6 +27,7 @@ export default function Calculator() {
     setAppr(4);
     setDownPct(10);
     setTerm(30);
+    setRent(2200);
   };
 
   const r = useMemo(() => {
@@ -49,16 +52,33 @@ export default function Calculator() {
     const piLater = payment(loanLater, n(laterRate), term_m);
     const interestLater = piLater * term_m - loanLater;
     const downLater = futurePrice * dp;
-    const totalLater = downLater + piLater * term_m;
+    // Waiting is not free: you live somewhere for those months, and the buy-now
+    // buyer is retiring principal the whole time. Leaving rent out was enough to
+    // reverse the verdict at any realistic figure.
+    const rentTotal = Math.max(0, n(rent)) * waitM;
+    const totalLater = rentTotal + downLater + piLater * term_m;
+
+    // What each side actually spends over the waiting window. The buy-now
+    // payments are split, because principal comes back as equity and interest
+    // does not — that is the like-for-like against rent.
+    const balAtWait = balanceAfter(loanNow, n(nowRate), term_m, waitM);
+    const principalWhileWaiting = Math.max(0, loanNow - balAtWait);
+    const paidWhileWaiting = piNow * waitM;
+    const interestWhileWaiting = Math.max(0, paidWhileWaiting - principalWhileWaiting);
 
     /**
      * The price at which waiting stops helping: the future price whose payment
      * at the lower rate exactly matches today's payment. Payment is linear in
      * the loan amount, so scale rather than search.
      */
+    // Solved on total cost, not on payment parity. Payment parity ignored both
+    // the bigger down payment and the rent, which is why it read high.
+    // Payment is linear in the loan, so the future price solves in closed form:
+    //   rent + fp*dp + fp*(1-dp)*perDollar*term = totalNow
     const perDollarLater = payment(1, n(laterRate), term_m);
-    const breakEvenLoan = perDollarLater > 0 ? piNow / perDollarLater : 0;
-    const breakEvenPrice = 1 - dp > 0 ? breakEvenLoan / (1 - dp) : 0;
+    const costPerFuturePriceDollar = dp + (1 - dp) * perDollarLater * term_m;
+    const breakEvenPrice =
+      costPerFuturePriceDollar > 0 ? Math.max(0, (totalNow - rentTotal) / costPerFuturePriceDollar) : 0;
     const maxTotalAppr = P > 0 ? (breakEvenPrice / P - 1) * 100 : 0;
     const maxAnnualAppr = P > 0 && waitYears > 0
       ? (Math.pow(breakEvenPrice / P, 1 / waitYears) - 1) * 100
@@ -74,8 +94,9 @@ export default function Calculator() {
       futurePrice, loanLater, piLater, interestLater, downLater, totalLater,
       breakEvenPrice, maxTotalAppr, maxAnnualAppr,
       monthlyGap, totalGap, waitingWins, priceRise, waitM, waitYears,
+      rentTotal, principalWhileWaiting, interestWhileWaiting, paidWhileWaiting,
     };
-  }, [price, nowRate, wait, laterRate, appr, downPct, term]);
+  }, [price, nowRate, wait, laterRate, appr, downPct, term, rent]);
 
   return (
     <CalcShell
@@ -83,7 +104,7 @@ export default function Calculator() {
       intro="Waiting for a lower rate only helps if prices stay still while you wait. Put today's price and rate against a future price and rate, and see how much the home can appreciate before the cheaper rate stops being worth it."
       onExample={loadExample}
       relatedSlugs={["mortgage-payment", "rent-vs-buy", "home-affordability"]}
-      disclaimer="For educational purposes only. Nobody can forecast rates or prices — treat the future figures as assumptions to test, not predictions. This compares purchase economics only, and ignores rent paid while waiting."
+      disclaimer="For educational purposes only. Nobody can forecast rates or prices — treat the future figures as assumptions to test, not predictions. Rent while waiting is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Buy today" badge="NOW">
@@ -100,6 +121,15 @@ export default function Calculator() {
         <Card title="Or wait" badge="LATER" badgeTone="blue">
           <div className="space-y-4">
             <NumField label="How long you'd wait" value={wait} onChange={setWait} placeholder="18" suffix="mo" />
+            <NumField
+              label="Rent while you wait"
+              value={rent}
+              onChange={setRent}
+              placeholder="2200"
+              prefix="$"
+              suffix="/mo"
+              hint="You still live somewhere for those months, and this is usually the largest number on this page. Enter 0 only if you really would pay nothing — staying with family, say."
+            />
             <NumField label="Rate you're hoping for" value={laterRate} onChange={setLaterRate} placeholder="5.75" suffix="%" step={0.125} />
             <NumField
               label="Home price growth while you wait"
@@ -142,11 +172,23 @@ export default function Calculator() {
               unit="/yr"
               tone={r.maxAnnualAppr > 0 ? "green" : "red"}
             />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
               <Stat label="Break-even price" value={fmtK(r.breakEvenPrice)} sub={`${pct(r.maxTotalAppr, 1)} above today`} />
               <Stat label="Price you assumed" value={fmtK(r.futurePrice)} sub={`+${fmtK(r.priceRise)}`} tone={r.waitingWins ? "green" : "amber"} />
               <Stat label="Monthly difference" value={`${r.monthlyGap >= 0 ? "+" : "−"}${fmt(Math.abs(r.monthlyGap))}`} tone={r.monthlyGap <= 0 ? "green" : "amber"} />
-              <Stat label="Extra down payment needed" value={fmtK(Math.max(0, r.downLater - r.downNow))} tone="amber" />
+              <Stat label="Rent while you wait" value={fmtK(r.rentTotal)} sub={`${fmtMonths(r.waitM)} of paying to live`} tone="amber" />
+              <Stat
+                label="Equity you'd have meanwhile"
+                value={fmtK(r.principalWhileWaiting)}
+                sub={`principal in the first ${fmtMonths(r.waitM)}`}
+                tone="green"
+              />
+              <Stat
+                label="Extra down payment needed"
+                value={fmtK(Math.max(0, r.downLater - r.downNow))}
+                sub="already counted below"
+                tone="amber"
+              />
             </div>
             <Takeaway tone={r.waitingWins ? "green" : "amber"}>
               At <strong>{pct(n(appr), 1)}</strong> a year the home would cost{" "}
@@ -161,7 +203,7 @@ export default function Calculator() {
 
           <ChartCard
             title="Total cost either way"
-            footnote="Down payment plus every payment over the full term."
+            footnote="Down payment plus every payment over the full term, and the rent paid while waiting."
           >
             <BarChart
               ariaLabel="Total cost of buying now compared with waiting"
@@ -177,6 +219,7 @@ export default function Calculator() {
                 {
                   label: `Wait ${fmtMonths(r.waitM)}`,
                   segments: [
+                    { label: "Rent", value: r.rentTotal, color: COLORS.red },
                     { label: "Down payment", value: r.downLater, color: COLORS.blue },
                     { label: "Principal", value: r.loanLater, color: COLORS.gray },
                     { label: "Interest", value: r.interestLater, color: COLORS.amber },
@@ -189,10 +232,13 @@ export default function Calculator() {
           <div className="border border-gray-200 rounded-2xl p-5 mb-4">
             <h2 className="text-sm font-medium text-gray-900 mb-3">What this leaves out</h2>
             <Takeaway tone="blue">
-              Rent paid while you wait is not counted here, and it is usually the largest missing number —
-              add it to the waiting side before deciding. On the other hand, a rate you lock today is not
-              permanent: if rates really do fall you can refinance, which is the strongest argument for
-              buying now and repricing later.
+              Over those {fmtMonths(r.waitM)} the buy-now payments come to{" "}
+              <strong>{fmtK(r.paidWhileWaiting)}</strong>, but{" "}
+              <strong>{fmtK(r.principalWhileWaiting)}</strong> of that is principal you keep, so the real
+              cost is the <strong>{fmtK(r.interestWhileWaiting)}</strong> of interest — against{" "}
+              <strong>{fmtK(r.rentTotal)}</strong> of rent, none of which comes back. What is still not
+              counted: a rate you lock today is not permanent. If rates really do fall you can refinance,
+              which is the strongest argument for buying now and repricing later.
             </Takeaway>
           </div>
         </>

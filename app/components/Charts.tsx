@@ -236,16 +236,26 @@ export function BarChart({
     });
   });
 
-  const legendItems = bars[0]?.segments.length > 1
-    ? bars[0].segments.map((s) => ({ label: s.label, color: s.color, dashed: false }))
-    : [];
+  // Union across every bar, not just the first: bars do not have to share a
+  // segment list, and a segment that only appears on one of them still needs a
+  // key. First appearance sets the order and the colour.
+  const seen = new Set<string>();
+  const legendItems: { label: string; color: string; dashed: boolean }[] = [];
+  for (const bar of bars) {
+    for (const seg of bar.segments) {
+      if (seen.has(seg.label)) continue;
+      seen.add(seg.label);
+      legendItems.push({ label: seg.label, color: seg.color, dashed: false });
+    }
+  }
+  const showLegend = bars.some((b) => b.segments.length > 1);
 
   return (
     <>
       <div style={{ position: "relative", width: "100%", height: `${height}px` }}>
         <canvas ref={ref} style={{ width: "100%", height: "100%" }} role="img" aria-label={ariaLabel} />
       </div>
-      {legendItems.length > 0 && <Legend items={legendItems} />}
+      {showLegend && legendItems.length > 0 && <Legend items={legendItems} />}
     </>
   );
 }
