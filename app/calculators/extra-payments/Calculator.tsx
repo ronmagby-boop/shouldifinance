@@ -41,7 +41,6 @@ export default function Calculator() {
 
     const monthsSaved = base.payoffMonths - withExtra.payoffMonths;
     const interestSaved = base.totalInterest - withExtra.totalInterest;
-    const totalExtraPaid = effectiveExtra * withExtra.payoffMonths + n(oneTime);
 
     const payoffDate = new Date();
     payoffDate.setMonth(payoffDate.getMonth() + withExtra.payoffMonths);
@@ -55,7 +54,6 @@ export default function Calculator() {
       withExtra,
       monthsSaved,
       interestSaved,
-      totalExtraPaid,
       payoffStr: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       originalStr: originalDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       newPayment: basePayment + effectiveExtra,
@@ -131,7 +129,7 @@ export default function Calculator() {
       {r ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Time saved</p>
                 <p className="text-lg font-medium text-gray-900">{fmtMonths(r.monthsSaved)}</p>
@@ -141,14 +139,6 @@ export default function Calculator() {
                 <p className="text-xs text-green-300 mb-0.5">Interest saved</p>
                 <p className="text-2xl font-medium text-white">{fmtK(r.interestSaved)}</p>
                 <p className="text-xs text-green-300">over the life of the loan</p>
-              </div>
-              <div className="p-4 text-center">
-                <p className="text-xs text-gray-400 mb-1">Extra paid in</p>
-                <p className="text-lg font-medium text-gray-900">{fmtK(r.totalExtraPaid)}</p>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {fmt(r.effectiveExtra)}/mo over {fmtMonths(r.withExtra.payoffMonths)}
-                  {n(oneTime) > 0 && <>, plus {fmtK(n(oneTime))} up front</>}
-                </p>
               </div>
             </div>
           </div>
