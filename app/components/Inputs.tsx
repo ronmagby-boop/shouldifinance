@@ -41,6 +41,7 @@ export function NumField({
   step,
   hint,
   action,
+  disabled = false,
 }: {
   label: string;
   value: Num;
@@ -51,10 +52,12 @@ export function NumField({
   step?: number;
   hint?: string;
   action?: ReactNode;
+  /** Dimmed and non-interactive — for a field the current mode does not use. */
+  disabled?: boolean;
 }) {
   const pad = `${prefix ? "pl-7" : "pl-3"} ${suffix ? (suffix.length > 2 ? "pr-12" : "pr-8") : "pr-3"}`;
   return (
-    <div>
+    <div className={disabled ? "opacity-50" : undefined}>
       <label className="block text-xs font-medium text-gray-500 mb-1.5">
         {label}
         {action}
@@ -71,8 +74,9 @@ export function NumField({
           value={value}
           step={step}
           placeholder={placeholder}
+          disabled={disabled}
           onChange={(e) => onChange(e.target.value === "" ? "" : +e.target.value)}
-          className={`${baseInput} ${pad}`}
+          className={`${baseInput} ${pad} ${disabled ? "cursor-not-allowed bg-gray-50" : ""}`}
         />
         {suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">

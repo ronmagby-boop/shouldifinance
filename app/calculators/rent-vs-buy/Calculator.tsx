@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
-  Card, NumField, Headline, Stat, Takeaway, EmptyState,
+  Card, NumField, SelectField, Toggle, Headline, Stat, Takeaway, EmptyState,
   fmt, fmtK, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
@@ -25,6 +25,11 @@ export default function Calculator() {
   const [rentersIns, setRentersIns] = useState<Num>("");
   const [investReturn, setInvestReturn] = useState<Num>("");
   const [years, setYears] = useState<Num>("");
+  const [financeClosing, setFinanceClosing] = useState(true);
+  const [cgRate, setCgRate] = useState<Num>(15);
+  const [filing, setFiling] = useState("married");
+  /** null = follow the horizon; set once the user picks for themselves. */
+  const [intentOverride, setIntentOverride] = useState<"sell" | "stay" | null>(null);
 
   const loadExample = () => {
     setPrice(450000);
@@ -43,34 +48,82 @@ export default function Calculator() {
     setRentersIns(20);
     setInvestReturn(7);
     setYears(10);
+    setFinanceClosing(true);
+    setCgRate(15);
+    setFiling("married");
+    setIntentOverride(null);
   };
+
+  // Short horizons usually end in a sale; long ones usually do not. The user
+  // can say otherwise, and that choice then sticks.
+  const intent: "sell" | "stay" = intentOverride ?? (n(years) >= 20 ? "stay" : "sell");
+  const willSell = intent === "sell";
+  /** IRC Section 121 exclusion on the gain from a primary residence. */
+  const exclusion = filing === "married" ? 500000 : 250000;
 
   const r = useMemo(() => {
     if (n(price) <= 0 || n(rent) <= 0 || n(years) <= 0) return null;
 
     const horizon = Math.round(n(years) * 12);
     const termMonths = Math.max(1, n(term) * 12);
-    const loan = Math.max(0, n(price) - n(down));
+    const closingCosts = (n(price) * n(closingPct)) / 100;
+    // Financed, the costs ride on the loan and the buyer only brings the down
+    // payment. Paid at the table, they are cash on top of it.
+    const loan = Math.max(0, n(price) - n(down)) + (financeClosing ? closingCosts : 0);
+    const upFront = financeClosing ? n(down) : n(down) + closingCosts;
     const pi = payment(loan, n(rate), termMonths);
     const monthlyRate = n(rate) / 100 / 12;
-    const closingCosts = (n(price) * n(closingPct)) / 100;
+    const cg = Math.max(0, n(cgRate)) / 100;
 
     // Both households start with the same cash and spend the same amount on
     // housing each month. The buyer sinks the cash into the house; the renter
     // invests it. Whoever has the cheaper month invests the difference, so the
     // two paths stay directly comparable on wealth.
+    //
+    // Basis is tracked on both portfolios — contributions are after-tax money —
+    // so a sale can be taxed on the gain alone, the same way the house is.
     let balance = loan;
     let homeValue = n(price);
     let currentRent = n(rent);
     let buyerPortfolio = 0;
-    let renterPortfolio = n(down) + closingCosts;
-    let buyerOutlay = n(down) + closingCosts;
+    let buyerBasis = 0;
+    let renterPortfolio = upFront;
+    let renterBasis = upFront;
+    let buyerOutlay = upFront;
     let renterOutlay = 0;
     const monthlyReturn = n(investReturn) / 100 / 12;
 
     const buyNet: number[] = [];
     const rentNet: number[] = [];
     let breakEvenMonth: number | null = null;
+
+    /**
+     * Where each side stands if they settled up today. The symmetry rule: on a
+     * sale both sides are marked to the liquidation — the house net of selling
+     * costs and capital gains tax, the portfolios net of tax on their gain. If
+     * there is no sale neither side is realised, so both are shown gross.
+     */
+    const positions = () => {
+      if (!willSell) {
+        return {
+          buyer: homeValue - balance + buyerPortfolio,
+          renter: renterPortfolio,
+          sellCosts: 0, homeGain: 0, homeTax: 0, exclusionUsed: 0,
+          renterTax: 0, buyerPortTax: 0,
+        };
+      }
+      const sellCosts = (homeValue * n(sellingPct)) / 100;
+      const homeGain = Math.max(0, homeValue - n(price));
+      const exclusionUsed = Math.min(homeGain, exclusion);
+      const homeTax = Math.max(0, homeGain - exclusion) * cg;
+      const renterTax = Math.max(0, renterPortfolio - renterBasis) * cg;
+      const buyerPortTax = Math.max(0, buyerPortfolio - buyerBasis) * cg;
+      return {
+        buyer: homeValue - sellCosts - balance + buyerPortfolio - homeTax - buyerPortTax,
+        renter: renterPortfolio - renterTax,
+        sellCosts, homeGain, homeTax, exclusionUsed, renterTax, buyerPortTax,
+      };
+    };
 
     for (let m = 1; m <= horizon; m++) {
       const interest = balance * monthlyRate;
@@ -86,36 +139,35 @@ export default function Calculator() {
 
       // Whichever household pays less that month invests the difference.
       const diff = ownMonthly - rentMonthly;
-      renterPortfolio = renterPortfolio * (1 + monthlyReturn) + Math.max(0, diff);
-      buyerPortfolio = buyerPortfolio * (1 + monthlyReturn) + Math.max(0, -diff);
+      const renterAdd = Math.max(0, diff);
+      const buyerAdd = Math.max(0, -diff);
+      renterPortfolio = renterPortfolio * (1 + monthlyReturn) + renterAdd;
+      renterBasis += renterAdd;
+      buyerPortfolio = buyerPortfolio * (1 + monthlyReturn) + buyerAdd;
+      buyerBasis += buyerAdd;
 
       homeValue *= Math.pow(1 + n(appreciation) / 100, 1 / 12);
       if (m % 12 === 0) currentRent *= 1 + n(rentGrowth) / 100;
 
-      // Wealth if you sold and settled up today.
-      const sellCosts = (homeValue * n(sellingPct)) / 100;
-      const buyerPosition = homeValue - sellCosts - balance + buyerPortfolio;
-      const renterPosition = renterPortfolio;
-
-      buyNet.push(buyerPosition);
-      rentNet.push(renterPosition);
-      if (breakEvenMonth === null && buyerPosition > renterPosition) breakEvenMonth = m;
+      const p = positions();
+      buyNet.push(p.buyer);
+      rentNet.push(p.renter);
+      if (breakEvenMonth === null && p.buyer > p.renter) breakEvenMonth = m;
     }
 
-    const finalBuy = buyNet[buyNet.length - 1];
-    const finalRent = rentNet[rentNet.length - 1];
+    const final = positions();
     const equity = homeValue - balance;
-    const invested = renterPortfolio;
 
     return {
       pi,
       loan,
       closingCosts,
+      upFront,
       buyNet,
       rentNet,
-      finalBuy,
-      finalRent,
-      advantage: finalBuy - finalRent,
+      finalBuy: final.buyer,
+      finalRent: final.renter,
+      advantage: final.buyer - final.renter,
       breakEvenMonth,
       homeValue,
       balance,
@@ -123,10 +175,20 @@ export default function Calculator() {
       buyerOutlay,
       renterOutlay,
       finalRentPayment: currentRent,
-      investedFinal: invested,
+      renterPortfolio,
+      renterBasis,
+      renterGain: Math.max(0, renterPortfolio - renterBasis),
+      renterTax: final.renterTax,
+      buyerPortfolio,
+      buyerPortTax: final.buyerPortTax,
+      buyerGross: homeValue - balance + buyerPortfolio,
+      sellCosts: final.sellCosts,
+      homeGain: final.homeGain,
+      homeTax: final.homeTax,
+      exclusionUsed: final.exclusionUsed,
       firstMonthOwn: pi + (n(price) * n(tax)) / 100 / 12 + n(insurance) + n(hoa) + (n(price) * n(maintenance)) / 100 / 12,
     };
-  }, [price, down, rate, term, tax, insurance, maintenance, hoa, appreciation, closingPct, sellingPct, rent, rentGrowth, rentersIns, investReturn, years]);
+  }, [price, down, rate, term, tax, insurance, maintenance, hoa, appreciation, closingPct, sellingPct, rent, rentGrowth, rentersIns, investReturn, years, financeClosing, willSell, cgRate, exclusion]);
 
   return (
     <CalcShell
@@ -157,8 +219,20 @@ export default function Calculator() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <NumField label="Closing costs" value={closingPct} onChange={setClosingPct} placeholder="3" suffix="%" step={0.5} />
-              <NumField label="Cost to sell" value={sellingPct} onChange={setSellingPct} placeholder="6" suffix="%" step={0.5} />
+              <NumField
+                label="Cost to sell"
+                value={sellingPct}
+                onChange={setSellingPct}
+                placeholder="6"
+                suffix="%"
+                step={0.5}
+                disabled={!willSell}
+                hint={!willSell ? "Not charged — you plan to stay, so there is no sale." : undefined}
+              />
             </div>
+            <Toggle checked={financeClosing} onChange={setFinanceClosing}>
+              Finance closing costs into the loan (unchecked = paid in cash at closing)
+            </Toggle>
             <NumField label="Home appreciation/yr" value={appreciation} onChange={setAppreciation} placeholder="3.5" suffix="%" step={0.25} />
             {r && (
               <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -186,6 +260,32 @@ export default function Calculator() {
               hint="What the renter earns investing the down payment and any monthly savings."
             />
             <NumField label="How long you'll stay" value={years} onChange={setYears} placeholder="10" suffix="yrs" />
+            <SelectField
+              label="At the end of that period"
+              value={intent}
+              onChange={v => setIntentOverride(v as "sell" | "stay")}
+              options={[
+                { value: "sell", label: "I plan to sell" },
+                { value: "stay", label: "I plan to stay" },
+              ]}
+              hint={
+                intentOverride === null
+                  ? `Defaulted from your ${n(years)}-year horizon. Change it if that is not the plan.`
+                  : "Selling costs and capital gains tax only apply if you sell."
+              }
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <NumField label="Capital gains rate" value={cgRate} onChange={setCgRate} placeholder="15" suffix="%" step={1} />
+              <SelectField
+                label="Filing status"
+                value={filing}
+                onChange={setFiling}
+                options={[
+                  { value: "married", label: "Married filing jointly" },
+                  { value: "single", label: "Single" },
+                ]}
+              />
+            </div>
             {r && (
               <>
                 <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -193,8 +293,10 @@ export default function Calculator() {
                   <span className="text-sm font-medium text-gray-900">{fmt(r.finalRentPayment)}/mo</span>
                 </div>
                 <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
-                  <span className="text-xs text-gray-400">Renter&apos;s portfolio</span>
-                  <span className="text-sm font-medium text-gray-900">{fmtK(r.investedFinal)}</span>
+                  <span className="text-xs text-gray-400">
+                    Renter&apos;s portfolio{willSell ? " (after tax)" : ""}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">{fmtK(r.finalRent)}</span>
                 </div>
               </>
             )}
@@ -209,41 +311,56 @@ export default function Calculator() {
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Renting leaves you with</p>
                 <p className="text-lg font-medium text-gray-900">{fmtK(r.finalRent)}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{willSell ? "after capital gains tax" : "portfolio, not sold"}</p>
               </div>
               <div className={`p-4 text-center ${r.advantage >= 0 ? "bg-green-800" : "bg-[#1a2744]"}`}>
                 <p className="text-xs text-green-300 mb-0.5">
                   {r.advantage >= 0 ? "Buying wins by" : "Renting wins by"}
                 </p>
                 <p className="text-2xl font-medium text-white">{fmtK(Math.abs(r.advantage))}</p>
-                <p className="text-xs text-green-300">after {n(years)} years</p>
+                <p className="text-xs text-green-300">
+                  after {n(years)} years, {willSell ? "both after tax" : "both before tax"}
+                </p>
               </div>
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Buying leaves you with</p>
                 <p className="text-lg font-medium text-gray-900">{fmtK(r.finalBuy)}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{willSell ? "after selling costs and tax" : "equity, not sold"}</p>
               </div>
             </div>
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline
-              label={`Break-even point`}
+              label={r.breakEvenMonth && r.advantage < 0 ? "Buying leads from" : "Break-even point"}
               value={r.breakEvenMonth ? `Year ${(r.breakEvenMonth / 12).toFixed(1)}` : "Not within this horizon"}
-              tone={r.breakEvenMonth ? "green" : "gray"}
+              tone={r.advantage >= 0 && r.breakEvenMonth ? "green" : "gray"}
             />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <Stat label={`Home value in year ${n(years)}`} value={fmtK(r.homeValue)} />
               <Stat label="Mortgage balance" value={fmtK(r.balance)} />
               <Stat label="Equity built" value={fmtK(r.equity)} tone="green" />
-              <Stat label="Up-front cash to buy" value={fmtK(n(down) + r.closingCosts)} tone="amber" />
+              <Stat label="Up-front cash to buy" value={fmtK(r.upFront)} tone="amber" sub={financeClosing ? "closing costs financed" : "includes closing costs"} />
             </div>
-            <Takeaway tone={r.breakEvenMonth ? "green" : "amber"}>
-              {r.breakEvenMonth ? (
+            <Takeaway tone={r.advantage >= 0 ? "green" : "amber"}>
+              {/* Branch on who is ahead at the horizon, not merely on whether the
+                  lines ever crossed — they can cross back. */}
+              {r.advantage >= 0 && r.breakEvenMonth ? (
                 <>
                   Buying pulls ahead of renting around{" "}
-                  <strong>year {(r.breakEvenMonth / 12).toFixed(1)}</strong>. Stay longer than that and
-                  buying wins; move sooner and the closing and selling costs — about{" "}
-                  <strong>{fmtK(r.closingCosts + (r.homeValue * n(sellingPct)) / 100)}</strong> combined —
-                  swallow the equity you built.
+                  <strong>year {(r.breakEvenMonth / 12).toFixed(1)}</strong> and is still ahead at{" "}
+                  <strong>year {n(years)}</strong>, by <strong>{fmtK(r.advantage)}</strong>. Move sooner
+                  and the transaction costs — about{" "}
+                  <strong>{fmtK(r.closingCosts + (willSell ? (r.homeValue * n(sellingPct)) / 100 : 0))}</strong>{" "}
+                  in total — swallow the equity you built.
+                </>
+              ) : r.breakEvenMonth ? (
+                <>
+                  Buying leads from about <strong>year {(r.breakEvenMonth / 12).toFixed(1)}</strong>, but
+                  the renter&apos;s portfolio overtakes it again before{" "}
+                  <strong>year {n(years)}</strong>, finishing <strong>{fmtK(Math.abs(r.advantage))}</strong>{" "}
+                  ahead. Compounding at {n(investReturn)}% eventually outruns a home appreciating at{" "}
+                  {n(appreciation)}%, so the winner here depends on exactly when you stop.
                 </>
               ) : (
                 <>
@@ -254,6 +371,71 @@ export default function Calculator() {
                 </>
               )}
             </Takeaway>
+          </div>
+
+          <div className="border border-gray-200 rounded-2xl p-5 mb-4">
+            <h2 className="text-sm font-medium text-gray-900 mb-3">
+              {willSell ? "Both sides, after tax" : "Both sides, nothing sold"}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-xs font-medium text-gray-900 mb-2">Renter</p>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between gap-2"><span className="text-gray-400">Portfolio</span><span className="text-gray-900">{fmtK(r.renterPortfolio)}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-gray-400">Basis (what they put in)</span><span className="text-gray-900">{fmtK(r.renterBasis)}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-gray-400">Unrealised gain</span><span className="text-gray-900">{fmtK(r.renterGain)}</span></div>
+                  <div className="flex justify-between gap-2 border-t border-gray-200 pt-1.5">
+                    <span className="text-gray-400">{willSell ? `Capital gains tax at ${n(cgRate)}%` : "Not sold, so no tax"}</span>
+                    <span className={willSell ? "text-amber-600" : "text-green-700"}>{willSell ? `−${fmtK(r.renterTax)}` : "—"}</span>
+                  </div>
+                  <div className="flex justify-between gap-2 font-medium"><span className="text-gray-900">Net</span><span className="text-gray-900">{fmtK(r.finalRent)}</span></div>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-xs font-medium text-gray-900 mb-2">Buyer</p>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between gap-2"><span className="text-gray-400">Equity{r.buyerPortfolio > 0 ? " + portfolio" : ""}</span><span className="text-gray-900">{fmtK(r.buyerGross)}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-gray-400">Gain on the home</span><span className="text-gray-900">{fmtK(r.homeGain)}</span></div>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-gray-400">Section 121 exclusion</span>
+                    <span className="text-green-700">{willSell ? `−${fmtK(r.exclusionUsed)} shielded` : "—"}</span>
+                  </div>
+                  <div className="flex justify-between gap-2 border-t border-gray-200 pt-1.5">
+                    <span className="text-gray-400">{willSell ? "Selling costs + capital gains tax" : "Not sold, so neither applies"}</span>
+                    <span className={willSell ? "text-amber-600" : "text-green-700"}>{willSell ? `−${fmtK(r.sellCosts + r.homeTax + r.buyerPortTax)}` : "—"}</span>
+                  </div>
+                  <div className="flex justify-between gap-2 font-medium"><span className="text-gray-900">Net</span><span className="text-gray-900">{fmtK(r.finalBuy)}</span></div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Takeaway tone="green">
+                <strong>The Section 121 exclusion</strong> is the biggest tax break most homeowners will
+                ever get, and many have never heard of it. Sell a home you have owned and lived in for at
+                least two of the last five years and{" "}
+                <strong>{fmtK(exclusion)}</strong> of the gain is excluded from capital gains tax entirely
+                ({filing === "married" ? "$500,000 married filing jointly" : "$250,000 filing single"};
+                the other status gives {filing === "married" ? "$250,000" : "$500,000"}). An investment
+                portfolio has no equivalent — every dollar of growth is taxable when sold.
+              </Takeaway>
+              <Takeaway tone={willSell ? "blue" : "amber"}>
+                {willSell ? (
+                  <>
+                    Because you plan to sell, both sides are shown at the same moment: the home net of
+                    selling costs and any tax the exclusion does not cover, and the portfolio net of tax on
+                    its gain. Comparing a house after its exit costs against a portfolio before them is the
+                    most common way this question gets answered wrongly.
+                  </>
+                ) : (
+                  <>
+                    Because you plan to stay, neither side is being cashed out, so both figures are shown
+                    before tax — no selling costs on the house and no capital gains tax on either the house
+                    or the portfolio. The catch is that they are not equally spendable: the portfolio can be
+                    sold in a day, the equity cannot.
+                  </>
+                )}
+              </Takeaway>
+            </div>
           </div>
 
           <ChartCard title="Wealth over time: buy vs. rent and invest">
