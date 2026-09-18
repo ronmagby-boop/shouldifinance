@@ -84,34 +84,96 @@ export default function Calculator() {
 
     const horizon = base.payoffMonths;
     const monthlyInvest = n(investReturn) / 100 / 12;
+    const marginal = n(marginalRate) / 100;
+
+    /**
+     * The deductible slice of one month's interest, given what this year has
+     * already used. The student loan cap is annual, so it has to be applied as
+     * the year runs rather than to a whole-year total.
+     */
+    const deductibleSlice = (interest: number, usedThisYear: number): number => {
+      if (debtType === "mortgage") return deductible ? interest : 0;
+      if (debtType === "student") {
+        return Math.max(0, Math.min(interest, STUDENT_LOAN_INTEREST_CAP - usedThisYear));
+      }
+      return 0;
+    };
 
     // Path A: prepay the debt, then invest the whole payment once it's gone.
     // Path B: keep the minimum payment and invest the extra from day one.
+    //
+    // Tax relief on deductible interest is cash back, so it is invested on
+    // whichever path earned it. Path B carries the debt longer and so collects
+    // more of it — which is exactly how a deduction tilts the comparison, and
+    // was missing while the effective rate was only ever displayed. The relief
+    // is invested rather than thrown at the loan so that the payoff date and
+    // interest saved stay what the amortization says.
     const payoffNet: number[] = [];
     const investNet: number[] = [];
+    const difference: number[] = [];
     let payoffPortfolio = 0;
     let investPortfolio = 0;
+    // Contributions are tracked as running totals because relief now adds to
+    // them; without that the relief would be taxed again as though it were gain.
+    let contributedA = 0;
+    let contributedB = 0;
+    let yearUsedA = 0;
+    let yearUsedB = 0;
+    let reliefA = 0;
+    let reliefB = 0;
 
     for (let m = 1; m <= horizon; m++) {
+      if ((m - 1) % 12 === 0) {
+        yearUsedA = 0;
+        yearUsedB = 0;
+      }
+      const openA = fast.balances[Math.min(m - 1, fast.balances.length - 1)] ?? 0;
+      const openB = base.balances[Math.min(m - 1, base.balances.length - 1)] ?? 0;
+      const dedA = deductibleSlice(openA * monthlyR, yearUsedA);
+      const dedB = deductibleSlice(openB * monthlyR, yearUsedB);
+      yearUsedA += dedA;
+      yearUsedB += dedB;
+      const backA = dedA * marginal;
+      const backB = dedB * marginal;
+      reliefA += backA;
+      reliefB += backB;
+
       // Path A
       const debtGoneA = m > fast.payoffMonths;
-      payoffPortfolio *= 1 + monthlyInvest;
-      if (debtGoneA) payoffPortfolio += basePayment + n(extra);
+      payoffPortfolio = payoffPortfolio * (1 + monthlyInvest) + backA;
+      contributedA += backA;
+      if (debtGoneA) {
+        payoffPortfolio += basePayment + n(extra);
+        contributedA += basePayment + n(extra);
+      }
       const balanceA = fast.balances[Math.min(m, fast.balances.length - 1)] ?? 0;
 
       // Path B
-      investPortfolio = investPortfolio * (1 + monthlyInvest) + n(extra);
+      investPortfolio = investPortfolio * (1 + monthlyInvest) + n(extra) + backB;
+      contributedB += n(extra) + backB;
       const balanceB = base.balances[Math.min(m, base.balances.length - 1)] ?? 0;
 
       // Only gains are taxed, and only when the money is eventually sold.
-      const contributedA = debtGoneA ? (basePayment + n(extra)) * (m - fast.payoffMonths) : 0;
-      const contributedB = n(extra) * m;
       const afterTaxA = payoffPortfolio - Math.max(0, payoffPortfolio - contributedA) * (n(taxRate) / 100);
       const afterTaxB = investPortfolio - Math.max(0, investPortfolio - contributedB) * (n(taxRate) / 100);
 
       payoffNet.push(afterTaxA - balanceA);
       investNet.push(afterTaxB - balanceB);
+      difference.push(afterTaxB - balanceB - (afterTaxA - balanceA));
     }
+
+    // Same gross return, taxed once at the end instead of every year. This is
+    // what the projection above actually earns, and it is why the displayed
+    // spread can disagree with it.
+    const years = horizon / 12;
+    const grossEnd = Math.pow(1 + n(investReturn) / 100, years);
+    const deferredEquivalent =
+      years > 0 && grossEnd - (grossEnd - 1) * (n(taxRate) / 100) > 0
+        ? (Math.pow(grossEnd - (grossEnd - 1) * (n(taxRate) / 100), 1 / years) - 1) * 100
+        : n(investReturn);
+
+    const allNet = [...payoffNet, ...investNet];
+    const netRange = allNet.length ? Math.max(...allNet) - Math.min(...allNet) : 0;
 
     const finalPayoff = payoffNet[payoffNet.length - 1] ?? 0;
     const finalInvest = investNet[investNet.length - 1] ?? 0;
@@ -129,6 +191,11 @@ export default function Calculator() {
       spread: afterTaxInvestReturn - effectiveDebtRate,
       payoffNet,
       investNet,
+      difference,
+      netRange,
+      deferredEquivalent,
+      reliefA,
+      reliefB,
       finalPayoff,
       finalInvest,
       advantage: finalInvest - finalPayoff,
@@ -240,6 +307,14 @@ export default function Calculator() {
                     {r.spread > 0 ? "+" : ""}{pct(r.spread, 2)}
                   </span>
                 </div>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  This spread charges the investment tax <strong className="font-medium text-gray-500">every
+                  year</strong>. The projection below instead defers it to a single gain taxed when you
+                  sell, which over {r.horizonYears.toFixed(0)} years is worth about{" "}
+                  <strong className="font-medium text-gray-500">{pct(r.deferredEquivalent, 2)}</strong> a
+                  year — so the two can point different ways, and the projection is the one the results
+                  below use.
+                </p>
               </>
             )}
           </div>
@@ -335,6 +410,22 @@ export default function Calculator() {
                 The prepay line jumps when the loan clears and the whole payment starts going into
                 investments instead. Net worth counts both sides — portfolio minus remaining balance — so
                 the two paths are compared on the same footing.
+              </Takeaway>
+            </div>
+          </ChartCard>
+
+          <ChartCard title="Difference between the strategies">
+            <LineChart
+              ariaLabel="How far ahead investing is compared with prepaying, month by month"
+              periodsPerYear={12}
+              baselineZero
+              series={[{ label: "Investing minus prepaying", color: COLORS.blue, data: r.difference }]}
+            />
+            <div className="mt-4">
+              <Takeaway tone="blue">
+                Above the zero line investing is ahead; below it prepaying is. This is the same
+                comparison as the chart above, on its own scale — a {fmtK(Math.abs(r.advantage))} gap is
+                invisible against two lines that span {fmtK(r.netRange)}, which is why they look like one.
               </Takeaway>
             </div>
           </ChartCard>
