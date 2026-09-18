@@ -37,18 +37,27 @@ export default function ShouldIRefinance() {
   const yearsOf = (months: number) => Math.round((months / 12) * 10) / 10;
 
   const loadExample = () => {
-    setCurrentBalance(300000);
-    setCurrentRate(7.5);
-    // $300,000 at 7.5% over 25 years is a $2,217 payment — all four reconcile.
-    setYearsLeft(25);
-    setCurrentPayment(2217);
+    const bal = 300000, rate = 7.5, yrs = 27;
+    const cash = 0, costs = 5000, nRate = 6.5, nTermYears = 30;
+    // Derive the payment through the same linked-pair helper the form uses, so
+    // the example can never drift out of step with the amortization maths.
+    const pay = payFrom(bal, rate, yrs);
+    const newLoan = bal + cash + costs; // costs financed, the default
+    const saving = Math.max(0, Math.round(n(pay) - payment(newLoan, nRate, nTermYears * 12)));
+
+    setCurrentBalance(bal);
+    setCurrentRate(rate);
+    setYearsLeft(yrs);
+    setCurrentPayment(pay);
     setDerived(null);
-    setCashOut(0);
-    setClosingCosts(5000);
+    setCashOut(cash);
+    setClosingCosts(costs);
     setFinanceClosing(true);
-    setNewRate(6.5);
-    setNewTerm(30);
-    setExtraPayment("");
+    setNewRate(nRate);
+    setNewTerm(nTermYears);
+    // Open on the scenario the caveat recommends: the saving redirected to
+    // principal, so total outlay is unchanged from what they pay today.
+    setExtraPayment(saving);
   };
 
   // --- the linked pair -------------------------------------------------
@@ -277,7 +286,7 @@ export default function ShouldIRefinance() {
                   <label className="block text-xs font-medium text-gray-500 mb-1.5">Current monthly payment (P&amp;I)</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                    <input type="number" value={currentPayment} placeholder="2217"
+                    <input type="number" value={currentPayment} placeholder="2162"
                       onChange={e => onPayment(e.target.value === "" ? "" : +e.target.value)}
                       className={inputCls + " pl-7 pr-3"} />
                   </div>
@@ -292,7 +301,7 @@ export default function ShouldIRefinance() {
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5">Years left</label>
                   <div className="relative">
-                    <input type="number" value={yearsLeft} step={0.1} placeholder="25"
+                    <input type="number" value={yearsLeft} step={0.1} placeholder="27"
                       onChange={e => onYears(e.target.value === "" ? "" : +e.target.value)}
                       className={inputCls + " pl-3 pr-10"} />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">yrs</span>
@@ -427,9 +436,10 @@ export default function ShouldIRefinance() {
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 leading-relaxed space-y-2">
               <p>
                 <strong>⚠ The &quot;reset the clock&quot; caveat</strong><br />
-                A new loan restarts amortization, so comparing lifetime interest on a fresh {n(newTerm) || 30}-year
-                loan against one you&apos;re partway through isn&apos;t apples-to-apples. The figures below compare
-                interest over the same {results ? results.horizonYears : n(yearsLeft) || 25}-year horizon instead.
+                A new loan restarts amortization, so comparing lifetime interest on a fresh{" "}
+                {n(newTerm) > 0 ? `${n(newTerm)}-year` : "new"} loan against one you&apos;re partway through
+                isn&apos;t apples-to-apples. The figures below compare interest over the same{" "}
+                {results ? `${results.horizonYears}-year` : "remaining"} horizon instead.
               </p>
               <p>
                 The strongest version of a refinance is to take the monthly saving and put it straight back
@@ -473,6 +483,10 @@ export default function ShouldIRefinance() {
                     {results.breakEvenMonths
                       ? `${(results.breakEvenMonths / 12).toFixed(1)} years to recoup costs`
                       : results.monthlySavings <= 0 ? "Payment doesn't decrease" : "No closing costs entered"}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                    Clearing the costs is a lower bar than finishing ahead overall — sending the saving to
+                    principal is what opens that gap.
                   </p>
                 </div>
                 <div className="p-4 text-center">
