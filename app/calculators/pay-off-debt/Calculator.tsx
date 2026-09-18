@@ -6,7 +6,7 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
-import { payment, amortize } from "../../lib/finance";
+import { payment, amortize, monthsFromPayment } from "../../lib/finance";
 import { TAX_YEAR, STANDARD_DEDUCTION, STUDENT_LOAN_INTEREST_CAP } from "../../lib/tax";
 
 /**
@@ -35,6 +35,8 @@ export default function Calculator() {
   const [deductible, setDeductible] = useState(false);
   const [marginalRate, setMarginalRate] = useState<Num>("");
   const [debtType, setDebtType] = useState<DebtType>("mortgage");
+  /** Revolving debt has no term, so the cardholder enters the payment instead. */
+  const [cardPayment, setCardPayment] = useState<Num>("");
 
   const loadExample = () => {
     setBalance(280000);
@@ -46,17 +48,50 @@ export default function Calculator() {
     setDeductible(false);
     setMarginalRate(24);
     setDebtType("mortgage");
+    setCardPayment("");
   };
+
+  const isRevolving = debtType === "credit-card";
 
   const r = useMemo(() => {
     const bal = n(balance);
-    const term = Math.round(n(yearsLeft) * 12);
-    if (bal <= 0 || term <= 0 || n(extra) <= 0) return null;
+    if (bal <= 0) return null;
 
-    const basePayment = payment(bal, n(rate), term);
-    const base = amortize(bal, n(rate), term);
+    const monthlyR = n(rate) / 100 / 12;
+    // What the balance costs in interest alone each month. A payment at or below
+    // this never touches principal.
+    const interestOnly = bal * monthlyR;
+
+    // A card has no term: the holder knows the payment and wants the date. Every
+    // other debt is the other way round — same linked pair, opposite direction.
+    let term: number;
+    let basePayment: number;
+    if (isRevolving) {
+      basePayment = n(cardPayment);
+      if (basePayment <= 0) return null;
+      // monthsFromPayment carries the relative epsilon and the 1200-month
+      // ceiling, so a payment that merely shaves the interest is rejected here
+      // instead of becoming a century-long schedule.
+      const derived = monthsFromPayment(bal, n(rate), basePayment);
+      if (derived === null) {
+        return { blocked: true as const, interestOnly, enteredPayment: basePayment };
+      }
+      term = Math.max(1, Math.ceil(derived));
+    } else {
+      term = Math.round(n(yearsLeft) * 12);
+      if (term <= 0) return null;
+      basePayment = payment(bal, n(rate), term);
+    }
+
+    // The same guard for every debt type, not only cards.
+    if (n(rate) > 0 && basePayment <= interestOnly * (1 + 1e-9)) {
+      return { blocked: true as const, interestOnly, enteredPayment: basePayment };
+    }
+    if (n(extra) <= 0) return null;
+
+    const base = amortize(bal, n(rate), term, 0, basePayment);
     const fast = amortize(bal, n(rate), term, n(extra), basePayment);
-    if (!Number.isFinite(fast.totalInterest)) return null;
+    if (!Number.isFinite(fast.totalInterest) || !Number.isFinite(base.totalInterest)) return null;
 
     // What the debt really costs after any tax relief its type actually allows.
     let effectiveDebtRate = n(rate);
@@ -75,7 +110,6 @@ export default function Calculator() {
     // rate stands.
 
     // Concrete context for the standard-deduction point in the mortgage panel.
-    const monthlyR = n(rate) / 100 / 12;
     let firstYearInterest = 0;
     for (let i = 0; i < Math.min(12, base.balances.length - 1); i++) {
       firstYearInterest += base.balances[i] * monthlyR;
@@ -180,6 +214,9 @@ export default function Calculator() {
     const interestSaved = base.totalInterest - fast.totalInterest;
 
     return {
+      blocked: false as const,
+      derivedMonths: isRevolving ? term : null,
+      interestOnly,
       basePayment,
       base,
       fast,
@@ -201,7 +238,7 @@ export default function Calculator() {
       advantage: finalInvest - finalPayoff,
       horizonYears: horizon / 12,
     };
-  }, [balance, rate, yearsLeft, extra, investReturn, taxRate, deductible, marginalRate, debtType]);
+  }, [balance, rate, yearsLeft, extra, investReturn, taxRate, deductible, marginalRate, debtType, isRevolving, cardPayment]);
 
   return (
     <CalcShell
@@ -223,9 +260,31 @@ export default function Calculator() {
             />
             <NumField label="Balance" value={balance} onChange={setBalance} placeholder="280000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Interest rate" value={rate} onChange={setRate} placeholder="6.75" suffix="%" step={0.125} />
-              <NumField label="Years remaining" value={yearsLeft} onChange={setYearsLeft} placeholder="26" suffix="yrs" />
+              <NumField label="Interest rate" value={rate} onChange={setRate} placeholder="18.99" suffix="%" step={0.125} />
+              {isRevolving ? (
+                <NumField
+                  label="Monthly payment"
+                  value={cardPayment}
+                  onChange={setCardPayment}
+                  placeholder="250"
+                  prefix="$"
+                />
+              ) : (
+                <NumField label="Years remaining" value={yearsLeft} onChange={setYearsLeft} placeholder="26" suffix="yrs" />
+              )}
             </div>
+            {isRevolving && (
+              <p className="text-xs text-gray-400 leading-relaxed">
+                A card has no set term, so the payoff date is worked out from your balance, rate and
+                payment rather than asked for.
+              </p>
+            )}
+            {isRevolving && r && !r.blocked && r.derivedMonths !== null && (
+              <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
+                <span className="text-xs text-gray-400">Paid off at this payment</span>
+                <span className="text-sm font-medium text-gray-900">{fmtMonths(r.derivedMonths)}</span>
+              </div>
+            )}
             <NumField
               label="Extra money available each month"
               value={extra}
@@ -245,7 +304,7 @@ export default function Calculator() {
                   {fmt(STANDARD_DEDUCTION.marriedFilingJointly)} married filing jointly and{" "}
                   {fmt(STANDARD_DEDUCTION.single)} single, and the deduction only helps to the extent
                   your total itemized deductions clear that bar.
-                  {r && (
+                  {r && !r.blocked && (
                     <>
                       {" "}
                       This loan&apos;s first-year interest is about{" "}
@@ -272,7 +331,7 @@ export default function Calculator() {
                 the effective cost below is simply the rate you are paying.
               </p>
             )}
-            {r && (
+            {r && !r.blocked && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                 <span className="text-xs text-gray-400">Effective cost of this debt</span>
                 <span className="text-sm font-medium text-gray-900">{pct(r.effectiveDebtRate, 2)}</span>
@@ -293,7 +352,7 @@ export default function Calculator() {
               step={1}
               hint="Use 0 for a 401(k), IRA, or other tax-sheltered account. This is charged as an annual drag, which overstates the cost for a buy-and-hold investor — if you expect to defer capital gains for decades, enter something below your marginal capital gains rate."
             />
-            {r && (
+            {r && !r.blocked && (
               <>
                 <div className="bg-blue-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                   <span className="text-xs text-blue-700 font-medium">After-tax expected return</span>
@@ -321,7 +380,7 @@ export default function Calculator() {
         </Card>
       </div>
 
-      {r ? (
+      {r && !r.blocked ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
@@ -334,7 +393,7 @@ export default function Calculator() {
                   {r.advantage > 0 ? "Investing wins by" : "Paying off wins by"}
                 </p>
                 <p className="text-2xl font-medium text-white">{fmtK(Math.abs(r.advantage))}</p>
-                <p className="text-xs text-green-300">after {r.horizonYears.toFixed(0)} years</p>
+                <p className="text-xs text-green-300">after {fmtMonths(Math.round(r.horizonYears * 12))}</p>
               </div>
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Invest instead</p>
@@ -342,6 +401,20 @@ export default function Calculator() {
               </div>
             </div>
           </div>
+
+          {/* Directly under the verdict rather than buried 600px below it: at card
+              rates this is the only line on the page that really matters. */}
+          {r.effectiveDebtRate > 10 && (
+            <div className="border-2 border-amber-300 bg-amber-50 rounded-2xl px-5 py-4 mb-4">
+              <p className="text-sm text-amber-900 leading-relaxed">
+                <strong>At {pct(r.effectiveDebtRate, 2)}, this is not a close call.</strong> That is
+                above the long-run average return of a broad stock index, before any tax on that
+                return — and the cost of the debt is certain while the return is not. Once the
+                effective rate is into double digits the gap is wider than the range long-run return
+                assumptions usually fall in.
+              </p>
+            </div>
+          )}
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline label="If you prepay, interest saved" value={fmtK(r.interestSaved)} />
@@ -361,7 +434,7 @@ export default function Calculator() {
                   <>
                     On these assumptions investing edges ahead by{" "}
                     <strong>{fmtK(Math.abs(r.advantage))}</strong> over{" "}
-                    {r.horizonYears.toFixed(0)} years. But that margin is an expectation, not a promise:
+                    {fmtMonths(Math.round(r.horizonYears * 12))}. But that margin is an expectation, not a promise:
                     a decade of poor returns flips it, while the {pct(r.effectiveDebtRate, 2)} you save
                     by prepaying happens no matter what markets do.
                     {r.spread <= 0 && (
@@ -383,15 +456,6 @@ export default function Calculator() {
                   </>
                 )}
               </Takeaway>
-              {r.effectiveDebtRate > 10 && (
-                <Takeaway tone="green">
-                  At <strong>{pct(r.effectiveDebtRate, 2)}</strong> this debt costs more than the
-                  long-run average return of a broad stock index, before any tax on that return — and
-                  the debt cost is certain while the return is not. Once the effective rate is into
-                  double digits the gap is wider than the range long-run return assumptions usually
-                  fall in, so the comparison stops being close.
-                </Takeaway>
-              )}
             </div>
           </div>
 
@@ -441,6 +505,26 @@ export default function Calculator() {
             />
           </ChartCard>
         </>
+      ) : r && r.blocked ? (
+        <div className="border border-red-100 bg-red-50 rounded-2xl px-5 py-4 mb-4 text-sm text-red-700 leading-relaxed">
+          {/* Cents matter here: the floor is a threshold the user has to clear, and
+              rounding $142.43 down to $142 would make the figure wrong to act on. */}
+          <strong>That payment does not cover the interest.</strong> At {pct(n(rate), 2)} on{" "}
+          {fmt(n(balance))}, interest alone comes to{" "}
+          <strong>
+            {/* Rounded UP: this is a floor the payment has to clear, and rounding
+                142.425 down to 142.42 would understate what it takes. */}
+            {(Math.ceil(r.interestOnly * 100) / 100).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+          </strong>{" "}
+          a month. Paying{" "}
+          {r.enteredPayment.toLocaleString("en-US", { style: "currency", currency: "USD" })} means the
+          balance grows instead of shrinking, so there is no payoff date and nothing to compare
+          against. A payment only just above that figure technically clears the balance, but takes
+          decades to do it.
+        </div>
       ) : (
         <div className="border border-gray-200 rounded-2xl mb-4 bg-gray-50">
           <EmptyState>
