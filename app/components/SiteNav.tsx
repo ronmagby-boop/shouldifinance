@@ -192,7 +192,7 @@ export default function SiteNav({
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 placeholder={`Search ${CALCULATORS.length} calculators…`}
-                className="flex-1 py-4 text-sm focus:outline-none"
+                className="flex-1 py-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none bg-transparent"
               />
               <button onClick={closeSearch} aria-label="Close search"
                 className="text-xs font-semibold text-gray-400 hover:text-gray-700 px-2 py-1">

@@ -6,6 +6,7 @@ import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/Calc
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
 import { related } from "../../lib/calculators";
+import { NumField, type Num } from "../../components/Inputs";
 
 export default function MortgageCalculator() {
   const [price, setPrice] = useState<number | "">("");
@@ -77,16 +78,14 @@ export default function MortgageCalculator() {
     return { total, pi, taxMo, pmiMo, totalInt, totalCost, payoffStr, intRatio, loan, amortRows };
   }, [price, down, rate, term, tax, ins, hoa, pmi]);
 
-  const syncFromAmt = (raw: string) => {
-    if (raw === "") { setDown(""); setDownPct(""); return; }
-    const val = +raw;
+  const syncFromAmt = (val: Num) => {
+    if (val === "") { setDown(""); setDownPct(""); return; }
     setDown(val);
     const P = n(price);
     setDownPct(P > 0 ? Math.round((val / P) * 100 * 10) / 10 : "");
   };
-  const syncFromPct = (raw: string) => {
-    if (raw === "") { setDownPct(""); setDown(""); return; }
-    const val = +raw;
+  const syncFromPct = (val: Num) => {
+    if (val === "") { setDownPct(""); setDown(""); return; }
     setDownPct(val);
     const P = n(price);
     setDown(P > 0 ? Math.round((P * val) / 100) : "");
@@ -136,72 +135,21 @@ export default function MortgageCalculator() {
                 {/* INPUTS */}
                 <div className="p-5 md:p-6 border-b md:border-b-0 md:border-r border-gray-100">
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5">Home price</label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                        <input type="number" value={price} placeholder="400,000" onChange={e => setPrice(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-7 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5">Down payment</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                          <input type="number" value={down} placeholder="80,000" onChange={e => syncFromAmt(e.target.value)} className="w-full pl-7 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                        </div>
-                        <div className="relative">
-                          <input type="number" value={downPct} placeholder="20" onChange={e => syncFromPct(e.target.value)} className="w-full pl-3 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                        </div>
-                      </div>
+                    <NumField label="Home price" value={price} onChange={setPrice} placeholder="400000" prefix="$" />
+                    <div className="grid grid-cols-2 gap-2">
+                      <NumField label="Down payment" value={down} onChange={syncFromAmt} placeholder="80000" prefix="$" />
+                      <NumField label="Down payment %" value={downPct} onChange={syncFromPct} placeholder="20" suffix="%" step={0.1} />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1.5">Interest rate</label>
-                        <div className="relative">
-                          <input type="number" value={rate} step={0.125} placeholder="6.8" onChange={e => setRate(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-3 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1.5">Loan term</label>
-                        <div className="relative">
-                          <input type="number" value={term} placeholder="30" onChange={e => setTerm(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-3 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">yrs</span>
-                        </div>
-                      </div>
+                      <NumField label="Interest rate" value={rate} onChange={setRate} placeholder="6.8" suffix="%" step={0.125} />
+                      <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5">Property tax (annual %)</label>
-                      <div className="relative">
-                        <input type="number" value={tax} step={0.1} placeholder="1.2" onChange={e => setTax(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-3 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                      </div>
-                    </div>
+                    <NumField label="Property tax (annual %)" value={tax} onChange={setTax} placeholder="1.2" suffix="%" step={0.1} />
                     <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1.5">Insurance/mo</label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                          <input type="number" value={ins} placeholder="120" onChange={e => setIns(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-7 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1.5">HOA/mo</label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                          <input type="number" value={hoa} placeholder="0" onChange={e => setHoa(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-7 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                        </div>
-                      </div>
+                      <NumField label="Insurance/mo" value={ins} onChange={setIns} placeholder="120" prefix="$" />
+                      <NumField label="HOA/mo" value={hoa} onChange={setHoa} placeholder="0" prefix="$" />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1.5">PMI rate (if down &lt; 20%)</label>
-                      <div className="relative">
-                        <input type="number" value={pmi} step={0.1} placeholder="0.5" onChange={e => setPmi(e.target.value === "" ? "" : +e.target.value)} className="w-full pl-3 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400" />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                      </div>
-                    </div>
+                    <NumField label="PMI rate (if down < 20%)" value={pmi} onChange={setPmi} placeholder="0.5" suffix="%" step={0.1} />
                   </div>
                 </div>
 

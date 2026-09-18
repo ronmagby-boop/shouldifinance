@@ -6,6 +6,7 @@ import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/Calc
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
+import { NumField } from "../../components/Inputs";
 
 type Num = number | "";
 
@@ -249,8 +250,6 @@ export default function ShouldIRefinance() {
     plotLine(newBalances, "#378ADD", [6, 3]);
   }, [results]);
 
-  const inputCls = "w-full py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 bg-white";
-  const noteCls = "text-xs text-gray-400 mt-1 leading-relaxed";
 
   return (
     <main className="min-h-screen bg-white font-sans">
@@ -293,53 +292,30 @@ export default function ShouldIRefinance() {
                 <span className="text-xs bg-gray-100 text-gray-500 rounded-full px-3 py-1">TODAY</span>
               </div>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Current balance</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                    <input type="number" value={currentBalance} placeholder="300000"
-                      onChange={e => onBalance(e.target.value === "" ? "" : +e.target.value)}
-                      className={inputCls + " pl-7 pr-3"} />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Current rate</label>
-                  <div className="relative">
-                    <input type="number" value={currentRate} step={0.125} placeholder="7.5"
-                      onChange={e => onRate(e.target.value === "" ? "" : +e.target.value)}
-                      className={inputCls + " pl-3 pr-8"} />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                  </div>
-                </div>
+                <NumField label="Current balance" value={currentBalance} onChange={onBalance} placeholder="300000" prefix="$" />
+                <NumField label="Current rate" value={currentRate} onChange={onRate} placeholder="7.5" suffix="%" step={0.125} />
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Current monthly payment (P&amp;I)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                    <input type="number" value={currentPayment} placeholder="2162"
-                      onChange={e => onPayment(e.target.value === "" ? "" : +e.target.value)}
-                      className={inputCls + " pl-7 pr-3"} />
-                  </div>
-                  {derived === "payment" && n(currentPayment) > 0 && (
-                    <p className={noteCls}>
-                      Calculated from your remaining term. Already paying extra? Type your real payment and
-                      the years left will follow.
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Years left</label>
-                  <div className="relative">
-                    <input type="number" value={yearsLeft} step={0.1} placeholder="27"
-                      onChange={e => onYears(e.target.value === "" ? "" : +e.target.value)}
-                      className={inputCls + " pl-3 pr-10"} />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">yrs</span>
-                  </div>
-                  {derived === "term" && n(yearsLeft) > 0 && (
-                    <p className={noteCls}>Calculated from your payment.</p>
-                  )}
-                </div>
+                <NumField
+                  label="Current monthly payment (P&I)"
+                  value={currentPayment}
+                  onChange={onPayment}
+                  placeholder="2162"
+                  prefix="$"
+                  hint={
+                    derived === "payment" && n(currentPayment) > 0
+                      ? "Calculated from your remaining term. Already paying extra? Type your real payment and the years left will follow."
+                      : undefined
+                  }
+                />
+                <NumField
+                  label="Years left"
+                  value={yearsLeft}
+                  onChange={onYears}
+                  placeholder="27"
+                  suffix="yrs"
+                  step={0.1}
+                  hint={derived === "term" && n(yearsLeft) > 0 ? "Calculated from your payment." : undefined}
+                />
 
                 {paymentTooSmall ? (
                   <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-xs text-red-700 leading-relaxed">
@@ -366,24 +342,8 @@ export default function ShouldIRefinance() {
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1.5">Cash out</label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                      <input type="number" value={cashOut} placeholder="0"
-                        onChange={e => setCashOut(e.target.value === "" ? "" : +e.target.value)}
-                        className={inputCls + " pl-7 pr-3"} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1.5">Closing costs</label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                      <input type="number" value={closingCosts} placeholder="5000"
-                        onChange={e => setClosingCosts(e.target.value === "" ? "" : +e.target.value)}
-                        className={inputCls + " pl-7 pr-3"} />
-                    </div>
-                  </div>
+                  <NumField label="Cash out" value={cashOut} onChange={setCashOut} placeholder="0" prefix="$" />
+                  <NumField label="Closing costs" value={closingCosts} onChange={setClosingCosts} placeholder="5000" prefix="$" />
                 </div>
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input type="checkbox" checked={financeClosing} onChange={e => setFinanceClosing(e.target.checked)} className="mt-0.5 w-4 h-4 accent-green-700 flex-shrink-0" />
@@ -396,24 +356,8 @@ export default function ShouldIRefinance() {
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1.5">New rate</label>
-                    <div className="relative">
-                      <input type="number" value={newRate} step={0.125} placeholder="6.5"
-                        onChange={e => setNewRate(e.target.value === "" ? "" : +e.target.value)}
-                        className={inputCls + " pl-3 pr-8"} />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1.5">New term</label>
-                    <div className="relative">
-                      <input type="number" value={newTerm} placeholder="30"
-                        onChange={e => setNewTerm(e.target.value === "" ? "" : +e.target.value)}
-                        className={inputCls + " pl-3 pr-10"} />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">yrs</span>
-                    </div>
-                  </div>
+                  <NumField label="New rate" value={newRate} onChange={setNewRate} placeholder="6.5" suffix="%" step={0.125} />
+                  <NumField label="New term" value={newTerm} onChange={setNewTerm} placeholder="30" suffix="yrs" />
                 </div>
                 {results && (
                   <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -421,29 +365,28 @@ export default function ShouldIRefinance() {
                     <span className="text-sm font-medium text-green-800">{fmt(results.newPayment)}</span>
                   </div>
                 )}
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                    Extra monthly payment toward principal
-                    {suggestedExtra > 0 && (
+                <NumField
+                  label="Extra monthly payment toward principal"
+                  value={extraValue}
+                  onChange={onExtraChange}
+                  placeholder={suggestedExtra > 0 ? String(suggestedExtra) : "0"}
+                  prefix="$"
+                  action={
+                    suggestedExtra > 0 ? (
                       <button onClick={useSuggestedExtra} className="ml-2 text-green-700 underline text-xs">
                         Use savings ({fmt(suggestedExtra)}/mo)
                       </button>
-                    )}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                    <input type="number" value={extraValue}
-                      placeholder={suggestedExtra > 0 ? String(suggestedExtra) : "0"}
-                      onChange={e => onExtraChange(e.target.value === "" ? "" : +e.target.value)}
-                      className={inputCls + " pl-7 pr-3"} />
-                  </div>
-                  {results && results.extraPmt > 0 && (
-                    <p className={noteCls}>
-                      Applied to the new loan. Total outlay {fmt(results.totalOutlay)}/mo
-                      {results.totalOutlay <= n(currentPayment) + 1 && <> — no more than you pay today</>}.
-                    </p>
-                  )}
-                </div>
+                    ) : undefined
+                  }
+                  hint={
+                    results && results.extraPmt > 0 ? (
+                      <>
+                        Applied to the new loan. Total outlay {fmt(results.totalOutlay)}/mo
+                        {results.totalOutlay <= n(currentPayment) + 1 && <> — no more than you pay today</>}.
+                      </>
+                    ) : undefined
+                  }
+                />
               </div>
             </div>
           </div>

@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* This site is light-only: every card, field and panel is a hardcoded white
+     or gray surface. Declaring the scheme stops the browser tinting form
+     controls for dark mode against backgrounds that never follow. */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,12 +16,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* The create-next-app dark-mode override that used to live here was removed.
+   It flipped --foreground to #ededed, which every <input> and <select>
+   inherited while keeping its hardcoded white background — 1.17:1 contrast,
+   so entered values read as faded placeholder text on any phone set to dark
+   mode. Nothing else on the site had a dark treatment to go with it. */
 
 body {
   background: var(--background);

@@ -1,5 +1,5 @@
 "use client";
-import type { ReactNode } from "react";
+import type { FocusEvent, MouseEvent, ReactNode } from "react";
 
 /** Inputs stay blank until the user types — never a sticky zero. */
 export type Num = number | "";
@@ -28,8 +28,56 @@ export const months = (m: number): string => {
   return `${y} yr${y === 1 ? "" : "s"} ${mo} mo`;
 };
 
+// text-gray-900 is explicit rather than inherited: the field background is a
+// hardcoded white, so the text on it must not depend on whatever an ancestor
+// happens to set. placeholder:text-gray-400 keeps a real entered value visibly
+// darker than a hint, which is the whole point of the distinction.
 const baseInput =
-  "w-full py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 bg-white";
+  "w-full py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 " +
+  "focus:outline-none focus:border-green-400 bg-white";
+
+/**
+ * Highlights the whole value when a field is entered, so the first keystroke
+ * replaces it instead of appending to it. Spread onto every numeric input on
+ * the site.
+ *
+ * Two wrinkles are handled here:
+ *  - On a pointer device the mouseup that follows the focusing click would
+ *    collapse the selection to a caret, so that one mouseup is suppressed. A
+ *    drag is left alone, since the user was deliberately picking a sub-range.
+ *  - iOS Safari re-places the caret on the frame after focus, undoing the
+ *    select() above, so the selection is re-asserted once on the next frame.
+ *
+ * Tapping an already-focused field never re-fires focus, so a second tap still
+ * places a cursor for editing a single digit.
+ */
+let pendingSelect: HTMLInputElement | null = null;
+let downX = 0;
+let downY = 0;
+
+export const selectOnFocus = {
+  onMouseDown: (e: MouseEvent<HTMLInputElement>) => {
+    downX = e.clientX;
+    downY = e.clientY;
+  },
+  onFocus: (e: FocusEvent<HTMLInputElement>) => {
+    const el = e.currentTarget;
+    pendingSelect = el;
+    el.select();
+    requestAnimationFrame(() => {
+      if (pendingSelect === el && el.ownerDocument.activeElement === el) el.select();
+    });
+  },
+  onMouseUp: (e: MouseEvent<HTMLInputElement>) => {
+    if (pendingSelect !== e.currentTarget) return;
+    pendingSelect = null;
+    if (Math.abs(e.clientX - downX) > 3 || Math.abs(e.clientY - downY) > 3) return;
+    e.preventDefault();
+  },
+  onBlur: () => {
+    pendingSelect = null;
+  },
+};
 
 export function NumField({
   label,
@@ -50,7 +98,7 @@ export function NumField({
   prefix?: string;
   suffix?: string;
   step?: number;
-  hint?: string;
+  hint?: ReactNode;
   action?: ReactNode;
   /** Dimmed and non-interactive — for a field the current mode does not use. */
   disabled?: boolean;
@@ -76,6 +124,7 @@ export function NumField({
           placeholder={placeholder}
           disabled={disabled}
           onChange={(e) => onChange(e.target.value === "" ? "" : +e.target.value)}
+          {...selectOnFocus}
           className={`${baseInput} ${pad} ${disabled ? "cursor-not-allowed bg-gray-50" : ""}`}
         />
         {suffix && (
@@ -100,7 +149,7 @@ export function SelectField({
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
-  hint?: string;
+  hint?: ReactNode;
 }) {
   return (
     <div>
