@@ -173,7 +173,7 @@ export default function Calculator() {
       {r ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
-            <div className="grid grid-cols-3 divide-x divide-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">EV total</p>
                 <p className="text-lg font-medium text-gray-900">{fmtK(r.evTotal)}</p>
