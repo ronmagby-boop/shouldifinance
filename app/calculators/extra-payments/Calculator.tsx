@@ -155,10 +155,14 @@ export default function Calculator() {
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline label="Total interest with extra payments" value={fmtK(r.withExtra.totalInterest)} />
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+            {/* Interest saved already has its own tile above. It was also shown here
+                as "Net benefit", which read as though the extra paid in had been
+                deducted — it had not, and deducting it would be wrong: both
+                schedules repay the same $320,000 of principal, so prepaying moves
+                principal earlier rather than adding any. */}
+            <div className="grid grid-cols-2 gap-2 mb-4">
               <Stat label="Interest without extra" value={fmtK(r.base.totalInterest)} tone="amber" />
               <Stat label="Payoff time" value={fmtMonths(r.withExtra.payoffMonths)} sub={`was ${fmtMonths(r.base.payoffMonths)}`} tone="green" />
-              <Stat label="Net benefit" value={fmtK(r.interestSaved)} tone="green" />
             </div>
             <Takeaway>
               Adding <strong>{fmt(r.effectiveExtra)}/mo</strong>
