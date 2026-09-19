@@ -183,12 +183,17 @@ export default function Calculator() {
       relatedSlugs={["should-i-refinance", "extra-payments", "pay-off-debt", "debt-payoff"]}
       disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend. Consolidating unsecured debt into a mortgage puts your home behind it."
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <Card title="Today's debts" badge="CURRENT">
+      {/* 5/3 rather than even halves: the debts panel puts five controls across
+          a row, the new loan panel stacks single fields. At equal widths the
+          row had 353px for four fields and needed 378, so it truncated.
+          The pair only sits side by side from xl, because below that the debts
+          panel needs the full width for the stacked card layout instead. */}
+      <div className="grid grid-cols-1 xl:grid-cols-8 gap-4 mb-4">
+        <Card title="Today's debts" badge="CURRENT" className="xl:col-span-5">
           <div className="space-y-2">
             {/* Column headings from md up; each row repeats them for screen
                 readers only, so the rows themselves stay one line tall. */}
-            <div className="hidden md:grid md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,1.1fr)_minmax(0,0.75fr)_minmax(0,0.95fr)_auto] md:gap-2 md:items-end md:px-0.5">
+            <div className="hidden xl:grid xl:grid-cols-[auto_minmax(120px,1.72fr)_minmax(104px,1fr)_minmax(82px,0.78fr)_minmax(88px,0.84fr)_auto] xl:gap-2 xl:items-end xl:px-0.5">
               <span className="w-8" aria-hidden="true" />
               <span className={headCell}>Debt</span>
               <span className={headCell}>Balance</span>
@@ -200,9 +205,9 @@ export default function Calculator() {
             {debts.map((d, i) => (
               <div
                 key={i}
-                className="grid grid-cols-[auto_minmax(0,1fr)_auto] md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,1.1fr)_minmax(0,0.75fr)_minmax(0,0.95fr)_auto] gap-2 items-center border-b border-gray-100 md:border-0 pb-2 md:pb-0"
+                className="grid grid-cols-[auto_minmax(0,1fr)_auto] xl:grid-cols-[auto_minmax(120px,1.72fr)_minmax(104px,1fr)_minmax(82px,0.78fr)_minmax(88px,0.84fr)_auto] gap-2 items-center border-b border-gray-100 xl:border-0 pb-2 xl:pb-0"
               >
-                <label className="flex items-center justify-center w-8 h-11 cursor-pointer md:order-1">
+                <label className="flex items-center justify-center w-8 h-11 cursor-pointer xl:order-1">
                   <input
                     type="checkbox"
                     checked={d.payoff}
@@ -217,26 +222,26 @@ export default function Calculator() {
                   onChange={(e) => update(i, { name: e.target.value })}
                   placeholder={`Debt ${i + 1}`}
                   aria-label={`Name of debt ${i + 1}`}
-                  className={`${textInput} md:order-2`}
+                  className={`${textInput} xl:order-2`}
                 />
                 <button
                   onClick={() => removeDebt(i)}
                   disabled={debts.length <= 1}
                   aria-label={`Remove ${d.name.trim() || `debt ${i + 1}`}`}
-                  className="w-7 h-11 flex items-center justify-center text-gray-300 hover:text-red-600 disabled:opacity-0 md:order-6"
+                  className="w-7 h-11 flex items-center justify-center text-gray-300 hover:text-red-600 disabled:opacity-0 xl:order-6"
                 >
                   <X className="w-4 h-4" aria-hidden="true" />
                 </button>
-                {/* md:contents lets these three join the row grid directly. */}
-                <div className="col-span-3 grid grid-cols-3 gap-2 md:contents">
-                  <div className="md:order-3">
-                    <NumField label="Balance" labelClass="md:sr-only" value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="14200" prefix="$" />
+                {/* xl:contents lets these three join the row grid directly. */}
+                <div className="col-span-3 grid grid-cols-[minmax(0,1.12fr)_minmax(0,0.92fr)_minmax(0,0.96fr)] gap-2 xl:contents">
+                  <div className="xl:order-3">
+                    <NumField label="Balance" labelClass="xl:sr-only" value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="14200" prefix="$" />
                   </div>
-                  <div className="md:order-4">
-                    <NumField label="Rate" labelClass="md:sr-only" value={d.rate} onChange={(v) => update(i, { rate: v })} placeholder="24.9" suffix="%" step={0.1} />
+                  <div className="xl:order-4">
+                    <NumField label="Rate" labelClass="xl:sr-only" value={d.rate} onChange={(v) => update(i, { rate: v })} placeholder="24.9" suffix="%" step={0.1} />
                   </div>
-                  <div className="md:order-5">
-                    <NumField label="Payment" labelClass="md:sr-only" value={d.pmt} onChange={(v) => update(i, { pmt: v })} placeholder="430" prefix="$" />
+                  <div className="xl:order-5">
+                    <NumField label="Payment" labelClass="xl:sr-only" value={d.pmt} onChange={(v) => update(i, { pmt: v })} placeholder="430" prefix="$" />
                   </div>
                 </div>
               </div>
@@ -279,7 +284,7 @@ export default function Calculator() {
           </div>
         </Card>
 
-        <Card title="The new loan" badge="PROPOSED" badgeTone="blue">
+        <Card title="The new loan" badge="PROPOSED" badgeTone="blue" className="xl:col-span-3">
           <div className="space-y-4">
             {base && !base.blocked && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
