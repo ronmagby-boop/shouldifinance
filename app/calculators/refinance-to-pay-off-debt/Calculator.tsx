@@ -382,16 +382,23 @@ export default function Calculator() {
                 <p className="text-lg font-medium text-gray-900">{pct(n(newRate), 2)}</p>
                 <p className="text-xs text-gray-400 mt-0.5">on {fmt(base.newLoan)}</p>
               </div>
-              {/* The rate the accelerated schedule works out to. With no extra
-                  entered it shows the note rate unchanged and says what applying
-                  the saving would make it, rather than a blank or a figure that
-                  looks like it is already being earned. */}
-              <div className="p-4 text-center bg-white">
-                <p className="text-xs text-gray-400 mb-1">Effective rate</p>
-                <p className={`text-lg font-medium ${r.extra > 0 ? "text-green-700" : "text-gray-400"}`}>
+              {/* The rate the accelerated schedule works out to. It only takes
+                  the green fill once an extra payment is actually entered, since
+                  the fill is what marks a figure as earned; with the field empty
+                  it stays neutral and shows the note rate with what applying the
+                  saving would reach. */}
+              <div className={`p-4 text-center ${r.extra > 0 ? "bg-green-800" : "bg-white"}`}>
+                <p className={`text-xs mb-0.5 ${r.extra > 0 ? "text-white/70" : "text-gray-400"}`}>
+                  Effective rate
+                </p>
+                <p
+                  className={`font-medium ${
+                    r.extra > 0 ? "text-2xl text-white" : "text-lg text-gray-400"
+                  }`}
+                >
                   {pct(r.extra > 0 ? r.effectiveRate : n(newRate), 2)}
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className={`text-xs ${r.extra > 0 ? "text-white/70" : "text-gray-400 mt-0.5"}`}>
                   {r.extra > 0 ? (
                     <>with {fmt(r.extra)}/mo extra on the principal</>
                   ) : suggestedExtra > 0 && r.effectiveAtSuggested < n(newRate) ? (
