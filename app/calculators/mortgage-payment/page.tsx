@@ -15,9 +15,15 @@ export default function MortgageCalculator() {
   const [rate, setRate] = useState<number | "">("");
   const [term, setTerm] = useState<number | "">("");
   const [tax, setTax] = useState<number | "">("");
+  /** Annual property tax as a dollar figure; the percent field derives from it
+   *  and vice versa, the same linked pair the down payment uses. Tax bills
+   *  arrive in dollars, and effective rates vary enough by state that guessing
+   *  a percentage moves the payment materially. */
+  const [taxAmt, setTaxAmt] = useState<number | "">("");
   const [ins, setIns] = useState<number | "">("");
   const [hoa, setHoa] = useState<number | "">("");
   const [pmi, setPmi] = useState<number | "">("");
+  const [showAll, setShowAll] = useState(false);
 
   /** Blank reads as zero for the maths, the same way should-i-refinance does it. */
   const n = (v: number | "") => (v === "" ? 0 : +v);
@@ -29,9 +35,11 @@ export default function MortgageCalculator() {
     setRate(6.8);
     setTerm(30);
     setTax(1.2);
+    setTaxAmt(4800);
     setIns(120);
     setHoa(0);
     setPmi(0.5);
+    setShowAll(false);
   };
 
   const fmt = (v: number) => "$" + Math.round(Math.abs(v)).toLocaleString();
@@ -42,14 +50,15 @@ export default function MortgageCalculator() {
 
   const results = useMemo(() => {
     const P = n(price), D = n(down), R = n(rate), T = n(term);
-    const TAX = n(tax), INS = n(ins), HOA = n(hoa), PMI = n(pmi);
+    const INS = n(ins), HOA = n(hoa), PMI = n(pmi);
     const loan = Math.max(0, P - D);
     const r = R / 100 / 12;
     const months = T * 12;
     const pi = months <= 0 ? 0
       : r > 0 ? (loan * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1)
       : loan / months;
-    const taxMo = (P * TAX) / 100 / 12;
+    // Driven by the dollar figure, so a tax bill entered exactly stays exact.
+    const taxMo = n(taxAmt) / 12;
     const pmiMo = P > 0 && D / P < 0.2 ? (loan * PMI) / 100 / 12 : 0;
     const total = pi + taxMo + INS + pmiMo + HOA;
     const totalInt = Math.max(0, pi * months - loan);
@@ -59,24 +68,50 @@ export default function MortgageCalculator() {
     const payoffStr = months > 0 ? now.toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "—";
     const intRatio = totalCost > 0 ? Math.round((totalInt / totalCost) * 100) : 0;
 
-    // Amortization
-    const amortRows: { yr: number; yearPrin: number; yearInt: number; bal: number; equity: number }[] = [];
+    // Amortization over the whole term, not a fixed five years. PMI is charged
+    // only while the balance is above 78% of the original price, which is where
+    // the servicer must drop it automatically -- the same rule the VA and
+    // buy-now-or-save pages use. Charging it for the full term overstated the
+    // cost of every low-down-payment loan on this page.
+    const amortRows: {
+      yr: number; yearPrin: number; yearInt: number; yearPmi: number;
+      bal: number; equity: number; crossover: boolean;
+    }[] = [];
     let bal = loan;
-    const years = Math.min(5, Math.floor(months / 12));
+    let pmiTotal = 0;
+    let pmiMonths = 0;
+    let crossoverYear: number | null = null;
+    const years = Math.max(0, Math.floor(months / 12));
     for (let yr = 1; yr <= years; yr++) {
-      let yearPrin = 0, yearInt = 0;
+      let yearPrin = 0, yearInt = 0, yearPmi = 0;
       for (let mo = 0; mo < 12 && (yr - 1) * 12 + mo < months; mo++) {
+        if (pmiMo > 0 && bal > P * 0.78) {
+          yearPmi += pmiMo;
+          pmiTotal += pmiMo;
+          pmiMonths++;
+        }
         const intPmt = bal * r;
         const prinPmt = Math.min(pi - intPmt, bal);
         yearInt += intPmt;
         yearPrin += prinPmt;
         bal = Math.max(0, bal - prinPmt);
       }
-      amortRows.push({ yr, yearPrin, yearInt, bal, equity: P - bal });
+      const crossover = crossoverYear === null && yearPrin > yearInt;
+      if (crossover) crossoverYear = yr;
+      amortRows.push({ yr, yearPrin, yearInt, yearPmi, bal, equity: P - bal, crossover });
     }
+    const pmiEndYear = pmiMo > 0 && pmiMonths > 0 ? Math.ceil(pmiMonths / 12) : null;
 
-    return { total, pi, taxMo, pmiMo, totalInt, totalCost, payoffStr, intRatio, loan, amortRows };
-  }, [price, down, rate, term, tax, ins, hoa, pmi]);
+    const shown = Math.min(5, amortRows.length);
+    const firstFive = amortRows.slice(0, shown);
+    const prin5 = firstFive.reduce((a, x) => a + x.yearPrin, 0);
+    const int5 = firstFive.reduce((a, x) => a + x.yearInt, 0);
+
+    return {
+      total, pi, taxMo, pmiMo, totalInt, totalCost, payoffStr, intRatio, loan, amortRows,
+      years, crossoverYear, pmiTotal, pmiMonths, pmiEndYear, shown, prin5, int5,
+    };
+  }, [price, down, rate, term, taxAmt, ins, hoa, pmi]);
 
   const syncFromAmt = (val: Num) => {
     if (val === "") { setDown(""); setDownPct(""); return; }
@@ -84,6 +119,19 @@ export default function MortgageCalculator() {
     const P = n(price);
     setDownPct(P > 0 ? Math.round((val / P) * 100 * 10) / 10 : "");
   };
+  const syncTaxFromAmt = (val: Num) => {
+    if (val === "") { setTaxAmt(""); setTax(""); return; }
+    setTaxAmt(val);
+    const P = n(price);
+    setTax(P > 0 ? Math.round((val / P) * 100 * 1000) / 1000 : "");
+  };
+  const syncTaxFromPct = (val: Num) => {
+    if (val === "") { setTax(""); setTaxAmt(""); return; }
+    setTax(val);
+    const P = n(price);
+    setTaxAmt(P > 0 ? Math.round((P * val) / 100) : "");
+  };
+
   const syncFromPct = (val: Num) => {
     if (val === "") { setDownPct(""); setDown(""); return; }
     setDownPct(val);
@@ -144,7 +192,10 @@ export default function MortgageCalculator() {
                       <NumField label="Interest rate" value={rate} onChange={setRate} placeholder="6.8" suffix="%" step={0.125} />
                       <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
                     </div>
-                    <NumField label="Property tax (annual %)" value={tax} onChange={setTax} placeholder="1.2" suffix="%" step={0.1} />
+                    <div className="grid grid-cols-2 gap-2">
+                      <NumField label="Property tax (annual $)" value={taxAmt} onChange={syncTaxFromAmt} placeholder="4800" prefix="$" />
+                      <NumField label="Property tax (annual %)" value={tax} onChange={syncTaxFromPct} placeholder="1.2" suffix="%" step={0.1} />
+                    </div>
                     <div className="grid grid-cols-2 gap-2">
                       <NumField label="Insurance/mo" value={ins} onChange={setIns} placeholder="120" prefix="$" />
                       <NumField label="HOA/mo" value={hoa} onChange={setHoa} placeholder="0" prefix="$" />
@@ -179,7 +230,7 @@ export default function MortgageCalculator() {
 
                     <div className="bg-green-50 border border-green-100 rounded-lg p-3 text-xs text-green-800 leading-relaxed">
                       At <strong>{rate}%</strong> for <strong>{term} years</strong>, you&apos;ll pay <strong>{fmtK(results.totalInt)}</strong> in interest — <strong>{results.intRatio}%</strong> of your total loan cost.
-                      {results.pmiMo > 0 && ` You're paying ${fmt(results.pmiMo)}/mo in PMI — drops once you reach 20% equity.`}
+                      {results.pmiMo > 0 && results.pmiEndYear !== null && ` You're paying ${fmt(results.pmiMo)}/mo in PMI, ending in year ${results.pmiEndYear} at ${fmt(results.pmiTotal)} in total.`}
                       {results.pmiMo === 0 && ` No PMI — your down payment is 20% or more.`}
                     </div>
                   </div>
@@ -189,7 +240,19 @@ export default function MortgageCalculator() {
 
             {/* AMORTIZATION TABLE */}
             <div className="mb-6">
-              <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">Amortization schedule — first 5 years</h2>
+              <div className="flex items-baseline justify-between gap-3 mb-3 pb-2 border-b border-gray-100">
+                <h2 className="text-base font-medium text-gray-900">
+                  Amortization schedule {showAll ? `— all ${results.years} years` : `— first ${results.shown} years`}
+                </h2>
+                {results.years > results.shown && (
+                  <button
+                    onClick={() => setShowAll((v) => !v)}
+                    className="text-xs font-medium text-green-700 underline shrink-0 min-h-11 px-1 -mx-1"
+                  >
+                    {showAll ? "Show first 5 years" : `Show all ${results.years} years`}
+                  </button>
+                )}
+              </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
@@ -202,9 +265,17 @@ export default function MortgageCalculator() {
                     </tr>
                   </thead>
                   <tbody>
-                    {results.amortRows.map((row) => (
-                      <tr key={row.yr} className="hover:bg-gray-50 border-b border-gray-50">
-                        <td className="px-3 py-2 text-gray-900">Year {row.yr}</td>
+                    {(showAll ? results.amortRows : results.amortRows.slice(0, results.shown)).map((row) => (
+                      <tr
+                        key={row.yr}
+                        className={`border-b border-gray-50 ${row.crossover ? "bg-green-50" : "hover:bg-gray-50"}`}
+                      >
+                        <td className="px-3 py-2 text-gray-900 whitespace-nowrap">
+                          Year {row.yr}
+                          {row.crossover && (
+                            <span className="ml-1.5 text-[10px] font-medium text-green-700">turning point</span>
+                          )}
+                        </td>
                         <td className="px-3 py-2 text-green-700">{fmt(row.yearPrin)}</td>
                         <td className="px-3 py-2 text-amber-600">{fmt(row.yearInt)}</td>
                         <td className="px-3 py-2 text-gray-900">{fmtK(row.bal)}</td>
@@ -213,6 +284,41 @@ export default function MortgageCalculator() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  After <strong className="text-gray-900">{results.shown} years</strong> you will have paid{" "}
+                  <strong className="text-amber-600">{fmt(results.int5)}</strong> in interest and repaid{" "}
+                  <strong className="text-green-700">{fmt(results.prin5)}</strong> of what you borrowed
+                  {results.prin5 > 0 && (
+                    <> — about {(results.int5 / results.prin5).toFixed(2)} dollars of interest for every dollar off the balance</>
+                  )}
+                  .
+                </p>
+                {results.crossoverYear !== null && (
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    The row marked <span className="text-green-700 font-medium">turning point</span> is{" "}
+                    <strong className="text-gray-900">year {results.crossoverYear}</strong>, the first year
+                    more of your payments go to principal than to interest.
+                    {!showAll && results.crossoverYear > results.shown && (
+                      <> It is further down the schedule — expand the table to see it.</>
+                    )}
+                  </p>
+                )}
+                {results.pmiEndYear !== null && (
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    PMI stops in <strong className="text-gray-900">year {results.pmiEndYear}</strong>, once the
+                    balance falls to 78% of the purchase price and the servicer has to drop it —{" "}
+                    <strong className="text-gray-900">{fmt(results.pmiTotal)}</strong> in total. You can ask to
+                    cancel earlier, at 80%.
+                  </p>
+                )}
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Equity here is your down payment plus the principal you have repaid. It leaves out any
+                  change in the home&apos;s value — appreciation comes on top of this, and a falling
+                  market comes off it.
+                </p>
               </div>
             </div>
 
