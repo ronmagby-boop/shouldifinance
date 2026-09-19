@@ -3,83 +3,123 @@ import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
   Card, NumField, Toggle, Headline, Stat, Takeaway, EmptyState,
-  fmt, pct, n, type Num,
+  fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
+import { payment, balanceAfter, typicalMonthlyRent } from "../../lib/finance";
+
+/** Typical annual PMI as a percent of the loan, by loan-to-value band. */
+function pmiRate(ltv: number): number {
+  if (ltv <= 80) return 0;
+  if (ltv <= 85) return 0.32;
+  if (ltv <= 90) return 0.52;
+  if (ltv <= 95) return 0.78;
+  return 1.03;
+}
+
+/**
+ * Selling first can free up more cash than anyone would actually put down.
+ * Capping the down payment at 20% stops the comparison assuming a household
+ * empties its savings into the house: 20% is where PMI stops, so there is no
+ * mortgage-cost reason to go past it, and anything above the cap stays liquid.
+ */
+const DOWN_PAYMENT_CAP = 0.2;
 
 export default function Calculator() {
   const [value, setValue] = useState<Num>("");
   const [balance, setBalance] = useState<Num>("");
   const [sellPct, setSellPct] = useState<Num>("");
   const [newPrice, setNewPrice] = useState<Num>("");
-  const [newDownPct, setNewDownPct] = useState<Num>("");
   const [otherCash, setOtherCash] = useState<Num>("");
-  const [bridgeCost, setBridgeCost] = useState<Num>("");
-  /** Sell-first has its own carrying cost; one shared field only ever charged
-   *  the buy-first side, which made buying first look dearer than it is. */
-  const [tempHousing, setTempHousing] = useState<Num>("");
-  const [needProceeds, setNeedProceeds] = useState(true);
+  const [rate, setRate] = useState<Num>("");
+  const [term, setTerm] = useState<Num>("");
+  const [interimMonthly, setInterimMonthly] = useState<Num>("");
+  const [interimMonths, setInterimMonths] = useState<Num>("");
+  const [recast, setRecast] = useState(false);
 
   const loadExample = () => {
     setValue(480000);
     setBalance(340000);
     setSellPct(6);
     setNewPrice(610000);
-    setNewDownPct(20);
     setOtherCash(60000);
-    setBridgeCost(9000);
-    setTempHousing(4000);
-    setNeedProceeds(true);
+    setRate(6.5);
+    setTerm(30);
+    setInterimMonthly(typicalMonthlyRent(480000));
+    setInterimMonths(2);
+    setRecast(false);
   };
 
   const r = useMemo(() => {
     const V = n(value);
     const NP = n(newPrice);
-    if (V <= 0 || NP <= 0) return null;
+    const term_m = Math.round(n(term) * 12);
+    if (V <= 0 || NP <= 0 || term_m <= 0 || n(rate) <= 0) return null;
 
     const sellingCosts = V * (Math.max(0, n(sellPct)) / 100);
     const netProceeds = V - sellingCosts - n(balance);
-    const downNeeded = NP * (Math.min(Math.max(n(newDownPct), 0), 100) / 100);
+    const gap = Math.max(0, Math.round(n(interimMonths)));
 
-    // Both paths put the SAME down payment on the table. What differs is when
-    // the money has to exist and where it comes from — not the amount.
-    // Sell first: the sale closes, so proceeds fund the down payment first.
-    const sellFirstAvailable = netProceeds + n(otherCash);
-    const sellFirstShortfall = Math.max(0, downNeeded - sellFirstAvailable);
-    const fromProceeds = Math.min(Math.max(0, netProceeds), downNeeded);
-    const ownCashSellFirst = Math.max(0, downNeeded - Math.max(0, netProceeds));
+    /**
+     * The two paths differ in one structural way: when the sale closes relative
+     * to the purchase. That decides how much cash can reach the down payment,
+     * which decides the loan, which decides the payment for the rest of the term.
+     */
+    const priceFor = (down: number) => {
+      const loan = Math.max(0, NP - down);
+      const ltv = NP > 0 ? (loan / NP) * 100 : 0;
+      const pmiPct = pmiRate(ltv);
+      const pmiMonthly = (loan * (pmiPct / 100)) / 12;
+      const pi = payment(loan, n(rate), term_m);
+      return { down, loan, ltv, pmiPct, pmiMonthly, pi, monthly: pi + pmiMonthly };
+    };
 
-    // Buy first: the equity is still locked in the old home, so the whole down
-    // payment has to come from savings or a bridge before any sale closes.
-    const buyFirstAvailable = n(otherCash);
-    const buyFirstShortfall = Math.max(0, downNeeded - buyFirstAvailable);
-    const fromSavings = Math.min(n(otherCash), downNeeded);
-    const bridgeNeeded = buyFirstShortfall > 0;
+    // Buy first: the old home has not sold, so only savings reach closing.
+    const buy = priceFor(Math.min(Math.max(0, n(otherCash)), NP));
 
-    // The only genuine dollar difference between the paths: what each one costs
-    // to carry. Everything else is timing.
-    const sellFirstOutlay = downNeeded + n(tempHousing);
-    const buyFirstOutlay = downNeeded + n(bridgeCost);
-    const costDifference = n(bridgeCost) - n(tempHousing);
+    // Sell first: proceeds land before closing, but capped — see the constant.
+    const availableSellFirst = Math.max(0, netProceeds) + Math.max(0, n(otherCash));
+    const capAmount = NP * DOWN_PAYMENT_CAP;
+    const sell = priceFor(Math.min(availableSellFirst, capAmount));
+    const cashLeftOver = Math.max(0, availableSellFirst - sell.down);
+
+    const monthlyGap = buy.monthly - sell.monthly;
+    const interimTotal = Math.max(0, n(interimMonthly)) * gap;
+    // How long the permanent premium takes to cost what the interim costs once.
+    const monthsToEqual = monthlyGap > 0 ? interimTotal / monthlyGap : null;
+
+    /**
+     * Recasting: once the old home sells, the proceeds go against the new loan
+     * and the payment is recalculated over what is left of the term, at the
+     * original rate. It is not a refinance — the note stays put.
+     */
+    const balanceAtSale = balanceAfter(buy.loan, n(rate), term_m, gap);
+    const recastBalance = Math.max(0, balanceAtSale - Math.max(0, netProceeds));
+    const remainingTerm = Math.max(1, term_m - gap);
+    const recastPi = payment(recastBalance, n(rate), remainingTerm);
+    const recastLtv = NP > 0 ? (recastBalance / NP) * 100 : 0;
+    const recastPmiPct = pmiRate(recastLtv);
+    const recastPmi = (recastBalance * (recastPmiPct / 100)) / 12;
+    const recastMonthly = recastPi + recastPmi;
+    const recastGap = recastMonthly - sell.monthly;
 
     return {
-      sellingCosts, netProceeds, downNeeded,
-      sellFirstAvailable, sellFirstShortfall, fromProceeds, ownCashSellFirst,
-      buyFirstAvailable, buyFirstShortfall, fromSavings, bridgeNeeded,
-      sellFirstOutlay, buyFirstOutlay, costDifference,
-      equity: V - n(balance),
-      canBuyFirstOutright: !bridgeNeeded,
-      sellFirstWorks: sellFirstShortfall <= 0,
+      sellingCosts, netProceeds, equity: V - n(balance),
+      buy, sell, cashLeftOver, capAmount, availableSellFirst,
+      monthlyGap, interimTotal, monthsToEqual, gap,
+      lifetimeGap: monthlyGap * term_m,
+      balanceAtSale, recastBalance, remainingTerm, recastPi, recastLtv,
+      recastPmiPct, recastPmi, recastMonthly, recastGap,
     };
-  }, [value, balance, sellPct, newPrice, newDownPct, otherCash, bridgeCost, tempHousing]);
+  }, [value, balance, sellPct, newPrice, otherCash, rate, term, interimMonthly, interimMonths]);
 
   return (
     <CalcShell
       slug="sell-first-or-buy-first"
-      intro="Selling first is cheaper and safer but can leave you without a home for a while. Buying first is smoother to live through but needs the down payment before your equity is free. This works out the cash each path needs."
+      intro="The order you do this in decides how much cash reaches the closing table, and that decides your loan. Buy first and only your savings are available, because your equity is still locked in the unsold home. Sell first and the proceeds come too — a smaller loan and a lower payment, but you pay for somewhere to live in between."
       onExample={loadExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "rent-vs-buy"]}
-      disclaimer="For educational purposes only. Bridge loans, contingent offers and rent-back agreements vary a lot by lender and market, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
+      disclaimer="For educational purposes only. PMI bands are typical figures rather than a quote, recasting is not offered on every loan, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The home you're selling" badge="CURRENT">
@@ -105,29 +145,36 @@ export default function Calculator() {
 
         <Card title="The home you're buying" badge="NEXT" badgeTone="blue">
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <NumField label="Price" value={newPrice} onChange={setNewPrice} placeholder="610000" prefix="$" />
-              <NumField label="Down payment" value={newDownPct} onChange={setNewDownPct} placeholder="20" suffix="%" />
-            </div>
+            <NumField label="Price" value={newPrice} onChange={setNewPrice} placeholder="610000" prefix="$" />
             <NumField
               label="Savings you can use"
               value={otherCash}
               onChange={setOtherCash}
               placeholder="60000"
               prefix="$"
-              hint="Cash on hand, not counting anything tied up in the current home."
+              hint="Cash on hand, not counting anything tied up in the current home. Buying first, this is all you have."
             />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Bridge cost if you buy first" value={bridgeCost} onChange={setBridgeCost} placeholder="9000" prefix="$" />
-              <NumField label="Housing cost if you sell first" value={tempHousing} onChange={setTempHousing} placeholder="4000" prefix="$" />
+              <NumField label="Rate" value={rate} onChange={setRate} placeholder="6.5" suffix="%" step={0.125} />
+              <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <NumField
+                label="Housing between closings"
+                value={interimMonthly}
+                onChange={setInterimMonthly}
+                placeholder={String(typicalMonthlyRent(n(value) || 480000))}
+                prefix="$"
+                suffix="/mo"
+              />
+              <NumField label="Months between" value={interimMonths} onChange={setInterimMonths} placeholder="2" suffix="mo" />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Bridge fees and interest on one side; storage, a short rental or a rent-back on the other.
-              These are the only figures that genuinely differ between the paths — the down payment
-              itself is the same either way.
+              Only selling first is charged this — a rent-back, a short let or storage while you find the
+              next place. Enter 0 if you would stay with family.
             </p>
-            <Toggle checked={needProceeds} onChange={setNeedProceeds}>
-              I need the sale proceeds to cover the down payment
+            <Toggle checked={recast} onChange={setRecast}>
+              Recast the new loan once the old home sells
             </Toggle>
           </div>
         </Card>
@@ -135,142 +182,190 @@ export default function Calculator() {
 
       {r ? (
         <>
+          <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+              <div className="p-4 text-center">
+                <p className="text-xs text-gray-400 mb-1">Sell first</p>
+                <p className="text-lg font-medium text-gray-900">{fmt(r.sell.monthly)}/mo</p>
+                <p className="text-xs text-gray-400 mt-0.5">{fmtK(r.sell.loan)} loan</p>
+              </div>
+              <div className={`p-4 text-center ${r.monthlyGap > 0 ? "bg-green-800" : "bg-[#1a2744]"}`}>
+                <p className="text-xs text-white/70 mb-0.5">
+                  {r.monthlyGap > 0 ? "Buying first costs" : "Selling first costs"}
+                </p>
+                <p className="text-2xl font-medium text-white">{fmt(Math.abs(r.monthlyGap))}/mo</p>
+                <p className="text-xs text-white/70">more, every month</p>
+              </div>
+              <div className="p-4 text-center">
+                <p className="text-xs text-gray-400 mb-1">Buy first</p>
+                <p className="text-lg font-medium text-gray-900">{fmt(r.buy.monthly)}/mo</p>
+                <p className="text-xs text-gray-400 mt-0.5">{fmtK(r.buy.loan)} loan</p>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="border border-gray-200 rounded-2xl p-5 bg-gray-50">
-              <Headline
-                label="Sell first — down payment at closing"
-                value={fmt(r.downNeeded)}
-                tone="green"
-              />
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <Stat label="Funded by the sale" value={fmt(r.fromProceeds)} tone="green" sub="already in hand" />
+              <Headline label="Sell first — monthly payment" value={fmt(r.sell.monthly)} tone="green" />
+              <div className="grid grid-cols-2 gap-2">
                 <Stat
-                  label="Funded by your cash"
-                  value={r.ownCashSellFirst > 0 ? fmt(r.ownCashSellFirst) : "None needed"}
-                  tone={r.ownCashSellFirst > 0 ? "amber" : "green"}
+                  label="Down payment"
+                  value={fmt(r.sell.down)}
+                  tone="green"
+                  sub={r.cashLeftOver > 0 ? `${fmt(r.cashLeftOver)} stays liquid` : "proceeds plus savings"}
                 />
+                <Stat label="Loan amount" value={fmtK(r.sell.loan)} sub={`${pct(r.sell.ltv, 1)} of the price`} />
                 <Stat
-                  label="Still short"
-                  value={r.sellFirstShortfall > 0 ? fmt(r.sellFirstShortfall) : "None"}
-                  tone={r.sellFirstShortfall > 0 ? "red" : "green"}
-                  sub={r.sellFirstShortfall > 0 ? "proceeds and savings combined" : "proceeds and savings cover it"}
+                  label="PMI"
+                  value={r.sell.pmiPct > 0 ? `${fmt(r.sell.pmiMonthly)}/mo` : "None"}
+                  tone={r.sell.pmiPct > 0 ? "amber" : "green"}
+                  sub={r.sell.pmiPct > 0 ? `${r.sell.pmiPct}%/yr at this LTV` : "20% down or more"}
                 />
-                <Stat label="Typical timeline" value="1–3 months" sub="sale closes, then you buy" />
+                <Stat label="Interim housing" value={fmt(r.interimTotal)} tone="amber" sub={`${fmtMonths(r.gap)} between closings`} />
               </div>
-              <Takeaway tone="green">
-                You know exactly what you have to spend and carry one mortgage at a time. The cost is
-                flexibility: you may need a rent-back or a short let between closings.
-              </Takeaway>
             </div>
 
             <div className="border border-gray-200 rounded-2xl p-5 bg-gray-50">
               <Headline
-                label="Buy first — down payment at closing"
-                value={fmt(r.downNeeded)}
-                tone={r.canBuyFirstOutright ? "green" : "red"}
+                label="Buy first — monthly payment"
+                value={fmt(r.buy.monthly)}
+                tone={r.monthlyGap > 0 ? "red" : "green"}
               />
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <Stat label="Funded by the sale" value="Nothing yet" tone="amber" sub="equity is locked until you sell" />
-                <Stat label="Funded by your cash" value={fmt(r.fromSavings)} tone={r.canBuyFirstOutright ? "green" : "default"} />
+              <div className="grid grid-cols-2 gap-2">
+                <Stat label="Down payment" value={fmt(r.buy.down)} sub="savings only — equity is locked" />
+                <Stat label="Loan amount" value={fmtK(r.buy.loan)} sub={`${pct(r.buy.ltv, 1)} of the price`} />
                 <Stat
-                  label="Needs a bridge"
-                  value={r.bridgeNeeded ? fmt(r.buyFirstShortfall) : "No"}
-                  tone={r.bridgeNeeded ? "red" : "green"}
-                  sub={r.bridgeNeeded ? "borrowed until the sale closes" : "savings cover it outright"}
+                  label="PMI"
+                  value={r.buy.pmiPct > 0 ? `${fmt(r.buy.pmiMonthly)}/mo` : "None"}
+                  tone={r.buy.pmiPct > 0 ? "amber" : "green"}
+                  sub={r.buy.pmiPct > 0 ? `${r.buy.pmiPct}%/yr at this LTV` : "20% down or more"}
                 />
-                <Stat label="Typical timeline" value="2–4 months" sub="buy, move, then sell" />
+                <Stat label="Interim housing" value="None" tone="green" sub="you move once" />
               </div>
-              <Takeaway tone={r.bridgeNeeded ? "amber" : "blue"}>
-                You move once and never live in limbo. The risk is carrying both homes if the sale is slow —
-                two mortgages, and a price cut if you get impatient.
-              </Takeaway>
             </div>
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-            {/* Both paths put the same down payment on the table. The old panel
-                subtracted two different quantities and presented the result as a
-                cost of buying first, which it never was. */}
             <Headline
-              label={
-                r.costDifference === 0
-                  ? "Cost difference between the paths"
-                  : r.costDifference > 0
-                    ? "Buying first costs more to carry"
-                    : "Selling first costs more to carry"
-              }
-              value={fmt(Math.abs(r.costDifference))}
-              tone={r.costDifference === 0 ? "green" : "gray"}
+              label="Permanent against temporary"
+              value={`${fmt(Math.abs(r.monthlyGap))}/mo vs ${fmt(r.interimTotal)} once`}
+              tone="gray"
             />
-            <p className="text-xs text-gray-400 leading-relaxed mb-3">
-              Both paths need the same{" "}
-              <strong className="font-medium text-gray-500">{fmt(r.downNeeded)}</strong> down payment.
-              This is the difference in what each costs to carry — {fmt(n(bridgeCost))} of
-              bridge against {fmt(n(tempHousing))} of temporary housing. The real decision is timing
-              and financing, not the size of the check.
-            </p>
-            <Takeaway tone={needProceeds && r.bridgeNeeded ? "red" : "blue"}>
-              {needProceeds && r.bridgeNeeded ? (
+            <Takeaway tone={r.monthlyGap > 0 ? "amber" : "blue"}>
+              {r.monthlyGap > 0 ? (
                 <>
-                  You said you need the sale proceeds for the down payment, and your savings fall{" "}
-                  <strong>{fmt(r.buyFirstShortfall)}</strong> short of it. Buying first means a bridge loan
-                  or a sale contingency — expect the contingency to weaken your offer in a competitive
-                  market. Selling first is the realistic path here.
-                </>
-              ) : r.canBuyFirstOutright ? (
-                <>
-                  Your savings of <strong>{fmt(r.buyFirstAvailable)}</strong> already cover the{" "}
-                  <strong>{fmt(r.downNeeded)}</strong> down payment, so you can buy first without a bridge. That
-                  buys you a clean move and a stronger offer — just make sure you could carry both
-                  mortgages for a few months if the sale drags.
+                  Buying first leaves you with a <strong>{fmt(Math.abs(r.monthlyGap))}</strong> higher
+                  payment for the whole term — <strong>{fmtK(r.lifetimeGap)}</strong> over {n(term)}{" "}
+                  years — because only your savings reach the closing table. Selling first costs{" "}
+                  <strong>{fmt(r.interimTotal)}</strong> once, and then it is over.
+                  {r.monthsToEqual !== null && (
+                    <>
+                      {" "}
+                      The interim housing is worth about{" "}
+                      <strong>{r.monthsToEqual.toFixed(1)} months</strong> of the higher payment; past
+                      that, buying first is the dearer choice for as long as you keep the loan.
+                    </>
+                  )}
                 </>
               ) : (
                 <>
-                  Buying first needs <strong>{fmt(r.buyFirstShortfall)}</strong> more than you have in
-                  savings, so it depends on a bridge loan. Price that borrowing carefully — it is short
-                  term and usually expensive.
+                  Your savings alone already fund as much of this purchase as the sale would, so buying
+                  first costs you nothing extra each month. The interim housing you would pay selling
+                  first — <strong>{fmt(r.interimTotal)}</strong> — is avoidable here.
                 </>
               )}
             </Takeaway>
           </div>
 
-          <ChartCard title="Cash needed up front" footnote="The same down payment either way — the bars differ in where the money comes from and when, plus each path's carrying cost.">
+          {recast && (
+            <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+              <Headline
+                label="Buy first, then recast — monthly payment"
+                value={fmt(r.recastMonthly)}
+                tone={r.recastGap < 0 ? "green" : "gray"}
+              />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                <Stat label="Balance at the sale" value={fmtK(r.balanceAtSale)} sub={`after ${fmtMonths(r.gap)}`} />
+                <Stat label="Proceeds applied" value={fmt(r.netProceeds)} tone="green" />
+                <Stat label="New balance" value={fmtK(r.recastBalance)} sub={`${pct(r.recastLtv, 1)} of the price`} />
+                <Stat label="Recalculated over" value={fmtMonths(r.remainingTerm)} sub="same rate, same loan" />
+              </div>
+              <Takeaway tone={r.recastGap < 0 ? "green" : "blue"}>
+                Recasting drops the payment from <strong>{fmt(r.buy.monthly)}</strong> to{" "}
+                <strong>{fmt(r.recastMonthly)}</strong>
+                {r.recastGap < 0 ? (
+                  <>
+                    {" "}
+                    — <strong>{fmt(Math.abs(r.recastGap))}</strong> a month below the sell-first payment.
+                    That is not a trick: recasting puts the whole{" "}
+                    <strong>{fmt(r.netProceeds)}</strong> into the loan, while selling first stops at{" "}
+                    {fmt(r.sell.down)} and keeps <strong>{fmt(r.cashLeftOver)}</strong> liquid. Buying
+                    first and recasting buys the lower payment with money selling first would have left
+                    in your pocket.
+                  </>
+                ) : (
+                  <>
+                    , which is still <strong>{fmt(r.recastGap)}</strong> a month above selling first.
+                  </>
+                )}
+              </Takeaway>
+            </div>
+          )}
+
+          <ChartCard
+            title="What you pay each month"
+            footnote="Principal, interest and any mortgage insurance. The interim housing selling first is not here — it is a one-time cost, not a monthly one."
+          >
             <BarChart
-              ariaLabel="Cash needed up front when selling first compared with buying first"
+              ariaLabel="Monthly payment when selling first compared with buying first"
               height={200}
               bars={[
                 {
                   label: "Sell first",
                   segments: [
-                    { label: "From proceeds", value: r.fromProceeds, color: COLORS.green },
-                    { label: "From savings", value: r.ownCashSellFirst, color: COLORS.blue },
-                    { label: "Carrying cost", value: n(tempHousing), color: COLORS.amber },
+                    { label: "Principal & interest", value: r.sell.pi, color: COLORS.green },
+                    { label: "PMI", value: r.sell.pmiMonthly, color: COLORS.red },
                   ],
                 },
                 {
                   label: "Buy first",
                   segments: [
-                    { label: "From savings", value: r.fromSavings, color: COLORS.blue },
-                    { label: "Borrowed on a bridge", value: r.buyFirstShortfall, color: COLORS.red },
-                    { label: "Carrying cost", value: n(bridgeCost), color: COLORS.amber },
+                    { label: "Principal & interest", value: r.buy.pi, color: COLORS.blue },
+                    { label: "PMI", value: r.buy.pmiMonthly, color: COLORS.red },
                   ],
                 },
+                ...(recast
+                  ? [
+                      {
+                        label: "Buy first, recast",
+                        segments: [
+                          { label: "After recasting", value: r.recastPi, color: COLORS.teal },
+                          { label: "PMI", value: r.recastPmi, color: COLORS.red },
+                        ],
+                      },
+                    ]
+                  : []),
               ]}
             />
           </ChartCard>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4">
-            <h2 className="text-sm font-medium text-gray-900 mb-3">Risks worth pricing</h2>
+            <h2 className="text-sm font-medium text-gray-900 mb-3">How people actually bridge the gap</h2>
             <div className="space-y-2">
               <Takeaway tone="amber">
-                <strong>Selling first:</strong> you are a cash-ready buyer, which is strong. But if you
-                cannot find the next home quickly you are renting, moving twice, and paying for storage.
-                Negotiate a rent-back from your buyer if you can.
+                <strong>Buying first</strong> means finding the down payment while your equity is still
+                in the old house. A HELOC opened <em>before</em> you list is the usual route and the
+                cheapest, though most lenders will not open one once the home is on the market. A bridge
+                loan does the same job faster and dearer. Some people borrow against a retirement
+                account. Or you make the offer contingent on your sale — that costs nothing in dollars,
+                but in a competitive market it can lose you the house, which is a real price even though
+                no calculator can put a number on it.
               </Takeaway>
-              <Takeaway tone="red">
-                <strong>Buying first:</strong> the danger is a sale that stalls. Work out how many months
-                of two mortgages you could absorb, and treat that as your real deadline — a forced price
-                cut usually costs more than a bridge loan ever would.
+              <Takeaway tone="green">
+                <strong>Selling first</strong> means somewhere to live in between. Ask your buyer for a
+                rent-back — you stay on after closing and pay them rent, often at their carrying cost.
+                Many sellers never think to ask, and it is usually the cheapest interim housing there
+                is. Failing that, a short-term rental, and storage for whatever will not fit.
               </Takeaway>
               <Takeaway tone="blue">
                 Your equity of <strong>{fmt(r.equity)}</strong> becomes{" "}
@@ -279,10 +374,27 @@ export default function Calculator() {
               </Takeaway>
             </div>
           </div>
+
+          <div className="border border-gray-200 rounded-2xl p-5 mb-4">
+            <h2 className="text-sm font-medium text-gray-900 mb-3">About recasting</h2>
+            <Takeaway tone="blue">
+              If you buy first, you do not have to live with the bigger payment for long. Once the old
+              home sells, many lenders will let you put the proceeds against the new loan and
+              recalculate the payment over what is left of the term, keeping your original rate. It is
+              not a refinance: same loan, same note, no new underwriting. Expect a lump-sum minimum —
+              often around $10,000 — and a processing fee, usually a few hundred dollars. It is not
+              available on every loan; FHA, VA and USDA loans generally cannot be recast, and jumbo
+              rules vary by lender. Ask before you close on the new home rather than after, because the
+              answer may change which order makes sense for you.
+            </Takeaway>
+          </div>
         </>
       ) : (
         <div className="border border-gray-200 rounded-2xl mb-4 bg-gray-50">
-          <EmptyState>Enter your current home&apos;s value and the price of the next one.</EmptyState>
+          <EmptyState>
+            Enter your current home&apos;s value, the price of the next one, and your rate to compare the
+            two payments.
+          </EmptyState>
         </div>
       )}
     </CalcShell>
