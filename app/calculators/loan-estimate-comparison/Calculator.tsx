@@ -64,12 +64,16 @@ export default function Calculator() {
     setStayYears(7);
     // Three quotes on the same $400,000 loan: A bought the rate down (box D
     // carries the discount points), C took a credit for a higher rate, B sits
-    // between them. Loan and term are left blank so all three inherit the
-    // shared figures, which is how most shopping actually looks.
+    // between them.
+    //
+    // Loan and term are written out rather than left to inherit. Blank fields
+    // would still produce these figures, but an example that leaves two boxes
+    // per card empty looks half-filled; the override behaviour is unchanged,
+    // it just starts from the value it would have inherited.
     setQuotes([
-      { name: "Lender A", loan: "", rate: 6.375, term: "", loanCosts: 7200, otherCosts: 4100, credits: 0 },
-      { name: "Lender B", loan: "", rate: 6.5, term: "", loanCosts: 3100, otherCosts: 4050, credits: 0 },
-      { name: "Lender C", loan: "", rate: 6.875, term: "", loanCosts: 1900, otherCosts: 4000, credits: 1500 },
+      { name: "Lender A", loan: 400000, rate: 6.375, term: 30, loanCosts: 7200, otherCosts: 4100, credits: 0 },
+      { name: "Lender B", loan: 400000, rate: 6.5, term: 30, loanCosts: 3100, otherCosts: 4050, credits: 0 },
+      { name: "Lender C", loan: 400000, rate: 6.875, term: 30, loanCosts: 1900, otherCosts: 4000, credits: 1500 },
     ]);
   };
 
