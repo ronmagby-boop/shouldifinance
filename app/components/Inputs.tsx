@@ -142,6 +142,32 @@ export function NumField({
   );
 }
 
+/** A date, styled to match NumField so a form can mix the two. */
+export function DateField({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  hint?: ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1.5">{label}</label>
+      <input
+        type="date"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${baseInput} px-3`}
+      />
+      {hint && <p className="text-xs text-gray-400 mt-1 leading-relaxed">{hint}</p>}
+    </div>
+  );
+}
+
 export function SelectField({
   label,
   value,

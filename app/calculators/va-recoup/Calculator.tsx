@@ -2,13 +2,38 @@
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
-  Card, NumField, Toggle, Headline, Stat, Takeaway, EmptyState,
+  Card, NumField, DateField, Toggle, Headline, Stat, Takeaway, EmptyState,
   fmt, fmtK, pct, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
 
 const VA_LIMIT = 36; // months — the statutory recoupment ceiling for an IRRRL
+
+/** An IRRRL has to clear both of these on the loan being refinanced. */
+const SEASONING_DAYS = 210;
+const SEASONING_PAYMENTS = 6;
+
+/**
+ * VA allows only incidental cash back to the veteran on an IRRRL. Past the
+ * first threshold the structure needs explaining; past the second it probably
+ * is not an IRRRL at all.
+ */
+const CASH_BACK_NOTICE = 500;
+const CASH_BACK_LIMIT = 2000;
+
+const addDays = (d: Date, days: number) => {
+  const out = new Date(d);
+  out.setDate(out.getDate() + days);
+  return out;
+};
+const addMonths = (d: Date, months: number) => {
+  const out = new Date(d);
+  out.setMonth(out.getMonth() + months);
+  return out;
+};
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 export default function Calculator() {
   const [balance, setBalance] = useState<Num>("");
@@ -20,6 +45,9 @@ export default function Calculator() {
   const [fundingFeePct, setFundingFeePct] = useState<Num>("");
   const [escrow, setEscrow] = useState<Num>("");
   const [financeCosts, setFinanceCosts] = useState(true);
+  const [firstPayment, setFirstPayment] = useState("");
+  /** Optional override; blank means use the derived figure. */
+  const [loanOverride, setLoanOverride] = useState<Num>("");
 
   const loadExample = () => {
     setBalance(340000);
@@ -31,6 +59,9 @@ export default function Calculator() {
     setFundingFeePct(0.5);
     setEscrow(0);
     setFinanceCosts(true);
+    const seasoned = addMonths(new Date(), -18);
+    setFirstPayment(seasoned.toISOString().slice(0, 10));
+    setLoanOverride("");
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -44,6 +75,8 @@ export default function Calculator() {
     setFundingFeePct("");
     setEscrow("");
     setFinanceCosts(true);
+    setFirstPayment("");
+    setLoanOverride("");
   };
 
   const r = useMemo(() => {
@@ -62,7 +95,21 @@ export default function Calculator() {
      */
     const recoupableCosts = n(closingCosts);
     const financedCosts = n(closingCosts) + fundingFee + n(escrow);
-    const newLoan = financeCosts ? n(balance) + financedCosts : n(balance);
+    const derivedLoan = financeCosts ? n(balance) + financedCosts : n(balance);
+
+    // An entered figure wins, but the derived one stays on screen beside it so
+    // the difference is visible rather than silently swallowed.
+    const overridden = n(loanOverride) > 0;
+    const newLoan = overridden ? n(loanOverride) : derivedLoan;
+
+    /**
+     * The most an IRRRL can be written for: the payoff plus the fees that are
+     * allowed to be financed. Anything above this is cash going back to the
+     * veteran, which VA permits only incidentally.
+     */
+    const allowableMax = n(balance) + n(closingCosts) + fundingFee + n(escrow);
+    const excess = newLoan - allowableMax;
+
     const termMonths = Math.max(1, n(newTerm) * 12);
     const newPayment = payment(newLoan, n(newRate), termMonths);
 
@@ -81,10 +128,49 @@ export default function Calculator() {
 
     const rateDrop = n(currentRate) - n(newRate);
 
+    /**
+     * Seasoning. Both tests run off the first payment due date and both have to
+     * pass; they can fail separately, and either one blocks the loan however
+     * well it recoups.
+     */
+    let seasoning = null;
+    if (firstPayment) {
+      const first = new Date(`${firstPayment}T00:00:00`);
+      if (!Number.isNaN(first.getTime())) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const dayTarget = addDays(first, SEASONING_DAYS);
+        const daysElapsed = Math.floor((today.getTime() - first.getTime()) / 86400000);
+        const daysMet = today.getTime() >= dayTarget.getTime();
+
+        // Payment 1 falls on the first due date, payment 6 five months later.
+        const paymentTarget = addMonths(first, SEASONING_PAYMENTS - 1);
+        const monthsElapsed =
+          (today.getFullYear() - first.getFullYear()) * 12 +
+          (today.getMonth() - first.getMonth()) -
+          (today.getDate() < first.getDate() ? 1 : 0);
+        const paymentsMade = Math.max(0, monthsElapsed + 1);
+        const paymentsMet = today.getTime() >= paymentTarget.getTime();
+
+        const eligibleFrom = new Date(Math.max(dayTarget.getTime(), paymentTarget.getTime()));
+        seasoning = {
+          first, daysElapsed, daysMet, dayTarget,
+          paymentsMade, paymentsMet, paymentTarget,
+          eligibleFrom, passes: daysMet && paymentsMet,
+        };
+      }
+    }
+
     return {
       fundingFee,
       recoupableCosts,
       financedCosts,
+      derivedLoan,
+      overridden,
+      allowableMax,
+      excess,
+      seasoning,
       newLoan,
       newPayment,
       monthlySavings,
@@ -97,7 +183,7 @@ export default function Calculator() {
       savings10yr: monthlySavings * 120 - recoupableCosts,
       maxCosts: monthlySavings > 0 ? monthlySavings * VA_LIMIT : 0,
     };
-  }, [balance, currentRate, currentPayment, newRate, newTerm, closingCosts, fundingFeePct, escrow, financeCosts]);
+  }, [balance, currentRate, currentPayment, newRate, newTerm, closingCosts, fundingFeePct, escrow, financeCosts, firstPayment, loanOverride]);
 
   return (
     <CalcShell
@@ -106,7 +192,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["should-i-refinance", "mortgage-payment", "loan-estimate-comparison"]}
-      disclaimer="For educational purposes only and not a commitment to lend. VA recoupment rules count fees, closing costs and expenses other than taxes, insurance, and escrow — lender interpretations vary. IRRRLs also require a net tangible benefit and a seasoning period on the existing loan. Confirm eligibility and exact figures with a VA-approved lender."
+      disclaimer="For educational purposes only and not a commitment to lend. VA recoupment rules count fees, closing costs and expenses other than taxes, insurance, and escrow — lender interpretations vary. IRRRLs also require a net tangible benefit. Confirm eligibility and exact figures with a VA-approved lender."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your current VA loan" badge="TODAY">
@@ -116,6 +202,12 @@ export default function Calculator() {
               <NumField label="Current rate" value={currentRate} onChange={setCurrentRate} placeholder="7.25" suffix="%" step={0.125} />
               <NumField label="Payment (P&I)" value={currentPayment} onChange={setCurrentPayment} placeholder="2320" prefix="$" />
             </div>
+            <DateField
+              label="First payment date on your current loan"
+              value={firstPayment}
+              onChange={setFirstPayment}
+              hint="Used for the seasoning test. VA needs 210 days since this date and six payments made before an IRRRL can close."
+            />
           </div>
         </Card>
 
@@ -148,6 +240,18 @@ export default function Calculator() {
             <Toggle checked={financeCosts} onChange={setFinanceCosts}>
               Roll costs into the new loan (IRRRLs are usually structured this way)
             </Toggle>
+            <NumField
+              label="New loan amount"
+              value={loanOverride}
+              onChange={setLoanOverride}
+              placeholder={r && !r.overridden ? String(Math.round(r.derivedLoan)) : "345900"}
+              prefix="$"
+              hint={
+                r && r.overridden
+                  ? `Using your figure. Derived from the inputs above: ${fmt(r.derivedLoan)}.`
+                  : "Optional. Leave blank to use the figure derived from the balance, costs and fee above."
+              }
+            />
             {r && (
               <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                 <span className="text-xs text-green-700 font-medium">New payment (P&amp;I)</span>
@@ -219,6 +323,81 @@ export default function Calculator() {
               )}
             </Takeaway>
           </div>
+
+          {/* Seasoning is a gate, not a footnote: a loan can recoup in twelve
+              months and still be ineligible, so it sits with the verdict rather
+              than below the charts. */}
+          {r.seasoning && (
+            <div
+              className={`border-2 rounded-2xl p-5 mb-4 ${
+                r.seasoning.passes ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
+              }`}
+            >
+              <p className={`text-sm font-medium mb-3 ${r.seasoning.passes ? "text-green-800" : "text-red-800"}`}>
+                {r.seasoning.passes
+                  ? "✓ Seasoning met — this loan is old enough to refinance"
+                  : `⚠ Not seasoned yet — eligible from ${fmtDate(r.seasoning.eligibleFrom)}`}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="bg-white border border-gray-100 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-0.5">210 days since first payment</p>
+                  <p className={`text-sm font-medium ${r.seasoning.daysMet ? "text-green-700" : "text-red-600"}`}>
+                    {r.seasoning.daysMet ? "Met" : "Not met"} — {r.seasoning.daysElapsed} days
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {r.seasoning.daysMet ? "cleared " : "clears "}
+                    {fmtDate(r.seasoning.dayTarget)}
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-0.5">Six consecutive payments</p>
+                  <p className={`text-sm font-medium ${r.seasoning.paymentsMet ? "text-green-700" : "text-red-600"}`}>
+                    {r.seasoning.paymentsMet ? "Met" : "Not met"} — {r.seasoning.paymentsMade} made
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {r.seasoning.paymentsMet ? "sixth was due " : "sixth due "}
+                    {fmtDate(r.seasoning.paymentTarget)}
+                  </p>
+                </div>
+              </div>
+              <p className={`text-xs mt-3 leading-relaxed ${r.seasoning.passes ? "text-green-800" : "text-red-800"}`}>
+                {r.seasoning.passes ? (
+                  <>
+                    Both tests are satisfied, so seasoning is not what decides this loan — the
+                    recoupment period above is.
+                  </>
+                ) : (
+                  <>
+                    Both have to be met, and they clear on different dates. Until{" "}
+                    <strong>{fmtDate(r.seasoning.eligibleFrom)}</strong> the loan cannot close as an
+                    IRRRL however well it recoups.
+                  </>
+                )}
+              </p>
+            </div>
+          )}
+
+          {r.excess > CASH_BACK_LIMIT ? (
+            <div className="border-2 border-red-300 bg-red-50 rounded-2xl p-5 mb-4">
+              <p className="text-sm font-medium text-red-800 mb-1">
+                ⚠ The new loan is {fmt(r.excess)} above the payoff plus allowable fees
+              </p>
+              <p className="text-xs text-red-800 leading-relaxed">
+                A {fmt(r.newLoan)} loan against a {fmt(r.allowableMax)} payoff and allowable fees is not
+                an incidental difference. This structure should be reviewed before you go further — as
+                entered, the loan may not be eligible as an IRRRL at all. Ask the lender to itemise
+                what the extra {fmt(r.excess)} is paying for.
+              </p>
+            </div>
+          ) : r.excess > CASH_BACK_NOTICE ? (
+            <div className="border border-amber-200 bg-amber-50 rounded-2xl p-4 mb-4">
+              <p className="text-xs text-amber-800 leading-relaxed">
+                <strong>The new loan is {fmt(r.excess)} above the payoff plus allowable fees.</strong> VA
+                limits cash back to the veteran on an IRRRL to an incidental amount, and this structure
+                would exceed it. Check the figure against the Loan Estimate.
+              </p>
+            </div>
+          ) : null}
 
           <ChartCard title="When the refinance pays for itself">
             <LineChart
