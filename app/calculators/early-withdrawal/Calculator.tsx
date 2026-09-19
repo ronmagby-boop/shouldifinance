@@ -36,6 +36,20 @@ export default function Calculator() {
     setException(false);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setAmount("");
+    setAge("");
+    setIncome("");
+    setStateRate("");
+    setReturnRate("");
+    setRetireAge("");
+    setContributions("");
+    setStatus("single");
+    setAccount("401k");
+    setException(false);
+  };
+
   const r = useMemo(() => {
     const gross = n(amount);
     if (gross <= 0) return null;
@@ -94,6 +108,7 @@ export default function Calculator() {
       slug="early-withdrawal"
       intro="Taking money out of a retirement account early costs you three times: income tax, a 10% penalty, and every dollar of growth that money would have earned. Here's the full bill."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["retirement-savings", "emergency-fund", "capital-gains"]}
       disclaimer="For educational purposes only and not tax advice. Uses 2025 federal brackets with a flat state rate. Exceptions to the 10% penalty are specific and fact-dependent (disability, certain medical costs, first-home purchase from an IRA, substantially equal periodic payments, and others). A 401(k) loan or hardship distribution may have different rules. Talk to a tax professional before withdrawing."
     >

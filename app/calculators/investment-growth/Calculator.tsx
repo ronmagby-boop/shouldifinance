@@ -27,6 +27,17 @@ export default function Calculator() {
     setRaise(3);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setInitial("");
+    setMonthly("");
+    setRate("");
+    setYears("");
+    setFee("");
+    setInflation("");
+    setRaise("");
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (yrs <= 0 || (n(initial) <= 0 && n(monthly) <= 0)) return null;
@@ -79,6 +90,7 @@ export default function Calculator() {
       slug="investment-growth"
       intro="A projection is only honest if it includes the two things that quietly shrink it: fees and inflation. This one shows the headline number and what that money is actually worth in today's dollars."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["compound-interest", "retirement-savings", "required-rate-of-return"]}
       disclaimer="For educational purposes only. Assumes a constant annual return, which real markets never deliver. Does not account for taxes on gains in taxable accounts, sequence-of-returns risk, or changes in contribution limits. Not investment advice."
     >

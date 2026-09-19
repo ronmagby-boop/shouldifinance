@@ -41,6 +41,20 @@ export default function Calculator() {
     setSituation("average");
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setHousing("");
+    setFood("");
+    setTransport("");
+    setInsurance("");
+    setDebtPayments("");
+    setOther("");
+    setCurrent("");
+    setMonthlySaving("");
+    setApy("");
+    setSituation("average");
+  };
+
   const r = useMemo(() => {
     const essentials = n(housing) + n(food) + n(transport) + n(insurance) + n(debtPayments) + n(other);
     if (essentials <= 0) return null;
@@ -107,6 +121,7 @@ export default function Calculator() {
       slug="emergency-fund"
       intro="An emergency fund is measured in months, not dollars — it's however long you could keep the lights on with no income. Add up what you'd actually have to keep paying, and see how long it takes to get there."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["debt-payoff", "net-worth", "early-withdrawal"]}
       disclaimer="For educational purposes only. Include only essential expenses you could not cut — streaming subscriptions and dining out are not part of a survival budget. Keep emergency savings somewhere liquid and federally insured; this money's job is availability, not return."
     >

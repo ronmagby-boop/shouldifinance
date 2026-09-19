@@ -51,6 +51,23 @@ export default function Calculator() {
     setYears(7);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setNewPrice("");
+    setNewDown("");
+    setNewRate("");
+    setNewTerm("");
+    setNewDrop("");
+    setUsedPrice("");
+    setUsedDown("");
+    setUsedRate("");
+    setUsedTerm("");
+    setUsedDrop("");
+    setLaterDrop("");
+    setMaintGap("");
+    setYears("");
+  };
+
   const r = useMemo(() => {
     const NP = n(newPrice);
     const UP = n(usedPrice);
@@ -104,6 +121,7 @@ export default function Calculator() {
       slug="new-vs-used-car"
       intro="A new car costs more and loses value fastest in year one. A used one is cheaper but borrows at a higher rate and needs more repairs. Depreciation is usually the biggest number of the three, and the one nobody puts on the invoice."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["total-cost-of-ownership", "depreciation", "lease-vs-buy"]}
       disclaimer="For educational purposes only. Depreciation varies enormously by make, model and mileage, and repair costs on a used car are unpredictable by nature. Treat the residual values here as estimates, and check model-specific data before committing."
     >

@@ -72,6 +72,17 @@ export default function Calculator() {
     setAfterRate(26.99);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setRate("");
+    setPay("");
+    setFeePct("");
+    setPromoRate("");
+    setPromoMonths("");
+    setAfterRate("");
+  };
+
   const r = useMemo(() => {
     const B = n(balance);
     const P = n(pay);
@@ -105,6 +116,7 @@ export default function Calculator() {
       slug="balance-transfer"
       intro="A 0% window can wipe out a year or more of interest, but the transfer fee is charged up front and the old rate comes back the day the promo ends. This shows what you save, and what happens if you are still carrying a balance when the clock runs out."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["debt-payoff", "debt-consolidation", "heloc-debt-payoff"]}
       disclaimer="For educational purposes only. Transfer offers vary, and a new purchase on the card can change how payments are allocated. Missing a payment often voids the promotional rate entirely — read the terms."
     >

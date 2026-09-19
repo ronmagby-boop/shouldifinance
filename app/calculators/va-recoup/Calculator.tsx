@@ -33,6 +33,19 @@ export default function Calculator() {
     setFinanceCosts(true);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setCurrentRate("");
+    setCurrentPayment("");
+    setNewRate("");
+    setNewTerm("");
+    setClosingCosts("");
+    setFundingFeePct("");
+    setEscrow("");
+    setFinanceCosts(true);
+  };
+
   const r = useMemo(() => {
     if (n(balance) <= 0 || n(currentPayment) <= 0) return null;
 
@@ -80,6 +93,7 @@ export default function Calculator() {
       slug="va-recoup"
       intro="A VA streamline refinance (IRRRL) has a hard rule: the fees have to pay for themselves within 36 months. Enter your numbers to see your recoupment period and whether the loan clears that bar."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["should-i-refinance", "mortgage-payment", "loan-estimate-comparison"]}
       disclaimer="For educational purposes only and not a commitment to lend. VA recoupment rules count fees, closing costs and expenses other than taxes, insurance, and escrow — lender interpretations vary. IRRRLs also require a net tangible benefit and a seasoning period on the existing loan. Confirm eligibility and exact figures with a VA-approved lender."
     >

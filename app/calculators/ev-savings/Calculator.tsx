@@ -42,6 +42,24 @@ export default function Calculator() {
     setGasInsurance(1600);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setMiles("");
+    setYears("");
+    setEvPrice("");
+    setIncentive("");
+    setKwhPer100("");
+    setElectricity("");
+    setEvMaintenance("");
+    setEvInsurance("");
+    setCharger("");
+    setGasPrice("");
+    setMpg("");
+    setFuelPrice("");
+    setGasMaintenance("");
+    setGasInsurance("");
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (yrs <= 0 || n(miles) <= 0) return null;
@@ -103,6 +121,7 @@ export default function Calculator() {
       slug="ev-savings"
       intro="Electric cars usually cost more up front and less to run. Whether that trade works out depends on your electricity rate, your gas price, and how many miles you drive — so put your own numbers in."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["total-cost-of-ownership", "depreciation", "auto-affordability"]}
       disclaimer="For educational purposes only. Federal and state EV incentives have income caps, vehicle price limits, and sourcing requirements that change — verify eligibility before counting on one. Electricity rates vary by time of day and utility, and public fast charging typically costs two to three times home charging."
     >

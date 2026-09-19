@@ -25,6 +25,16 @@ export default function Calculator() {
     setSideInvest(15);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setContrib("");
+    setRateNow("");
+    setRateLater("");
+    setYears("");
+    setRet("");
+    setSideInvest("");
+  };
+
   const r = useMemo(() => {
     const C = n(contrib);
     const yrs = n(years);
@@ -83,6 +93,7 @@ export default function Calculator() {
       slug="roth-vs-traditional"
       intro="Roth pays the tax now, Traditional pays it in retirement. If your bracket is the same either way the two are identical — so the whole question is whether you expect to be taxed more or less later."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["retirement-savings", "early-withdrawal", "investment-growth"]}
       disclaimer="For educational purposes only and not tax advice. Real brackets are progressive, so a blended retirement rate is usually lower than your marginal rate today. Contribution limits, RMDs and state taxes all matter — talk to a tax professional."
     >

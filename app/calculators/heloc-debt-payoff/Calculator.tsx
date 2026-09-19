@@ -30,6 +30,17 @@ export default function Calculator() {
     setHelocTerm(10);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setHomeValue("");
+    setMortgage("");
+    setDebt("");
+    setDebtRate("");
+    setDebtPayment("");
+    setHelocRate("");
+    setHelocTerm("");
+  };
+
   const r = useMemo(() => {
     const D = n(debt);
     const term_m = Math.round(n(helocTerm) * 12);
@@ -67,6 +78,7 @@ export default function Calculator() {
       slug="heloc-debt-payoff"
       intro="A HELOC can cut a 23% credit card rate to single digits. It also turns debt you could walk away from into debt secured against your house. Both halves of that trade matter."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["debt-consolidation", "debt-payoff", "balance-transfer"]}
       disclaimer="For educational purposes only, and not advice to borrow against your home. HELOC rates are usually variable, so the payment shown can rise. Missing payments on a HELOC can cost you the house — unsecured debt carries no such risk."
     >

@@ -35,6 +35,17 @@ export default function Calculator() {
     setLongTerm(true);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBuyPrice("");
+    setSellPrice("");
+    setCosts("");
+    setIncome("");
+    setStateRate("");
+    setStatus("single");
+    setLongTerm(true);
+  };
+
   const r = useMemo(() => {
     if (n(sellPrice) <= 0 || n(buyPrice) <= 0) return null;
 
@@ -86,6 +97,7 @@ export default function Calculator() {
       slug="capital-gains"
       intro="The tax on a sale depends on one thing more than any other: whether you held the asset longer than a year. Enter your numbers to see federal, state, and net investment income tax — and what the holding period is worth."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["investment-growth", "dividend-reinvestment", "early-withdrawal"]}
       disclaimer="For educational purposes only and not tax advice. Uses 2025 federal brackets and assumes a flat state rate; many states tax gains as ordinary income and some do not tax them at all. Ignores carryforward losses, wash sales, AMT, and special asset classes such as collectibles or Section 1202 stock. Consult a tax professional."
     >

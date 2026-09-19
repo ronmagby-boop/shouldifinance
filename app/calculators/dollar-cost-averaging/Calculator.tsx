@@ -48,6 +48,15 @@ export default function Calculator() {
     setScenario("dip");
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setTotal("");
+    setPeriods("");
+    setAnnualReturn("");
+    setHoldYears("");
+    setScenario("dip");
+  };
+
   const r = useMemo(() => {
     const amount = n(total);
     const months = Math.max(1, Math.round(n(periods)));
@@ -104,6 +113,7 @@ export default function Calculator() {
       slug="dollar-cost-averaging"
       intro="You have a lump of money. Do you invest it all today, or feed it in over months? Pick a market scenario and see how both strategies play out on exactly the same price path."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["compound-interest", "investment-growth", "required-rate-of-return"]}
       disclaimer="For educational purposes only. The market scenarios are illustrative price paths, not forecasts — nobody knows which one the next year looks like. Historically, lump-sum investing has beaten averaging in most periods, but averaging reduces regret when timing is wrong. Not investment advice."
     >

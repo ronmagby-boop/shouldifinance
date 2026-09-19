@@ -35,6 +35,21 @@ export default function Calculator() {
     setSocialSecurity(2200);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setAge("");
+    setRetireAge("");
+    setSavings("");
+    setMonthly("");
+    setMatch("");
+    setPreReturn("");
+    setPostReturn("");
+    setIncome("");
+    setInflation("");
+    setLifeExp("");
+    setSocialSecurity("");
+  };
+
   const r = useMemo(() => {
     const yearsToRetire = n(retireAge) - n(age);
     if (n(age) <= 0 || yearsToRetire <= 0) return null;
@@ -117,6 +132,7 @@ export default function Calculator() {
       slug="retirement-savings"
       intro="Two questions matter: what will you have, and how long will it last? This projects your balance to your retirement date, then spends it down at the income you want — in inflation-adjusted dollars."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["investment-growth", "compound-interest", "early-withdrawal"]}
       disclaimer="For educational purposes only. Assumes steady returns and inflation; real markets vary and a bad sequence of returns early in retirement can shorten how long savings last. Social Security estimates are yours to supply and are not verified. Consult a financial advisor before acting."
     >

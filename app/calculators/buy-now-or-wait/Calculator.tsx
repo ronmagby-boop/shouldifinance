@@ -30,6 +30,18 @@ export default function Calculator() {
     setRent(typicalMonthlyRent(420000));
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setNowRate("");
+    setWait("");
+    setLaterRate("");
+    setAppr("");
+    setDownPct("");
+    setTerm("");
+    setRent("");
+  };
+
   const r = useMemo(() => {
     const P = n(price);
     const term_m = Math.round(n(term) * 12);
@@ -103,6 +115,7 @@ export default function Calculator() {
       slug="buy-now-or-wait"
       intro="Waiting for a lower rate only helps if prices stay still while you wait. Put today's price and rate against a future price and rate, and see how much the home can appreciate before the cheaper rate stops being worth it."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["mortgage-payment", "rent-vs-buy", "home-affordability"]}
       disclaimer="For educational purposes only. Nobody can forecast rates or prices — treat the future figures as assumptions to test, not predictions. Rent while waiting is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >

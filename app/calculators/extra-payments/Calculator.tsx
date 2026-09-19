@@ -25,6 +25,16 @@ export default function Calculator() {
     setBiweekly(false);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setRate("");
+    setYearsLeft("");
+    setExtra("");
+    setOneTime("");
+    setBiweekly(false);
+  };
+
   const r = useMemo(() => {
     const bal = n(balance);
     const term = Math.round(n(yearsLeft) * 12);
@@ -65,6 +75,7 @@ export default function Calculator() {
       slug="extra-payments"
       intro="Every extra dollar toward principal skips all the interest that dollar would have carried for the rest of the loan. Enter what you could add each month and see the years and interest it erases."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["should-i-refinance", "refinance-to-pay-off-debt", "pay-off-debt"]}
       disclaimer="For educational purposes only. Confirm your servicer applies extra payments to principal, and check for prepayment penalties. Before prepaying, make sure you have an emergency fund and are capturing any employer retirement match — those usually come first."
     >

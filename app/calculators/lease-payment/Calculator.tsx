@@ -40,6 +40,23 @@ export default function Calculator() {
     setTaxMethod("monthly");
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setMsrp("");
+    setNegotiated("");
+    setTerm("");
+    setResidualPct("");
+    setMoneyFactor("");
+    setDown("");
+    setTradeIn("");
+    setRebates("");
+    setFees("");
+    setAcquisition("");
+    setDisposition("");
+    setTaxRate("");
+    setTaxMethod("monthly");
+  };
+
   const r = useMemo(() => {
     const months = Math.max(1, Math.round(n(term)));
     if (n(msrp) <= 0 || n(negotiated) <= 0) return null;
@@ -99,6 +116,7 @@ export default function Calculator() {
       slug="lease-payment"
       intro="A lease payment is two numbers added together: depreciation and a finance charge. Once you can build it yourself, you can tell which part of a dealer's quote is negotiable — and which isn't."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["lease-vs-buy", "total-cost-of-ownership", "auto-affordability"]}
       disclaimer="For educational purposes only. Residual values and money factors are set by the leasing company and vary by model, term, and mileage allowance. Sales tax treatment on leases differs by state — some tax the monthly payment, some the full price up front. Confirm every figure on the lease agreement before signing."
     >

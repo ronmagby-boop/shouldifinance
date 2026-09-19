@@ -30,6 +30,19 @@ export default function Calculator() {
     setTaxable(true);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setInvested("");
+    setPrice("");
+    setYieldPct("");
+    setDivGrowth("");
+    setPriceGrowth("");
+    setYears("");
+    setContribution("");
+    setTaxRate("");
+    setTaxable(false);
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (yrs <= 0 || n(invested) <= 0 || n(price) <= 0) return null;
@@ -102,6 +115,7 @@ export default function Calculator() {
       slug="dividend-reinvestment"
       intro="Every dividend you reinvest buys shares that pay their own dividends. Compare taking the cash against letting it compound — and see what your yield on cost becomes after years of dividend growth."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["compound-interest", "investment-growth", "capital-gains"]}
       disclaimer="For educational purposes only. Assumes dividends are paid quarterly and grow at a steady rate — companies can and do cut dividends. Share price growth is an assumption, not a forecast. Not investment advice."
     >

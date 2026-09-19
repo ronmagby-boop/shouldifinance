@@ -50,6 +50,20 @@ export default function Calculator() {
     setRecast(false);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setValue("");
+    setBalance("");
+    setSellPct("");
+    setNewPrice("");
+    setOtherCash("");
+    setRate("");
+    setTerm("");
+    setInterimMonthly("");
+    setInterimMonths("");
+    setRecast(false);
+  };
+
   const r = useMemo(() => {
     const V = n(value);
     const NP = n(newPrice);
@@ -118,6 +132,7 @@ export default function Calculator() {
       slug="sell-first-or-buy-first"
       intro="The order you do this in decides how much cash reaches the closing table, and that decides your loan. Buy first and only your savings are available, because your equity is still locked in the unsold home. Sell first and the proceeds come too — a smaller loan and a lower payment, but you pay for somewhere to live in between."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "rent-vs-buy"]}
       disclaimer="For educational purposes only. PMI bands are typical figures rather than a quote, recasting is not offered on every loan, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
     >

@@ -39,6 +39,23 @@ export default function Calculator() {
     setRegistration(280);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setDown("");
+    setRate("");
+    setTerm("");
+    setYears("");
+    setResale("");
+    setMilesPerYear("");
+    setMpg("");
+    setGasPrice("");
+    setInsurance("");
+    setMaintenance("");
+    setRepairs("");
+    setRegistration("");
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (n(price) <= 0 || yrs <= 0) return null;
@@ -107,6 +124,7 @@ export default function Calculator() {
       slug="total-cost-of-ownership"
       intro="The sticker price is the smallest part of the story. Depreciation, fuel, insurance, and repairs usually cost more than the payment — here's what the car really costs per year and per mile."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["depreciation", "ev-savings", "auto-affordability"]}
       disclaimer="For educational purposes only. Insurance, fuel prices, and repair costs vary widely by location, driving record, and model. Resale values are estimates — check current market data for your specific vehicle, year, and mileage."
     >

@@ -29,6 +29,16 @@ export default function Calculator() {
     setRaise(3);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setInitial("");
+    setMonthly("");
+    setRate("");
+    setYears("");
+    setFreq("monthly");
+    setRaise("");
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (yrs <= 0 || (n(initial) <= 0 && n(monthly) <= 0)) return null;
@@ -75,6 +85,7 @@ export default function Calculator() {
       slug="compound-interest"
       intro="Compounding is interest earning interest. Enter what you start with and what you add each month — we'll show what it grows into, how much of that is your own money, and how much the market did for you."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["investment-growth", "retirement-savings", "dollar-cost-averaging"]}
       disclaimer="For educational purposes only. Projections assume a constant rate of return, which no real investment delivers. Actual results vary with markets, fees, and taxes. Not investment advice."
     >

@@ -38,6 +38,19 @@ export default function Calculator() {
     setDeposit(25000);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setLoanAmount("");
+    setRate("");
+    setTerm("");
+    setPoints("");
+    setFees("");
+    setHoldYears("");
+    setSavingRate("");
+    setFreq("monthly");
+    setDeposit("");
+  };
+
   const loan = useMemo(() => {
     if (n(loanAmount) <= 0 || n(rate) <= 0) return null;
     const months = Math.max(1, Math.round(n(term) * 12));
@@ -93,6 +106,7 @@ export default function Calculator() {
       slug="effective-interest-rate"
       intro="A quoted rate is rarely what you actually pay or earn. Points and fees push a loan's real cost above its rate, and compounding pushes a savings yield above its rate. Both sides are here."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "compound-interest"]}
       disclaimer="For educational purposes only. APR calculated here is an approximation using the fees you enter and may differ from a lender's disclosed APR, which follows specific regulatory rules about which fees are included. Not a commitment to lend."
     >

@@ -57,6 +57,31 @@ export default function Calculator() {
     setDiscipline(50);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setDown("");
+    setRate("");
+    setTerm("");
+    setTax("");
+    setInsurance("");
+    setMaintenance("");
+    setHoa("");
+    setAppreciation("");
+    setClosingPct("");
+    setSellingPct("");
+    setRent("");
+    setRentGrowth("");
+    setRentersIns("");
+    setInvestReturn("");
+    setYears("");
+    setFinanceClosing(true);
+    setCgRate(15);
+    setFiling("married");
+    setIntentOverride(null);
+    setDiscipline(50);
+  };
+
   // Short horizons usually end in a sale; long ones usually do not. The user
   // can say otherwise, and that choice then sticks.
   const intent: "sell" | "stay" = intentOverride ?? (n(years) >= 20 ? "stay" : "sell");
@@ -217,6 +242,7 @@ export default function Calculator() {
       slug="rent-vs-buy"
       intro="Buying isn't automatically better — it depends on how long you stay. This compares both paths honestly: the renter invests the down payment and any monthly difference, and the buyer pays every cost of ownership including selling."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["mortgage-payment", "home-affordability", "should-i-refinance"]}
       disclaimer="For educational purposes only. Results are highly sensitive to assumed appreciation, rent growth, and investment returns — small changes swing the answer by years. Ignores tax deductions for mortgage interest and property tax, which may favour buying if you itemize. Not a recommendation to buy or rent."
     >

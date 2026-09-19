@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { Sparkles } from "lucide-react";
 import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import SiteNav from "./SiteNav";
+import ExampleButton from "./ExampleButton";
 
 export type CalcShellProps = {
   slug: string;
@@ -15,6 +15,8 @@ export type CalcShellProps = {
   intro: string;
   crumb?: string;
   onExample: () => void;
+  /** Empties every field back to the page's initial state. */
+  onClear?: () => void;
   relatedSlugs?: string[];
   disclaimer: string;
   children: ReactNode;
@@ -31,6 +33,7 @@ export default function CalcShell({
   intro,
   crumb,
   onExample,
+  onClear,
   relatedSlugs,
   disclaimer,
   children,
@@ -78,13 +81,7 @@ export default function CalcShell({
 
           {/* Sits directly above the inputs — this is the moment someone decides
               whether to type their own numbers or see it working first. */}
-          <button
-            onClick={onExample}
-            className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"
-          >
-            <Sparkles className="w-4 h-4" aria-hidden="true" />
-            See with example numbers
-          </button>
+          <ExampleButton onLoad={onExample} onClear={onClear} />
 
           {children}
 

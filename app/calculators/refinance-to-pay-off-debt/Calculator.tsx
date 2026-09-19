@@ -65,6 +65,18 @@ export default function Calculator() {
     setExtraDirty(false);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setDebts([{ ...BLANK }, { ...BLANK }, { ...BLANK }]);
+    setCashOut("");
+    setClosing("");
+    setNewRate("");
+    setTerm("");
+    setMi("");
+    setExtraPayment("");
+    setExtraDirty(false);
+  };
+
   /**
    * Everything that does not depend on the extra payment. Split out so the
    * suggested extra can be derived from the monthly saving without the saving
@@ -196,6 +208,7 @@ export default function Calculator() {
       slug="refinance-to-pay-off-debt"
       intro="Every debt you carry has a rate, and together they average out to one number. A new mortgage replaces that blend with a single lower rate — and if you keep paying what you pay today, the difference goes straight onto the principal and the house is gone years early."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["should-i-refinance", "extra-payments", "pay-off-debt", "debt-payoff"]}
       disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend. Consolidating unsecured debt into a mortgage puts your home behind it."
     >

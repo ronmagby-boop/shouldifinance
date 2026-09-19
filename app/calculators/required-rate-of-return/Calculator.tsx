@@ -54,6 +54,14 @@ export default function Calculator() {
     setYears(20);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setCurrent("");
+    setMonthly("");
+    setGoal("");
+    setYears("");
+  };
+
   const r = useMemo(() => {
     const yrs = n(years);
     if (yrs <= 0 || n(goal) <= 0) return null;
@@ -119,6 +127,7 @@ export default function Calculator() {
       slug="required-rate-of-return"
       intro="Work backwards from the goal. Given what you have, what you can add, and how long you have, this finds the annual return you'd need — and tells you honestly whether that number is realistic."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["investment-growth", "compound-interest", "retirement-savings"]}
       disclaimer="For educational purposes only. A required return is a planning figure, not a promise — no portfolio delivers the same number every year. If the required return looks aggressive, adjusting the goal, the contribution, or the timeline is usually safer than reaching for risk. Not investment advice."
     >

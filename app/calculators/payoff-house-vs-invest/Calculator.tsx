@@ -23,6 +23,15 @@ export default function Calculator() {
     setRet(7);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setRate("");
+    setYearsLeft("");
+    setExtra("");
+    setRet("");
+  };
+
   const r = useMemo(() => {
     const B = n(balance);
     const term_m = Math.round(n(yearsLeft) * 12);
@@ -91,6 +100,7 @@ export default function Calculator() {
       slug="payoff-house-vs-invest"
       intro="An extra payment on the mortgage earns exactly your interest rate, guaranteed. The market has historically paid more, but not reliably and not on a schedule. This puts both on the same timeline."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["extra-payments", "pay-off-debt", "investment-growth"]}
       disclaimer="For educational purposes only. The investing side assumes a steady return that real markets do not deliver — a bad decade early on changes the outcome badly. Prepaying is certain, and it also removes a fixed cost from your life, which is worth something no spreadsheet captures."
     >

@@ -100,6 +100,14 @@ export default function Calculator() {
     setExtra(400);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setDebts([
+    { ...BLANK }, { ...BLANK }, { ...BLANK }, { ...BLANK },
+  ]);
+    setExtra("");
+  };
+
   const r = useMemo(() => {
     const clean = debts
       .filter((d) => n(d.balance) > 0 && n(d.minimum) > 0)
@@ -144,6 +152,7 @@ export default function Calculator() {
       slug="debt-payoff"
       intro="List everything you owe, then add whatever you can put toward it beyond the minimums. We'll run both payoff methods — smallest balance first, or highest rate first — and show what each one costs."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["refinance-to-pay-off-debt", "pay-off-debt", "emergency-fund"]}
       disclaimer="For educational purposes only. Assumes fixed rates and that you stop adding new debt. Credit card minimum payments usually shrink as the balance falls, which makes payoff slower than shown here if you only ever pay the minimum. Not credit counselling advice."
     >

@@ -33,6 +33,20 @@ export default function Calculator() {
     setYears(10);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setExtra("");
+    setDebt("");
+    setDebtRate("");
+    setDebtPayment("");
+    setSalary("");
+    setMatchPct("");
+    setMatchCap("");
+    setContribPct("");
+    setRet("");
+    setYears("");
+  };
+
   const r = useMemo(() => {
     const E = n(extra);
     const yrs = n(years);
@@ -121,6 +135,7 @@ export default function Calculator() {
       slug="401k-vs-debt-payoff"
       intro="An employer match is an instant return nothing else comes close to. Past that point, paying down debt is a guaranteed return and investing is not. This works out where your spare money does the most good."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["pay-off-debt", "debt-payoff", "retirement-savings"]}
       disclaimer="For educational purposes only. Investment returns are not guaranteed and are shown before tax, while debt payoff is certain. Vesting schedules can delay when employer money is really yours — check yours before counting it."
     >

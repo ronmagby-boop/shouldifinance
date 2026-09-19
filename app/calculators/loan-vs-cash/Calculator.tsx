@@ -29,6 +29,18 @@ export default function Calculator() {
     setCashDiscount(0);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setDown("");
+    setRate("");
+    setTerm("");
+    setFees("");
+    setInvestReturn("");
+    setTaxRate("");
+    setCashDiscount("");
+  };
+
   const r = useMemo(() => {
     if (n(price) <= 0) return null;
     const months = Math.max(1, Math.round(n(term)));
@@ -95,6 +107,7 @@ export default function Calculator() {
       slug="loan-vs-cash"
       intro="Paying cash avoids interest. Financing keeps your cash invested. Whichever earns more wins — and with car loan rates where they are, that is usually closer than people expect."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["auto-affordability", "lease-vs-buy", "auto-loan-refinance"]}
       disclaimer="For educational purposes only. Assumes a steady investment return, which is not guaranteed, and that you genuinely invest the cash rather than spend it. Financing also requires qualifying credit and carries the risk of being upside down if the car depreciates faster than the loan amortizes. Not investment advice."
     >

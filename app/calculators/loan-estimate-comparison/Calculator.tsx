@@ -44,6 +44,18 @@ export default function Calculator() {
     ]);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setLoanAmount("");
+    setTerm("");
+    setStayYears("");
+    setQuotes([
+    { ...EMPTY, name: "Lender A" },
+    { ...EMPTY, name: "Lender B" },
+    { ...EMPTY, name: "Lender C" },
+  ]);
+  };
+
   const r = useMemo(() => {
     const loan = n(loanAmount);
     const months = Math.max(1, Math.round(n(term) * 12));
@@ -115,6 +127,7 @@ export default function Calculator() {
       slug="loan-estimate-comparison"
       intro="The lowest rate isn't always the cheapest loan. Points and fees can cost more than they save if you move or refinance first. Put three quotes side by side and compare them over the years you'll actually keep the loan."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["mortgage-payment", "effective-interest-rate", "should-i-refinance"]}
       disclaimer="For educational purposes only. Compare official Loan Estimates, which lenders must issue within three business days of an application, and check that each quote assumes the same loan amount, term, product, and lock period. APR here is calculated from the fees you enter and may differ from a lender's disclosed figure."
     >

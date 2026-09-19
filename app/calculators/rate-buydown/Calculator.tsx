@@ -25,6 +25,16 @@ export default function Calculator() {
     setTerm(30);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setLoan("");
+    setBaseRate("");
+    setBuyRate("");
+    setCost("");
+    setStay("");
+    setTerm("");
+  };
+
   const r = useMemo(() => {
     const L = n(loan);
     const term_m = Math.round(n(term) * 12);
@@ -95,6 +105,7 @@ export default function Calculator() {
       slug="rate-buydown"
       intro="Discount points buy a lower rate with cash today. That only pays off if you keep the loan long enough for the smaller payment to repay what you handed over. Find the month it crosses over."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["mortgage-payment", "should-i-refinance", "loan-estimate-comparison"]}
       disclaimer="For educational purposes only. Point pricing varies by lender and day, and the rate a given number of points buys is not fixed. Compare real Loan Estimates before paying for a buydown."
     >

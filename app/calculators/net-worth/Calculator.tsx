@@ -51,6 +51,27 @@ export default function Calculator() {
     setIncome(135000);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setCash("");
+    setInvestments("");
+    setRetirement("");
+    setHome("");
+    setVehicles("");
+    setOtherAssets("");
+    setMortgage("");
+    setAutoLoans("");
+    setStudentLoans("");
+    setCreditCards("");
+    setOtherDebts("");
+    setMonthlySaving("");
+    setInvestReturn("");
+    setHomeGrowth("");
+    setDebtPaydown("");
+    setAge("");
+    setIncome("");
+  };
+
   const r = useMemo(() => {
     const liquidAssets = n(cash) + n(investments) + n(retirement);
     const totalAssets = liquidAssets + n(home) + n(vehicles) + n(otherAssets);
@@ -107,6 +128,7 @@ export default function Calculator() {
       slug="net-worth"
       intro="Net worth is the one number that captures everything: what you own minus what you owe. Track it once a quarter and the trend tells you more about your finances than any single month of budgeting."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["retirement-savings", "debt-payoff", "emergency-fund"]}
       disclaimer="For educational purposes only. Asset values are estimates — homes and vehicles are worth what someone will pay, not what a calculator says. Projections assume steady returns and consistent saving. Retirement account balances are shown before the taxes you will owe on withdrawal."
     >

@@ -61,6 +61,18 @@ export default function Calculator() {
     setUse("first");
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setDown("");
+    setVaDown("");
+    setVaRate("");
+    setConvRate("");
+    setTerm("");
+    setTier("740");
+    setUse("first");
+  };
+
   const r = useMemo(() => {
     const P = n(price);
     const term_m = Math.round(n(term) * 12);
@@ -125,6 +137,7 @@ export default function Calculator() {
       slug="va-vs-conventional"
       intro="A VA loan asks for nothing down and charges no mortgage insurance, but it adds a funding fee to the loan. A conventional loan skips the fee and wants a down payment, plus PMI until you reach 20% equity. Put both side by side."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["mortgage-payment", "va-recoup", "home-affordability"]}
       disclaimer="For educational purposes only. Funding fee tiers and PMI rates are typical figures, not quotes — your lender's PMI depends on credit, LTV and the insurer, and VA eligibility rules change. Confirm both with a lender before deciding."
     >

@@ -77,6 +77,20 @@ export default function Calculator() {
     setRent(typicalMonthlyRent(400000));
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setSavings("");
+    setMonthlySave("");
+    setDpNow("");
+    setDpTarget("");
+    setRateNow("");
+    setRateLater("");
+    setAppr("");
+    setTerm("");
+    setRent("");
+  };
+
   const r = useMemo(() => {
     const P = n(price);
     const term_m = Math.round(n(term) * 12);
@@ -150,6 +164,7 @@ export default function Calculator() {
       slug="buy-now-or-save"
       intro="Buying sooner with less down means PMI and a bigger loan. Saving longer means a smaller loan and no PMI — but home prices keep rising while you save, so the amount you need keeps growing too. This shows how long the saving actually takes and what each path costs in total."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "buy-now-or-wait"]}
       disclaimer="For educational purposes only. PMI rates here are typical bands, not a quote, and price growth is an assumption rather than a forecast. Rent while saving is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >

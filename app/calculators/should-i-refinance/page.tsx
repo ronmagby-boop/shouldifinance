@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
+import ExampleButton from "../../components/ExampleButton";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
 import { NumField } from "../../components/Inputs";
 import { related } from "../../lib/calculators";
@@ -66,6 +66,22 @@ export default function ShouldIRefinance() {
     // untouched, so it keeps tracking the suggestion as inputs change.
     setExtraDirty(false);
     setExtraPayment("");
+  };
+
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setCurrentBalance("");
+    setCurrentRate("");
+    setYearsLeft("");
+    setCurrentPayment("");
+    setDerived(null);
+    setCashOut("");
+    setClosingCosts("");
+    setFinanceClosing(true);
+    setNewRate("");
+    setNewTerm("");
+    setExtraPayment("");
+    setExtraDirty(false);
   };
 
   // --- the linked pair -------------------------------------------------
@@ -275,13 +291,7 @@ export default function ShouldIRefinance() {
           <h1 className="text-2xl font-medium text-gray-900 mb-2">Should I refinance?</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you&apos;re considering. We&apos;ll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>
 
-          <button
-            onClick={loadExample}
-            className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"
-          >
-            <Sparkles className="w-4 h-4" aria-hidden="true" />
-            See with example numbers
-          </button>
+            <ExampleButton onLoad={loadExample} onClear={clearExample} />
 
           {/* TWO COLUMN ON DESKTOP, STACKED ON MOBILE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

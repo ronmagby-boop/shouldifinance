@@ -1,10 +1,10 @@
 "use client";
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
+import ExampleButton from "../../components/ExampleButton";
 import { related } from "../../lib/calculators";
 import { NumField, type Num } from "../../components/Inputs";
 
@@ -42,6 +42,21 @@ export default function MortgageCalculator() {
     setShowAll(false);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setDown("");
+    setDownPct("");
+    setRate("");
+    setTerm("");
+    setTax("");
+    setTaxAmt("");
+    setIns("");
+    setHoa("");
+    setPmi("");
+    setShowAll(false);
+  };
+
   const fmt = (v: number) => "$" + Math.round(Math.abs(v)).toLocaleString();
   const fmtK = (v: number) => {
     const n = Math.round(Math.abs(v));
@@ -51,6 +66,10 @@ export default function MortgageCalculator() {
   const results = useMemo(() => {
     const P = n(price), D = n(down), R = n(rate), T = n(term);
     const INS = n(ins), HOA = n(hoa), PMI = n(pmi);
+    // Without a price and a term there is nothing to report. Returning a result
+    // anyway rendered "first 0 years" over an empty table, and a green summary
+    // claiming no PMI was due on a loan nobody had entered.
+    if (P <= 0 || T <= 0 || R <= 0) return null;
     const loan = Math.max(0, P - D);
     const r = R / 100 / 12;
     const months = T * 12;
@@ -168,13 +187,7 @@ export default function MortgageCalculator() {
               <p className="text-sm text-gray-500 leading-relaxed">Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.</p>
             </div>
 
-            <button
-              onClick={loadExample}
-              className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"
-            >
-              <Sparkles className="w-4 h-4" aria-hidden="true" />
-              See with example numbers
-            </button>
+            <ExampleButton onLoad={loadExample} onClear={clearExample} />
 
             {/* CALCULATOR */}
             <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
@@ -238,7 +251,17 @@ export default function MortgageCalculator() {
               </div>
             </div>
 
+            {!results && (
+              <div className="mb-6 border border-gray-200 rounded-xl bg-gray-50 px-5 py-8 text-center">
+                <p className="text-sm text-gray-500">
+                  Enter a home price, an interest rate and a loan term to see the payment and the
+                  schedule.
+                </p>
+              </div>
+            )}
+
             {/* AMORTIZATION TABLE */}
+            {results && (
             <div className="mb-6">
               <div className="flex items-baseline justify-between gap-3 mb-3 pb-2 border-b border-gray-100">
                 <h2 className="text-base font-medium text-gray-900">
@@ -321,6 +344,8 @@ export default function MortgageCalculator() {
                 </p>
               </div>
             </div>
+
+            )}
 
             {/* RELATED CALCULATORS */}
             <div className="mb-6">

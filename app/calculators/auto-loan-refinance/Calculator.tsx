@@ -31,6 +31,19 @@ export default function Calculator() {
     setRollFees(true);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setCurrentPayment("");
+    setCurrentRate("");
+    setMonthsLeft("");
+    setNewRate("");
+    setNewTerm("");
+    setFees("");
+    setCarValue("");
+    setRollFees(true);
+  };
+
   const r = useMemo(() => {
     const bal = n(balance);
     const left = Math.round(n(monthsLeft));
@@ -86,6 +99,7 @@ export default function Calculator() {
       slug="auto-loan-refinance"
       intro="Car loans are short, so a refinance has less time to pay off than a mortgage does. Enter your current loan and the offer to see the monthly savings, the real interest savings, and whether a longer term is quietly undoing both."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["loan-vs-cash", "auto-affordability", "depreciation"]}
       disclaimer="For educational purposes only and not a commitment to lend. Refinancing depends on credit, vehicle age and mileage, and loan-to-value limits. Check your current loan for prepayment penalties and confirm whether it uses simple interest or a precomputed balance."
     >

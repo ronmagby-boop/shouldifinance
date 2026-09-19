@@ -45,6 +45,24 @@ export default function Calculator() {
     setMaintenance(700);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setYears("");
+    setInvestReturn("");
+    setLeaseDown("");
+    setLeasePayment("");
+    setLeaseTerm("");
+    setLeaseFees("");
+    setMileageCharge("");
+    setBuyDown("");
+    setBuyRate("");
+    setBuyTerm("");
+    setSalesTax("");
+    setResaleValue("");
+    setMaintenance("");
+  };
+
   const r = useMemo(() => {
     const horizon = Math.round(n(years) * 12);
     if (n(price) <= 0 || horizon <= 0) return null;
@@ -115,6 +133,7 @@ export default function Calculator() {
       slug="lease-vs-buy"
       intro="Leasing usually has the lower payment; buying usually has the lower cost. Compare both over the same number of years — including what the car is still worth at the end, which is the part leasing never gives you."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["lease-payment", "loan-vs-cash", "total-cost-of-ownership"]}
       disclaimer="For educational purposes only. Lease terms, residual values, money factors, and disposition fees vary by manufacturer and by month. Resale values are estimates — check current market data for the specific model. Excess mileage and wear charges can add substantially to a lease."
     >

@@ -33,6 +33,20 @@ export default function Calculator() {
     setFuel(180);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setIncome("");
+    setDebts("");
+    setDown("");
+    setTradeIn("");
+    setTradeOwed("");
+    setRate("");
+    setTerm("");
+    setSalesTax("");
+    setInsurance("");
+    setFuel("");
+  };
+
   const r = useMemo(() => {
     const gross = n(income);
     if (gross <= 0) return null;
@@ -111,6 +125,7 @@ export default function Calculator() {
       slug="auto-affordability"
       intro="A car payment is only part of the cost — insurance, fuel, and maintenance ride along with it. This works out a price range from your whole transportation budget, not just what a lender will approve."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["total-cost-of-ownership", "loan-vs-cash", "lease-vs-buy"]}
       disclaimer="For educational purposes only. Actual approval depends on credit score, income verification, and the lender's own limits. Insurance quotes vary widely by vehicle, so get a quote on the specific model before committing — a sports car and a sedan at the same price can differ by hundreds a month."
     >

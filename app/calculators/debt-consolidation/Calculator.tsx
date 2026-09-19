@@ -33,6 +33,14 @@ export default function Calculator() {
     setFee(500);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setDebts([{ ...EMPTY }, { ...EMPTY }, { ...EMPTY }]);
+    setNewRate("");
+    setNewTerm("");
+    setFee("");
+  };
+
   const r = useMemo(() => {
     const live = debts.filter(d => n(d.balance) > 0 && n(d.min) > 0);
     if (live.length === 0 || n(newRate) < 0 || n(newTerm) <= 0) return null;
@@ -81,6 +89,7 @@ export default function Calculator() {
       slug="debt-consolidation"
       intro="One payment instead of five is easier to live with, but only helps your wallet if the new rate beats what you are paying now — after any fee. List what you owe and see both sides."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["debt-payoff", "balance-transfer", "heloc-debt-payoff"]}
       disclaimer="For educational purposes only. Consolidation loan offers depend on credit and income, and a longer term can lower the payment while raising total interest. Closing the old accounts can also move your credit score."
     >

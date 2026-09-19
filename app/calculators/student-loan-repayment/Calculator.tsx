@@ -33,6 +33,17 @@ export default function Calculator() {
     setStatus("single");
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setBalance("");
+    setRate("");
+    setIncome("");
+    setIncomeGrowth("");
+    setFamilySize("");
+    setExtra("");
+    setStatus("single");
+  };
+
   const r = useMemo(() => {
     const bal = n(balance);
     if (bal <= 0 || n(rate) < 0) return null;
@@ -144,6 +155,7 @@ export default function Calculator() {
       slug="student-loan-repayment"
       intro="The lowest payment and the lowest cost are almost never the same plan. Compare standard, extended, and income-driven repayment on your actual balance — including what gets forgiven and what that costs in interest."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["debt-payoff", "pay-off-debt", "emergency-fund"]}
       disclaimer="For educational purposes only. Federal repayment plans, their formulas, and forgiveness timelines change with legislation and regulation — verify current terms at studentaid.gov. Income-driven plans require annual recertification, and forgiven balances may be taxable. Private loans do not qualify for federal plans or forgiveness. This is not advice about your specific loans."
     >

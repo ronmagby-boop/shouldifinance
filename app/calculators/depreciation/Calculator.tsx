@@ -27,6 +27,17 @@ export default function Calculator() {
     setTerm(72);
   };
 
+  /** Back to the page's initial state: every field, flag and row. */
+  const clearExample = () => {
+    setPrice("");
+    setFirstYear("");
+    setLaterYears("");
+    setYears("");
+    setDown("");
+    setRate("");
+    setTerm("");
+  };
+
   const r = useMemo(() => {
     const yrs = Math.max(1, Math.round(n(years)));
     if (n(price) <= 0) return null;
@@ -98,6 +109,7 @@ export default function Calculator() {
       slug="depreciation"
       intro="Depreciation is the largest cost of owning a car and the only one that never sends a bill. Track what your vehicle is worth each year — and see exactly when the loan balance finally drops below it."
       onExample={loadExample}
+      onClear={clearExample}
       relatedSlugs={["total-cost-of-ownership", "auto-loan-refinance", "lease-vs-buy"]}
       disclaimer="For educational purposes only. Depreciation varies enormously by make, model, condition, mileage, and market conditions — trucks and some hybrids hold value far better than average, while luxury sedans and EVs have historically fallen faster. Check current listings for the real number on your vehicle."
     >
