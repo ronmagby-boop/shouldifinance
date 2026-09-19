@@ -245,7 +245,7 @@ export default function Calculator() {
       slug="pay-off-debt"
       intro="Paying down a loan is a guaranteed return equal to its interest rate. Investing might do better — or might not. Compare both after tax, and see how much of the answer rests on an assumption."
       onExample={loadExample}
-      relatedSlugs={["extra-payments", "debt-payoff", "investment-growth"]}
+      relatedSlugs={["refinance-to-pay-off-debt", "extra-payments", "debt-payoff"]}
       disclaimer="For educational purposes only. Paying down debt is a certain return; investment returns are not — the comparison assumes a steady rate that real markets do not deliver. Before doing either, capture any employer retirement match and fund your emergency savings. Not investment or tax advice."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

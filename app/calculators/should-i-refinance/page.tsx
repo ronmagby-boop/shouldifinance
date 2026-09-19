@@ -7,6 +7,7 @@ import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileB
 import SiteNav from "../../components/SiteNav";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
 import { NumField } from "../../components/Inputs";
+import { related } from "../../lib/calculators";
 
 type Num = number | "";
 
@@ -486,6 +487,32 @@ export default function ShouldIRefinance() {
               </div>
             </div>
           )}
+
+          {/* RELATED */}
+          <div className="mb-6">
+            <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
+              Related calculators
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {related("should-i-refinance", [
+                "refinance-to-pay-off-debt",
+                "extra-payments",
+                "rate-buydown",
+              ]).map((card) => (
+                <Link
+                  key={card.slug}
+                  href={`/calculators/${card.slug}`}
+                  className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block"
+                >
+                  <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
+                    <card.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">{card.nav}</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
 
           <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
             Figures are estimates for discussion purposes only. Not a commitment to lend. Actual figures depend on credit, escrow, and underwriting.

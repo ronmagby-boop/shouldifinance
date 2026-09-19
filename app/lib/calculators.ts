@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront,
+  Scale3d, Split, HandCoins, CarFront, Merge,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -47,6 +47,14 @@ export const CALCULATORS: Calc[] = [
     desc: "See if refinancing saves money, when you break even, and what it costs to reset the clock.",
     icon: RefreshCw, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["refinance calculator", "break even", "refinance savings"],
+  },
+  {
+    slug: "refinance-to-pay-off-debt",
+    title: "Should I refinance and pay off my debt?",
+    nav: "Should I refinance to pay off debt?",
+    desc: "Roll high-rate debts into a new mortgage and see the blended rate, the monthly saving, and what it costs over the full term.",
+    icon: Merge, bg: "bg-purple-50", category: "Home", kind: "should-i",
+    keywords: ["debt consolidation refinance", "cash out refinance to pay off debt", "blended interest rate"],
   },
   {
     slug: "rent-vs-buy",

@@ -144,7 +144,7 @@ export default function Calculator() {
       slug="debt-payoff"
       intro="List everything you owe, then add whatever you can put toward it beyond the minimums. We'll run both payoff methods — smallest balance first, or highest rate first — and show what each one costs."
       onExample={loadExample}
-      relatedSlugs={["pay-off-debt", "emergency-fund", "student-loan-repayment"]}
+      relatedSlugs={["refinance-to-pay-off-debt", "pay-off-debt", "emergency-fund"]}
       disclaimer="For educational purposes only. Assumes fixed rates and that you stop adding new debt. Credit card minimum payments usually shrink as the balance falls, which makes payoff slower than shown here if you only ever pay the minimum. Not credit counselling advice."
     >
       <Card title="What you owe" badge="YOUR DEBTS" className="mb-4">
