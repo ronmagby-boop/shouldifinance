@@ -37,6 +37,8 @@ export default function Calculator() {
   const [closing, setClosing] = useState<Num>("");
   const [newRate, setNewRate] = useState<Num>("");
   const [term, setTerm] = useState<Num>("");
+  /** Optional: FHA MIP or conventional MI, as a flat monthly figure. */
+  const [mi, setMi] = useState<Num>("");
   const [extraPayment, setExtraPayment] = useState<Num>("");
   /** Until the field is edited by hand it tracks the monthly saving. */
   const [extraDirty, setExtraDirty] = useState(false);
@@ -58,6 +60,7 @@ export default function Calculator() {
     setClosing(6500);
     setNewRate(6.75);
     setTerm(30);
+    setMi(0);
     setExtraPayment("");
     setExtraDirty(false);
   };
@@ -109,7 +112,11 @@ export default function Calculator() {
 
     const newLoan = payoffTotal + n(cashOut) + n(closing);
     const newPI = payment(newLoan, n(newRate), term_m);
-    const newOutlay = newPI + keptPayments;
+    // Mortgage insurance is part of what you hand over each month, so it has to
+    // sit in the outlay rather than beside it — otherwise the saving, the
+    // suggested extra and the break-even all overstate the case.
+    const miMonthly = Math.max(0, n(mi));
+    const newOutlay = newPI + keptPayments + miMonthly;
     const monthlySaving = totalPayments - newOutlay;
     const breakEvenMonths =
       monthlySaving > 0 && n(closing) > 0 ? Math.ceil(n(closing) / monthlySaving) : null;
@@ -118,10 +125,10 @@ export default function Calculator() {
       blocked: false as const,
       totalBalance, totalPayments, blendedAll,
       payoffTotal, blendedChecked, keptPayments, checkedCount: checked.length,
-      newLoan, newPI, newOutlay, monthlySaving, breakEvenMonths, term_m,
+      newLoan, newPI, miMonthly, newOutlay, monthlySaving, breakEvenMonths, term_m,
       rateDrop: blendedAll - n(newRate),
     };
-  }, [debts, cashOut, closing, newRate, term]);
+  }, [debts, cashOut, closing, newRate, term, mi]);
 
   const suggestedExtra =
     base && !base.blocked && base.monthlySaving > 0 ? Math.round(base.monthlySaving) : 0;
@@ -315,12 +322,26 @@ export default function Calculator() {
                   <span className="text-xs text-blue-700 font-medium">New loan amount</span>
                   <span className="text-sm font-medium text-blue-800">{fmt(base.newLoan)}</span>
                 </div>
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-xs text-blue-700 font-medium">New mortgage payment</span>
+                  <span className="text-sm font-medium text-blue-800">{fmt(base.newPI)}/mo</span>
+                </div>
                 <p className="text-xs text-blue-700 leading-relaxed">
                   Payoff {fmt(base.payoffTotal)} plus cash out {fmt(n(cashOut))} plus costs{" "}
-                  {fmt(n(closing))}. Everything financed is already in this figure.
+                  {fmt(n(closing))}, at {pct(n(newRate), 2)} over {n(term)} years. Principal and
+                  interest only — any mortgage insurance is below.
                 </p>
               </div>
             )}
+            <NumField
+              label="Mortgage insurance (monthly)"
+              value={mi}
+              onChange={setMi}
+              placeholder="0"
+              prefix="$"
+              suffix="/mo"
+              hint="Optional. FHA loans carry annual mortgage insurance whatever the loan-to-value, so it applies even where a conventional loan at the same LTV would have none. Your loan officer or Loan Estimate has the figure."
+            />
             <NumField
               label="Additional principal payment"
               value={extraValue}
@@ -419,8 +440,14 @@ export default function Calculator() {
               value={fmt(base.newOutlay)}
               tone={base.monthlySaving > 0 ? "green" : "red"}
             />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
               <Stat label="New mortgage payment" value={`${fmt(base.newPI)}/mo`} sub="principal and interest" />
+              <Stat
+                label="Mortgage insurance"
+                value={base.miMonthly > 0 ? `${fmt(base.miMonthly)}/mo` : "None"}
+                tone={base.miMonthly > 0 ? "amber" : "green"}
+                sub={base.miMonthly > 0 ? "included in the outlay" : "none entered"}
+              />
               <Stat
                 label="Debts kept"
                 value={base.keptPayments > 0 ? `${fmt(base.keptPayments)}/mo` : "None"}
@@ -493,10 +520,21 @@ export default function Calculator() {
             </div>
           ) : (
             <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-              <Takeaway tone="blue">
-                Put the <strong>{fmt(suggestedExtra)}</strong> saving back onto the loan as extra
-                principal and this page will show what it does to the payoff date. Spent instead, the
-                refinance is only a smaller payment on a longer loan.
+              <Takeaway tone={suggestedExtra > 0 ? "blue" : "amber"}>
+                {suggestedExtra > 0 ? (
+                  <>
+                    Put the <strong>{fmt(suggestedExtra)}</strong> saving back onto the loan as extra
+                    principal and this page will show what it does to the payoff date. Spent instead,
+                    the refinance is only a smaller payment on a longer loan.
+                  </>
+                ) : (
+                  <>
+                    There is no monthly saving to redirect here — the new outlay of{" "}
+                    <strong>{fmt(base.newOutlay)}</strong> is at or above the{" "}
+                    <strong>{fmt(base.totalPayments)}</strong> you pay now. Any extra principal would
+                    have to come from somewhere else, so enter it by hand if you have it.
+                  </>
+                )}
               </Takeaway>
               <div className="mt-2">
                 <Takeaway tone="amber">
