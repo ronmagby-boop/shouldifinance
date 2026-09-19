@@ -146,22 +146,31 @@ export default function Calculator() {
      * interest as this accelerated schedule. Bisection, because payment() has
      * no closed-form inverse in the rate.
      */
-    let effectiveRate = n(newRate);
-    if (extra > 0 && Number.isFinite(withExtra.interest)) {
+    const rateCosting = (targetInterest: number) => {
+      if (!Number.isFinite(targetInterest)) return n(newRate);
       let lo = 0;
       let hi = n(newRate);
       for (let i = 0; i < 200; i++) {
         const mid = (lo + hi) / 2;
         const midInterest = payment(base.newLoan, mid, base.term_m) * base.term_m - base.newLoan;
-        if (midInterest > withExtra.interest) hi = mid;
+        if (midInterest > targetInterest) hi = mid;
         else lo = mid;
       }
-      effectiveRate = (lo + hi) / 2;
-    }
+      return (lo + hi) / 2;
+    };
+    const effectiveRate = extra > 0 ? rateCosting(withExtra.interest) : n(newRate);
+    // Computed even when the field is empty, so the tile can say what applying
+    // the saving would achieve instead of showing nothing.
+    const suggested = base.monthlySaving > 0 ? Math.round(base.monthlySaving) : 0;
+    const effectiveAtSuggested =
+      suggested > 0
+        ? rateCosting(amortizeWithExtra(base.newLoan, n(newRate), base.term_m, suggested).interest)
+        : n(newRate);
 
     return {
       extra,
       effectiveRate,
+      effectiveAtSuggested,
       payoffMonths: withExtra.months,
       monthsSaved: base.term_m - withExtra.months,
       interestWithExtra: withExtra.interest,
@@ -188,12 +197,12 @@ export default function Calculator() {
           row had 353px for four fields and needed 378, so it truncated.
           The pair only sits side by side from xl, because below that the debts
           panel needs the full width for the stacked card layout instead. */}
-      <div className="grid grid-cols-1 xl:grid-cols-8 gap-4 mb-4">
-        <Card title="Today's debts" badge="CURRENT" className="xl:col-span-5">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+        <Card title="Today's debts" badge="CURRENT" className="xl:col-span-2">
           <div className="space-y-2">
             {/* Column headings from md up; each row repeats them for screen
                 readers only, so the rows themselves stay one line tall. */}
-            <div className="hidden xl:grid xl:grid-cols-[auto_minmax(120px,1.72fr)_minmax(104px,1fr)_minmax(82px,0.78fr)_minmax(88px,0.84fr)_auto] xl:gap-2 xl:items-end xl:px-0.5">
+            <div className="hidden xl:grid xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto] xl:gap-2 xl:items-end xl:px-0.5">
               <span className="w-8" aria-hidden="true" />
               <span className={headCell}>Debt</span>
               <span className={headCell}>Balance</span>
@@ -205,7 +214,7 @@ export default function Calculator() {
             {debts.map((d, i) => (
               <div
                 key={i}
-                className="grid grid-cols-[auto_minmax(0,1fr)_auto] xl:grid-cols-[auto_minmax(120px,1.72fr)_minmax(104px,1fr)_minmax(82px,0.78fr)_minmax(88px,0.84fr)_auto] gap-2 items-center border-b border-gray-100 xl:border-0 pb-2 xl:pb-0"
+                className="grid grid-cols-[auto_minmax(0,1fr)_auto] xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto] gap-2 items-center border-b border-gray-100 xl:border-0 pb-2 xl:pb-0"
               >
                 <label className="flex items-center justify-center w-8 h-11 cursor-pointer xl:order-1">
                   <input
@@ -233,8 +242,8 @@ export default function Calculator() {
                   <X className="w-4 h-4" aria-hidden="true" />
                 </button>
                 {/* xl:contents lets these three join the row grid directly. */}
-                <div className="col-span-3 grid grid-cols-[minmax(0,1.12fr)_minmax(0,0.92fr)_minmax(0,0.96fr)] gap-2 xl:contents">
-                  <div className="xl:order-3">
+                <div className="col-span-3 grid grid-cols-2 sm:grid-cols-[minmax(0,1.12fr)_minmax(0,0.92fr)_minmax(0,0.96fr)] gap-2 xl:contents">
+                  <div className="col-span-2 sm:col-span-1 xl:order-3">
                     <NumField label="Balance" labelClass="xl:sr-only" value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="14200" prefix="$" />
                   </div>
                   <div className="xl:order-4">
@@ -284,7 +293,7 @@ export default function Calculator() {
           </div>
         </Card>
 
-        <Card title="The new loan" badge="PROPOSED" badgeTone="blue" className="xl:col-span-3">
+        <Card title="The new loan" badge="PROPOSED" badgeTone="blue" className="xl:col-span-1">
           <div className="space-y-4">
             {base && !base.blocked && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -353,8 +362,8 @@ export default function Calculator() {
       ) : base && r ? (
         <>
           <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
-              <div className="p-4 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-px bg-gray-100">
+              <div className="p-4 text-center bg-white">
                 <p className="text-xs text-gray-400 mb-1">You pay today</p>
                 <p className="text-lg font-medium text-gray-900">{pct(base.blendedAll, 2)}</p>
                 <p className="text-xs text-gray-400 mt-0.5">blended across {fmt(base.totalBalance)}</p>
@@ -368,10 +377,31 @@ export default function Calculator() {
                   {fmt(base.totalPayments)} → {fmt(base.newOutlay)}
                 </p>
               </div>
-              <div className="p-4 text-center">
-                <p className="text-xs text-gray-400 mb-1">You&apos;d pay instead</p>
-                <p className="text-lg font-medium text-green-700">{pct(n(newRate), 2)}</p>
+              <div className="p-4 text-center bg-white">
+                <p className="text-xs text-gray-400 mb-1">New mortgage rate</p>
+                <p className="text-lg font-medium text-gray-900">{pct(n(newRate), 2)}</p>
                 <p className="text-xs text-gray-400 mt-0.5">on {fmt(base.newLoan)}</p>
+              </div>
+              {/* The rate the accelerated schedule works out to. With no extra
+                  entered it shows the note rate unchanged and says what applying
+                  the saving would make it, rather than a blank or a figure that
+                  looks like it is already being earned. */}
+              <div className="p-4 text-center bg-white">
+                <p className="text-xs text-gray-400 mb-1">Effective rate</p>
+                <p className={`text-lg font-medium ${r.extra > 0 ? "text-green-700" : "text-gray-400"}`}>
+                  {pct(r.extra > 0 ? r.effectiveRate : n(newRate), 2)}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {r.extra > 0 ? (
+                    <>with {fmt(r.extra)}/mo extra on the principal</>
+                  ) : suggestedExtra > 0 && r.effectiveAtSuggested < n(newRate) ? (
+                    <>
+                      {pct(r.effectiveAtSuggested, 2)} if you apply the {fmt(suggestedExtra)} saving
+                    </>
+                  ) : (
+                    <>no extra principal entered</>
+                  )}
+                </p>
               </div>
             </div>
           </div>
