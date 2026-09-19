@@ -79,6 +79,16 @@ export const selectOnFocus = {
   },
 };
 
+/** Parses a raw field value and holds it inside any bounds the field declares. */
+const clamp = (raw: string, min?: number, max?: number): Num => {
+  if (raw === "") return "";
+  let v = +raw;
+  if (Number.isNaN(v)) return "";
+  if (min !== undefined) v = Math.max(min, v);
+  if (max !== undefined) v = Math.min(max, v);
+  return v;
+};
+
 export function NumField({
   label,
   value,
@@ -87,6 +97,8 @@ export function NumField({
   prefix,
   suffix,
   step,
+  min,
+  max,
   hint,
   action,
   labelClass = "",
@@ -99,6 +111,17 @@ export function NumField({
   prefix?: string;
   suffix?: string;
   step?: number;
+  /**
+   * Bounds, enforced on every keystroke rather than on blur. The native
+   * min/max attributes only gate the spinners and form validation — a typed
+   * value sails past them — so an out-of-range figure would reach the results
+   * and be read before the field corrected itself.
+   *
+   * Opt-in. Plenty of fields take a genuinely negative value (a net worth, a
+   * monthly surplus, an annual change) and must not be clamped.
+   */
+  min?: number;
+  max?: number;
   hint?: ReactNode;
   action?: ReactNode;
   /** Extra classes on the label — e.g. "md:sr-only" for an inline table row
@@ -125,9 +148,11 @@ export function NumField({
           inputMode="decimal"
           value={value}
           step={step}
+          min={min}
+          max={max}
           placeholder={placeholder}
           disabled={disabled}
-          onChange={(e) => onChange(e.target.value === "" ? "" : +e.target.value)}
+          onChange={(e) => onChange(clamp(e.target.value, min, max))}
           {...selectOnFocus}
           className={`${baseInput} ${pad} ${disabled ? "cursor-not-allowed bg-gray-50" : ""}`}
         />

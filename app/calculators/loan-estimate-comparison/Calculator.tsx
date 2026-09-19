@@ -181,6 +181,7 @@ export default function Calculator() {
           <NumField
             label="Loan amount"
             value={loanAmount}
+            min={0}
             onChange={setLoanAmount}
             placeholder="400000"
             prefix="$"
@@ -189,6 +190,7 @@ export default function Calculator() {
           <NumField
             label="Loan term"
             value={term}
+            min={0}
             onChange={setTerm}
             placeholder="30"
             suffix="yrs"
@@ -197,6 +199,7 @@ export default function Calculator() {
           <NumField
             label="Years you'll keep it"
             value={stayYears}
+            min={0}
             onChange={setStayYears}
             placeholder="7"
             suffix="yrs"
@@ -225,6 +228,7 @@ export default function Calculator() {
               <NumField
                 label="Loan amount"
                 value={q.loan}
+                min={0}
                 onChange={(v) => update(i, { loan: v })}
                 placeholder={sharedLoan > 0 ? String(Math.round(sharedLoan)) : "400000"}
                 prefix="$"
@@ -240,6 +244,7 @@ export default function Calculator() {
                 <NumField
                   label="Rate"
                   value={q.rate}
+                  min={0}
                   onChange={(v) => update(i, { rate: v })}
                   placeholder="6.375"
                   suffix="%"
@@ -249,6 +254,7 @@ export default function Calculator() {
                 <NumField
                   label="Term"
                   value={q.term}
+                  min={0}
                   onChange={(v) => update(i, { term: v })}
                   placeholder={sharedMonths > 0 ? String(Math.round(sharedMonths / 12)) : "30"}
                   suffix="yrs"
@@ -262,6 +268,7 @@ export default function Calculator() {
               <NumField
                 label="Total Loan Costs (D)"
                 value={q.loanCosts}
+                min={0}
                 onChange={(v) => update(i, { loanCosts: v })}
                 placeholder="7200"
                 prefix="$"
@@ -270,6 +277,7 @@ export default function Calculator() {
               <NumField
                 label="Total Other Costs (I)"
                 value={q.otherCosts}
+                min={0}
                 onChange={(v) => update(i, { otherCosts: v })}
                 placeholder="4100"
                 prefix="$"
@@ -278,6 +286,7 @@ export default function Calculator() {
               <NumField
                 label="Lender credits"
                 value={q.credits}
+                min={0}
                 onChange={(v) => update(i, { credits: v })}
                 placeholder="0"
                 prefix="$"
