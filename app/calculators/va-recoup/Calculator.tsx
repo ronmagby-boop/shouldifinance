@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
   Card, NumField, Toggle, Headline, Stat, Takeaway, EmptyState,
-  fmt, fmtK, pct, months as fmtMonths, n, type Num,
+  fmt, fmtK, pct, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
@@ -50,9 +50,19 @@ export default function Calculator() {
     if (n(balance) <= 0 || n(currentPayment) <= 0) return null;
 
     const fundingFee = (n(balance) * n(fundingFeePct)) / 100;
-    // VA recoupment counts all fees and closing costs, excluding escrow and prepaids.
-    const recoupableCosts = n(closingCosts) + fundingFee;
-    const newLoan = financeCosts ? n(balance) + recoupableCosts + n(escrow) : n(balance);
+    /**
+     * Two different totals, and conflating them was overstating recoupment.
+     *
+     * Recoupment counts closing costs and fees only. The VA funding fee is
+     * excluded from it, as are escrows and prepaids — so a fee that is rolled
+     * into the loan still does not have to pay for itself inside 36 months.
+     *
+     * What gets financed is the wider figure: the fee and any escrow do go into
+     * the new balance, and therefore into the new payment.
+     */
+    const recoupableCosts = n(closingCosts);
+    const financedCosts = n(closingCosts) + fundingFee + n(escrow);
+    const newLoan = financeCosts ? n(balance) + financedCosts : n(balance);
     const termMonths = Math.max(1, n(newTerm) * 12);
     const newPayment = payment(newLoan, n(newRate), termMonths);
 
@@ -74,6 +84,7 @@ export default function Calculator() {
     return {
       fundingFee,
       recoupableCosts,
+      financedCosts,
       newLoan,
       newPayment,
       monthlySavings,
@@ -161,7 +172,11 @@ export default function Calculator() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               <Stat label="Monthly savings" value={r.monthlySavings > 0 ? `${fmt(r.monthlySavings)}/mo` : "None"} tone={r.monthlySavings > 0 ? "green" : "red"} />
-              <Stat label="Recoupable costs" value={fmt(r.recoupableCosts)} sub={`incl. ${fmt(r.fundingFee)} funding fee`} />
+              <Stat
+                label="Recoupable costs"
+                value={fmt(r.recoupableCosts)}
+                sub="funding fee and prepaids excluded"
+              />
               <Stat label="Rate reduction" value={pct(r.rateDrop, 3)} tone={r.rateDrop > 0 ? "green" : "red"} />
               <Stat label="New loan amount" value={fmtK(r.newLoan)} />
             </div>
@@ -169,9 +184,11 @@ export default function Calculator() {
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline label="Net savings after 5 years" value={fmtK(r.savings5yr)} tone={r.savings5yr > 0 ? "green" : "red"} />
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+            {/* "Break-even" lived here showing Math.ceil(recoupMonths) — the
+                recoupment period again, under a second name. One number with two
+                labels reads as a discrepancy, so it is gone rather than restated. */}
+            <div className="grid grid-cols-2 gap-2 mb-4">
               <Stat label="Net after 10 years" value={fmtK(r.savings10yr)} tone={r.savings10yr > 0 ? "green" : "red"} />
-              <Stat label="Break-even" value={r.recoupMonths ? fmtMonths(Math.ceil(r.recoupMonths)) : "—"} />
               <Stat
                 label="Max costs that would still pass"
                 value={r.maxCosts > 0 ? fmt(r.maxCosts) : "—"}
@@ -210,7 +227,7 @@ export default function Calculator() {
               baselineZero
               series={[
                 { label: "Cumulative net savings", color: COLORS.green, data: r.net },
-                { label: "Break-even", color: COLORS.gray, data: r.zero, dash: [4, 4] },
+                { label: "Recoupment line", color: COLORS.gray, data: r.zero, dash: [4, 4] },
               ]}
             />
             <div className="mt-4">
