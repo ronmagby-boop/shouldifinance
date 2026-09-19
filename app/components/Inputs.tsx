@@ -89,6 +89,7 @@ export function NumField({
   step,
   hint,
   action,
+  labelClass = "",
   disabled = false,
 }: {
   label: string;
@@ -100,13 +101,16 @@ export function NumField({
   step?: number;
   hint?: ReactNode;
   action?: ReactNode;
+  /** Extra classes on the label — e.g. "md:sr-only" for an inline table row
+   *  whose column headings already name the field. */
+  labelClass?: string;
   /** Dimmed and non-interactive — for a field the current mode does not use. */
   disabled?: boolean;
 }) {
   const pad = `${prefix ? "pl-7" : "pl-3"} ${suffix ? (suffix.length > 2 ? "pr-12" : "pr-8") : "pr-3"}`;
   return (
     <div className={disabled ? "opacity-50" : undefined}>
-      <label className="block text-xs font-medium text-gray-500 mb-1.5">
+      <label className={`block text-xs font-medium text-gray-500 mb-1.5 ${labelClass}`}>
         {label}
         {action}
       </label>
