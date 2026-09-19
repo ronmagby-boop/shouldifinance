@@ -22,11 +22,11 @@ export default function Calculator() {
 
   const loadExample = () => {
     setValue(480000);
-    setBalance(265000);
-    setSellPct(7);
+    setBalance(340000);
+    setSellPct(6);
     setNewPrice(610000);
     setNewDownPct(20);
-    setOtherCash(30000);
+    setOtherCash(60000);
     setBridgeCost(9000);
     setTempHousing(4000);
     setNeedProceeds(true);
@@ -85,12 +85,12 @@ export default function Calculator() {
         <Card title="The home you're selling" badge="CURRENT">
           <div className="space-y-4">
             <NumField label="What it's worth" value={value} onChange={setValue} placeholder="480000" prefix="$" />
-            <NumField label="Mortgage still owed" value={balance} onChange={setBalance} placeholder="265000" prefix="$" />
+            <NumField label="Mortgage still owed" value={balance} onChange={setBalance} placeholder="340000" prefix="$" />
             <NumField
               label="Selling costs"
               value={sellPct}
               onChange={setSellPct}
-              placeholder="7"
+              placeholder="6"
               suffix="%"
               hint="Agent commission, transfer taxes and the usual concessions — commonly 6–9%."
             />
@@ -113,7 +113,7 @@ export default function Calculator() {
               label="Savings you can use"
               value={otherCash}
               onChange={setOtherCash}
-              placeholder="30000"
+              placeholder="60000"
               prefix="$"
               hint="Cash on hand, not counting anything tied up in the current home."
             />
