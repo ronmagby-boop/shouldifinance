@@ -6,10 +6,23 @@ import {
   fmt, fmtK, pct, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
-import { ordinaryRate, futureValue } from "../../lib/finance";
+import { futureValue } from "../../lib/finance";
+import { TAX_YEAR, taxOnExtraIncome, standardDeduction, type FilingStatus } from "../../lib/tax";
 
-type Status = "single" | "married" | "head";
 type Account = "401k" | "traditional-ira" | "roth";
+
+/**
+ * How much comes off the top before the money reaches you.
+ *
+ * A 401(k) or 403(b) distribution carries a mandatory 20% federal withholding
+ * that cannot be waived. An IRA withholds 10% by default and the owner may opt
+ * out. Neither is the tax — both are a prepayment settled on the return.
+ */
+const WITHHOLDING: Record<Account, { rate: number; waivable: boolean }> = {
+  "401k": { rate: 20, waivable: false },
+  "traditional-ira": { rate: 10, waivable: true },
+  roth: { rate: 10, waivable: true },
+};
 
 export default function Calculator() {
   const [amount, setAmount] = useState<Num>("");
@@ -19,7 +32,7 @@ export default function Calculator() {
   const [returnRate, setReturnRate] = useState<Num>("");
   const [retireAge, setRetireAge] = useState<Num>("");
   const [contributions, setContributions] = useState<Num>("");
-  const [status, setStatus] = useState<Status>("single");
+  const [status, setStatus] = useState<FilingStatus>("single");
   const [account, setAccount] = useState<Account>("401k");
   const [exception, setException] = useState(false);
 
@@ -55,51 +68,80 @@ export default function Calculator() {
     if (gross <= 0) return null;
 
     const isRoth = account === "roth";
-    // Roth contributions come out tax and penalty free; only earnings are hit.
+    // Roth contributions come out first, tax and penalty free; only what is
+    // left is earnings, and only earnings are taxed and penalised.
     const taxablePortion = isRoth ? Math.max(0, gross - n(contributions)) : gross;
 
     const under59 = n(age) < 59.5;
     const penaltyApplies = under59 && !exception;
     const penalty = penaltyApplies ? taxablePortion * 0.1 : 0;
 
-    const fedRate = ordinaryRate(n(income) + taxablePortion, status);
-    const fedTax = (taxablePortion * fedRate) / 100;
+    /* Federal tax on the withdrawal.
+     *
+     * This used to be a single marginal rate applied to the whole amount:
+     * 24% of $30,000 = $7,200 on the example. But the withdrawal stacks on
+     * income already sitting inside the 22% band, so most of it is taxed at
+     * 22% and only the top slice reaches 24%. A flat marginal rate always
+     * overstates, and it overstates most for the people least able to check. */
+    const fed = taxOnExtraIncome(n(income), taxablePortion, status);
+    const fedTax = fed.tax;
     const stateTax = (taxablePortion * n(stateRate)) / 100;
 
-    // 401(k) distributions carry a mandatory 20% federal withholding.
-    const withholding = account === "401k" && !isRoth ? gross * 0.2 : 0;
+    const wh = WITHHOLDING[account];
+    const withholding = (gross * wh.rate) / 100;
 
     const totalCost = penalty + fedTax + stateTax;
     const net = gross - totalCost;
     const keepPct = (net / gross) * 100;
 
-    const yearsToRetire = Math.max(0, n(retireAge) - n(age));
-    const forgone = futureValue(gross, n(returnRate), yearsToRetire);
-    const forgoneNet = futureValue(net, n(returnRate), yearsToRetire);
+    /* The gross-up has to be solved rather than divided, now that the federal
+     * rate moves with the size of the withdrawal. */
+    const netFrom = (w: number) => {
+      const f = taxOnExtraIncome(n(income), isRoth ? Math.max(0, w - n(contributions)) : w, status).tax;
+      const t = isRoth ? Math.max(0, w - n(contributions)) : w;
+      return w - (penaltyApplies ? t * 0.1 : 0) - f - (t * n(stateRate)) / 100;
+    };
+    let lo = 0;
+    let hi = 2_000_000;
+    for (let i = 0; i < 80; i++) {
+      const mid = (lo + hi) / 2;
+      if (netFrom(mid) < 10_000) lo = mid;
+      else hi = mid;
+    }
+    const grossUpFor10k = netFrom(hi) >= 9_999 ? (lo + hi) / 2 : Infinity;
 
-    // Grossed-up amount you would need to withdraw to net a target.
-    const effectiveRate = totalCost / gross;
-    const grossUpFor10k = effectiveRate < 1 ? 10000 / (1 - effectiveRate) : Infinity;
+    const yearsToRetire = n(retireAge) - n(age);
+    const retirementReached = yearsToRetire > 0;
+    /* Annual compounding, not the helper's monthly default. An "expected
+     * return" of 7% is an annual return; compounding it twelve times a year
+     * quietly turns it into 7.23% and reported $171,763 where $162,823 is
+     * right. This is the only caller, so the default is left alone. */
+    const forgone = retirementReached ? futureValue(gross, n(returnRate), yearsToRetire, 1) : gross;
+    const growthMultiple = forgone / Math.max(1, gross);
 
     return {
       gross,
       taxablePortion,
       penalty,
       penaltyApplies,
-      fedRate,
+      fed,
       fedTax,
       stateTax,
       withholding,
+      withholdingRate: wh.rate,
+      withholdingWaivable: wh.waivable,
       totalCost,
       net,
       keepPct,
-      effectiveRate: effectiveRate * 100,
+      effectiveRate: (totalCost / gross) * 100,
       yearsToRetire,
+      retirementReached,
       forgone,
-      forgoneNet,
+      growthMultiple,
       grossUpFor10k,
       isRoth,
       under59,
+      deduction: standardDeduction(status),
     };
   }, [amount, age, income, stateRate, returnRate, retireAge, contributions, status, account, exception]);
 
@@ -109,13 +151,13 @@ export default function Calculator() {
       intro="Taking money out of a retirement account early costs you three times: income tax, a 10% penalty, and every dollar of growth that money would have earned. Here's the full bill."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["retirement-savings", "emergency-fund", "capital-gains"]}
-      disclaimer="For educational purposes only and not tax advice. Uses 2025 federal brackets with a flat state rate. Exceptions to the 10% penalty are specific and fact-dependent (disability, certain medical costs, first-home purchase from an IRA, substantially equal periodic payments, and others). A 401(k) loan or hardship distribution may have different rules. Talk to a tax professional before withdrawing."
+      relatedSlugs={["retirement-savings", "emergency-fund", "401k-vs-debt-payoff", "capital-gains"]}
+      disclaimer={`For educational purposes only and not tax advice. Uses ${TAX_YEAR} federal brackets and the standard deduction, with a flat state rate — it does not model credits, phase-outs, or itemising. Exceptions to the 10% penalty are specific and fact-dependent (disability, certain medical costs, first-home purchase from an IRA, substantially equal periodic payments, and others). A 401(k) loan or hardship distribution may have different rules. Talk to a tax professional before withdrawing.`}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The withdrawal" badge="INPUTS">
           <div className="space-y-4">
-            <NumField label="Amount you want to withdraw" value={amount} onChange={setAmount} placeholder="30000" prefix="$" />
+            <NumField label="Amount you want to withdraw" value={amount} onChange={setAmount} min={0} placeholder="30000" prefix="$" />
             <SelectField
               label="Account type"
               value={account}
@@ -125,36 +167,64 @@ export default function Calculator() {
                 { value: "traditional-ira", label: "Traditional IRA" },
                 { value: "roth", label: "Roth IRA" },
               ]}
+              hint={
+                account === "401k"
+                  ? "A plan distribution carries a mandatory 20% federal withholding that you cannot waive."
+                  : account === "traditional-ira"
+                    ? "An IRA withholds 10% federal by default, and you can waive it — the tax is still owed either way."
+                    : "Your contributions come out first, tax and penalty free. Only the earnings above them are taxed."
+              }
             />
             {account === "roth" && (
               <NumField
                 label="Contributions you've made"
                 value={contributions}
                 onChange={setContributions}
+                min={0}
                 placeholder="20000"
                 prefix="$"
-                hint="Roth contributions come out tax and penalty free — only earnings are taxed."
+                hint="Total you have put in over the years, not the current balance. It comes out before any earnings do."
               />
             )}
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Your age" value={age} onChange={setAge} placeholder="40" suffix="yrs" />
-              <NumField label="Retirement age" value={retireAge} onChange={setRetireAge} placeholder="65" suffix="yrs" />
+              <NumField label="Your age" value={age} onChange={setAge} min={1} placeholder="40" suffix="yrs" />
+              <NumField
+                label="Retirement age"
+                value={retireAge}
+                onChange={setRetireAge}
+                min={1}
+                placeholder="65"
+                suffix="yrs"
+                hint={r && !r.retirementReached ? "Set this above your current age to see the growth you'd give up." : undefined}
+              />
             </div>
             <SelectField
               label="Filing status"
               value={status}
-              onChange={(v) => setStatus(v as Status)}
+              onChange={(v) => setStatus(v as FilingStatus)}
               options={[
                 { value: "single", label: "Single" },
                 { value: "married", label: "Married filing jointly" },
                 { value: "head", label: "Head of household" },
               ]}
             />
+            <NumField
+              label="Other gross income"
+              value={income}
+              onChange={setIncome}
+              min={0}
+              placeholder="95000"
+              prefix="$"
+              hint={
+                r
+                  ? `Wages and other taxable income before deductions — the figure on your W-2, not your taxable income. The ${fmt(r.deduction)} standard deduction is applied for you.`
+                  : "Wages and other taxable income before deductions, not your taxable income."
+              }
+            />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Other income" value={income} onChange={setIncome} placeholder="95000" prefix="$" />
-              <NumField label="State tax rate" value={stateRate} onChange={setStateRate} placeholder="5" suffix="%" step={0.5} />
+              <NumField label="State tax rate" value={stateRate} onChange={setStateRate} min={0} placeholder="5" suffix="%" step={0.5} />
+              <NumField label="Expected return" value={returnRate} onChange={setReturnRate} placeholder="7" suffix="%" step={0.25} />
             </div>
-            <NumField label="Expected investment return" value={returnRate} onChange={setReturnRate} placeholder="7" suffix="%" step={0.25} />
             <Toggle checked={exception} onChange={setException}>
               A penalty exception applies (disability, qualified medical costs, SEPP, and similar)
             </Toggle>
@@ -166,7 +236,12 @@ export default function Calculator() {
             <>
               <Headline label={`Cash in hand from a ${fmt(r.gross)} withdrawal`} value={fmt(r.net)} tone="gray" />
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <Stat label={`Federal tax (${pct(r.fedRate, 0)})`} value={fmt(r.fedTax)} tone="red" />
+                <Stat
+                  label="Federal tax"
+                  value={fmt(r.fedTax)}
+                  sub={`${pct(r.fed.effectiveRate, 1)} of the withdrawal`}
+                  tone="red"
+                />
                 <Stat
                   label="10% early penalty"
                   value={r.penaltyApplies ? fmt(r.penalty) : "None ✓"}
@@ -197,11 +272,29 @@ export default function Calculator() {
                 {r.withholding > 0 && (
                   <>
                     {" "}
-                    Your plan must also withhold <strong>{fmt(r.withholding)}</strong> (20%) up front; you
+                    Your {account === "401k" ? "plan" : "custodian"} {r.withholdingWaivable ? "will withhold" : "must withhold"}{" "}
+                    <strong>{fmt(r.withholding)}</strong> ({r.withholdingRate}%) up front
+                    {r.withholdingWaivable ? ", which you can waive" : ""}; that is a prepayment, and you
                     settle up at tax time.
                   </>
                 )}
               </Takeaway>
+              {/* A single marginal rate on the whole withdrawal was the bug. Show
+                  the bands it actually crosses so the effective rate is checkable. */}
+              {r.taxablePortion > 0 && r.fed.bands.length > 0 && (
+                <p className="text-xs text-gray-400 leading-relaxed mt-3">
+                  Stacked on {fmt(n(income))} of income less the {fmt(r.deduction)} standard deduction,
+                  this withdrawal is taxed at{" "}
+                  {r.fed.bands.map((b, i) => (
+                    <span key={b.rate}>
+                      {i > 0 && (i === r.fed.bands.length - 1 ? " and " : ", ")}
+                      <strong className="text-gray-600">{b.rate}% on {fmt(b.amount)}</strong>
+                    </span>
+                  ))}{" "}
+                  — {pct(r.fed.effectiveRate, 2)} overall, not the {r.fed.marginalRate}% top rate it
+                  reaches. {TAX_YEAR} brackets.
+                </p>
+              )}
             </>
           ) : (
             <EmptyState>Enter the amount you&apos;re thinking of withdrawing.</EmptyState>
@@ -225,28 +318,42 @@ export default function Calculator() {
             />
           </ChartCard>
 
-          {r.yearsToRetire > 0 && (
-            <ChartCard title={`The bigger cost: ${r.yearsToRetire} years of growth`}>
+          {r.retirementReached && (
+            <ChartCard title={`The bigger cost: ${Math.round(r.yearsToRetire)} years of growth`}>
+              {/* Both bars are the gross amount and what it becomes. Putting
+                  after-tax cash beside a pre-tax future balance made the gap
+                  look bigger than it is — that balance gets taxed too. */}
               <BarChart
-                ariaLabel="Cash received today compared with what the money would be worth at retirement"
+                ariaLabel="The withdrawal today split into cash and tax, compared with what it would grow to by retirement before tax"
                 height={210}
                 bars={[
-                  { label: "Cash today", segments: [{ label: "Net cash", value: r.net, color: COLORS.gray }] },
                   {
-                    label: `Left invested to age ${n(retireAge)}`,
-                    segments: [{ label: "Future value", value: r.forgone, color: COLORS.green }],
+                    label: "Taken out today",
+                    segments: [
+                      { label: "Cash you keep", value: r.net, color: COLORS.gray },
+                      { label: "Tax and penalty", value: r.totalCost, color: COLORS.red },
+                    ],
+                  },
+                  {
+                    label: `Left invested to ${n(retireAge)}, before tax`,
+                    segments: [{ label: "Future balance", value: r.forgone, color: COLORS.green }],
                   },
                 ]}
               />
               <div className="mt-4">
                 <Takeaway tone="red">
-                  Left alone at {pct(n(returnRate), 1)}, that <strong>{fmt(r.gross)}</strong> would be worth{" "}
-                  <strong>{fmtK(r.forgone)}</strong> by age {n(retireAge)}. Withdrawing it now trades{" "}
-                  {fmtK(r.forgone)} of future money for {fmt(r.net)} today — roughly{" "}
-                  <strong>{(r.forgone / Math.max(1, r.net)).toFixed(1)}× </strong>
-                  what you receive. If this is an emergency, a 401(k) loan or a smaller withdrawal may cost
-                  far less.
+                  Left alone at {pct(n(returnRate), 1)}, that <strong>{fmt(r.gross)}</strong> would be{" "}
+                  <strong>{fmtK(r.forgone)}</strong> by age {n(retireAge)} —{" "}
+                  <strong>{r.growthMultiple.toFixed(1)}×</strong> what you are taking out. If this is an
+                  emergency, a 401(k) loan or a smaller withdrawal may cost far less.
                 </Takeaway>
+                <p className="text-xs text-gray-400 leading-relaxed mt-3">
+                  {fmtK(r.forgone)} is the balance before tax. You would owe income tax on a traditional
+                  account when you drew it in retirement, so it is not the same kind of money as the{" "}
+                  {fmt(r.net)} of after-tax cash in your hand today — the comparison above is gross to
+                  gross for that reason. What the retirement tax costs depends on your bracket then, which
+                  nobody can know now.
+                </p>
               </div>
             </ChartCard>
           )}
