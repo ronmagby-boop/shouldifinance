@@ -215,6 +215,37 @@ export function aprFromFees(
   return monthly === null ? annualRate : monthly * 12 * 100;
 }
 
+/**
+ * The same calculation over a holding period shorter than the term: the
+ * borrower makes `holdMonths` payments and then repays whatever is left as a
+ * lump sum, on a sale or a refinance.
+ *
+ * The fees do not shrink with the hold, so spreading them over fewer payments
+ * always reads higher than the full-term figure, and the two converge as the
+ * hold approaches the term. A hold at or beyond the term is the full-term
+ * case, and delegates to it rather than duplicating it.
+ */
+export function aprFromFeesHeld(
+  loanAmount: number,
+  annualRate: number,
+  months: number,
+  financedFees: number,
+  holdMonths: number,
+): number {
+  const held = Math.min(Math.max(1, Math.round(holdMonths)), months);
+  if (held >= months) return aprFromFees(loanAmount, annualRate, months, financedFees);
+
+  const pmt = payment(loanAmount, annualRate, months);
+  const net = loanAmount - financedFees;
+  if (net <= 0 || pmt <= 0) return annualRate;
+
+  const flows = [net, ...Array<number>(held).fill(-pmt)];
+  // The balloon lands in the same month as the last scheduled payment.
+  flows[held] -= balanceAfter(loanAmount, annualRate, months, held);
+  const monthly = irr(flows);
+  return monthly === null ? annualRate : monthly * 12 * 100;
+}
+
 /** Federal long-term capital gains bracket for a filing status (2025 thresholds). */
 export function longTermRate(taxableIncome: number, status: "single" | "married" | "head"): number {
   const brackets = {
