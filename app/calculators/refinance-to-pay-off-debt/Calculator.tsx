@@ -205,7 +205,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["debt-consolidation", "should-i-refinance", "extra-payments", "pay-off-debt"]}
-      disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend. Consolidating unsecured debt into a mortgage puts your home behind it."
+      disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend."
     >
       {/* 5/3 rather than even halves: the debts panel puts five controls across
           a row, the new loan panel stacks single fields. At equal widths the
@@ -463,12 +463,6 @@ export default function Calculator() {
                   {fmtMonths(base.term_m)}. Both figures compare the same loan on two schedules, so the{" "}
                   <strong>{fmtK(r.interestSaved)}</strong> saved is money you genuinely do not pay.
                 </Takeaway>
-                <Takeaway tone="amber">
-                  This moves unsecured debt onto your home. A credit card issuer can hurt your credit; a
-                  mortgage lender can foreclose. Debt that was costing you{" "}
-                  {pct(base.blendedChecked, 2)} with no collateral would be secured against the roof
-                  over your head.
-                </Takeaway>
               </div>
             </div>
           ) : (
@@ -489,14 +483,6 @@ export default function Calculator() {
                   </>
                 )}
               </Takeaway>
-              <div className="mt-2">
-                <Takeaway tone="amber">
-                  This moves unsecured debt onto your home. A credit card issuer can hurt your credit; a
-                  mortgage lender can foreclose. Debt that was costing you{" "}
-                  {pct(base.blendedChecked, 2)} with no collateral would be secured against the roof
-                  over your head.
-                </Takeaway>
-              </div>
             </div>
           )}
 

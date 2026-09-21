@@ -321,11 +321,11 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="heloc-debt-payoff"
-      intro="A HELOC can cut a 25% credit card rate to single digits, which is why it looks like breathing room. It also turns debt you could walk away from into debt secured against your house, and what it ends up costing depends more on how you pay it than on the rate. Here is what each way of paying it actually does."
+      intro="A HELOC can cut a 25% credit card rate to single digits, which is why it looks like breathing room. What it ends up costing depends more on how you pay it than on the rate. Here is what each way of paying it actually does."
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["debt-consolidation", "refinance-to-pay-off-debt", "debt-payoff", "balance-transfer"]}
-      disclaimer="For educational purposes only, and not advice to borrow against your home. HELOC rates are usually variable, so the payments shown can rise. Missing payments on a HELOC can cost you the house — unsecured debt carries no such risk."
+      disclaimer="For educational purposes only, and not a commitment to lend. HELOC rates are usually variable, so the payments shown can rise, and the rate you are offered depends on your credit and your equity."
     >
       <Card title="The debts you'd pay off" badge="TICK WHAT THE HELOC COVERS" className="mb-4">
         <DebtList
@@ -356,8 +356,8 @@ export default function Calculator() {
                   {row.rate}% is {row.rate === rate ? "the same as" : "below"} the {rate}% HELOC rate.
                 </strong>{" "}
                 Rolling this one in costs about {fmt(row.rateOnlyPenalty)} more in interest over the same{" "}
-                {fmtMonths(row.keepMonths)} it would take on its own — and puts the house behind a debt
-                that never touched it. Untick it unless you want the simplicity.
+                {fmtMonths(row.keepMonths)} it would take on its own. Untick it unless you want the
+                simplicity.
               </p>
             );
           }}
@@ -477,7 +477,7 @@ export default function Calculator() {
                   <strong>{fmtK(r.payNowScenario.saved)}</strong> the{" "}
                   {r.payNowDistinct ? "second" : "faster"} panel shows comes entirely from paying{" "}
                   {fmt(r.payNowScenario.drawPayment)}/mo rather than the minimums — and you can send that
-                  straight at these debts without putting the house behind them.
+                  straight at these debts instead.
                 </>
               ) : (
                 <>
@@ -511,25 +511,6 @@ export default function Calculator() {
                 </>
               )}
             </Takeaway>
-            {/* Directly under the answer, not buried below the charts. A
-                cash-flow answer without this is selling, not explaining. */}
-            <div className="border-l-2 border-red-300 bg-red-50 rounded-r-xl px-4 py-3 mt-3">
-              <p className="text-xs text-red-800 leading-relaxed">
-                <strong>Whatever the arithmetic says, the house secures this debt.</strong> Credit cards
-                cannot foreclose; a HELOC can.{" "}
-                {r.cashFlowScenario && r.freedToday > 0 ? (
-                  <>
-                    Freeing up {fmt(r.freedToday)} a month is worth having, and it is not worth the roof
-                    if the income behind it is shaky.
-                  </>
-                ) : (
-                  <>
-                    Whatever this frees up each month is worth having, and none of it is worth the roof
-                    if the income behind it is shaky.
-                  </>
-                )}
-              </p>
-            </div>
             <p className="text-xs text-gray-400 leading-relaxed mt-3">
               Every panel is measured against the same baseline: each debt left where it is, paid at its
               own minimum until it clears, nothing rolled over —{" "}
@@ -636,14 +617,12 @@ export default function Calculator() {
             />
           </ChartCard>
 
-          <div className="border border-red-200 rounded-2xl p-5 mb-4 bg-red-50">
-            <h2 className="text-sm font-medium text-red-800 mb-3">Read this before you sign</h2>
+          {/* Was a red panel led by a secured-debt warning. The warning is gone;
+              what is left is a rate note, a tax note and a behavioural one, so
+              the styling is neutral to match. */}
+          <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+            <h2 className="text-sm font-medium text-gray-900 mb-3">Before you sign</h2>
             <div className="space-y-2">
-              <Takeaway tone="red">
-                <strong>You are converting unsecured debt into secured debt.</strong> Credit card debt is
-                painful but your home is not on the line. A HELOC is a lien against the house — fall behind
-                and foreclosure is on the table. The interest figures above are real, and so is that risk.
-              </Takeaway>
               <Takeaway tone="amber">
                 Most HELOC rates are variable. Every panel assumes {rate}% throughout and shows what{" "}
                 {RATE_SHOCK} points would do to the repayment-period payment. Nothing stops it moving
@@ -656,7 +635,7 @@ export default function Calculator() {
               </Takeaway>
               <Takeaway tone="blue">
                 This goes wrong the same way every time: the cards get cleared, then used again, and you
-                end up owing both the HELOC and the cards with your house behind the larger half.
+                end up owing both the HELOC and the cards.
               </Takeaway>
             </div>
           </div>
