@@ -220,7 +220,7 @@ export default function Calculator() {
                 value={q.name}
                 onChange={(e) => update(i, { name: e.target.value })}
                 placeholder={`Lender ${i + 1}`}
-                className="text-sm font-medium text-gray-900 border-b border-gray-200 focus:outline-none focus:border-green-400 pb-1 w-full mr-2 bg-transparent"
+                className="text-base sm:text-sm font-medium text-gray-900 border-b border-gray-200 focus:outline-none focus:border-green-400 pb-1 w-full mr-2 bg-transparent"
               />
               <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: TONES[i] }} />
             </div>

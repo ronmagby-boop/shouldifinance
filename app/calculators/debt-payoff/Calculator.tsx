@@ -216,7 +216,7 @@ export default function Calculator() {
                     value={d.name}
                     onChange={(e) => update(i, { name: e.target.value })}
                     placeholder={`Debt ${i + 1}`}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
                   />
                 </div>
                 <NumField label="Balance" labelClass="md:sr-only" min={0} value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="12400" prefix="$" />

@@ -27,3 +27,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* A backstop, not a fix. Nothing on the site currently overflows horizontally —
+   a scan at 375, 390, 393 and 430px found no element past the right edge on
+   any page — but a single stray pixel is enough for Safari to rubber-band
+   sideways, and that is a miserable bug to find from a phone.
+
+   clip rather than hidden: overflow-x: hidden on body silently makes every
+   position: sticky descendant stop sticking, because it turns the element into
+   a scroll container. clip does not. */
+html,
+body {
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}

@@ -113,7 +113,7 @@ export default function Home() {
                 onChange={e => setDecideQuery(e.target.value)}
                 placeholder="What are you trying to decide?"
                 aria-label="Search calculators"
-                className="w-full bg-white border border-gray-200 rounded-full pl-12 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                className="w-full bg-white border border-gray-200 rounded-full pl-12 pr-4 py-3.5 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
               />
 
               {decideQuery.trim() !== "" && (
@@ -387,7 +387,7 @@ export default function Home() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="flex-1 border border-gray-200 rounded-full px-5 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
+                  className="flex-1 border border-gray-200 rounded-full px-5 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
                 />
                 <button className="bg-green-700 text-white text-sm font-bold rounded-full px-6 py-3 hover:bg-green-800 whitespace-nowrap transition-colors">
                   Subscribe

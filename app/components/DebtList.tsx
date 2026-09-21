@@ -56,7 +56,7 @@ export default function DebtList({
   // py-3 rather than py-2.5: at 2.5 the name field came out 42px, under the
   // 44px tap target the number fields beside it already meet.
   const textInput =
-    "w-full px-3 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white";
+    "w-full px-3 py-3 border border-gray-200 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white";
   const headCell = "text-xs font-medium text-gray-400";
   const cols =
     "xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto]";

@@ -32,8 +32,15 @@ export const months = (m: number): string => {
 // hardcoded white, so the text on it must not depend on whatever an ancestor
 // happens to set. placeholder:text-gray-400 keeps a real entered value visibly
 // darker than a hint, which is the whole point of the distinction.
+//
+// text-base below sm, text-sm above it. iOS Safari zooms the page when a
+// control smaller than 16px takes focus, and the zoomed page can then be
+// panned sideways — which reads as the whole site wobbling. 14px is the design
+// size and it is kept everywhere the zoom cannot happen. Do not "simplify"
+// this back to a bare text-sm, and do not fix it with maximum-scale on the
+// viewport: that disables pinch-zoom for everyone.
 const baseInput =
-  "w-full py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 " +
+  "w-full py-3 border border-gray-200 rounded-xl text-base sm:text-sm text-gray-900 placeholder:text-gray-400 " +
   "focus:outline-none focus:border-green-400 bg-white";
 
 /**
