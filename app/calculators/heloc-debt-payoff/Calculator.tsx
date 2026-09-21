@@ -15,6 +15,16 @@ const INTEREST_ONLY_EPSILON = 1 + 1e-9;
 /** The variable-rate scenario each panel shows, in percentage points. */
 const RATE_SHOCK = 2;
 
+type Kind = "cashflow" | "faster" | "minimum" | "custom";
+
+/** "A", "A and B", "A, B and C" — not "A and B and C". */
+const listNames = (xs: { name: string }[]): string =>
+  xs.length <= 1
+    ? xs[0]?.name ?? ""
+    : xs.length === 2
+      ? `${xs[0].name} and ${xs[1].name}`
+      : `${xs.slice(0, -1).map((x) => x.name).join(", ")} and ${xs[xs.length - 1].name}`;
+
 /** One debt run at its own minimum until it clears. No rollover. */
 function atMinimum(balance: number, rate: number, min: number) {
   const r = rate / 100 / 12;
@@ -40,8 +50,14 @@ type Scenario = ReturnType<typeof buildScenario>;
  * anything above the month's interest comes off the principal. Whatever is
  * left when the draw ends then has to amortise over the repayment period,
  * which is where the payment jumps.
+ *
+ * Every figure on the page comes out of here. The headline, the panels and
+ * the takeaway all read the same objects, so the copy cannot drift from the
+ * model the way it did when the term was modelled in one place and described
+ * in another.
  */
 function buildScenario(
+  kind: Kind,
   label: string,
   draw: number,
   monthlyPayment: number,
@@ -77,6 +93,7 @@ function buildScenario(
 
   const helocInterest = drawInterest + repayInterest;
   return {
+    kind,
     label,
     drawPayment: monthlyPayment,
     monthlyAfter: monthlyPayment + keptMin,
@@ -103,7 +120,7 @@ export default function Calculator() {
   const [helocRate, setHelocRate] = useState<Num>("");
   const [drawYears, setDrawYears] = useState<Num>("");
   const [repayYears, setRepayYears] = useState<Num>("");
-  /** Optional third scenario. Blank shows just the two anchors. */
+  /** Optional fourth scenario. Blank shows just the three anchors. */
   const [drawAmount, setDrawAmount] = useState<Num>("");
 
   const update = (i: number, patch: Partial<DebtRow>) =>
@@ -159,8 +176,6 @@ export default function Calculator() {
         const keep = atMinimum(d.balance, d.rate, d.min);
         // Isolates the rate: the same balance, over the same number of months
         // it would have taken at its own minimum, priced at the HELOC's rate.
-        // Mixing in the HELOC's much longer term would blame the rate for a
-        // cost the term caused.
         const atHelocRate = Number.isFinite(keep.months)
           ? payment(d.balance, rate, keep.months) * keep.months - d.balance
           : Infinity;
@@ -183,40 +198,68 @@ export default function Calculator() {
 
     const draw = chosen.reduce((a, d) => a + d.balance, 0);
     const interestOnlyPayment = (draw * rate) / 100 / 12;
-    /** What the ticked debts cost today — the second anchor. */
+    /** What the ticked debts cost today. */
     const payNowAmount = chosen.reduce((a, d) => a + d.min, 0);
 
     // Baseline: every debt at its own minimum until it clears, no rollover.
     const interestNow = rows.reduce((a, d) => a + d.keepInterest, 0);
     const keptInterest = kept.reduce((a, d) => a + d.keepInterest, 0);
     const keptMin = kept.reduce((a, d) => a + d.min, 0);
+    const chosenInterest = chosen.reduce((a, d) => a + d.keepInterest, 0);
 
-    const run = (label: string, pmt: number) =>
-      buildScenario(label, draw, pmt, rate, drawMonths, repayMonths, keptInterest, keptMin, interestNow);
+    const run = (kind: Kind, label: string, pmt: number) =>
+      buildScenario(kind, label, draw, pmt, rate, drawMonths, repayMonths, keptInterest, keptMin, interestNow);
 
-    /* ---- The two anchors, always both on screen. ------------------------
-     * The same line, the same rate, the same debts. Only the monthly payment
-     * differs, and it decides the entire verdict — which is the one thing a
-     * reader has to leave this page with.
+    /* ---- 1. The cash-flow answer. ---------------------------------------
+     * The payment that clears the draw on the date the ticked debts would
+     * have cleared anyway. Same debt-free date, smaller monthly, less
+     * interest — which is the honest version of "frees up cash", as opposed
+     * to the interest-only minimum, which frees up more and never ends.
+     *
+     * Derived from the baseline: the longest of the ticked debts' own payoff
+     * times. Capped at the draw period so the payment is constant and there
+     * is no recast; if the baseline runs past the draw, this clears sooner
+     * than the baseline rather than later, and the panel reports its real
+     * payoff time either way.
      */
-    const minimumScenario = run("Paying the interest-only minimum", interestOnlyPayment);
-    const payNowScenario = run(
-      "Keep paying what you pay now",
-      Math.max(payNowAmount, interestOnlyPayment),
-    );
+    const chosenAllFinite = chosen.length > 0 && chosen.every((d) => Number.isFinite(d.keepMonths));
+    const baselineMonths = chosenAllFinite
+      ? chosen.reduce((a, d) => Math.max(a, d.keepMonths), 0)
+      : 0;
+    const sameTimelineTarget = Math.min(baselineMonths, drawMonths);
+    const cashFlowScenario = sameTimelineTarget > 0 && draw > 0
+      ? run("cashflow", "Free up cash flow", payment(draw, rate, sameTimelineTarget))
+      : null;
 
-    /* ---- Anything the reader wants in between. --------------------------- */
+    /* What the ticked debts actually cost per month, averaged over the
+     * baseline — because the $850 does not last: each debt drops out as it
+     * clears, so the saving is widest on day one and narrows from there. */
+    const avgCurrentOutlay = baselineMonths > 0 ? (draw + chosenInterest) / baselineMonths : 0;
+    const freedToday = cashFlowScenario ? payNowAmount - cashFlowScenario.drawPayment : 0;
+    const freedAverage = cashFlowScenario ? avgCurrentOutlay - cashFlowScenario.drawPayment : 0;
+
+    /* ---- 2 and 3. Faster, and the warning. ------------------------------ */
+    /* When the interest-only minimum is already above what these debts cost
+     * today, "keep paying what you pay now" is not an option the lender
+     * offers — the floor is higher. The scenario is still built so the copy
+     * has something to read, but it stops being a panel of its own, because
+     * it would be the interest-only panel under a second name. */
+    const payNowDistinct = payNowAmount > interestOnlyPayment + 0.5;
+    const payNowScenario = run("faster", "Pay it off faster", Math.max(payNowAmount, interestOnlyPayment));
+    const minimumScenario = run("minimum", "Interest-only minimum", interestOnlyPayment);
+
+    /* ---- Anything the reader wants instead. ------------------------------
+     * Tested on the figure that would actually be paid, not the one typed:
+     * an amount under the interest-only minimum is clamped up to it and
+     * would otherwise duplicate a panel under a label saying otherwise. */
     const customAmount = n(drawAmount);
-    const distinct = (a: number, b: number) => Math.abs(a - b) > 0.5;
-    // Test the figure that would actually be paid, not the one typed: an
-    // amount under the interest-only minimum is clamped up to it, and would
-    // otherwise render a third panel identical to the first under a label
-    // saying something else.
     const effectiveCustom = Math.max(customAmount, interestOnlyPayment);
+    const distinct = (a: number, b: number) => Math.abs(a - b) > 0.5;
     const custom = customAmount > 0
       && distinct(effectiveCustom, interestOnlyPayment)
       && distinct(effectiveCustom, payNowScenario.drawPayment)
-      ? run(`Paying ${fmt(effectiveCustom)}/mo`, effectiveCustom)
+      && (!cashFlowScenario || distinct(effectiveCustom, cashFlowScenario.drawPayment))
+      ? run("custom", `Paying ${fmt(effectiveCustom)}/mo`, effectiveCustom)
       : null;
     const customUnderInterest = customAmount > 0 && customAmount < interestOnlyPayment;
 
@@ -225,6 +268,8 @@ export default function Calculator() {
     const weightedRate = totalBalance > 0
       ? rows.reduce((a, d) => a + d.balance * d.rate, 0) / totalBalance
       : 0;
+    /** The rate the HELOC is actually replacing — ticked debts only. */
+    const chosenBlended = draw > 0 ? chosen.reduce((a, d) => a + d.balance * d.rate, 0) / draw : 0;
 
     /* ---- Equity. Information, not a gate. -------------------------------- */
     const value = n(homeValue);
@@ -232,32 +277,39 @@ export default function Calculator() {
     const cltvBefore = value > 0 ? (n(mortgage) / value) * 100 : 0;
     const cltvAfter = value > 0 ? ((n(mortgage) + draw) / value) * 100 : 0;
 
-    /* ---- The headline and the takeaway read off these two and nothing else,
-     * so the copy cannot drift from the panels again. */
-    const swing = payNowScenario.saved - minimumScenario.saved;
-    const bothSave = minimumScenario.saved > 0 && payNowScenario.saved > 0;
-    const bothCost = minimumScenario.saved <= 0 && payNowScenario.saved <= 0;
+    /* ---- The answer, and the reason for it. ------------------------------
+     * Cheaper means cheaper than the blend it replaces. The sentence under
+     * the answer still reads its numbers off the scenarios, so a "no" that
+     * sits above a panel showing a saving says what that saving really is:
+     * the effect of paying faster, not of the rate.
+     */
+    const cheaperRate = rate < chosenBlended;
 
     return {
       rows, chosen, kept, stuck, keptStuck,
-      draw, totalBalance, weightedRate, monthlyNow, payNowAmount,
+      draw, totalBalance, weightedRate, chosenBlended, monthlyNow, payNowAmount,
       interestOnlyPayment, interestNow, keptMin,
-      minimumScenario, payNowScenario, custom, customUnderInterest,
-      swing, bothSave, bothCost,
-      longestKeepMonths: rows
-        .filter((d) => Number.isFinite(d.keepMonths))
-        .reduce((a, d) => Math.max(a, d.keepMonths), 0),
+      cashFlowScenario, payNowScenario, payNowDistinct, minimumScenario, custom, customUnderInterest,
+      baselineMonths, sameTimelineTarget, avgCurrentOutlay, freedToday, freedAverage,
+      cheaperRate,
       equity, cltvBefore, cltvAfter, value,
       costlyMoves: chosen.filter((d) => d.notCheaper),
       neverClears: !Number.isFinite(interestNow),
     };
   }, [debts, homeValue, mortgage, rate, drawMonths, repayMonths, drawAmount]);
 
-  const panels: Scenario[] = r ? [r.minimumScenario, r.payNowScenario, ...(r.custom ? [r.custom] : [])] : [];
+  const panels: Scenario[] = r
+    ? [
+        ...(r.cashFlowScenario ? [r.cashFlowScenario] : []),
+        ...(r.payNowDistinct ? [r.payNowScenario] : []),
+        r.minimumScenario,
+        ...(r.custom ? [r.custom] : []),
+      ]
+    : [];
   // Both class strings written out in full so Tailwind sees them.
-  const panelGrid = r?.custom
-    ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4"
-    : "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4";
+  const panelGrid = panels.length >= 4
+    ? "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+    : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4";
 
   const line = (k: string, v: string, tone = "text-gray-900") => (
     <div className="flex justify-between items-baseline gap-2">
@@ -269,7 +321,7 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="heloc-debt-payoff"
-      intro="A HELOC can cut a 25% credit card rate to single digits. It also turns debt you could walk away from into debt secured against your house — and what it ends up costing depends far more on how you pay it than on the rate. Both halves of that trade matter."
+      intro="A HELOC can cut a 25% credit card rate to single digits, which is why it looks like breathing room. It also turns debt you could walk away from into debt secured against your house, and what it ends up costing depends more on how you pay it than on the rate. Here is what each way of paying it actually does."
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["debt-consolidation", "refinance-to-pay-off-debt", "debt-payoff", "balance-transfer"]}
@@ -355,9 +407,7 @@ export default function Calculator() {
               hint={
                 r && r.customUnderInterest
                   ? `Below the ${fmt(r.interestOnlyPayment)}/mo interest, so in practice it would be the interest-only minimum — a HELOC won't let the balance grow.`
-                  : r
-                    ? `Optional. The panels below already show ${fmt(r.interestOnlyPayment)}/mo and ${fmt(r.payNowScenario.drawPayment)}/mo; anything you enter appears beside them as a third.`
-                    : "Optional — a third scenario between the interest-only minimum and what you pay today."
+                  : "Optional. The panels below already cover the three that matter; anything else you enter appears beside them."
               }
             />
           </div>
@@ -368,79 +418,133 @@ export default function Calculator() {
         <>
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline
-              label="Same line, same rate, same debts — the gap between paying the minimum and paying what you pay now"
-              value={r.neverClears ? "—" : fmtK(Math.abs(r.swing))}
-              tone={r.bothCost ? "red" : "green"}
+              label="Should you use a HELOC here?"
+              value={
+                r.neverClears
+                  ? "Not enough to go on"
+                  : r.cheaperRate
+                    ? "Yes, at these rates — if you pay it down"
+                    : "No, not at these rates"
+              }
+              tone={r.neverClears ? "gray" : r.cheaperRate ? "green" : "red"}
             />
-            <Takeaway tone={r.bothSave ? "green" : r.bothCost ? "red" : "amber"}>
+            <Takeaway tone={r.neverClears ? "amber" : r.cheaperRate ? "green" : "red"}>
               {r.neverClears ? (
                 <>
-                  {r.stuck.map((d) => d.name).join(", ")}{" "}
+                  {listNames(r.stuck)}{" "}
                   {r.stuck.length === 1 ? "has a minimum" : "have minimums"} too small to cover the
                   interest, so {r.stuck.length === 1 ? "it never clears" : "they never clear"} and there is
-                  nothing to measure against.{" "}
-                  {r.keptStuck.length > 0 ? (
+                  no honest figure to compare a HELOC against.{" "}
+                  {r.keptStuck.length > 0 && (
                     <>
                       <strong>
-                        {r.keptStuck.map((d) => d.name).join(", ")} {r.keptStuck.length === 1 ? "is" : "are"}{" "}
+                        {listNames(r.keptStuck)} {r.keptStuck.length === 1 ? "is" : "are"}{" "}
                         still outside the HELOC
                       </strong>{" "}
                       — tick {r.keptStuck.length === 1 ? "it" : "them"} or nothing here changes that.
                     </>
-                  ) : (
-                    <>The HELOC does end either way, but only the second panel below ends it quickly.</>
                   )}
                 </>
-              ) : r.bothCost ? (
+              ) : r.cheaperRate && r.cashFlowScenario ? (
                 <>
-                  Both ways of paying this line cost more than leaving the debts alone —{" "}
-                  <strong>{fmtK(Math.abs(r.minimumScenario.saved))}</strong> more on the interest-only
-                  minimum and <strong>{fmtK(Math.abs(r.payNowScenario.saved))}</strong> more even at{" "}
-                  {fmt(r.payNowScenario.drawPayment)}/mo. At {rate}% against an average of{" "}
-                  {r.weightedRate.toFixed(1)}%, the rate isn&apos;t low enough to pay for the extra years.
+                  On these numbers, yes — {rate}% sits below the{" "}
+                  <strong>{r.chosenBlended.toFixed(1)}%</strong> these balances average now. Pay{" "}
+                  <strong>{fmt(r.cashFlowScenario.drawPayment)}/mo</strong> and you are debt-free on the
+                  same timeline you are already on, {fmtMonths(r.cashFlowScenario.months)} from now, while
+                  keeping <strong>{fmt(Math.abs(r.freedToday))}</strong> a month today and paying{" "}
+                  <strong>{fmtK(r.cashFlowScenario.saved)}</strong> less interest.
+                  {r.payNowDistinct && (
+                    <>
+                      {" "}
+                      Keep paying the {fmt(r.payNowScenario.drawPayment)}/mo you pay now and it is gone in{" "}
+                      <strong>{fmtMonths(r.payNowScenario.months)}</strong> instead.
+                    </>
+                  )}
                 </>
-              ) : r.bothSave ? (
+              ) : r.cheaperRate ? (
                 <>
-                  Either way this saves money, but not by the same margin:{" "}
-                  <strong>{fmtK(r.minimumScenario.saved)}</strong> on the interest-only minimum against{" "}
-                  <strong>{fmtK(r.payNowScenario.saved)}</strong> if you keep sending{" "}
-                  {fmt(r.payNowScenario.drawPayment)}/mo — <strong>{fmtK(Math.abs(r.swing))}</strong>{" "}
-                  apart. The rate gets you in the door; the payment does the work.
+                  On these numbers the rate is in your favour — {rate}% against the{" "}
+                  <strong>{r.chosenBlended.toFixed(1)}%</strong> these balances average — but the payments
+                  entered never clear them, so there is no timeline to match. Keep paying{" "}
+                  {fmt(r.payNowScenario.drawPayment)}/mo and the line is gone in{" "}
+                  <strong>{fmtMonths(r.payNowScenario.months)}</strong>.
+                </>
+              ) : r.payNowScenario.saved > 0 ? (
+                <>
+                  On these numbers, no — {rate}% is at or above the{" "}
+                  <strong>{r.chosenBlended.toFixed(1)}%</strong> these balances already average, so the
+                  rate is not what would be helping you. The{" "}
+                  <strong>{fmtK(r.payNowScenario.saved)}</strong> the{" "}
+                  {r.payNowDistinct ? "second" : "faster"} panel shows comes entirely from paying{" "}
+                  {fmt(r.payNowScenario.drawPayment)}/mo rather than the minimums — and you can send that
+                  straight at these debts without putting the house behind them.
                 </>
               ) : (
                 <>
-                  <strong>The rate is not what decides this — the payment is.</strong> On the
-                  interest-only minimum of {fmt(r.minimumScenario.drawPayment)}/mo the line costs{" "}
-                  <strong>{fmtK(Math.abs(r.minimumScenario.saved))} more</strong> than leaving the debts
-                  alone, because it runs for {fmtMonths(r.minimumScenario.months)} instead of{" "}
-                  {fmtMonths(r.longestKeepMonths)}. Keep sending the{" "}
-                  {fmt(r.payNowScenario.drawPayment)}/mo these debts already cost and the same line at the
-                  same rate <strong>saves {fmtK(r.payNowScenario.saved)}</strong> and is gone in{" "}
-                  {fmtMonths(r.payNowScenario.months)}. That is{" "}
-                  <strong>{fmtK(Math.abs(r.swing))}</strong> of difference from the monthly payment alone.
+                  On these numbers, no — {rate}% is at or above the{" "}
+                  <strong>{r.chosenBlended.toFixed(1)}%</strong> these balances already average, and it
+                  costs more however you pay it.{" "}
+                  {r.payNowDistinct ? (
+                    <>
+                      The interest-only minimum costs{" "}
+                      <strong>{fmtK(Math.abs(r.minimumScenario.saved))}</strong> more, and even at{" "}
+                      {fmt(r.payNowScenario.drawPayment)}/mo it is{" "}
+                      <strong>{fmtK(Math.abs(r.payNowScenario.saved))}</strong> more.
+                    </>
+                  ) : (
+                    <>
+                      The interest-only minimum alone is {fmt(r.interestOnlyPayment)}/mo — more than the{" "}
+                      {fmt(r.payNowAmount)}/mo these debts cost you today — and it runs{" "}
+                      <strong>{fmtK(Math.abs(r.minimumScenario.saved))}</strong> over.
+                    </>
+                  )}
                 </>
               )}
               {r.costlyMoves.length > 0 && (
                 <>
                   {" "}
                   <strong>
-                    {r.costlyMoves.map((d) => d.name).join(" and ")}{" "}
+                    {listNames(r.costlyMoves)}{" "}
                     {r.costlyMoves.length === 1 ? "is" : "are"} already at or below {rate}%
                   </strong>{" "}
                   — untick {r.costlyMoves.length === 1 ? "it" : "them"} and the rest of this still works.
                 </>
               )}
             </Takeaway>
+            {/* Directly under the answer, not buried below the charts. A
+                cash-flow answer without this is selling, not explaining. */}
+            <div className="border-l-2 border-red-300 bg-red-50 rounded-r-xl px-4 py-3 mt-3">
+              <p className="text-xs text-red-800 leading-relaxed">
+                <strong>Whatever the arithmetic says, the house secures this debt.</strong> Credit cards
+                cannot foreclose; a HELOC can.{" "}
+                {r.cashFlowScenario && r.freedToday > 0 ? (
+                  <>
+                    Freeing up {fmt(r.freedToday)} a month is worth having, and it is not worth the roof
+                    if the income behind it is shaky.
+                  </>
+                ) : (
+                  <>
+                    Whatever this frees up each month is worth having, and none of it is worth the roof
+                    if the income behind it is shaky.
+                  </>
+                )}
+              </p>
+            </div>
             <p className="text-xs text-gray-400 leading-relaxed mt-3">
-              Both are measured against the same baseline: every debt left where it is, paid at its own
-              minimum until it clears, with nothing rolled over —{" "}
+              Every panel is measured against the same baseline: each debt left where it is, paid at its
+              own minimum until it clears, nothing rolled over —{" "}
               {r.neverClears ? "which these minimums never do" : `${fmtK(r.interestNow)} of interest`}.
             </p>
           </div>
 
           <div className={panelGrid}>
-            {panels.map((s, i) => {
+            {panels.map((s) => {
               const good = s.saved > 0;
+              const tag =
+                s.kind === "cashflow" ? "same debt-free date"
+                  : s.kind === "faster" ? "what you pay today"
+                    : s.kind === "minimum" ? "the bare minimum"
+                      : "your figure";
               return (
                 <div
                   key={s.label}
@@ -448,12 +552,24 @@ export default function Calculator() {
                 >
                   <div className="flex items-baseline justify-between gap-2 mb-4">
                     <h3 className="text-sm font-medium text-gray-900">{s.label}</h3>
-                    <span className="text-xs text-gray-400 flex-shrink-0">
-                      {i === 0 ? "the minimum" : i === 1 ? "what you pay today" : "your figure"}
-                    </span>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{tag}</span>
                   </div>
                   <div className="bg-white border border-gray-100 rounded-xl px-4 py-3 space-y-2 mb-3">
                     {line("During the draw", `${fmt(s.drawPayment)}/mo`)}
+                    {s.kind === "cashflow" && r.cashFlowScenario && (
+                      <>
+                        {line(
+                          r.freedToday >= 0 ? "Freed up today" : "More per month today",
+                          `${fmt(Math.abs(r.freedToday))}/mo`,
+                          r.freedToday >= 0 ? "text-green-700" : "text-red-700",
+                        )}
+                        {line(
+                          r.freedAverage >= 0 ? "Freed up on average" : "More per month on average",
+                          `${fmt(Math.abs(r.freedAverage))}/mo`,
+                          r.freedAverage >= 0 ? "text-green-700" : "text-red-700",
+                        )}
+                      </>
+                    )}
                     {s.amortising
                       ? line("Once repayment starts", `${fmt(s.repayPayment)}/mo`, "text-amber-700")
                       : line("Once repayment starts", "Already paid off", "text-green-700")}
@@ -463,6 +579,15 @@ export default function Calculator() {
                     {line("Time to clear", fmtMonths(s.months))}
                     {line("Total interest", fmtK(s.helocInterest))}
                   </div>
+                  {s.kind === "cashflow" && (
+                    <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                      The {fmt(r.payNowAmount)}/mo you pay now shrinks as each debt clears, so the{" "}
+                      {fmt(Math.abs(r.freedToday))} is today&apos;s gap, not a figure that holds for{" "}
+                      {fmtMonths(s.months)}. The average over that time is{" "}
+                      {fmt(Math.abs(r.freedAverage))}/mo; the interest line above is what actually settles
+                      it.
+                    </p>
+                  )}
                   {s.balanceUnmoved && (
                     <p className="text-xs text-red-800 leading-relaxed mb-3">
                       After {fmtMonths(drawMonths)} you would still owe{" "}
@@ -496,8 +621,12 @@ export default function Calculator() {
                     { label: "Interest", value: Number.isFinite(r.interestNow) ? r.interestNow : 0, color: COLORS.red },
                   ],
                 },
-                ...panels.map((s, i) => ({
-                  label: i === 0 ? "HELOC, minimum" : i === 1 ? "HELOC, paying now" : "HELOC, your figure",
+                ...panels.map((s) => ({
+                  label:
+                    s.kind === "cashflow" ? "Cash flow"
+                      : s.kind === "faster" ? "Pay faster"
+                        : s.kind === "minimum" ? "Minimum"
+                          : "Your figure",
                   segments: [
                     { label: "Balances", value: r.totalBalance, color: COLORS.gray },
                     { label: "Interest", value: s.helocInterest, color: COLORS.amber },
