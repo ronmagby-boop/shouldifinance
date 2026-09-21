@@ -9,12 +9,12 @@ import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts"
 
 type Scenario = "rising" | "flat" | "dip" | "falling" | "volatile";
 
-const SCENARIOS: { value: Scenario; label: string }[] = [
-  { value: "rising", label: "Steady rise — market climbs the whole time" },
-  { value: "dip", label: "Dip then recovery — falls, then comes back" },
-  { value: "volatile", label: "Choppy — swings up and down" },
-  { value: "flat", label: "Flat — goes nowhere" },
-  { value: "falling", label: "Decline — keeps sliding" },
+const SCENARIOS: { value: Scenario; label: string; short: string }[] = [
+  { value: "rising", label: "Steady rise — market climbs the whole time", short: "Steady rise" },
+  { value: "dip", label: "Dip then recovery — falls, then comes back", short: "Dip then recovery" },
+  { value: "volatile", label: "Choppy — swings up and down", short: "Choppy" },
+  { value: "flat", label: "Flat — goes nowhere", short: "Flat" },
+  { value: "falling", label: "Decline — keeps sliding", short: "Decline" },
 ];
 
 /** Deterministic price path so the two strategies are compared on identical markets. */
@@ -33,19 +33,88 @@ function pricePath(scenario: Scenario, months: number, annualReturn: number, sta
   return prices;
 }
 
+/**
+ * Both strategies on one price path.
+ *
+ * Every figure on the page comes out of here — the tiles, both charts and each
+ * row of the scenario table — so the chart cannot disagree with the result
+ * beside it. It used to: the chart's averaging series counted the slice bought
+ * this month as still sitting in cash, which put month zero at $65,000 on a
+ * $60,000 investment and dropped a cliff into the line when the spreading
+ * period ended.
+ */
+function runScenario(
+  scenario: Scenario,
+  amount: number,
+  months: number,
+  hold: number,
+  annualReturn: number,
+  cashRate: number,
+) {
+  const prices = pricePath(scenario, hold, annualReturn);
+  const perPeriod = amount / months;
+  const monthlyCash = cashRate / 100 / 12;
+
+  const lumpShares = amount / prices[0];
+
+  let cash = amount;
+  let shares = 0;
+  let paidIn = 0;
+  const dcaValues: number[] = [];
+  const lumpValues: number[] = [];
+
+  for (let i = 0; i <= hold; i++) {
+    if (i < months) {
+      const buy = Math.min(perPeriod, cash);
+      shares += buy / prices[i];
+      cash -= buy;
+      paidIn += buy;
+    } else if (i === months && cash > 0.005) {
+      // Interest the waiting cash earned goes in with the last instalment
+      // rather than sitting uninvested for the rest of the hold.
+      shares += cash / prices[i];
+      paidIn += cash;
+      cash = 0;
+    }
+
+    // Cash not yet invested, plus the market value of what has been.
+    dcaValues.push(shares * prices[i] + cash);
+    lumpValues.push(lumpShares * prices[i]);
+
+    if (i < months) cash *= 1 + monthlyCash;
+  }
+
+  const dcaFinal = dcaValues[dcaValues.length - 1];
+  const lumpFinal = lumpValues[lumpValues.length - 1];
+  return {
+    prices, dcaValues, lumpValues, dcaFinal, lumpFinal,
+    diff: lumpFinal - dcaFinal,
+    avgCost: paidIn / shares,
+    lumpCost: prices[0],
+    shares, lumpShares, paidIn,
+    dcaReturn: (dcaFinal / amount - 1) * 100,
+    lumpReturn: (lumpFinal / amount - 1) * 100,
+  };
+}
+
 export default function Calculator() {
   const [total, setTotal] = useState<Num>("");
   const [periods, setPeriods] = useState<Num>("");
   const [annualReturn, setAnnualReturn] = useState<Num>("");
   const [holdYears, setHoldYears] = useState<Num>("");
-  const [scenario, setScenario] = useState<Scenario>("dip");
+  const [cashRate, setCashRate] = useState<Num>("");
+  const [scenario, setScenario] = useState<Scenario>("rising");
 
   const loadExample = () => {
     setTotal(60000);
     setPeriods(12);
     setAnnualReturn(8);
     setHoldYears(5);
-    setScenario("dip");
+    setCashRate(0);
+    // The steady rise, because that is the common case. "Dip then recovery" is
+    // the one averaging is built to win, and leading with it teaches the
+    // exception as though it were the rule.
+    setScenario("rising");
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -54,76 +123,74 @@ export default function Calculator() {
     setPeriods("");
     setAnnualReturn("");
     setHoldYears("");
-    setScenario("dip");
+    setCashRate("");
+    setScenario("rising");
   };
 
   const r = useMemo(() => {
     const amount = n(total);
-    const months = Math.max(1, Math.round(n(periods)));
-    const hold = Math.max(months, Math.round(n(holdYears) * 12));
     if (amount <= 0 || n(periods) <= 0) return null;
 
-    const prices = pricePath(scenario, hold, n(annualReturn));
-    const perPeriod = amount / months;
+    const holdMonths = Math.max(1, Math.round(n(holdYears) * 12));
+    // Spreading for longer than you intend to hold is not a plan; cap it and
+    // say so rather than silently stretching the hold to match.
+    const requested = Math.max(1, Math.round(n(periods)));
+    const months = Math.min(requested, holdMonths);
+    const spreadCapped = requested > holdMonths;
 
-    // Lump sum: everything at month 0.
-    const lumpShares = amount / prices[0];
+    const run = (s: Scenario) =>
+      runScenario(s, amount, months, holdMonths, n(annualReturn), n(cashRate));
 
-    // DCA: equal slices, uninvested cash sits idle.
-    let dcaShares = 0;
-    const dcaValues: number[] = [];
-    const lumpValues: number[] = [];
-    let costBasisShares = 0;
-
-    for (let i = 0; i <= hold; i++) {
-      if (i < months) {
-        dcaShares += perPeriod / prices[i];
-        costBasisShares += perPeriod / prices[i];
-      }
-      const cashWaiting = i < months ? perPeriod * (months - i) : 0;
-      dcaValues.push(dcaShares * prices[i] + cashWaiting);
-      lumpValues.push(lumpShares * prices[i]);
-    }
-
-    const dcaFinal = dcaValues[dcaValues.length - 1];
-    const lumpFinal = lumpValues[lumpValues.length - 1];
-    const dcaAvgCost = amount / costBasisShares;
+    const selected = run(scenario);
+    // Every scenario on the same inputs. The selected one drives the charts;
+    // this is what says whether the selected one is typical.
+    const table = SCENARIOS.map((s) => {
+      const x = run(s.value);
+      return { ...s, lumpFinal: x.lumpFinal, dcaFinal: x.dcaFinal, diff: x.diff };
+    });
+    const lumpWins = table.filter((t) => t.diff >= 0).length;
 
     return {
-      prices,
-      dcaValues,
-      lumpValues,
-      dcaFinal,
-      lumpFinal,
-      diff: lumpFinal - dcaFinal,
-      dcaAvgCost,
-      lumpCost: prices[0],
-      dcaShares,
-      lumpShares,
-      perPeriod,
+      ...selected,
+      table,
+      lumpWins,
+      perPeriod: amount / months,
       months,
-      hold,
-      dcaReturn: (dcaFinal / amount - 1) * 100,
-      lumpReturn: (lumpFinal / amount - 1) * 100,
+      hold: holdMonths,
+      spreadCapped,
+      requested,
+      cashEarned: Math.max(0, selected.paidIn - amount),
     };
-  }, [total, periods, annualReturn, holdYears, scenario]);
+  }, [total, periods, annualReturn, holdYears, cashRate, scenario]);
 
   return (
     <CalcShell
       slug="dollar-cost-averaging"
-      intro="You have a lump of money. Do you invest it all today, or feed it in over months? Pick a market scenario and see how both strategies play out on exactly the same price path."
+      intro="You have a lump of money. Do you invest it all today, or feed it in over months? Pick a market scenario and see how both strategies play out on exactly the same price path — then check the table, which runs every scenario at once."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["compound-interest", "investment-growth", "required-rate-of-return"]}
-      disclaimer="For educational purposes only. The market scenarios are illustrative price paths, not forecasts — nobody knows which one the next year looks like. Historically, lump-sum investing has beaten averaging in most periods, but averaging reduces regret when timing is wrong. Not investment advice."
+      relatedSlugs={["compound-interest", "investment-growth", "savings-apy", "required-rate-of-return"]}
+      disclaimer="For educational purposes only. The market scenarios are illustrative price paths, not forecasts — nobody knows which one the next year looks like. Vanguard's study of the US, UK and Australian markets found lump-sum investing beat twelve-month averaging about two-thirds of the time. Not investment advice."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your money" badge="INPUTS">
           <div className="space-y-4">
-            <NumField label="Total amount to invest" value={total} onChange={setTotal} placeholder="60000" prefix="$" />
+            <NumField label="Total amount to invest" value={total} onChange={setTotal} min={0} placeholder="60000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Spread over" value={periods} onChange={setPeriods} placeholder="12" suffix="mo" />
-              <NumField label="Then hold for" value={holdYears} onChange={setHoldYears} placeholder="5" suffix="yrs" />
+              <NumField
+                label="Spread over"
+                value={periods}
+                onChange={setPeriods}
+                min={1}
+                placeholder="12"
+                suffix="mo"
+                hint={
+                  r && r.spreadCapped
+                    ? `Capped at ${r.months} months — you cannot spread the money over longer than you hold it.`
+                    : undefined
+                }
+              />
+              <NumField label="Then hold for" value={holdYears} onChange={setHoldYears} min={1} placeholder="5" suffix="yrs" />
             </div>
             <NumField
               label="Long-run annual return"
@@ -132,7 +199,22 @@ export default function Calculator() {
               placeholder="8"
               suffix="%"
               step={0.5}
-              hint="The underlying trend the scenario moves around."
+              hint="The underlying trend the scenario moves around. Can be negative."
+            />
+            <NumField
+              label="Rate on cash while you wait"
+              value={cashRate}
+              onChange={setCashRate}
+              min={0}
+              placeholder="0"
+              suffix="%"
+              step={0.25}
+              hint={
+                <>
+                  Optional. Money queued to be invested usually sits in a savings or money-market account
+                  rather than at zero — <a href="/calculators/savings-apy" className="text-green-700 underline">what that actually earns</a>.
+                </>
+              }
             />
             <SelectField
               label="Market scenario"
@@ -166,8 +248,8 @@ export default function Calculator() {
                 <Stat label="Lump sum cost/share" value={`$${r.lumpCost.toFixed(2)}`} />
                 <Stat
                   label="Average cost/share"
-                  value={`$${r.dcaAvgCost.toFixed(2)}`}
-                  tone={r.dcaAvgCost < r.lumpCost ? "green" : "amber"}
+                  value={`$${r.avgCost.toFixed(2)}`}
+                  tone={r.avgCost < r.lumpCost ? "green" : "amber"}
                 />
               </div>
               <Takeaway tone={r.diff >= 0 ? "blue" : "green"}>
@@ -175,14 +257,22 @@ export default function Calculator() {
                   <>
                     In this scenario, being invested from day one beat averaging in by{" "}
                     <strong>{fmtK(r.diff)}</strong>. That is the usual result when markets rise: money on
-                    the sidelines earns nothing.
+                    the sidelines earns {n(cashRate) > 0 ? `only ${n(cashRate)}%` : "nothing"} while the
+                    market compounds.
                   </>
                 ) : (
                   <>
                     Averaging bought more shares at lower prices and finished{" "}
                     <strong>{fmtK(Math.abs(r.diff))}</strong> ahead. Your average cost of{" "}
-                    <strong>${r.dcaAvgCost.toFixed(2)}</strong> beat the day-one price of $
+                    <strong>${r.avgCost.toFixed(2)}</strong> beat the day-one price of $
                     {r.lumpCost.toFixed(2)}.
+                  </>
+                )}
+                {r.cashEarned > 0.5 && (
+                  <>
+                    {" "}
+                    The waiting cash earned <strong>{fmt(r.cashEarned)}</strong> at {n(cashRate)}%, which
+                    goes in with the last instalment.
                   </>
                 )}
               </Takeaway>
@@ -195,6 +285,48 @@ export default function Calculator() {
 
       {r && (
         <>
+          <div className="border border-gray-200 rounded-2xl overflow-hidden mb-4">
+            <div className="px-4 pt-4 pb-2">
+              <h2 className="text-sm font-medium text-gray-900">Every scenario, same money</h2>
+              <p className="text-xs text-gray-500 leading-relaxed mt-1">
+                {fmt(n(total))} over {r.months} months, held {Math.round(r.hold / 12)} years, on each of
+                the five price paths. Lump sum wins <strong>{r.lumpWins} of {r.table.length}</strong> here
+                — which is roughly the historical split, and the point: averaging is a bet on the path,
+                not a better strategy.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left px-3 py-2.5 text-gray-500 font-medium border-y border-gray-100">Scenario</th>
+                    <th className="text-right px-3 py-2.5 text-gray-500 font-medium border-y border-gray-100">Lump sum</th>
+                    <th className="text-right px-3 py-2.5 text-gray-500 font-medium border-y border-gray-100">Averaging</th>
+                    <th className="text-right px-3 py-2.5 text-gray-500 font-medium border-y border-gray-100">Winner</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {r.table.map((row) => (
+                    <tr
+                      key={row.value}
+                      className={`border-b border-gray-50 ${row.value === scenario ? "bg-green-50" : "hover:bg-gray-50"}`}
+                    >
+                      <td className="px-3 py-2.5 text-gray-900 font-medium whitespace-nowrap">
+                        {row.short}
+                        {row.value === scenario && <span className="ml-2 text-green-700">✓ shown above</span>}
+                      </td>
+                      <td className="px-3 py-2.5 text-right text-gray-900">{fmtK(row.lumpFinal)}</td>
+                      <td className="px-3 py-2.5 text-right text-gray-900">{fmtK(row.dcaFinal)}</td>
+                      <td className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${row.diff >= 0 ? "text-blue-700" : "text-green-700"}`}>
+                        {row.diff >= 0 ? "Lump sum" : "Averaging"} +{fmtK(Math.abs(row.diff))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <ChartCard title="Portfolio value over time">
             <LineChart
               ariaLabel="Portfolio value for lump sum investing compared with dollar-cost averaging"
@@ -206,8 +338,9 @@ export default function Calculator() {
             />
             <div className="mt-4">
               <Takeaway tone="amber">
-                The averaging line starts lower because most of your money is still cash. That is the real
-                trade: less exposure to a bad start, but also less exposure to a good one.
+                Both lines start at {fmt(n(total))}, because on day one the averaging money is all still
+                cash. They separate as that cash goes in: less exposure to a bad start, and less to a good
+                one. That is the whole trade.
               </Takeaway>
             </div>
           </ChartCard>
