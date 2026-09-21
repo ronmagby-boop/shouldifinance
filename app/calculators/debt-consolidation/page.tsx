@@ -4,7 +4,7 @@ import Calculator from "./Calculator";
 
 export const metadata: Metadata = calcMetadata(
   "debt-consolidation",
-  "Put up to five balances against a single consolidation loan and compare monthly payment, total interest and how long each route takes to clear.",
+  "Choose which balances to roll into a consolidation loan and compare monthly payment, total interest after the fee, and how long each route takes to clear.",
 );
 
 export default function Page() {

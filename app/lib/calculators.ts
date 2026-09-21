@@ -357,7 +357,7 @@ export const CALCULATORS: Calc[] = [
     slug: "debt-consolidation",
     title: "Should I consolidate my debt?",
     nav: "Should I consolidate my debt?",
-    desc: "Put up to five balances against one consolidation loan.",
+    desc: "Pick which balances to roll into one loan, and see what each move costs.",
     icon: Combine, bg: "bg-amber-50", category: "Debt", kind: "should-i",
     keywords: ["debt consolidation calculator", "consolidation loan", "combine debts"],
   },

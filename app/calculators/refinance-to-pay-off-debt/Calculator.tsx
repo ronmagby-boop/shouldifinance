@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Plus, X } from "lucide-react";
 import CalcShell from "../../components/CalcShell";
+import DebtList, { BLANK_DEBT, type DebtRow } from "../../components/DebtList";
 import {
   Card, NumField, Headline, Stat, Takeaway, EmptyState,
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
@@ -9,8 +9,6 @@ import {
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
 
-type Debt = { name: string; balance: Num; rate: Num; pmt: Num; payoff: boolean };
-const BLANK: Debt = { name: "", balance: "", rate: "", pmt: "", payoff: true };
 
 /** Interest and payoff month for a loan carrying an extra principal payment. */
 function amortizeWithExtra(principal: number, annualRate: number, term: number, extra: number) {
@@ -32,7 +30,7 @@ function amortizeWithExtra(principal: number, annualRate: number, term: number, 
 }
 
 export default function Calculator() {
-  const [debts, setDebts] = useState<Debt[]>([{ ...BLANK }, { ...BLANK }, { ...BLANK }]);
+  const [debts, setDebts] = useState<DebtRow[]>([{ ...BLANK_DEBT }, { ...BLANK_DEBT }, { ...BLANK_DEBT }]);
   const [cashOut, setCashOut] = useState<Num>("");
   const [closing, setClosing] = useState<Num>("");
   const [newRate, setNewRate] = useState<Num>("");
@@ -43,9 +41,9 @@ export default function Calculator() {
   /** Until the field is edited by hand it tracks the monthly saving. */
   const [extraDirty, setExtraDirty] = useState(false);
 
-  const update = (i: number, patch: Partial<Debt>) =>
+  const update = (i: number, patch: Partial<DebtRow>) =>
     setDebts((d) => d.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
-  const addDebt = () => setDebts((d) => [...d, { ...BLANK }]);
+  const addDebt = () => setDebts((d) => [...d, { ...BLANK_DEBT }]);
   const removeDebt = (i: number) => setDebts((d) => (d.length > 1 ? d.filter((_, idx) => idx !== i) : d));
 
   const loadExample = () => {
@@ -67,7 +65,7 @@ export default function Calculator() {
 
   /** Back to the page's initial state: every field, flag and row. */
   const clearExample = () => {
-    setDebts([{ ...BLANK }, { ...BLANK }, { ...BLANK }]);
+    setDebts([{ ...BLANK_DEBT }, { ...BLANK_DEBT }, { ...BLANK_DEBT }]);
     setCashOut("");
     setClosing("");
     setNewRate("");
@@ -199,9 +197,6 @@ export default function Calculator() {
     };
   }, [base, extraValue, newRate]);
 
-  const textInput =
-    "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white";
-  const headCell = "text-xs font-medium text-gray-400";
 
   return (
     <CalcShell
@@ -209,7 +204,7 @@ export default function Calculator() {
       intro="Every debt you carry has a rate, and together they average out to one number. A new mortgage replaces that blend with a single lower rate — and if you keep paying what you pay today, the difference goes straight onto the principal and the house is gone years early."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["should-i-refinance", "extra-payments", "pay-off-debt", "debt-payoff"]}
+      relatedSlugs={["debt-consolidation", "should-i-refinance", "extra-payments", "pay-off-debt"]}
       disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend. Consolidating unsecured debt into a mortgage puts your home behind it."
     >
       {/* 5/3 rather than even halves: the debts panel puts five controls across
@@ -220,69 +215,14 @@ export default function Calculator() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
         <Card title="Today's debts" badge="CURRENT" className="xl:col-span-2">
           <div className="space-y-2">
-            {/* Column headings from md up; each row repeats them for screen
-                readers only, so the rows themselves stay one line tall. */}
-            <div className="hidden xl:grid xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto] xl:gap-2 xl:items-end xl:px-0.5">
-              <span className="w-8" aria-hidden="true" />
-              <span className={headCell}>Debt</span>
-              <span className={headCell}>Balance</span>
-              <span className={headCell}>Rate</span>
-              <span className={headCell}>Payment</span>
-              <span className="w-7" aria-hidden="true" />
-            </div>
-
-            {debts.map((d, i) => (
-              <div
-                key={i}
-                className="grid grid-cols-[auto_minmax(0,1fr)_auto] xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto] gap-2 items-center border-b border-gray-100 xl:border-0 pb-2 xl:pb-0"
-              >
-                <label className="flex items-center justify-center w-8 h-11 cursor-pointer xl:order-1">
-                  <input
-                    type="checkbox"
-                    checked={d.payoff}
-                    onChange={(e) => update(i, { payoff: e.target.checked })}
-                    className="w-4 h-4 accent-green-700"
-                    aria-label={`Pay off ${d.name.trim() || `debt ${i + 1}`} in the refinance`}
-                  />
-                </label>
-                <input
-                  type="text"
-                  value={d.name}
-                  onChange={(e) => update(i, { name: e.target.value })}
-                  placeholder={`Debt ${i + 1}`}
-                  aria-label={`Name of debt ${i + 1}`}
-                  className={`${textInput} xl:order-2`}
-                />
-                <button
-                  onClick={() => removeDebt(i)}
-                  disabled={debts.length <= 1}
-                  aria-label={`Remove ${d.name.trim() || `debt ${i + 1}`}`}
-                  className="w-7 h-11 flex items-center justify-center text-gray-300 hover:text-red-600 disabled:opacity-0 xl:order-6"
-                >
-                  <X className="w-4 h-4" aria-hidden="true" />
-                </button>
-                {/* xl:contents lets these three join the row grid directly. */}
-                <div className="col-span-3 grid grid-cols-2 sm:grid-cols-[minmax(0,1.12fr)_minmax(0,0.92fr)_minmax(0,0.96fr)] gap-2 xl:contents">
-                  <div className="col-span-2 sm:col-span-1 xl:order-3">
-                    <NumField label="Balance" labelClass="xl:sr-only" value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="14200" prefix="$" />
-                  </div>
-                  <div className="xl:order-4">
-                    <NumField label="Rate" labelClass="xl:sr-only" value={d.rate} onChange={(v) => update(i, { rate: v })} placeholder="24.9" suffix="%" step={0.1} />
-                  </div>
-                  <div className="xl:order-5">
-                    <NumField label="Payment" labelClass="xl:sr-only" value={d.pmt} onChange={(v) => update(i, { pmt: v })} placeholder="430" prefix="$" />
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <button
-              onClick={addDebt}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-green-700 min-h-11 px-1 -mx-1"
-            >
-              <Plus className="w-4 h-4" aria-hidden="true" />
-              Add a debt
-            </button>
+            <DebtList
+              debts={debts}
+              onUpdate={update}
+              onAdd={addDebt}
+              onRemove={removeDebt}
+              paymentLabel="Payment"
+              checkboxAction="Pay off"
+            />
 
             {base && !base.blocked && (
               <div className="space-y-2 pt-1">
