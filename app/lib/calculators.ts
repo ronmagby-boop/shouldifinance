@@ -340,9 +340,9 @@ export const CALCULATORS: Calc[] = [
     slug: "student-loan-repayment",
     title: "Which student loan repayment plan should I choose?",
     nav: "Which student loan plan?",
-    desc: "Compare standard, extended, and income-driven repayment side by side.",
+    desc: "Compare the standard, extended, IBR and RAP plans on your balance.",
     icon: GraduationCap, bg: "bg-purple-50", category: "Debt", kind: "should-i",
-    keywords: ["student loan repayment", "income driven repayment", "loan forgiveness"],
+    keywords: ["student loan repayment", "income driven repayment", "repayment assistance plan", "RAP", "loan forgiveness"],
   },
   {
     slug: "net-worth",
