@@ -170,7 +170,7 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="dividend-reinvestment"
-      intro="Every dividend you reinvest buys shares that pay their own dividends. Compare taking the cash against letting it compound, and see what the position yields against everything you have put into it."
+      intro="A dividend reinvestment plan — a DRIP — puts each dividend straight back into more shares of the same holding, fractions included, instead of paying it out as cash; most brokerages offer it as a setting and usually charge nothing for it. Those extra shares pay dividends of their own, so compare letting that compound against taking the money, and see what the position yields against everything you have put in."
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["compound-interest", "investment-growth", "capital-gains"]}
@@ -184,7 +184,16 @@ export default function Calculator() {
               <NumField label="Share price" value={price} onChange={setPrice} min={0} placeholder="50" prefix="$" step={0.01} />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Dividend yield" value={yieldPct} onChange={setYieldPct} min={0} placeholder="3.2" suffix="%" step={0.1} />
+              <NumField
+                label="Dividend yield"
+                value={yieldPct}
+                onChange={setYieldPct}
+                min={0}
+                placeholder="3.2"
+                suffix="%"
+                step={0.1}
+                hint="A year of dividends ÷ the share price."
+              />
               <NumField label="Dividend growth/yr" value={divGrowth} onChange={setDivGrowth} placeholder="6" suffix="%" step={0.5} />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -225,19 +234,19 @@ export default function Calculator() {
             </div>
           ) : r ? (
             <>
-              <Headline label={`Value after ${n(years)} years with DRIP`} value={fmtK(r.dripFinal)} />
+              <Headline label={`Value after ${n(years)} years, reinvested`} value={fmtK(r.dripFinal)} />
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <Stat
                   label="If you took the cash"
                   value={fmtK(r.cashFinal)}
                   sub="dividends held as cash, earning nothing"
                 />
-                <Stat label="DRIP advantage" value={fmtK(r.advantage)} tone="green" />
-                <Stat label="Shares owned" value={Math.round(r.shares).toLocaleString()} sub={`vs ${Math.round(r.sharesNoDrip).toLocaleString()} without DRIP`} />
+                <Stat label="Advantage of reinvesting" value={fmtK(r.advantage)} tone="green" />
+                <Stat label="Shares owned" value={Math.round(r.shares).toLocaleString()} sub={`vs ${Math.round(r.sharesNoDrip).toLocaleString()} taking the cash`} />
                 <Stat
                   label="Dividends reinvested"
                   value={fmtK(r.dripDividends)}
-                  sub={taxable ? `after ${fmtK(r.taxPaid)} of tax` : "no tax withheld"}
+                  sub={taxable ? `after ${fmtK(r.taxPaid)} of tax` : "no tax in this account"}
                 />
                 <Stat
                   label="Annual dividend income"
@@ -272,8 +281,9 @@ export default function Calculator() {
                   <strong className="text-gray-900">{pct(r.yieldOnCost, 2)}</strong> — what the whole
                   position pays against everything that went into it: {fmtK(r.contributed)} of your own
                   money plus {fmtK(r.dripDividends)} of reinvested dividends,{" "}
-                  {fmtK(r.costBasis)} in all. Lower, because every share bought after day one cost more
-                  than {perShare(n(price))}.
+                  {fmtK(r.costBasis)} in all — your cost basis, which is also the figure tax is measured
+                  against when you sell. Lower than the first number, because every share bought after day
+                  one cost more than {perShare(n(price))}.
                 </p>
               </div>
               {taxable && (
@@ -303,8 +313,8 @@ export default function Calculator() {
           />
           <div className="mt-4">
             <Takeaway tone="blue">
-              Both lines start identical. The DRIP line pulls away because each reinvested dividend buys
-              shares that pay dividends of their own — the compounding is in the share count, not just the
+              Both lines start identical. The reinvested line pulls away because each dividend buys shares
+              that pay dividends of their own — the compounding is in the share count, not just the
               price.
               {taxable && " Taxes drag on both paths here, since dividends in a taxable account are taxed the year they're paid whether you spend them or not."}
             </Takeaway>
