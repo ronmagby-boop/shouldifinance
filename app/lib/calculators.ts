@@ -365,9 +365,9 @@ export const CALCULATORS: Calc[] = [
     slug: "heloc-debt-payoff",
     title: "Should I use a HELOC to pay off high-interest debt?",
     nav: "Should I use a HELOC to pay off debt?",
-    desc: "Trade a high rate for a lower one, secured against your home.",
+    desc: "Trade a high rate for a lower one secured against your home — and see the payment jump when the draw period ends.",
     icon: ShieldAlert, bg: "bg-red-50", category: "Debt", kind: "should-i",
-    keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "secured vs unsecured debt"],
+    keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "HELOC draw period", "HELOC payment shock", "secured vs unsecured debt"],
   },
   {
     slug: "balance-transfer",
