@@ -165,6 +165,14 @@ export const CALCULATORS: Calc[] = [
     keywords: ["compound interest", "investment growth", "compounding frequency"],
   },
   {
+    slug: "savings-apy",
+    title: "What does my savings account really earn?",
+    nav: "What does my savings earn?",
+    desc: "Turn a quoted savings rate into the yield you actually collect.",
+    icon: Percent, bg: "bg-blue-50", category: "Money", kind: "what-how",
+    keywords: ["APY calculator", "annual percentage yield", "compounding frequency", "savings account interest"],
+  },
+  {
     slug: "investment-growth",
     title: "What will my investments be worth?",
     nav: "What will my portfolio be worth?",

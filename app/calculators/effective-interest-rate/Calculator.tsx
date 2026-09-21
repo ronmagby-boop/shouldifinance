@@ -2,29 +2,19 @@
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
-  Card, NumField, SelectField, Headline, Stat, Takeaway, EmptyState,
+  Card, NumField, Headline, Stat, Takeaway, EmptyState,
   fmt, pct, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment, aprFromFees, aprFromFeesHeld, balanceAfter, effectiveAnnualRate } from "../../lib/finance";
-
-const FREQ: Record<string, number> = {
-  daily: 365, monthly: 12, quarterly: 4, semiannually: 2, annually: 1,
-};
+import { payment, aprFromFees, aprFromFeesHeld, balanceAfter } from "../../lib/finance";
 
 export default function Calculator() {
-  // Borrowing side
   const [loanAmount, setLoanAmount] = useState<Num>("");
   const [rate, setRate] = useState<Num>("");
   const [term, setTerm] = useState<Num>("");
   const [points, setPoints] = useState<Num>("");
   const [fees, setFees] = useState<Num>("");
   const [holdYears, setHoldYears] = useState<Num>("");
-
-  // Saving side
-  const [savingRate, setSavingRate] = useState<Num>("");
-  const [freq, setFreq] = useState("monthly");
-  const [deposit, setDeposit] = useState<Num>("");
 
   const loadExample = () => {
     setLoanAmount(350000);
@@ -33,9 +23,6 @@ export default function Calculator() {
     setPoints(1);
     setFees(3400);
     setHoldYears(7);
-    setSavingRate(4.5);
-    setFreq("monthly");
-    setDeposit(25000);
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -46,9 +33,6 @@ export default function Calculator() {
     setPoints("");
     setFees("");
     setHoldYears("");
-    setSavingRate("");
-    setFreq("monthly");
-    setDeposit("");
   };
 
   const loan = useMemo(() => {
@@ -97,33 +81,16 @@ export default function Calculator() {
     };
   }, [loanAmount, rate, term, points, fees, holdYears]);
 
-  const saving = useMemo(() => {
-    if (n(savingRate) <= 0) return null;
-    const apy = effectiveAnnualRate(n(savingRate), FREQ[freq]);
-    const annual = FREQ[freq];
-    const perYear = n(deposit) * (apy / 100);
-    const simpleYear = n(deposit) * (n(savingRate) / 100);
-    const comparisons = Object.entries(FREQ).map(([label, periods]) => ({
-      label,
-      apy: effectiveAnnualRate(n(savingRate), periods),
-    }));
-    return { apy, annual, perYear, simpleYear, bonus: perYear - simpleYear, comparisons };
-  }, [savingRate, freq, deposit]);
-
   return (
     <CalcShell
       slug="effective-interest-rate"
-      intro="A quoted rate is rarely what you actually pay or earn. Points and fees push a loan's real cost above its rate, and compounding pushes a savings yield above its rate. Both sides are here."
+      intro="A quoted rate is rarely what a loan actually costs. Points and fees are paid up front but bought with the loan, so they push the real rate above the one on the offer sheet — and the sooner you sell or refinance, the fewer payments they are spread across and the more they cost."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "compound-interest"]}
-      disclaimer="For educational purposes only. APR calculated here is an approximation using the fees you enter and may differ from a lender's disclosed APR, which follows specific regulatory rules about which fees are included. Not a commitment to lend."
+      relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "rate-buydown", "savings-apy"]}
+      disclaimer="For educational purposes only. The APR here is built from every cost you enter and will differ from a lender's disclosed APR, which follows specific rules about which charges count as finance charges. Not a commitment to lend."
     >
-      {/* BORROWING */}
-      <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
-        What a loan really costs
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The quoted loan" badge="BORROWING" badgeTone="amber">
           <div className="space-y-4">
             <NumField label="Loan amount" value={loanAmount} onChange={setLoanAmount} min={0} placeholder="350000" prefix="$" />
@@ -235,72 +202,6 @@ export default function Calculator() {
         </ChartCard>
       )}
 
-      {/* SAVING */}
-      <h2 className="text-base font-medium text-gray-900 mb-3 mt-6 pb-2 border-b border-gray-100">
-        What a savings rate really earns
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <Card title="The quoted yield" badge="SAVING" badgeTone="green">
-          <div className="space-y-4">
-            <NumField label="Nominal annual rate" value={savingRate} onChange={setSavingRate} min={0} placeholder="4.5" suffix="%" step={0.05} />
-            <SelectField
-              label="Compounding frequency"
-              value={freq}
-              onChange={setFreq}
-              options={[
-                { value: "daily", label: "Daily" },
-                { value: "monthly", label: "Monthly" },
-                { value: "quarterly", label: "Quarterly" },
-                { value: "semiannually", label: "Semi-annually" },
-                { value: "annually", label: "Annually" },
-              ]}
-            />
-            <NumField label="Deposit amount" value={deposit} onChange={setDeposit} min={0} placeholder="25000" prefix="$" />
-          </div>
-        </Card>
-
-        <Card title="What you actually earn" badge="APY" badgeTone="green" className="bg-gray-50">
-          {saving ? (
-            <>
-              <Headline label="Effective annual yield (APY)" value={pct(saving.apy, 3)} />
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <Stat label="Nominal rate" value={pct(n(savingRate), 3)} />
-                <Stat label="Compounding bonus" value={`+${pct(saving.apy - n(savingRate), 3)}`} tone="green" />
-                <Stat label="First-year interest" value={fmt(saving.perYear)} tone="green" />
-                <Stat label="Without compounding" value={fmt(saving.simpleYear)} />
-              </div>
-              <Takeaway>
-                Compounding {freq} turns a {pct(n(savingRate), 2)} rate into a{" "}
-                <strong>{pct(saving.apy, 3)}</strong> yield — an extra{" "}
-                <strong>{fmt(saving.bonus)}</strong> in the first year on a {fmt(n(deposit))} deposit. When
-                comparing accounts, always compare APY to APY; the headline rate hides this difference.
-              </Takeaway>
-            </>
-          ) : (
-            <EmptyState>Enter a nominal savings rate to see its true yield.</EmptyState>
-          )}
-        </Card>
-      </div>
-
-      {saving && (
-        <ChartCard title="Same rate, different compounding">
-          <BarChart
-            ariaLabel="Effective annual yield at different compounding frequencies for the same nominal rate"
-            height={200}
-            bars={saving.comparisons.map((c) => ({
-              label: c.label.charAt(0).toUpperCase() + c.label.slice(1),
-              segments: [{ label: "APY", value: c.apy, color: c.label === freq ? COLORS.green : COLORS.gray }],
-            }))}
-            valueFormat={(v) => `${v.toFixed(3)}%`}
-          />
-          <div className="mt-4">
-            <Takeaway tone="blue">
-              More frequent compounding always yields more, but the gains shrink fast — moving from annual
-              to monthly matters far more than moving from monthly to daily.
-            </Takeaway>
-          </div>
-        </ChartCard>
-      )}
     </CalcShell>
   );
 }
