@@ -10,10 +10,23 @@ export const has = (v: Num): boolean => v !== "" && !Number.isNaN(Number(v));
 export const fmt = (v: number): string =>
   (v < 0 ? "-$" : "$") + Math.round(Math.abs(v)).toLocaleString();
 
+/* Each entry is [roll-over point, divisor, suffix]. The roll-over points for
+ * B and T sit half a display unit below the round number so a figure that
+ * would print as 1000.00 of the smaller suffix moves up instead — $999,999,999
+ * reads $1.00B, not $1000.00M. Entry into M stays at a clean $1,000,000, so
+ * everything below a million prints exactly as it always has. */
+const SCALES: ReadonlyArray<readonly [number, number, string]> = [
+  [999_995_000_000, 1_000_000_000_000, "T"],
+  [999_995_000, 1_000_000_000, "B"],
+  [1_000_000, 1_000_000, "M"],
+];
+
 export const fmtK = (v: number): string => {
   const a = Math.abs(v);
   const sign = v < 0 ? "-" : "";
-  if (a >= 1_000_000) return `${sign}$${(a / 1_000_000).toFixed(2)}M`;
+  for (const [floor, size, suffix] of SCALES) {
+    if (a >= floor) return `${sign}$${(a / size).toFixed(2)}${suffix}`;
+  }
   return `${sign}$${Math.round(a).toLocaleString()}`;
 };
 
