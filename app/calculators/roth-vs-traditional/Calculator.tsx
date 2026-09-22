@@ -7,6 +7,7 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import { growthSeries } from "../../lib/finance";
+import { TAX_YEAR, RETIREMENT_LIMITS } from "../../lib/tax";
 
 export default function Calculator() {
   const [contrib, setContrib] = useState<Num>("");
@@ -38,7 +39,9 @@ export default function Calculator() {
   const r = useMemo(() => {
     const C = n(contrib);
     const yrs = n(years);
-    if (C <= 0 || yrs <= 0 || n(ret) < 0) return null;
+    // A negative return is a real scenario and the arithmetic handles it;
+    // the old guard blanked the page instead of showing the smaller balances.
+    if (C <= 0 || yrs <= 0) return null;
 
     const tNow = Math.min(Math.max(n(rateNow), 0), 100) / 100;
     const tLater = Math.min(Math.max(n(rateLater), 0), 100) / 100;
@@ -62,11 +65,19 @@ export default function Calculator() {
     const tradAfterTax = tradEnd - tradTax;
 
     /**
-     * The honest version of Traditional: the tax you did not pay up front is
-     * real money. If you invest that side amount too, it grows in a taxable
-     * account — taxed along the way at the assumed drag.
+     * A third scenario, and not an equal-cost one.
+     *
+     * Against contributing nothing, a pre-tax contribution of C lowers this
+     * year's tax bill by C x tNow. Saving that as well is a good idea, but it
+     * is extra money: it has to come out of after-tax pay, so funding it needs
+     * C x tNow / (1 - tNow) more gross pay on top of the C both columns above
+     * already spend. The page used to present it as the correction to an
+     * unequal comparison, which had it backwards — the two columns above
+     * already cost the same, and tie exactly when the two rates match.
      */
     const taxSaved = C * tNow;
+    const sideGrossCost = tNow < 1 ? taxSaved / (1 - tNow) : 0;
+    const totalGrossWithSide = C + sideGrossCost;
     const netRet = n(ret) * (1 - Math.min(Math.max(n(sideInvest), 0), 100) / 100);
     const side = growthSeries({ initial: 0, contribution: taxSaved, annualRate: netRet, years: yrs });
     const sideEnd = side.balances[side.balances.length - 1] ?? 0;
@@ -79,7 +90,7 @@ export default function Calculator() {
     return {
       rothContribution, rothEnd, rothAfterTax,
       tradEnd, tradTax, tradAfterTax,
-      taxSaved, sideEnd, tradWithSide, netRet,
+      taxSaved, sideEnd, tradWithSide, netRet, sideGrossCost, totalGrossWithSide,
       gap: Math.abs(gap), gapWithSide: Math.abs(gapWithSide),
       rothWins, rothWinsWithSide: gapWithSide > 0,
       contributedRoth: roth.contributed,
@@ -104,12 +115,13 @@ export default function Calculator() {
               label="Contribution each month"
               value={contrib}
               onChange={setContrib}
+              min={0}
               placeholder="1000"
               prefix="$"
               hint="Measured before tax, so both paths start from the same gross pay."
             />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Years until retirement" value={years} onChange={setYears} placeholder="25" suffix="yrs" />
+              <NumField label="Years until retirement" value={years} onChange={setYears} min={1} placeholder="25" suffix="yrs" />
               <NumField label="Expected return" value={ret} onChange={setRet} placeholder="7" suffix="%" step={0.5} />
             </div>
           </div>
@@ -118,13 +130,30 @@ export default function Calculator() {
         <Card title="Your tax rates" badge="THE DECIDER" badgeTone="blue">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Marginal rate today" value={rateNow} onChange={setRateNow} placeholder="24" suffix="%" />
-              <NumField label="Expected in retirement" value={rateLater} onChange={setRateLater} placeholder="18" suffix="%" />
+              <NumField
+                label="Marginal rate today"
+                value={rateNow}
+                onChange={setRateNow}
+                min={0}
+                placeholder="24"
+                suffix="%"
+                hint="The band your next dollar of income falls in."
+              />
+              <NumField
+                label="Expected in retirement"
+                value={rateLater}
+                onChange={setRateLater}
+                min={0}
+                placeholder="18"
+                suffix="%"
+                hint="Your effective rate on withdrawals, not your marginal band. The model applies this flat to the whole balance; real withdrawals fill the brackets from the bottom, so the effective rate is usually well below the marginal one — which favours Traditional more than a marginal figure here would show."
+              />
             </div>
             <NumField
               label="Tax drag on side investing"
               value={sideInvest}
               onChange={setSideInvest}
+              min={0}
               placeholder="15"
               suffix="%"
               hint="Traditional frees up cash today. If you invest it in a taxable account, this is the bite taken out of its return."
@@ -165,10 +194,24 @@ export default function Calculator() {
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline
-              label={r.sameRate ? "Difference between them" : `${r.rothWins ? "Roth" : "Traditional"} comes out ahead by`}
+              label={
+                r.sameRate
+                  ? `Difference on the same ${fmt(n(contrib))} of gross pay`
+                  : `${r.rothWins ? "Roth" : "Traditional"} comes out ahead by, on the same ${fmt(n(contrib))} of gross pay`
+              }
               value={fmtK(r.gap)}
               tone={r.sameRate ? "gray" : "green"}
             />
+            {/* The equal-cost test, stated so a reader can check it rather than
+                take it on trust. Setting the two rates equal ties the columns
+                exactly, which is the identity that proves the basis is fair. */}
+            <p className="text-xs text-gray-500 leading-relaxed mb-3">
+              Both columns spend the same <strong>{fmt(n(contrib))}</strong> a month of gross pay. Roth
+              loses <strong>{fmt(r.taxSaved)}</strong> of it to income tax on the way in and puts{" "}
+              <strong>{fmt(r.rothContribution)}</strong> to work; Traditional puts the whole{" "}
+              <strong>{fmt(n(contrib))}</strong> in and settles up at {pct(n(rateLater), 0)} on the way
+              out. That is why they tie to the dollar when the two rates match — set them equal and see.
+            </p>
             <Takeaway tone={r.sameRate ? "blue" : r.rothWins ? "green" : "amber"}>
               {r.sameRate ? (
                 <>
@@ -196,23 +239,49 @@ export default function Calculator() {
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-            <h2 className="text-sm font-medium text-gray-900 mb-3">If you invest the tax break too</h2>
+            <h2 className="text-sm font-medium text-gray-900 mb-1">If you can save more than that</h2>
+            <p className="text-xs text-gray-500 leading-relaxed mb-3">
+              A different question, not a correction to the one above. Against contributing nothing at
+              all, putting {fmt(n(contrib))} in pre-tax lowers this year&apos;s tax bill by{" "}
+              <strong>{fmt(r.taxSaved)}</strong>. Saving that as well is worth doing — but it is extra
+              money out of after-tax pay, so it needs{" "}
+              <strong>{fmt(r.sideGrossCost)}</strong> more gross a month, or{" "}
+              <strong>{fmt(r.totalGrossWithSide)}</strong> against the {fmt(n(contrib))} both columns
+              above cost. Read it as saving harder, not as Traditional winning.
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <Stat label="Tax saved each month" value={fmt(r.taxSaved)} tone="green" />
               <Stat label="Side pot at the end" value={fmtK(r.sideEnd)} sub={`at ${r.netRet.toFixed(1)}% after drag`} />
-              <Stat label="Traditional plus side pot" value={fmtK(r.tradWithSide)} />
+              <Stat label="Traditional plus side pot" value={fmtK(r.tradWithSide)} sub={`costs ${fmt(r.totalGrossWithSide)}/mo gross`} />
               <Stat
-                label={r.rothWinsWithSide ? "Roth still ahead by" : "Traditional ahead by"}
+                label="Ahead of Roth by"
                 value={fmtK(r.gapWithSide)}
-                tone={r.rothWinsWithSide ? "green" : "amber"}
+                sub={`on ${fmt(r.sideGrossCost)}/mo more`}
+                tone="amber"
               />
             </div>
             <Takeaway tone="blue">
-              This is the comparison most people skip. Traditional hands you{" "}
-              <strong>{fmt(r.taxSaved)}</strong> a month you would otherwise pay in tax. Investing it makes
-              Traditional look much stronger — but only if you genuinely invest it rather than spend it.
-              If it gets spent, the figures in the panel above are the real ones.
+              The side pot only exists if the money is genuinely invested rather than spent. If it gets
+              spent, the panel above is the real comparison — and that panel is the one where both paths
+              cost you the same.
             </Takeaway>
+          </div>
+
+          <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+            <h2 className="text-sm font-medium text-gray-900 mb-1">At the contribution limit</h2>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Roth and traditional contributions share one limit — {fmt(RETIREMENT_LIMITS.electiveDeferral)}{" "}
+              in {TAX_YEAR} for a 401(k), 403(b) or governmental 457(b), plus{" "}
+              {fmt(RETIREMENT_LIMITS.catchUp50)} from age 50 and{" "}
+              {fmt(RETIREMENT_LIMITS.catchUp60to63)} for ages 60 to 63. The cap counts dollars going in,
+              not what they are worth after tax, so at the limit a Roth dollar shelters more than a
+              traditional one: {fmt(RETIREMENT_LIMITS.electiveDeferral)} of Roth is{" "}
+              {fmt(RETIREMENT_LIMITS.electiveDeferral)} you keep, while{" "}
+              {fmt(RETIREMENT_LIMITS.electiveDeferral)} of traditional is worth{" "}
+              {fmt(RETIREMENT_LIMITS.electiveDeferral * (1 - Math.min(Math.max(n(rateLater), 0), 100) / 100))}{" "}
+              after {pct(n(rateLater), 0)} tax. That is a real argument for Roth, and it only applies once
+              you are actually at the cap — below it you can always contribute more instead.
+            </p>
           </div>
 
           <ChartCard title="What you actually keep" footnote="After every tax bill has been paid.">
@@ -231,7 +300,7 @@ export default function Calculator() {
                   ],
                 },
                 {
-                  label: "Traditional + side pot",
+                  label: "Traditional + side pot (costs more)",
                   segments: [
                     { label: "After tax", value: r.tradAfterTax, color: COLORS.gray },
                     { label: "Side investments", value: r.sideEnd, color: COLORS.blue },

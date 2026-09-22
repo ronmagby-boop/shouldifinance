@@ -34,6 +34,26 @@ export const standardDeduction = (status: FilingStatus): number =>
 export const STUDENT_LOAN_INTEREST_CAP = 2_500;
 
 /**
+ * Elective deferral and IRA limits, from IRS Notice 2025-67 (13 November
+ * 2025), announced at
+ * irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500.
+ *
+ * Roth and traditional contributions share one deferral limit between them,
+ * which is the whole reason the choice matters at the cap: the limit is
+ * counted in dollars going in, so a Roth dollar shelters more after-tax value
+ * than a traditional one.
+ */
+export const RETIREMENT_LIMITS = {
+  /** 401(k), 403(b) and most governmental 457(b) plans. */
+  electiveDeferral: 24_500,
+  /** Additional, age 50 and over. */
+  catchUp50: 8_000,
+  /** Additional, ages 60 to 63, under SECURE 2.0. */
+  catchUp60to63: 11_250,
+  ira: 7_500,
+};
+
+/**
  * Ordinary income brackets, as taxable income — after the standard deduction,
  * not gross. `upTo` is the top of the band.
  */
