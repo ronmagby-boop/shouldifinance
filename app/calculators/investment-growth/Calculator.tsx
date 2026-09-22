@@ -8,6 +8,15 @@ import {
 import { ChartCard, LineChart, COLORS } from "../../components/Charts";
 import { growthSeries } from "../../lib/finance";
 
+/**
+ * What a broad index fund costs, for the side-by-side against whatever the
+ * user typed. Index equity mutual funds averaged 0.05% in 2025 on an
+ * asset-weighted basis, against 0.64% for actively managed equity funds —
+ * ICI Research Perspective 32, no. 1 (March 2026), "Trends in the Expenses
+ * and Fees of Funds, 2025", Figure 6.
+ */
+const LOW_COST_FEE = 0.05;
+
 export default function Calculator() {
   const [initial, setInitial] = useState<Num>("");
   const [monthly, setMonthly] = useState<Num>("");
@@ -51,6 +60,7 @@ export default function Calculator() {
     };
     const gross = growthSeries({ ...opts, annualRate: n(rate) });
     const net = growthSeries({ ...opts, annualRate: n(rate) - n(fee) });
+    const lowCost = growthSeries({ ...opts, annualRate: n(rate) - LOW_COST_FEE });
 
     const finalNominal = net.balances[net.balances.length - 1];
     const infl = n(inflation) / 100;
@@ -69,12 +79,25 @@ export default function Calculator() {
     const feeCost = gross.balances[gross.balances.length - 1] - finalNominal;
     const lastYearContribution = c * 12;
 
+    /* The dollar figure alone does not land — $68,133 beside $445,550 of
+     * growth reads as a rounding error until you see it is an eighth of
+     * everything the money earned. Measured against the growth with no fee
+     * at all, which is what the fee actually came out of. */
+    const feeShare = gross.growth > 0 ? (feeCost / gross.growth) * 100 : 0;
+
+    const lowCostFinal = lowCost.balances[lowCost.balances.length - 1];
+
     return {
       finalNominal,
       finalReal,
       contributed: net.contributed,
       growth: net.growth,
       feeCost,
+      feeShare,
+      showFeeShare: gross.growth > 0 && feeCost > 0,
+      lowCostFinal,
+      lowCostGain: lowCostFinal - finalNominal,
+      showLowCost: n(fee) > LOW_COST_FEE,
       balances: net.balances,
       realBalances,
       contributedSeries,
@@ -97,20 +120,27 @@ export default function Calculator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your portfolio" badge="INPUTS">
           <div className="space-y-4">
-            <NumField label="Starting balance" value={initial} onChange={setInitial} placeholder="25000" prefix="$" />
-            <NumField label="Monthly contribution" value={monthly} onChange={setMonthly} placeholder="1000" prefix="$" />
+            <NumField label="Starting balance" value={initial} onChange={setInitial} min={0} placeholder="25000" prefix="$" />
+            <NumField label="Monthly contribution" value={monthly} onChange={setMonthly} min={0} placeholder="1000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
+              {/* Return is deliberately unbounded — a negative one is a real
+                  thing to model, and the page handles it. */}
               <NumField label="Annual return" value={rate} onChange={setRate} placeholder="8" suffix="%" step={0.25} />
-              <NumField label="Years invested" value={years} onChange={setYears} placeholder="20" suffix="yrs" />
+              <NumField label="Years invested" value={years} onChange={setYears} min={1} placeholder="20" suffix="yrs" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Annual fees" value={fee} onChange={setFee} placeholder="0.65" suffix="%" step={0.05} />
-              <NumField label="Inflation" value={inflation} onChange={setInflation} placeholder="2.5" suffix="%" step={0.1} />
+              <NumField label="Annual fees" value={fee} onChange={setFee} min={0} placeholder="0.65" suffix="%" step={0.05} />
+              <NumField label="Inflation" value={inflation} onChange={setInflation} min={0} placeholder="2.5" suffix="%" step={0.1} />
             </div>
+            <p className="text-xs text-gray-400 leading-relaxed -mt-2">
+              Actively managed equity funds averaged 0.64% in 2025; index equity funds averaged 0.05%
+              (ICI, asset-weighted).
+            </p>
             <NumField
               label="Contribution increase per year"
               value={raise}
               onChange={setRaise}
+              min={0}
               placeholder="3"
               suffix="%"
               step={0.5}
@@ -127,17 +157,48 @@ export default function Calculator() {
                 <Stat label="Worth in today's dollars" value={fmtK(r.finalReal)} tone="amber" />
                 <Stat label="You contributed" value={fmtK(r.contributed)} />
                 <Stat label="Investment growth" value={fmtK(r.growth)} tone="green" />
-                <Stat label="Lost to fees" value={fmtK(r.feeCost)} tone="red" />
+                <Stat
+                  label="Lost to fees"
+                  value={fmtK(r.feeCost)}
+                  tone="red"
+                  sub={r.showFeeShare ? `${Math.round(r.feeShare)}% of the growth it would have earned` : undefined}
+                />
                 <Stat label="Return after fees" value={pct(r.netReturn, 2)} />
                 <Stat label="Real return after inflation" value={pct(r.realReturn, 2)} />
               </div>
-              <Takeaway tone={r.realReturn > 0 ? "green" : "amber"}>
-                After {pct(n(fee), 2)} in fees and {pct(n(inflation), 1)} inflation, your{" "}
-                <strong>{fmtK(r.finalNominal)}</strong> buys what{" "}
-                <strong>{fmtK(r.finalReal)}</strong> buys today. Fees alone cost you{" "}
-                <strong>{fmtK(r.feeCost)}</strong> over {n(years)} years — the strongest argument for
-                low-cost index funds.
-              </Takeaway>
+              <div className="space-y-2">
+                <Takeaway tone={r.realReturn > 0 ? "green" : "amber"}>
+                  After {pct(n(fee), 2)} in fees and {pct(n(inflation), 1)} inflation, your{" "}
+                  <strong>{fmtK(r.finalNominal)}</strong> buys what{" "}
+                  <strong>{fmtK(r.finalReal)}</strong> buys today. Fees alone cost you{" "}
+                  <strong>{fmtK(r.feeCost)}</strong> over {n(years)} years
+                  {r.showFeeShare && (
+                    <>
+                      {" "}
+                      — <strong>{Math.round(r.feeShare)}%</strong> of everything the money would have
+                      earned
+                    </>
+                  )}
+                  .
+                </Takeaway>
+                {/* The old copy called index funds "the strongest argument"
+                    and left the reader to imagine the difference. This prices
+                    it on their own numbers instead. */}
+                {r.showLowCost && (
+                  <Takeaway tone="blue">
+                    The same portfolio in a fund charging {pct(LOW_COST_FEE, 2)} — roughly what a broad
+                    index fund costs — reaches <strong>{fmtK(r.lowCostFinal)}</strong>, or{" "}
+                    <strong>{fmtK(r.lowCostGain)}</strong> more. Nothing about the investments changed;
+                    that gap is the fee.
+                  </Takeaway>
+                )}
+                <Takeaway tone="amber">
+                  This assumes a steady {n(rate)}% every year. Real returns arrive in a jagged
+                  order, and when you are contributing monthly the order matters — a poor run in the
+                  early years does lasting damage a good run later does not undo. Treat{" "}
+                  <strong>{fmtK(r.finalNominal)}</strong> as a central estimate, not a forecast.
+                </Takeaway>
+              </div>
             </>
           ) : (
             <EmptyState>
