@@ -81,6 +81,14 @@ export const CALCULATORS: Calc[] = [
     keywords: ["extra mortgage payment", "pay off mortgage early", "interest saved"],
   },
   {
+    slug: "payoff-house-vs-invest",
+    title: "Should I pay off my house early or invest the difference?",
+    nav: "Should I pay off the house or invest?",
+    desc: "A guaranteed return from prepaying against a riskier one from the market.",
+    icon: HandCoins, bg: "bg-emerald-50", category: "Home", kind: "should-i",
+    keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
+  },
+  {
     slug: "va-recoup",
     title: "Will my VA refinance meet the recoupment rule?",
     nav: "Will my VA refinance recoup?",
@@ -244,14 +252,6 @@ export const CALCULATORS: Calc[] = [
     desc: "Pay tax now or later, decided by the bracket you expect in retirement.",
     icon: Split, bg: "bg-blue-50", category: "Money", kind: "should-i",
     keywords: ["Roth vs traditional 401k", "Roth IRA comparison", "pre-tax vs after-tax retirement"],
-  },
-  {
-    slug: "payoff-house-vs-invest",
-    title: "Should I pay off my house early or invest the difference?",
-    nav: "Should I pay off the house or invest?",
-    desc: "A guaranteed return from prepaying against a riskier one from the market.",
-    icon: HandCoins, bg: "bg-emerald-50", category: "Money", kind: "should-i",
-    keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
   },
   // ---------- Auto ----------
   {

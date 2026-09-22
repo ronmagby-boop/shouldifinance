@@ -76,7 +76,7 @@ export default function Calculator() {
       intro="Every extra dollar toward principal skips all the interest that dollar would have carried for the rest of the loan. Enter what you could add each month and see the years and interest it erases."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["should-i-refinance", "refinance-to-pay-off-debt", "pay-off-debt"]}
+      relatedSlugs={["payoff-house-vs-invest", "should-i-refinance", "refinance-to-pay-off-debt", "pay-off-debt"]}
       disclaimer="For educational purposes only. Confirm your servicer applies extra payments to principal, and check for prepayment penalties. Before prepaying, make sure you have an emergency fund and are capturing any employer retirement match — those usually come first."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
