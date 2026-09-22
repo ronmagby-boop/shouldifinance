@@ -239,15 +239,18 @@ export default function Calculator() {
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-            <h2 className="text-sm font-medium text-gray-900 mb-1">If you can save more than that</h2>
+            <h2 className="text-sm font-medium text-gray-900 mb-1">
+              If you also invest {fmt(r.taxSaved)} a month on top
+            </h2>
             <p className="text-xs text-gray-500 leading-relaxed mb-3">
-              A different question, not a correction to the one above. Against contributing nothing at
-              all, putting {fmt(n(contrib))} in pre-tax lowers this year&apos;s tax bill by{" "}
-              <strong>{fmt(r.taxSaved)}</strong>. Saving that as well is worth doing — but it is extra
-              money out of after-tax pay, so it needs{" "}
-              <strong>{fmt(r.sideGrossCost)}</strong> more gross a month, or{" "}
-              <strong>{fmt(r.totalGrossWithSide)}</strong> against the {fmt(n(contrib))} both columns
-              above cost. Read it as saving harder, not as Traditional winning.
+              A different scenario, not a correction to the one above — nothing is missing from it. This
+              is what happens if you put <strong>{fmt(r.taxSaved)}</strong> a month of your own money to
+              work in a taxable account <em>alongside</em> the Traditional contribution, over and above
+              the contribution itself. It is not like-for-like: that {fmt(r.taxSaved)} is after-tax
+              money, so funding it takes <strong>{fmt(r.sideGrossCost)}</strong> more gross a month —{" "}
+              <strong>{fmt(r.totalGrossWithSide)}</strong> in all, against the {fmt(n(contrib))} each
+              column above costs. It is the case where you have more to invest, and the extra is what
+              does the work.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <Stat label="Tax saved each month" value={fmt(r.taxSaved)} tone="green" />
