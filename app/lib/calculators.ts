@@ -426,22 +426,53 @@ export const byCategory = (category: Category): Calc[] =>
     (a, b) => (a.kind === b.kind ? 0 : a.kind === "should-i" ? -1 : 1),
   );
 
-/** Up to three sibling calculators to surface at the bottom of a page. */
+/** Padded up to this many when a page declares fewer, so no page looks bare. */
+const RELATED_MIN = 3;
+/** The card grid lays out three or four; a fifth would orphan a row. */
+export const RELATED_MAX = 4;
+
+/**
+ * Sibling calculators for the bottom of a page: everything the page declares,
+ * then category siblings to reach RELATED_MIN if it declared fewer.
+ *
+ * Declared picks used to be capped at three silently, which dropped the fourth
+ * on ten pages without a word — the link simply never rendered. Anything past
+ * RELATED_MAX is still dropped, because the grid cannot lay it out, but it now
+ * says so rather than doing it quietly.
+ */
 export function related(slug: string, picks: string[] = []): Calc[] {
   const chosen: Calc[] = [];
   for (const p of picks) {
     const c = bySlug(p);
-    if (c && c.slug !== slug) chosen.push(c);
+    if (c && c.slug !== slug && !chosen.some((x) => x.slug === c.slug)) chosen.push(c);
+  }
+  if (chosen.length > RELATED_MAX) {
+    console.warn(
+      `[calculators] ${slug} declares ${chosen.length} related calculators; ` +
+        `only the first ${RELATED_MAX} will render. Dropped: ` +
+        chosen.slice(RELATED_MAX).map((c) => c.slug).join(", "),
+    );
   }
   const self = bySlug(slug);
   const pool = self ? byCategory(self.category) : CALCULATORS;
   for (const c of [...pool, ...CALCULATORS]) {
-    if (chosen.length >= 3) break;
+    if (chosen.length >= RELATED_MIN) break;
     if (c.slug === slug || chosen.some((x) => x.slug === c.slug)) continue;
     chosen.push(c);
   }
-  return chosen.slice(0, 3);
+  return chosen.slice(0, RELATED_MAX);
 }
+
+/**
+ * Track count for the related-card grid. Three and four need different
+ * column counts — four in a three-column grid orphans the last card on a
+ * row of its own. Both strings are written out in full because Tailwind
+ * scans source text and never sees an interpolated class name.
+ */
+export const relatedGridClass = (count: number): string =>
+  count > RELATED_MIN
+    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
+    : "grid grid-cols-1 md:grid-cols-3 gap-3";
 
 export const SITE = "https://shouldifinance.com";
 

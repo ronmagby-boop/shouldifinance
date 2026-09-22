@@ -7,9 +7,17 @@ import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
 import { NumField } from "../../components/Inputs";
-import { related } from "../../lib/calculators";
+import { related, relatedGridClass } from "../../lib/calculators";
 
 type Num = number | "";
+
+/* Resolved once at module scope: the registry is static, and the count
+   decides the grid's column class. */
+const RELATED = related("should-i-refinance", [
+  "refinance-to-pay-off-debt",
+  "extra-payments",
+  "rate-buydown",
+]);
 
 export default function ShouldIRefinance() {
   const [currentBalance, setCurrentBalance] = useState<Num>("");
@@ -503,12 +511,8 @@ export default function ShouldIRefinance() {
             <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
               Related calculators
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {related("should-i-refinance", [
-                "refinance-to-pay-off-debt",
-                "extra-payments",
-                "rate-buydown",
-              ]).map((card) => (
+            <div className={relatedGridClass(RELATED.length)}>
+              {RELATED.map((card) => (
                 <Link
                   key={card.slug}
                   href={`/calculators/${card.slug}`}

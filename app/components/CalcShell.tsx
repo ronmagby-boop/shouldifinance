@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
+import { bySlug, CATEGORY_SECTIONS, related, relatedGridClass } from "../lib/calculators";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import SiteNav from "./SiteNav";
@@ -90,7 +90,7 @@ export default function CalcShell({
             <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
               Related calculators
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className={relatedGridClass(cards.length)}>
               {cards.map((card) => (
                 <Link
                   key={card.slug}

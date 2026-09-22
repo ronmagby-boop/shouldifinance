@@ -5,8 +5,17 @@ import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/Calc
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
-import { related } from "../../lib/calculators";
+import { related, relatedGridClass } from "../../lib/calculators";
 import { NumField, type Num } from "../../components/Inputs";
+
+/* Resolved once at module scope: the registry is static, and the count
+   decides the grid's column class. */
+const RELATED = related("mortgage-payment", [
+  "should-i-refinance",
+  "rent-vs-buy",
+  "extra-payments",
+  "payoff-house-vs-invest",
+]);
 
 export default function MortgageCalculator() {
   const [price, setPrice] = useState<number | "">("");
@@ -350,8 +359,8 @@ export default function MortgageCalculator() {
             {/* RELATED CALCULATORS */}
             <div className="mb-6">
               <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">Related calculators</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {related("mortgage-payment", ["should-i-refinance", "rent-vs-buy", "extra-payments", "payoff-house-vs-invest"]).map((card) => (
+              <div className={relatedGridClass(RELATED.length)}>
+                {RELATED.map((card) => (
                   <Link key={card.slug} href={`/calculators/${card.slug}`}
                     className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block">
                     <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
