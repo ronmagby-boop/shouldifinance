@@ -6,15 +6,12 @@ import {
   fmt, fmtK, pct, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
-import { longTermRate, ordinaryRate } from "../../lib/finance";
+import {
+  TAX_YEAR, taxOnCapitalGain, taxOnExtraIncome, niitOn, standardDeduction,
+  type FilingStatus,
+} from "../../lib/tax";
 
-type Status = "single" | "married" | "head";
-
-const NIIT_THRESHOLD: Record<Status, number> = {
-  single: 200000,
-  married: 250000,
-  head: 200000,
-};
+type Status = FilingStatus;
 
 export default function Calculator() {
   const [buyPrice, setBuyPrice] = useState<Num>("");
@@ -51,36 +48,46 @@ export default function Calculator() {
 
     const gain = n(sellPrice) - n(buyPrice) - n(costs);
     const inc = n(income);
-
-    const ltRate = longTermRate(inc + Math.max(0, gain), status);
-    const stRate = ordinaryRate(inc + Math.max(0, gain), status);
-    const appliedFedRate = longTerm ? ltRate : stRate;
-
     const taxableGain = Math.max(0, gain);
-    const fedTax = (taxableGain * appliedFedRate) / 100;
 
-    // Net investment income tax applies above the MAGI threshold.
-    const overThreshold = Math.max(0, inc + taxableGain - NIIT_THRESHOLD[status]);
-    const niitBase = Math.min(taxableGain, overThreshold);
-    const niit = niitBase * 0.038;
+    /* Both holding periods are costed by stacking the gain on top of taxable
+     * ordinary income and filling brackets from there — long-term into the
+     * 0/15/20% bands, short-term into the ordinary ones. The page used to
+     * pick the single rate the stacked total landed in and apply it to every
+     * dollar, which is wrong whenever a gain spans two bands. */
+    const lt = taxOnCapitalGain(inc, taxableGain, status);
+    const st = taxOnExtraIncome(inc, taxableGain, status);
+    const applied = longTerm ? lt : st;
+    const alt = longTerm ? st : lt;
+    const fedTax = applied.tax;
+
+    // MAGI is gross income plus the gain — before the standard deduction,
+    // which is why it is not the same base the brackets above are filled on.
+    const magi = inc + taxableGain;
+    const niitCalc = niitOn(magi, taxableGain, status);
+    const niit = niitCalc.tax;
 
     const stateTax = (taxableGain * n(stateRate)) / 100;
     const totalTax = fedTax + niit + stateTax;
     const net = n(sellPrice) - n(costs) - totalTax;
-
-    // What the other holding period would cost.
-    const altRate = longTerm ? stRate : ltRate;
-    const altFed = (taxableGain * altRate) / 100;
-    const altTotal = altFed + niit + stateTax;
+    const altTotal = alt.tax + niit + stateTax;
 
     return {
       gain,
       taxableGain,
-      appliedFedRate,
-      ltRate,
-      stRate,
+      isLoss: gain < 0,
+      appliedFedRate: applied.effectiveRate,
+      bands: applied.bands,
+      ltTax: lt.tax,
+      stTax: st.tax,
+      ltRate: lt.effectiveRate,
+      stRate: st.effectiveRate,
+      baseTaxable: lt.baseTaxable,
+      deduction: standardDeduction(status),
       fedTax,
       niit,
+      niitCalc,
+      magi,
       stateTax,
       totalTax,
       net,
@@ -88,7 +95,7 @@ export default function Calculator() {
       keepPct: taxableGain > 0 ? ((taxableGain - totalTax) / taxableGain) * 100 : 0,
       difference: Math.abs(altTotal - totalTax),
       altTotal,
-      returnPct: (gain / n(buyPrice)) * 100,
+      returnPct: n(buyPrice) > 0 ? (gain / n(buyPrice)) * 100 : 0,
     };
   }, [buyPrice, sellPrice, costs, income, stateRate, status, longTerm]);
 
@@ -99,19 +106,20 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["investment-growth", "dividend-reinvestment", "early-withdrawal"]}
-      disclaimer="For educational purposes only and not tax advice. Uses 2025 federal brackets and assumes a flat state rate; many states tax gains as ordinary income and some do not tax them at all. Ignores carryforward losses, wash sales, AMT, and special asset classes such as collectibles or Section 1202 stock. Consult a tax professional."
+      disclaimer={`For educational purposes only and not tax advice. Uses ${TAX_YEAR} federal brackets and assumes a flat state rate. Models a single sale only: it does not net this gain against other gains or losses, apply the $3,000 annual limit on deducting a net loss against ordinary income, or carry anything forward. Ignores wash sales, AMT, the qualified dividend interaction, and special asset classes such as collectibles or Section 1202 stock. Consult a tax professional.`}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The sale" badge="INPUTS">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="What you paid" value={buyPrice} onChange={setBuyPrice} placeholder="40000" prefix="$" />
-              <NumField label="What you sold for" value={sellPrice} onChange={setSellPrice} placeholder="115000" prefix="$" />
+              <NumField label="What you paid" value={buyPrice} onChange={setBuyPrice} min={0} placeholder="40000" prefix="$" />
+              <NumField label="What you sold for" value={sellPrice} onChange={setSellPrice} min={0} placeholder="115000" prefix="$" />
             </div>
             <NumField
               label="Commissions and fees"
               value={costs}
               onChange={setCosts}
+              min={0}
               placeholder="500"
               prefix="$"
               hint="Added to your cost basis, which lowers the taxable gain."
@@ -129,10 +137,25 @@ export default function Calculator() {
                 { value: "head", label: "Head of household" },
               ]}
             />
-            <div className="grid grid-cols-2 gap-3">
-              <NumField label="Other taxable income" value={income} onChange={setIncome} placeholder="120000" prefix="$" />
-              <NumField label="State tax rate" value={stateRate} onChange={setStateRate} placeholder="5" suffix="%" step={0.5} />
-            </div>
+            <NumField
+              label="Other income"
+              value={income}
+              onChange={setIncome}
+              min={0}
+              placeholder="120000"
+              prefix="$"
+              hint={`Wages and everything else before deductions — the standard deduction for your filing status is taken off here. The gain stacks on top of what is left, which is what decides the rate it is taxed at.`}
+            />
+            <NumField
+              label="State tax rate"
+              value={stateRate}
+              onChange={setStateRate}
+              min={0}
+              placeholder="5"
+              suffix="%"
+              step={0.5}
+              hint="Most states tax capital gains as ordinary income, so use your state's ordinary income rate. A few tax them at a lower rate, and several have no income tax at all — enter 0 for those."
+            />
           </div>
         </Card>
 
@@ -146,32 +169,75 @@ export default function Calculator() {
               />
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <Stat label="Capital gain" value={fmtK(r.gain)} sub={pct(r.returnPct, 1) + " return"} tone={r.gain >= 0 ? "green" : "red"} />
-                <Stat label={`Federal (${pct(r.appliedFedRate, 0)})`} value={fmt(r.fedTax)} />
-                <Stat label="Net investment income tax" value={fmt(r.niit)} sub={r.niit > 0 ? "3.8% surtax applies" : "Below threshold"} />
+                <Stat
+                  label={`Federal (${pct(r.appliedFedRate, 1)} on the gain)`}
+                  value={fmt(r.fedTax)}
+                  sub={
+                    r.bands.length > 1
+                      ? r.bands.map((b) => `${b.rate}% on ${fmtK(b.amount)}`).join(" + ")
+                      : undefined
+                  }
+                />
+                <Stat
+                  label="Net investment income tax"
+                  value={fmt(r.niit)}
+                  sub={
+                    r.taxableGain <= 0
+                      ? undefined
+                      : r.niitCalc.margin < 0
+                        ? `${fmtK(-r.niitCalc.margin)} below the ${fmtK(r.niitCalc.threshold)} threshold`
+                        : `3.8% on ${fmtK(r.niitCalc.base)} — the lesser of the gain and ${fmtK(r.niitCalc.excess)} over the threshold`
+                  }
+                />
                 <Stat label={`State (${pct(n(stateRate), 1)})`} value={fmt(r.stateTax)} />
-                <Stat label="Effective tax rate" value={pct(r.effectiveRate, 1)} tone="amber" />
-                <Stat label="You keep" value={pct(r.keepPct, 1)} sub="of the gain" tone="green" />
+                {!r.isLoss && <Stat label="Effective tax rate" value={pct(r.effectiveRate, 1)} tone="amber" />}
+                {!r.isLoss && <Stat label="You keep" value={pct(r.keepPct, 1)} sub="of the gain" tone="green" />}
               </div>
               {r.gain > 0 ? (
-                <Takeaway tone={longTerm ? "green" : "amber"}>
-                  {longTerm ? (
-                    <>
-                      <strong>✓ Long-term rates apply.</strong> At {pct(r.ltRate, 0)} instead of the{" "}
-                      {pct(r.stRate, 0)} you&apos;d pay on a short-term gain, holding past one year saved
-                      you <strong>{fmt(r.difference)}</strong>.
-                    </>
-                  ) : (
-                    <>
-                      <strong>⚠ This is a short-term gain</strong>, taxed as ordinary income at{" "}
-                      {pct(r.stRate, 0)}. Holding past the one-year mark would drop it to{" "}
-                      {pct(r.ltRate, 0)} and save about <strong>{fmt(r.difference)}</strong>.
-                    </>
-                  )}
-                </Takeaway>
+                <div className="space-y-2">
+                  <Takeaway tone={longTerm ? "green" : "amber"}>
+                    {longTerm ? (
+                      <>
+                        <strong>✓ Long-term rates apply.</strong> This gain costs{" "}
+                        <strong>{fmt(r.ltTax)}</strong> in federal tax — an effective{" "}
+                        {pct(r.ltRate, 1)} — against <strong>{fmt(r.stTax)}</strong> at{" "}
+                        {pct(r.stRate, 1)} if you had sold inside a year. Holding past the one-year mark
+                        saved you <strong>{fmt(r.difference)}</strong>.
+                      </>
+                    ) : (
+                      <>
+                        <strong>⚠ This is a short-term gain</strong>, taxed as ordinary income: it stacks
+                        on your other income and costs <strong>{fmt(r.stTax)}</strong>, an effective{" "}
+                        {pct(r.stRate, 1)}. Holding past the one-year mark would cost{" "}
+                        <strong>{fmt(r.ltTax)}</strong> instead and save about{" "}
+                        <strong>{fmt(r.difference)}</strong>.
+                      </>
+                    )}
+                  </Takeaway>
+                  {/* Both rates are effective rates across the bands the gain
+                      actually fills, not the single band its top dollar lands
+                      in — so this line has to show the working. */}
+                  <Takeaway tone="blue">
+                    Your {fmtK(n(income))} of income less the {fmtK(r.deduction)} standard deduction
+                    leaves <strong>{fmtK(r.baseTaxable)}</strong> of taxable income, and the gain stacks
+                    on top of it. That is what puts{" "}
+                    {r.bands.map((b, i) => (
+                      <span key={b.rate}>
+                        {i > 0 ? (i === r.bands.length - 1 ? " and " : ", ") : ""}
+                        <strong>{fmtK(b.amount)}</strong> in the {b.rate}% band
+                      </span>
+                    ))}
+                    .
+                  </Takeaway>
+                </div>
               ) : (
                 <Takeaway tone="blue">
-                  This sale is a loss of <strong>{fmt(Math.abs(r.gain))}</strong>. Losses offset other
-                  gains, and up to $3,000 a year can offset ordinary income, with the rest carried forward.
+                  This sale is a loss of <strong>{fmt(Math.abs(r.gain))}</strong>, so there is no tax to
+                  compute on it and the page shows zero rather than a negative bill. Losses have their
+                  own rules this page does not model: they offset other capital gains first, then up to
+                  $3,000 a year of ordinary income, and anything left carries forward to future years.
+                  What this sale is worth to you depends on the rest of your year, not on this sale
+                  alone.
                 </Takeaway>
               )}
             </>
@@ -206,14 +272,14 @@ export default function Calculator() {
                 {
                   label: "Held under 1 year",
                   segments: [
-                    { label: "Federal", value: (r.taxableGain * r.stRate) / 100, color: COLORS.amber },
+                    { label: "Federal", value: r.stTax, color: COLORS.amber },
                     { label: "NIIT + state", value: r.niit + r.stateTax, color: COLORS.gray },
                   ],
                 },
                 {
                   label: "Held over 1 year",
                   segments: [
-                    { label: "Federal", value: (r.taxableGain * r.ltRate) / 100, color: COLORS.amber },
+                    { label: "Federal", value: r.ltTax, color: COLORS.amber },
                     { label: "NIIT + state", value: r.niit + r.stateTax, color: COLORS.gray },
                   ],
                 },
@@ -221,9 +287,9 @@ export default function Calculator() {
             />
             <div className="mt-4">
               <Takeaway tone="blue">
-                One day past the one-year mark changes the federal rate from {pct(r.stRate, 0)} to{" "}
-                {pct(r.ltRate, 0)} on this gain. If you are close to that date, the calendar is worth more
-                than most trades.
+                One day past the one-year mark takes this gain from {pct(r.stRate, 1)} to{" "}
+                {pct(r.ltRate, 1)} in federal tax — <strong>{fmt(r.difference)}</strong>. If you are close
+                to that date, the calendar is worth more than most trades.
               </Takeaway>
             </div>
           </ChartCard>

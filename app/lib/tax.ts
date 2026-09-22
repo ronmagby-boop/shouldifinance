@@ -87,6 +87,38 @@ export const FEDERAL_BRACKETS: Record<FilingStatus, { upTo: number; rate: number
   ],
 };
 
+/**
+ * Long-term capital gains brackets, as TAXABLE income including the gain —
+ * the gain stacks on top of ordinary income and fills these bands from
+ * wherever ordinary income leaves off. `zeroUpTo` is the top of the 0% band,
+ * `fifteenUpTo` the top of the 15%; everything above is 20%.
+ *
+ * Source: IRS Revenue Procedure 2025-32 section 3.03, "Maximum Capital Gains
+ * Rate" (sections 1(h) and 1(j)(5)), for taxable years beginning in 2026.
+ * "All Other Individuals" is the single column.
+ */
+export const LT_GAINS_BRACKETS: Record<FilingStatus, { zeroUpTo: number; fifteenUpTo: number }> = {
+  single: { zeroUpTo: 49_450, fifteenUpTo: 545_500 },
+  married: { zeroUpTo: 98_900, fifteenUpTo: 613_700 },
+  head: { zeroUpTo: 66_200, fifteenUpTo: 579_600 },
+};
+
+/**
+ * Net investment income tax: 3.8% on the LESSER of net investment income or
+ * the amount modified AGI exceeds the threshold.
+ *
+ * These thresholds are written into section 1411 and are not adjusted for
+ * inflation, so unlike everything else in this file they do not move with
+ * TAX_YEAR — they have been the same since the tax took effect in 2013.
+ * Source: irs.gov/individuals/net-investment-income-tax.
+ */
+export const NIIT_RATE = 3.8;
+export const NIIT_THRESHOLDS: Record<FilingStatus, number> = {
+  single: 200_000,
+  married: 250_000,
+  head: 200_000,
+};
+
 /** Total federal tax on a taxable income, band by band. */
 export function federalTax(taxableIncome: number, status: FilingStatus): number {
   let remaining = Math.max(0, taxableIncome);
@@ -158,5 +190,95 @@ export function taxOnExtraIncome(
     marginalRate: marginalRate(withExtraTaxable, status),
     baseTaxable,
     bands,
+  };
+}
+
+/**
+ * Federal tax on a long-term capital gain, stacked on top of ordinary income.
+ *
+ * The 0/15/20% rates are brackets, not a flat rate picked from a table. The
+ * gain sits on top of taxable ordinary income and fills whatever is left of
+ * each band, so a gain can span two rates — or three. Applying the single
+ * rate the stacked total happens to land in is wrong in both directions: it
+ * overcharges a gain that starts in a lower band, and it is the reason a
+ * modest earner with a large gain used to be quoted 15% on every dollar when
+ * the first slice of it is taxed at nothing.
+ *
+ * `grossIncome` is gross — the standard deduction is applied here, matching
+ * taxOnExtraIncome, so both sides of a short-versus-long comparison ask the
+ * reader for the same figure.
+ */
+export function taxOnCapitalGain(
+  grossIncome: number,
+  gain: number,
+  status: FilingStatus,
+): {
+  tax: number;
+  effectiveRate: number;
+  baseTaxable: number;
+  bands: { rate: number; amount: number }[];
+} {
+  const deduction = standardDeduction(status);
+  const gross = Math.max(0, grossIncome);
+  const g = Math.max(0, gain);
+  const baseTaxable = Math.max(0, gross - deduction);
+  // Any deduction the ordinary income did not use is absorbed by the gain
+  // before the gain is taxed, the same way taxOnExtraIncome treats a slab.
+  const withGainTaxable = Math.max(0, gross + g - deduction);
+
+  const { zeroUpTo, fifteenUpTo } = LT_GAINS_BRACKETS[status];
+  const bands: { rate: number; amount: number }[] = [];
+  let remaining = withGainTaxable - baseTaxable;
+  let cursor = baseTaxable;
+  let tax = 0;
+
+  for (const [upTo, rate] of [
+    [zeroUpTo, 0],
+    [fifteenUpTo, 15],
+    [Infinity, 20],
+  ] as const) {
+    if (remaining <= 0) break;
+    const slice = Math.min(remaining, Math.max(0, upTo - cursor));
+    if (slice > 0) {
+      bands.push({ rate, amount: slice });
+      tax += (slice * rate) / 100;
+      cursor += slice;
+      remaining -= slice;
+    }
+  }
+
+  return { tax, effectiveRate: g > 0 ? (tax / g) * 100 : 0, baseTaxable, bands };
+}
+
+/**
+ * Net investment income tax on a gain, with the working shown: which of the
+ * two amounts the lesser-of rule picked, and how far MAGI sits from the
+ * threshold. `margin` is negative below the threshold, positive above.
+ */
+export function niitOn(
+  magi: number,
+  netInvestmentIncome: number,
+  status: FilingStatus,
+): {
+  tax: number;
+  base: number;
+  nii: number;
+  excess: number;
+  threshold: number;
+  margin: number;
+  lesserIs: "nii" | "excess";
+} {
+  const threshold = NIIT_THRESHOLDS[status];
+  const nii = Math.max(0, netInvestmentIncome);
+  const excess = Math.max(0, magi - threshold);
+  const base = Math.min(nii, excess);
+  return {
+    tax: (base * NIIT_RATE) / 100,
+    base,
+    nii,
+    excess,
+    threshold,
+    margin: magi - threshold,
+    lesserIs: excess < nii ? "excess" : "nii",
   };
 }

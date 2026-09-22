@@ -246,39 +246,6 @@ export function aprFromFeesHeld(
   return monthly === null ? annualRate : monthly * 12 * 100;
 }
 
-/** Federal long-term capital gains bracket for a filing status (2025 thresholds). */
-export function longTermRate(taxableIncome: number, status: "single" | "married" | "head"): number {
-  const brackets = {
-    single: [48350, 533400],
-    married: [96700, 600050],
-    head: [64750, 566700],
-  }[status];
-  if (taxableIncome <= brackets[0]) return 0;
-  if (taxableIncome <= brackets[1]) return 15;
-  return 20;
-}
-
-/** Marginal ordinary federal income tax rate (2025 brackets). */
-export function ordinaryRate(taxableIncome: number, status: "single" | "married" | "head"): number {
-  const table: Record<string, [number, number][]> = {
-    single: [
-      [11925, 10], [48475, 12], [103350, 22], [197300, 24],
-      [250525, 32], [626350, 35], [Infinity, 37],
-    ],
-    married: [
-      [23850, 10], [96950, 12], [206700, 22], [394600, 24],
-      [501050, 32], [751600, 35], [Infinity, 37],
-    ],
-    head: [
-      [17000, 10], [64850, 12], [103350, 22], [197300, 24],
-      [250500, 32], [626350, 35], [Infinity, 37],
-    ],
-  };
-  for (const [cap, rate] of table[status]) {
-    if (taxableIncome <= cap) return rate;
-  }
-  return 37;
-}
 
 /**
  * A starting-point monthly rent for a home at a given price, for the
