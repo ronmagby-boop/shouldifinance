@@ -231,11 +231,11 @@ export const CALCULATORS: Calc[] = [
 
   {
     slug: "401k-vs-debt-payoff",
-    title: "Should I max out my 401k or pay down debt?",
-    nav: "Should I max my 401k or pay debt?",
+    title: "Should I capture my full 401(k) match or pay down debt?",
+    nav: "Should I capture my full match?",
     desc: "Weigh an employer match against the guaranteed return of clearing debt.",
     icon: Scale3d, bg: "bg-green-50", category: "Money", kind: "should-i",
-    keywords: ["401k or pay off debt", "employer match vs debt", "invest or pay down debt"],
+    keywords: ["401k match or pay off debt", "employer match vs debt", "capture full 401k match", "invest or pay down debt"],
   },
   {
     slug: "roth-vs-traditional",

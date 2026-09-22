@@ -80,8 +80,16 @@ export default function Calculator() {
       : 0;
     const savingRate = roomAnnual > 0 ? taxSavingAnnual / roomAnnual : 0;
 
+    /* With no match on offer there is no "capture the match" path to run —
+     * contributing anyway is just investing instead of paying the debt, which
+     * is a different question and a different page. Zero here makes the two
+     * paths genuinely identical, so the comparison reads $0 rather than the
+     * small edge pre-tax deferral would otherwise show. */
+    const matchOffered = n(matchPct) > 0 && n(matchCap) > 0;
     // Spare cash limits the take-home cost, not the gross contribution.
-    const toMatch = Math.min(monthlyRoom, savingRate < 1 ? E / (1 - savingRate) : E);
+    const toMatch = matchOffered
+      ? Math.min(monthlyRoom, savingRate < 1 ? E / (1 - savingRate) : E)
+      : 0;
     const takeHomeCost = toMatch * (1 - savingRate);
     const matchEarned = toMatch * (n(matchPct) / 100);
     const leftover = Math.max(0, E - takeHomeCost);
@@ -158,7 +166,14 @@ export default function Calculator() {
       clearedA: A.cleared, clearedB: B.cleared,
       matchIfNeverRaised, bWins,
       gap: Math.abs(B.end - A.end),
-      alreadyMaxed: unmatchedRoom <= 0,
+      /* Two ways there is no match left to go and get, and they want different
+       * sentences: the employer offers none, or you are already taking all of
+       * it. Neither is a mistake, so neither gets a warning colour — but both
+       * leave this page with nothing to compare, because the two paths become
+       * the same plan. The question underneath is a different one. */
+      noMatchOffered: !matchOffered,
+      alreadyMaxed: matchOffered && unmatchedRoom <= 0,
+      nothingToCapture: !matchOffered || unmatchedRoom <= 0,
       horizonYears: yrs,
     };
   }, [extra, debt, debtRate, debtPayment, salary, status, matchPct, matchCap, contribPct, ret, years]);
@@ -232,7 +247,39 @@ export default function Calculator() {
         </div>
       ) : r ? (
         <>
-          {!r.alreadyMaxed && (
+          {r.nothingToCapture ? (
+            <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+              <p className="text-sm font-medium text-gray-900 mb-2">
+                {r.noMatchOffered
+                  ? "There is no match to capture here"
+                  : "You are already capturing the full match"}
+              </p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                {r.noMatchOffered ? (
+                  <>
+                    With no employer match on offer, there is nothing extra to go and get, so both
+                    approaches on this page give the same result — the money buys the same thing whichever
+                    order you send it in.
+                  </>
+                ) : (
+                  <>
+                    You contribute <strong>{fmt(r.contribDollars)}</strong> a year, which already reaches
+                    the <strong>{fmt(r.capDollars)}</strong> your employer matches. There is no employer
+                    money left on the table, so both approaches on this page give the same result.
+                  </>
+                )}
+              </p>
+              <p className="text-xs text-gray-500 leading-relaxed mt-2">
+                The question worth asking now is a different one: whether spare money does more as a{" "}
+                <strong>guaranteed {n(debtRate)}% return</strong> from clearing the debt or as an{" "}
+                <strong>expected {n(ret)}%</strong> from investing it.{" "}
+                <a href="/calculators/pay-off-debt" className="text-green-700 underline">
+                  Should I pay off a debt or invest?
+                </a>{" "}
+                works that through, including the tax treatment and the differences between debt types.
+              </p>
+            </div>
+          ) : (
             <div className="border border-green-200 rounded-2xl p-5 mb-4 bg-green-50">
               <Headline
                 label={`Employer money forgone over ${r.horizonYears} years if you never raise your contribution`}
@@ -280,12 +327,30 @@ export default function Calculator() {
                   debt gone in {Number.isFinite(r.clearedA) ? fmtMonths(r.clearedA) : "never"}
                 </p>
               </div>
-              <div className={`p-4 text-center ${r.matchPathStalls ? "bg-amber-600" : r.bWins ? "bg-green-800" : "bg-amber-600"}`}>
-                <p className="text-xs text-white/70 mb-0.5">
-                  {r.matchPathStalls ? "Only one path works" : r.bWins ? "Match first wins by" : "All to debt wins by"}
+              <div
+                className={`p-4 text-center ${
+                  r.nothingToCapture
+                    ? "bg-gray-100"
+                    : r.matchPathStalls || !r.bWins
+                      ? "bg-amber-600"
+                      : "bg-green-800"
+                }`}
+              >
+                <p className={`text-xs mb-0.5 ${r.nothingToCapture ? "text-gray-500" : "text-white/70"}`}>
+                  {r.nothingToCapture
+                    ? "Same either way"
+                    : r.matchPathStalls
+                      ? "Only one path works"
+                      : r.bWins
+                        ? "Match first wins by"
+                        : "All to debt wins by"}
                 </p>
-                <p className="text-2xl font-medium text-white">{r.matchPathStalls ? "—" : fmtK(r.gap)}</p>
-                <p className="text-xs text-white/70">after {r.horizonYears} years</p>
+                <p className={`text-2xl font-medium ${r.nothingToCapture ? "text-gray-900" : "text-white"}`}>
+                  {r.matchPathStalls ? "—" : fmtK(r.gap)}
+                </p>
+                <p className={`text-xs ${r.nothingToCapture ? "text-gray-500" : "text-white/70"}`}>
+                  after {r.horizonYears} years
+                </p>
               </div>
               <div className="p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Match first, rest to debt</p>
@@ -322,7 +387,7 @@ export default function Calculator() {
                 tone={r.debtLeftB > 0 ? "amber" : "green"}
               />
             </div>
-            <Takeaway tone={r.matchPathStalls ? "amber" : r.bWins ? "green" : "amber"}>
+            <Takeaway tone={r.nothingToCapture ? "blue" : r.matchPathStalls ? "amber" : r.bWins ? "green" : "amber"}>
               {r.matchPathStalls ? (
                 <>
                   Only the all-to-debt path finishes here. Catching the whole match costs more take-home
@@ -331,12 +396,17 @@ export default function Calculator() {
                   from <strong>{Number.isFinite(r.clearedA) ? fmtMonths(r.clearedA) : "payoff"}</strong>,
                   or contribute a smaller share of it in the meantime.
                 </>
-              ) : r.alreadyMaxed ? (
+              ) : r.nothingToCapture ? (
                 <>
-                  You are already capturing the full match, so there is no free money left to grab. From
-                  here it is a straight race: <strong>{n(debtRate)}%</strong> guaranteed by paying the debt
-                  against <strong>{n(ret)}%</strong> hoped for in the market. With a debt rate that high,
-                  clearing it first is usually the better risk-adjusted move.
+                  Both paths land in the same place, because with no match to capture they are the same
+                  plan. What is left is a straight comparison between a guaranteed{" "}
+                  <strong>{n(debtRate)}%</strong> from clearing the debt and an expected{" "}
+                  <strong>{n(ret)}%</strong> from the market — one of which is certain and one of which is
+                  not.{" "}
+                  <a href="/calculators/pay-off-debt" className="text-green-700 underline">
+                    Should I pay off a debt or invest?
+                  </a>{" "}
+                  is built for that question.
                 </>
               ) : r.bWins ? (
                 <>

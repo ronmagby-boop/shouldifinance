@@ -4,7 +4,7 @@ import Calculator from "./Calculator";
 
 export const metadata: Metadata = calcMetadata(
   "401k-vs-debt-payoff",
-  "Compare putting spare money into a 401k against paying down debt faster, including the value of any employer match you are not yet capturing.",
+  "Compare capturing your full employer 401(k) match against putting the same money on your debt, including the tax saving on a pre-tax contribution and what each path is worth after the debt clears.",
 );
 
 export default function Page() {
