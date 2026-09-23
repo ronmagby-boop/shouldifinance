@@ -119,6 +119,40 @@ export const NIIT_THRESHOLDS: Record<FilingStatus, number> = {
   head: 200_000,
 };
 
+/**
+ * Federal clean vehicle credits, and when they stopped.
+ *
+ * Public Law 119-21 (4 July 2025), the One Big Beautiful Bill Act, terminated
+ * all three vehicle credits early:
+ *
+ *  - Section 30D, the new clean vehicle credit worth up to $7,500, is
+ *    available only for vehicles ACQUIRED ON OR BEFORE 30 September 2025.
+ *  - Section 25E, the previously-owned clean vehicle credit, ends on the
+ *    same date.
+ *  - Section 30C, the charger credit, runs a little longer: the property has
+ *    to be PLACED IN SERVICE BEFORE 1 July 2026.
+ *
+ * A binding written contract plus a payment on or before the cutoff counts as
+ * acquisition, so a small number of 2026 deliveries still qualify.
+ *
+ * Source: irs.gov/clean-vehicle-tax-credits, and the IRS FAQs for the
+ * modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D under
+ * Public Law 119-21.
+ *
+ * Unlike the brackets above these do not move with TAX_YEAR — they are gone,
+ * not adjusted, and the dates are what a calculator needs to say so.
+ */
+export const CLEAN_VEHICLE_CREDITS = {
+  /** Section 30D, new vehicles. Acquired on or before this date. */
+  newVehicleCutoff: "30 September 2025",
+  /** Section 25E, used vehicles. Same cutoff. */
+  usedVehicleCutoff: "30 September 2025",
+  /** Section 30C, charging equipment. Placed in service before this date. */
+  chargerCutoff: "1 July 2026",
+  /** What 30D was worth before it ended, for explaining the change. */
+  formerNewVehicleMax: 7_500,
+};
+
 /** Total federal tax on a taxable income, band by band. */
 export function federalTax(taxableIncome: number, status: FilingStatus): number {
   let remaining = Math.max(0, taxableIncome);
