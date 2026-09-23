@@ -98,8 +98,16 @@ function readGuides(): Guide[] {
             `${calc.slug} is a "${calc.category}" calculator`,
         );
       }
-      if (Number.isNaN(Date.parse(data.reviewed))) {
+      const reviewed = Date.parse(data.reviewed);
+      if (Number.isNaN(reviewed)) {
         throw new Error(`content/guides/${file} has an unparseable reviewed date`);
+      }
+      /* "Last reviewed" is a claim about the past. A date in the future is
+       * always a typo, and it is the kind that reads as backdating. */
+      if (reviewed > Date.now()) {
+        throw new Error(
+          `content/guides/${file} is reviewed ${data.reviewed}, which is in the future`,
+        );
       }
 
       return {

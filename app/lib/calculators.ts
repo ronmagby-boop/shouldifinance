@@ -141,6 +141,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the guaranteed return of paying down debt against investing the same money.",
     icon: Scale, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["pay off debt vs invest", "guaranteed return", "mortgage payoff"],
+    guide: {
+      slug: "pay-off-debt-or-invest",
+      teaser: "Why one side of this comparison is a promise and the other a hope",
+    },
   },
   {
     slug: "loan-estimate-comparison",
@@ -157,6 +161,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
     icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
     keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
+    guide: {
+      slug: "what-rate-are-you-really-paying",
+      teaser: "What a lender's APR legally leaves out",
+    },
   },
 
   {
@@ -380,6 +388,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the snowball and avalanche methods across all your balances.",
     icon: Snowflake, bg: "bg-blue-50", category: "Debt", kind: "should-i",
     keywords: ["debt snowball", "debt avalanche", "debt payoff plan"],
+    guide: {
+      slug: "snowball-or-avalanche",
+      teaser: "Why avalanche always wins on paper, and snowball wins in practice",
+    },
   },
   {
     slug: "emergency-fund",
@@ -396,6 +408,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the standard, extended, IBR and RAP plans on your balance.",
     icon: GraduationCap, bg: "bg-purple-50", category: "Debt", kind: "should-i",
     keywords: ["student loan repayment", "income driven repayment", "repayment assistance plan", "RAP", "loan forgiveness"],
+    guide: {
+      slug: "which-student-loan-repayment-plan",
+      teaser: "What RAP changed, and which plans you can still pick",
+    },
   },
   {
     slug: "net-worth",
@@ -413,6 +429,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Pick which balances to roll into one loan, and see what each move costs.",
     icon: Combine, bg: "bg-amber-50", category: "Debt", kind: "should-i",
     keywords: ["debt consolidation calculator", "consolidation loan", "combine debts"],
+    guide: {
+      slug: "does-debt-consolidation-save-money",
+      teaser: "Where the savings go when the term gets longer",
+    },
   },
   {
     slug: "heloc-debt-payoff",
@@ -421,6 +441,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Trade a high rate for a lower one — and see the payment jump when the draw period ends.",
     icon: ShieldAlert, bg: "bg-red-50", category: "Debt", kind: "should-i",
     keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "HELOC draw period", "HELOC payment shock"],
+    guide: {
+      slug: "home-equity-to-pay-off-credit-cards",
+      teaser: "What an interest-only draw period really does",
+    },
   },
   {
     slug: "balance-transfer",
@@ -429,6 +453,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See what a 0% window saves once the transfer fee is counted.",
     icon: Shuffle, bg: "bg-purple-50", category: "Debt", kind: "should-i",
     keywords: ["balance transfer calculator", "0% APR transfer", "credit card transfer fee"],
+    guide: {
+      slug: "is-a-balance-transfer-worth-the-fee",
+      teaser: "The fee, the deadline, and two rules on your side",
+    },
   },
 ];
 

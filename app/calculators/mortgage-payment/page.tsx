@@ -9,6 +9,31 @@ import { related, relatedGridClass } from "../../lib/calculators";
 import GuideLink from "../../components/GuideLink";
 import { NumField, type Num } from "../../components/Inputs";
 
+/**
+ * ⚠ THIS PAGE DOES NOT USE CalcShell.
+ *
+ * It and mortgage-payment are the two oldest calculators, and they build their
+ * own page chrome — nav, breadcrumb, heading, related grid, disclaimer —
+ * instead of passing children to CalcShell like the other 41.
+ *
+ * That duplication has now caused three bugs, each found separately:
+ *
+ *  1. The related-card cap. related() silently sliced to three, so a declared
+ *     fourth link never rendered.
+ *  2. Input components copied rather than shared, which let the copies drift
+ *     from components/Inputs.
+ *  3. The guide link. GuideLink was added to CalcShell and would never have
+ *     appeared here at all — it had to be inserted by hand, below.
+ *
+ * So: ANY new shared page element added to CalcShell has to be added to this
+ * page and to mortgage-payment manually. Nothing warns you. Search for
+ * "DOES NOT USE CalcShell" to find both.
+ *
+ * Migrating them is worth doing and is not a small change; until then this
+ * comment is the only thing standing between the next shared element and a
+ * fourth instance of the same bug.
+ */
+
 /* Resolved once at module scope: the registry is static, and the count
    decides the grid's column class. */
 const RELATED = related("mortgage-payment", [
