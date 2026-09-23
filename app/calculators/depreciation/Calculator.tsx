@@ -60,15 +60,31 @@ export default function Calculator() {
       balances.push(schedule.balances[Math.min(m, schedule.balances.length - 1)] ?? 0);
     }
 
-    // When does equity turn positive?
-    let positiveEquityMonth: number | null = null;
+    /* "Equity turns positive" is the month after the LAST month underwater,
+     * not the first month that happens to be above zero. The old loop skipped
+     * month 0 and took the first non-negative month after it, so a car that
+     * was never underwater reported "1 mo" — implying a month spent owing more
+     * than it was worth that never happened. It also carried a hardcoded
+     * "20% down means day one" shortcut, which the real test makes redundant.
+     *
+     * Every figure below reads from this one pass, so the tile, the chart and
+     * the table's equity column cannot disagree. */
+    let lastUnderwaterMonth = -1;
     let maxUnderwater = 0;
+    let minEquity = Infinity;
     for (let m = 0; m < values.length; m++) {
       const equity = values[m] - balances[m];
+      if (equity < minEquity) minEquity = equity;
       if (equity < maxUnderwater) maxUnderwater = equity;
-      if (positiveEquityMonth === null && equity >= 0 && m > 0) positiveEquityMonth = m;
+      if (equity < 0) lastUnderwaterMonth = m;
     }
-    if (n(down) >= n(price) * 0.2) positiveEquityMonth = positiveEquityMonth ?? 0;
+    const neverUnderwater = lastUnderwaterMonth === -1;
+    const positiveEquityMonth = neverUnderwater
+      ? 0
+      : lastUnderwaterMonth + 1 < values.length
+        ? lastUnderwaterMonth + 1
+        : null;
+    const underwaterMonths = neverUnderwater ? 0 : lastUnderwaterMonth + 1;
 
     const yearlyValues = [];
     for (let y = 0; y <= yrs; y++) {
@@ -97,7 +113,10 @@ export default function Calculator() {
       perMonth: totalLost / (yrs * 12),
       firstYearLoss: n(price) - values[Math.min(12, values.length - 1)],
       positiveEquityMonth,
+      neverUnderwater,
+      underwaterMonths,
       maxUnderwater,
+      minEquity,
       monthly,
       financed,
       startsUnderwater: n(price) - financed < 0 || values[1] < balances[1],
@@ -116,12 +135,14 @@ export default function Calculator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The vehicle" badge="VALUE">
           <div className="space-y-4">
-            <NumField label="Purchase price" value={price} onChange={setPrice} placeholder="40000" prefix="$" />
+            <NumField label="Purchase price" value={price} onChange={setPrice} min={0} placeholder="40000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
               <NumField
                 label="First-year drop"
                 value={firstYear}
                 onChange={setFirstYear}
+                min={0}
+                max={100}
                 placeholder="20"
                 suffix="%"
                 step={1}
@@ -131,22 +152,24 @@ export default function Calculator() {
                 label="Each year after"
                 value={laterYears}
                 onChange={setLaterYears}
+                min={0}
+                max={100}
                 placeholder="14"
                 suffix="%"
                 step={1}
                 hint="Typically 12-18%."
               />
             </div>
-            <NumField label="Years to project" value={years} onChange={setYears} placeholder="8" suffix="yrs" />
+            <NumField label="Years to project" value={years} onChange={setYears} min={1} placeholder="8" suffix="yrs" />
           </div>
         </Card>
 
         <Card title="Your loan" badge="FINANCING" badgeTone="amber">
           <div className="space-y-4">
-            <NumField label="Down payment" value={down} onChange={setDown} placeholder="4000" prefix="$" />
+            <NumField label="Down payment" value={down} onChange={setDown} min={0} placeholder="4000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Loan rate" value={rate} onChange={setRate} placeholder="6.9" suffix="%" step={0.25} />
-              <NumField label="Loan term" value={term} onChange={setTerm} placeholder="72" suffix="mo" />
+              <NumField label="Loan rate" value={rate} onChange={setRate} min={0} placeholder="6.9" suffix="%" step={0.25} />
+              <NumField label="Loan term" value={term} onChange={setTerm} min={1} placeholder="72" suffix="mo" />
             </div>
             {r && (
               <>
@@ -156,14 +179,14 @@ export default function Calculator() {
                 </div>
                 <div className={`rounded-xl px-4 py-3 flex justify-between items-center gap-2 ${r.positiveEquityMonth === null ? "bg-red-50" : "bg-green-50"}`}>
                   <span className={`text-xs font-medium ${r.positiveEquityMonth === null ? "text-red-700" : "text-green-700"}`}>
-                    Equity turns positive
+                    {r.neverUnderwater ? "Underwater" : "Equity turns positive"}
                   </span>
                   <span className={`text-sm font-medium ${r.positiveEquityMonth === null ? "text-red-800" : "text-green-800"}`}>
-                    {r.positiveEquityMonth === null
-                      ? "Not in this period"
-                      : r.positiveEquityMonth === 0
-                      ? "Day one ✓"
-                      : fmtMonths(r.positiveEquityMonth)}
+                    {r.neverUnderwater
+                      ? "Never ✓"
+                      : r.positiveEquityMonth === null
+                        ? "Not in this period"
+                        : fmtMonths(r.positiveEquityMonth)}
                   </span>
                 </div>
               </>
@@ -185,12 +208,20 @@ export default function Calculator() {
             <Takeaway tone={r.maxUnderwater < 0 ? "amber" : "green"}>
               This car loses <strong>{fmtK(r.firstYearLoss)}</strong> in its first year alone — more than{" "}
               {fmt(r.firstYearLoss / 12)} a month of value you never see on a statement.
-              {r.maxUnderwater < 0 && (
+              {r.maxUnderwater < 0 ? (
                 <>
                   {" "}
                   You&apos;d also be underwater by as much as{" "}
-                  <strong>{fmt(Math.abs(r.maxUnderwater))}</strong> at the worst point, which is why gap
-                  insurance exists. A larger down payment or a shorter term closes that window faster.
+                  <strong>{fmt(Math.abs(r.maxUnderwater))}</strong> at the worst point, and stay there for{" "}
+                  <strong>{fmtMonths(r.underwaterMonths)}</strong> — which is why gap insurance exists. A
+                  larger down payment or a shorter term closes that window faster.
+                </>
+              ) : (
+                <>
+                  {" "}
+                  You would never owe more than it is worth: {fmt(n(down))} down against a{" "}
+                  {n(term)}-month loan keeps the balance under the value throughout, with the margin at
+                  its thinnest — <strong>{fmt(r.minEquity)}</strong> — around the end of year one.
                 </>
               )}
             </Takeaway>
@@ -208,8 +239,17 @@ export default function Calculator() {
             <div className="mt-4">
               <Takeaway tone="blue">
                 Wherever the red line sits above the green one, you owe more than the car is worth — if it
-                were totalled, insurance would pay the value and you would still owe the difference. The
-                crossing point is when you could finally sell without bringing cash to the table.
+                were totalled, insurance would pay the value and you would still owe the difference.{" "}
+                <strong>Gap insurance</strong> is what covers that shortfall, and it is only worth buying
+                while the gap exists. The crossing point is when you could finally sell without bringing
+                cash to the table.
+                {r.neverUnderwater && (
+                  <>
+                    {" "}
+                    On these numbers the lines never cross: {fmt(n(down))} down keeps the value above the
+                    balance from day one, so there is no gap to insure.
+                  </>
+                )}
               </Takeaway>
             </div>
           </ChartCard>
