@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import SiteNav from "./SiteNav";
+import SiteFooter from "./SiteFooter";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import { LEGAL_UPDATED_ISO, LEGAL_UPDATED_LABEL } from "../lib/legal";
 
@@ -76,33 +76,7 @@ export default function LegalShell({
         </div>
       </div>
 
-      <footer className="bg-[#1a2744] text-white mt-auto">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-            <div className="max-w-xs">
-              <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 w-auto" />
-              </span>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Better Questions. Smarter Decisions. Free financial tools for every stage of life.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-2">
-              <Link href="/calculators" className="text-xs text-gray-400 hover:text-white transition-colors">
-                All calculators
-              </Link>
-              {LEGAL_PAGES.map((p) => (
-                <Link key={p.href} href={p.href} className="text-xs text-gray-400 hover:text-white transition-colors">
-                  {p.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="border-t border-white/10 mt-6 pt-5">
-            <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <MobileBottomNav />
       <MobileBottomNavSpacer />

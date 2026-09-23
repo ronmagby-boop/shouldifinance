@@ -28,6 +28,19 @@ export type Calc = {
   bg: string;
   category: Category;
   keywords: string[];
+  /**
+   * The guide that explains this calculator in prose, if one has been written.
+   *
+   * The pairing lives here rather than being inferred, so both sides read it
+   * from one place. `slug` names the file in content/guides; `teaser` is the
+   * link text the calculator shows, which is deliberately not the guide's
+   * title — the guide is titled as a question a searcher types, the teaser is
+   * phrased as depth for someone who has just seen their own numbers.
+   *
+   * lib/guides.ts checks at build time that the named guide exists and that it
+   * points back at this calculator, so the two cannot drift apart silently.
+   */
+  guide?: { slug: string; teaser: string };
 };
 
 export const CALCULATORS: Calc[] = [
@@ -95,6 +108,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Check whether a VA IRRRL meets the 36-month recoupment rule.",
     icon: Medal, bg: "bg-blue-50", category: "Home", kind: "what-how",
     keywords: ["VA IRRRL", "recoupment period", "VA streamline refinance"],
+    guide: {
+      slug: "va-36-month-recoupment-rule",
+      teaser: "How VA recoupment actually works",
+    },
   },
   {
     slug: "pay-off-debt",
@@ -473,6 +490,13 @@ export const relatedGridClass = (count: number): string =>
   count > RELATED_MIN
     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
     : "grid grid-cols-1 md:grid-cols-3 gap-3";
+
+/**
+ * Calculators that have a guide written for them. The homepage guide count is
+ * taken from here rather than from a number typed into the copy, and
+ * lib/guides.ts fails the build if it does not match the files on disk.
+ */
+export const GUIDED = CALCULATORS.filter((c) => c.guide);
 
 export const SITE = "https://shouldifinance.com";
 

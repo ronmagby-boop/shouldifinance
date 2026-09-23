@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CALCULATORS, SITE } from "./lib/calculators";
+import { GUIDES } from "./lib/guides";
 import { LEGAL_LAST_UPDATED } from "./lib/legal";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -22,6 +23,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    ...(GUIDES.length
+      ? [
+          {
+            url: `${SITE}/guides`,
+            lastModified: now,
+            changeFrequency: "monthly" as const,
+            priority: 0.7,
+          },
+        ]
+      : []),
+    // Guides carry their own review date rather than today's — the whole point
+    // of the date is that it says when the content was last checked.
+    ...GUIDES.map((g) => ({
+      url: `${SITE}/guides/${g.slug}`,
+      lastModified: new Date(g.reviewed),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     // The legal pages change only when they are revised, so they carry their
     // own date rather than today's.

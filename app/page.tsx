@@ -3,10 +3,10 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  Calculator, FileText, BadgeCheck, ShieldCheck, CalendarClock,
+  Calculator, FileText, BadgeCheck, ShieldCheck,
   ArrowRight, CheckCircle2, Search, Compass, ClipboardCheck,
 } from "lucide-react";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS } from "./lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
 
@@ -28,6 +28,14 @@ const HERO_MASK = [
   "linear-gradient(to right, transparent 0%, #000 11%, #000 89%, transparent 100%)",
   "linear-gradient(to bottom, transparent 0%, #000 5%, #000 98%, transparent 100%)",
 ].join(", ");
+
+/**
+ * Number of guides, taken from the calculators that name one rather than typed
+ * into the copy. The homepage used to claim "100+ Helpful Articles" and
+ * "Updated Weekly"; neither was true. This one cannot go stale — lib/guides.ts
+ * fails the build if the registry and content/guides/ disagree.
+ */
+const GUIDE_COUNT = GUIDED.length;
 
 // Two gradients intersected: any pixel transparent in either layer is hidden.
 const HERO_MASK_STYLE: React.CSSProperties = {
@@ -178,7 +186,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
               { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Free Calculators" },
-              { Icon: FileText, num: "100+", label: "Helpful Articles" },
+              { Icon: FileText, num: `${GUIDE_COUNT}`, label: GUIDE_COUNT === 1 ? "In-Depth Guide" : "In-Depth Guides" },
               { Icon: BadgeCheck, num: "Expert", label: "Real-World Advice" },
               { Icon: ShieldCheck, num: "Trusted", label: "For Every Stage of Life" },
             ].map((s) => (
@@ -351,9 +359,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-0 sm:divide-x sm:divide-white/10">
             {[
-              { Icon: FileText, num: "100+", label: "Articles & Guides" },
+              { Icon: FileText, num: `${GUIDE_COUNT}`, label: GUIDE_COUNT === 1 ? "In-Depth Guide" : "In-Depth Guides" },
               { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Calculators & Tools" },
-              { Icon: CalendarClock, num: "Updated Weekly", label: "New Content & Insights" },
+              { Icon: ShieldCheck, num: "No Signup", label: "Free, And Nothing Tracked" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 md:px-8">
                 <span className="w-9 h-9 rounded-xl bg-white/10 text-green-300 flex items-center justify-center flex-shrink-0">
@@ -431,7 +439,12 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Learn</p>
-                {["Articles","Guides","Blog","FAQ"].map(l => (
+                {/* Guides is a real section now. Articles, Blog and FAQ have
+                    no pages yet, so they stay inert rather than 404ing —
+                    Blog in particular is being held back for time-sensitive
+                    writing, which the guides deliberately are not. */}
+                <Link href="/guides" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Guides</Link>
+                {["Articles","Blog","FAQ"].map(l => (
                   <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
                 ))}
               </div>
