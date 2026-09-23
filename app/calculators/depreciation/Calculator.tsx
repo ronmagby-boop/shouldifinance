@@ -22,7 +22,13 @@ export default function Calculator() {
     setFirstYear(20);
     setLaterYears(14);
     setYears(8);
-    setDown(4000);
+    /* Nothing down. At 10% this example stayed above water for its whole life,
+     * so the page's own subject — the window where the loan is larger than the
+     * car — never appeared on it. At 5% the window exists but is $704 deep,
+     * about two pixels on the chart, which is not a demonstration of anything.
+     * Zero down is common on new cars, especially alongside the promotional
+     * financing that produces these windows in the first place. */
+    setDown(0);
     setRate(6.9);
     setTerm(72);
   };
