@@ -3,10 +3,10 @@ import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
   Card, NumField, Headline, Stat, Takeaway, EmptyState,
-  fmt, fmtK, pct, n, type Num,
+  fmt, fmtK, pct, n, has, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
-import { payment } from "../../lib/finance";
+import { payment, pmiRateForLtv } from "../../lib/finance";
 
 type Scenario = { name: string; frontEnd: number; backEnd: number; note: string; color: string };
 
@@ -36,7 +36,7 @@ export default function Calculator() {
     setTax(1.2);
     setInsurance(140);
     setHoa(0);
-    setPmiRate(0.55);
+    setPmiRate("");
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -58,6 +58,21 @@ export default function Calculator() {
 
     const months = Math.max(1, n(term) * 12);
 
+    /**
+     * PMI on a given price. A blank rate field used to mean no mortgage
+     * insurance at all, which quietly inflated the affordable price at any
+     * LTV above 80%; it now falls back to the same loan-to-value bands
+     * buy-now-or-save and sell-first-or-buy-first use. A typed rate still
+     * wins, and a typed 0 is how a VA or USDA loan is modelled here.
+     */
+    const pmiOn = (price: number, loan: number): { rate: number; monthly: number; banded: boolean } => {
+      const ltv = price > 0 ? (loan / price) * 100 : 0;
+      const banded = !has(pmiRate);
+      const applied = banded ? pmiRateForLtv(ltv) : n(pmiRate);
+      const monthly = ltv > 80 ? (loan * applied) / 100 / 12 : 0;
+      return { rate: ltv > 80 ? applied : 0, monthly, banded };
+    };
+
     /** Solve for the price where total housing cost hits the budget. */
     const priceFor = (budget: number): number => {
       let lo = 0;
@@ -67,7 +82,9 @@ export default function Calculator() {
         const loan = Math.max(0, price - n(down));
         const pi = payment(loan, n(rate), months);
         const taxMo = (price * n(tax)) / 100 / 12;
-        const pmiMo = price > 0 && n(down) / price < 0.2 ? (loan * n(pmiRate)) / 100 / 12 : 0;
+        // PMI is inside the solve, not bolted on after it, so a higher
+        // premium buys a smaller house rather than a bigger bill.
+        const pmiMo = pmiOn(price, loan).monthly;
         const total = pi + taxMo + n(insurance) + n(hoa) + pmiMo;
         if (total < budget) lo = price;
         else hi = price;
@@ -83,7 +100,8 @@ export default function Calculator() {
       const loan = Math.max(0, price - n(down));
       const pi = payment(loan, n(rate), months);
       const taxMo = (price * n(tax)) / 100 / 12;
-      const pmiMo = price > 0 && n(down) / price < 0.2 ? (loan * n(pmiRate)) / 100 / 12 : 0;
+      const pmi = pmiOn(price, loan);
+      const pmiMo = pmi.monthly;
       return {
         ...s,
         price,
@@ -92,6 +110,9 @@ export default function Calculator() {
         pi,
         taxMo,
         pmiMo,
+        pmiPct: pmi.rate,
+        pmiBanded: pmi.banded,
+        ltv: price > 0 ? (loan / price) * 100 : 0,
         total: pi + taxMo + n(insurance) + n(hoa) + pmiMo,
         limitedBy: backBudget < frontBudget ? "your other debts" : "the housing ratio",
         dti: ((pi + taxMo + n(insurance) + n(hoa) + pmiMo + n(debts)) / gross) * 100,
@@ -108,6 +129,22 @@ export default function Calculator() {
       annualIncome: gross * 12,
       priceToIncome: standard.price / Math.max(1, gross * 12),
       currentDti: (n(debts) / gross) * 100,
+      /* What the same budget would buy if nobody charged mortgage insurance —
+       * the size of the error the old blank-field default was making. */
+      priceWithoutPmi: (() => {
+        if (standard.pmiMo <= 0) return standard.price;
+        let lo = 0;
+        let hi = 5_000_000;
+        for (let i = 0; i < 120; i++) {
+          const price = (lo + hi) / 2;
+          const loan = Math.max(0, price - n(down));
+          const total =
+            payment(loan, n(rate), months) + (price * n(tax)) / 100 / 12 + n(insurance) + n(hoa);
+          if (total < standard.budget) lo = price;
+          else hi = price;
+        }
+        return lo;
+      })(),
     };
   }, [income, debts, down, rate, term, tax, insurance, hoa, pmiRate]);
 
@@ -127,6 +164,7 @@ export default function Calculator() {
               label="Gross monthly income"
               value={income}
               onChange={setIncome}
+              min={0}
               placeholder="9500"
               prefix="$"
               hint="Before tax, household total."
@@ -135,33 +173,35 @@ export default function Calculator() {
               label="Other monthly debt payments"
               value={debts}
               onChange={setDebts}
+              min={0}
               placeholder="650"
               prefix="$"
               hint="Car loans, student loans, credit card minimums, child support."
             />
-            <NumField label="Down payment" value={down} onChange={setDown} placeholder="60000" prefix="$" />
+            <NumField label="Down payment" value={down} onChange={setDown} min={0} placeholder="60000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Interest rate" value={rate} onChange={setRate} placeholder="6.75" suffix="%" step={0.125} />
-              <NumField label="Loan term" value={term} onChange={setTerm} placeholder="30" suffix="yrs" />
+              <NumField label="Interest rate" value={rate} onChange={setRate} min={0} placeholder="6.75" suffix="%" step={0.125} />
+              <NumField label="Loan term" value={term} onChange={setTerm} min={1} placeholder="30" suffix="yrs" />
             </div>
           </div>
         </Card>
 
         <Card title="The other costs" badge="HOUSING">
           <div className="space-y-4">
-            <NumField label="Property tax rate" value={tax} onChange={setTax} placeholder="1.2" suffix="%" step={0.1} hint="Annual, as a percent of the home's value." />
+            <NumField label="Property tax rate" value={tax} onChange={setTax} min={0} placeholder="1.2" suffix="%" step={0.1} hint="Annual, as a percent of the home's value." />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Insurance/mo" value={insurance} onChange={setInsurance} placeholder="140" prefix="$" />
-              <NumField label="HOA/mo" value={hoa} onChange={setHoa} placeholder="0" prefix="$" />
+              <NumField label="Insurance/mo" value={insurance} onChange={setInsurance} min={0} placeholder="140" prefix="$" />
+              <NumField label="HOA/mo" value={hoa} onChange={setHoa} min={0} placeholder="0" prefix="$" />
             </div>
             <NumField
               label="PMI rate"
               value={pmiRate}
               onChange={setPmiRate}
-              placeholder="0.55"
+              min={0}
+              placeholder={r ? `${r.standard.pmiPct}` : "0.32"}
               suffix="%"
               step={0.05}
-              hint="Applies when your down payment is under 20%."
+              hint="Charged while the loan is above 80% of the price. Leave it blank and we use a typical rate for your loan-to-value; enter 0 for a VA or USDA loan, which carry no mortgage insurance."
             />
             {r && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -180,9 +220,30 @@ export default function Calculator() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <Stat label="Monthly payment" value={fmt(r.standard.total)} sub="all in, PITI + HOA" />
               <Stat label="Loan amount" value={fmtK(r.standard.loan)} />
-              <Stat label="Down payment" value={pct(r.downPct, 1)} tone={r.downPct >= 20 ? "green" : "amber"} sub={r.downPct >= 20 ? "No PMI ✓" : `PMI ${fmt(r.standard.pmiMo)}/mo`} />
+              <Stat
+                label="Down payment"
+                value={pct(r.downPct, 1)}
+                tone={r.downPct >= 20 ? "green" : "amber"}
+                sub={
+                  r.standard.pmiMo > 0
+                    ? `PMI ${fmt(r.standard.pmiMo)}/mo at ${r.standard.pmiPct}%${r.standard.pmiBanded ? ` — the band for ${pct(r.standard.ltv, 0)} LTV` : ""}`
+                    : r.downPct >= 20
+                      ? "No PMI ✓"
+                      : "No PMI — rate set to 0"
+                }
+              />
               <Stat label="Price to income" value={`${r.priceToIncome.toFixed(1)}×`} sub="annual income" />
             </div>
+            <div className="space-y-2">
+            {r.standard.pmiMo > 0 && (
+              <Takeaway tone="amber">
+                At {pct(r.standard.ltv, 0)} loan-to-value this loan carries mortgage insurance of{" "}
+                <strong>{fmt(r.standard.pmiMo)}/mo</strong>, and that comes out of the same budget as
+                the mortgage — so it does not raise your payment, it lowers the price you qualify for,
+                from <strong>{fmtK(r.priceWithoutPmi)}</strong> to{" "}
+                <strong>{fmtK(r.standard.price)}</strong>. Reaching 20% down removes it.
+              </Takeaway>
+            )}
             <Takeaway tone={r.currentDti > 20 ? "amber" : "green"}>
               At this price your total debt-to-income lands at{" "}
               <strong>{pct(r.standard.dti, 1)}</strong>, limited by{" "}
@@ -196,6 +257,7 @@ export default function Calculator() {
                 </>
               )}
             </Takeaway>
+            </div>
           </div>
 
           <ChartCard title="Three price points">

@@ -8,6 +8,30 @@ export function payment(principal: number, annualRate: number, months: number): 
   return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
 }
 
+/**
+ * Typical annual PMI as a percent of the loan, by loan-to-value band.
+ *
+ * Bands rather than one rate because the price of the insurance tracks how
+ * little equity is behind it. These are representative figures, not a quote —
+ * a real premium also depends on credit score, loan type and the insurer.
+ *
+ * This lived as an identical copy in two calculators before it lived here.
+ */
+export function pmiRateForLtv(ltv: number): number {
+  if (ltv <= 80) return 0;
+  if (ltv <= 85) return 0.32;
+  if (ltv <= 90) return 0.52;
+  if (ltv <= 95) return 0.78;
+  return 1.03;
+}
+
+/**
+ * PMI comes off automatically once the balance reaches this share of the
+ * original purchase price — 78% under the Homeowners Protection Act, which is
+ * why every page that amortizes stops charging it there.
+ */
+export const PMI_TERMINATION_LTV = 0.78;
+
 export type AmortResult = {
   /** Balance at the end of each month, starting with the opening balance. */
   balances: number[];

@@ -6,22 +6,13 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment, balanceAfter, typicalMonthlyRent } from "../../lib/finance";
-
-/** Typical annual PMI as a percent of the loan, by loan-to-value band. */
-function pmiRate(ltv: number): number {
-  if (ltv <= 80) return 0;
-  if (ltv <= 85) return 0.32;
-  if (ltv <= 90) return 0.52;
-  if (ltv <= 95) return 0.78;
-  return 1.03;
-}
+import { payment, balanceAfter, typicalMonthlyRent, pmiRateForLtv } from "../../lib/finance";
 
 /** Amortize and report interest, PMI and when the balance reaches 80% of value. */
 function run(loan: number, rate: number, term_m: number, price: number) {
   const pi = payment(loan, rate, term_m);
   const ltv = price > 0 ? (loan / price) * 100 : 0;
-  const annualPmi = pmiRate(ltv);
+  const annualPmi = pmiRateForLtv(ltv);
   const pmiMonthly = (loan * (annualPmi / 100)) / 12;
   const mr = rate / 100 / 12;
 

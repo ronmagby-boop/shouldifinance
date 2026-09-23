@@ -6,16 +6,7 @@ import {
   fmt, fmtK, pct, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment, balanceAfter, typicalMonthlyRent } from "../../lib/finance";
-
-/** Typical annual PMI as a percent of the loan, by loan-to-value band. */
-function pmiRate(ltv: number): number {
-  if (ltv <= 80) return 0;
-  if (ltv <= 85) return 0.32;
-  if (ltv <= 90) return 0.52;
-  if (ltv <= 95) return 0.78;
-  return 1.03;
-}
+import { payment, balanceAfter, typicalMonthlyRent, pmiRateForLtv } from "../../lib/finance";
 
 /**
  * Selling first can free up more cash than anyone would actually put down.
@@ -82,7 +73,7 @@ export default function Calculator() {
     const priceFor = (down: number) => {
       const loan = Math.max(0, NP - down);
       const ltv = NP > 0 ? (loan / NP) * 100 : 0;
-      const pmiPct = pmiRate(ltv);
+      const pmiPct = pmiRateForLtv(ltv);
       const pmiMonthly = (loan * (pmiPct / 100)) / 12;
       const pi = payment(loan, n(rate), term_m);
       return { down, loan, ltv, pmiPct, pmiMonthly, pi, monthly: pi + pmiMonthly };
@@ -112,7 +103,7 @@ export default function Calculator() {
     const remainingTerm = Math.max(1, term_m - gap);
     const recastPi = payment(recastBalance, n(rate), remainingTerm);
     const recastLtv = NP > 0 ? (recastBalance / NP) * 100 : 0;
-    const recastPmiPct = pmiRate(recastLtv);
+    const recastPmiPct = pmiRateForLtv(recastLtv);
     const recastPmi = (recastBalance * (recastPmiPct / 100)) / 12;
     const recastMonthly = recastPi + recastPmi;
     const recastGap = recastMonthly - sell.monthly;
