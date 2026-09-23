@@ -208,7 +208,7 @@ export function taxOnExtraIncome(
 
   // Which bands the extra crossed, for showing the reader.
   const bands: { rate: number; amount: number }[] = [];
-  let cursor = baseTaxable;
+  const cursor = baseTaxable;
   let last = 0;
   for (const band of FEDERAL_BRACKETS[status]) {
     const bandLow = Math.max(last, cursor);
