@@ -179,12 +179,10 @@ export default function TermsOfUse() {
           of or relating to these terms or your use of the Site, and you consent to the personal
           jurisdiction of those courts.
         </p>
-        <Note>
-          <strong>Confirm before publication.</strong> {GOVERNING_STATE} is a placeholder pending
-          confirmation. Governing law and venue should name the state the Site&apos;s owner actually
-          operates from and is prepared to litigate in, and consumer-protection law in a visitor&apos;s
-          home state may override a choice-of-law clause regardless of what this section says.
-        </Note>
+        <p>
+          Nothing in this section limits any right you have under the consumer-protection law of the
+          place you live. Those protections may apply regardless of the choice of law above.
+        </p>
       </Section>
 
       <Section id="severability" heading="11. Severability and entire agreement">

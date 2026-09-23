@@ -17,10 +17,7 @@ export const LEGAL_UPDATED_LABEL = LEGAL_LAST_UPDATED.toLocaleDateString("en-US"
 /** ISO form for <time dateTime>, so the date is machine-readable too. */
 export const LEGAL_UPDATED_ISO = LEGAL_LAST_UPDATED.toISOString().slice(0, 10);
 
-/**
- * Governing law for the Terms. Confirm with counsel — this should be the
- * state the site owner actually operates from and is prepared to litigate in.
- */
+/** Governing law and venue for the Terms. */
 export const GOVERNING_STATE = "Arizona";
 
 /**
@@ -30,4 +27,4 @@ export const GOVERNING_STATE = "Arizona";
  * clocks on responding to a request, and those clocks start when the message
  * arrives, not when it is noticed.
  */
-export const LEGAL_CONTACT_EMAIL = "privacy@shouldifinance.com";
+export const LEGAL_CONTACT_EMAIL = "shouldifinance@gmail.com";
