@@ -437,8 +437,17 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Company</p>
-                {["About","Contact","Disclaimer","Privacy"].map(l => (
+                {/* About and Contact have no pages yet, so they stay inert
+                    rather than linking somewhere that 404s. */}
+                {["About","Contact"].map(l => (
                   <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
+                ))}
+                {[
+                  { label: "Disclaimer", href: "/disclaimer" },
+                  { label: "Privacy", href: "/privacy" },
+                  { label: "Terms", href: "/terms" },
+                ].map(l => (
+                  <Link key={l.label} href={l.href} className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l.label}</Link>
                 ))}
               </div>
               <div>
@@ -458,9 +467,13 @@ export default function Home() {
           </div>
           <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
-            <div className="flex gap-5">
-              {["Privacy Policy","Terms of Use","Disclaimer"].map(l => (
-                <a key={l} href="#" className="text-xs text-gray-500 hover:text-white transition-colors">{l}</a>
+            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+              {[
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Terms of Use", href: "/terms" },
+                { label: "Disclaimer", href: "/disclaimer" },
+              ].map(l => (
+                <Link key={l.href} href={l.href} className="text-xs text-gray-500 hover:text-white transition-colors">{l.label}</Link>
               ))}
             </div>
           </div>

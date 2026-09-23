@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CALCULATORS, SITE } from "./lib/calculators";
+import { LEGAL_LAST_UPDATED } from "./lib/legal";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -21,6 +22,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    // The legal pages change only when they are revised, so they carry their
+    // own date rather than today's.
+    ...["privacy", "terms", "disclaimer"].map((slug) => ({
+      url: `${SITE}/${slug}`,
+      lastModified: LEGAL_LAST_UPDATED,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
   ];
 }

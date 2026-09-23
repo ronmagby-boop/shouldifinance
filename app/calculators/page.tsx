@@ -120,8 +120,17 @@ export default function AllCalculators() {
               ))}
             </div>
           </div>
-          <div className="border-t border-white/10 mt-6 pt-5">
+          <div className="border-t border-white/10 mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+              {[
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Terms of Use", href: "/terms" },
+                { label: "Disclaimer", href: "/disclaimer" },
+              ].map(l => (
+                <Link key={l.href} href={l.href} className="text-xs text-gray-500 hover:text-white transition-colors">{l.label}</Link>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
