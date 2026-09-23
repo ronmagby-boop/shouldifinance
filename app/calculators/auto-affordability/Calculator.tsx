@@ -8,6 +8,20 @@ import {
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
 
+/**
+ * Total debt-to-income ceiling used to tighten the transportation budget: the
+ * same 36% back-end ratio home-affordability treats as the standard, counting
+ * every monthly obligation including the car.
+ *
+ * The 10% transportation guideline usually binds first — it only gives way
+ * once other debts pass 26% of gross income — so this is a floor under the
+ * answer rather than a replacement for it.
+ */
+const TOTAL_DTI_CEILING = 0.36;
+
+/** What a lender may stretch to, which is not the same question. */
+const LENDER_DTI = 0.45;
+
 export default function Calculator() {
   const [income, setIncome] = useState<Num>("");
   const [debts, setDebts] = useState<Num>("");
@@ -68,24 +82,34 @@ export default function Calculator() {
 
     const ownership = n(insurance) + n(fuel);
 
+    /* What is left for a car payment once every other monthly obligation and
+     * the running costs are taken off a 36% total-debt ceiling. The other-debt
+     * field used to reach only the lender bar, so two people on the same
+     * income were told they could afford the same car whether they carried
+     * $450 a month of other debt or none. */
+    const debtRoom = Math.max(0, gross * TOTAL_DTI_CEILING - n(debts) - ownership);
+    const guideline10 = Math.max(0, gross * 0.1 - ownership);
+    const guideline15 = Math.max(0, gross * 0.15 - ownership);
+    const boundByDebt = debtRoom < guideline10;
+
     const scenarios = [
       {
         name: "10% rule",
-        note: "Total transportation costs stay under 10% of gross income — the conservative standard.",
+        note: "Total transportation costs stay under 10% of gross income, and all your debts stay under 36% — the conservative standard.",
         color: COLORS.green,
-        budget: Math.max(0, gross * 0.1 - ownership),
+        budget: Math.min(guideline10, debtRoom),
       },
       {
         name: "15% of income",
-        note: "A common middle ground when a car is central to your work or commute.",
+        note: "A common middle ground when a car is central to your work or commute, still inside the 36% debt ceiling.",
         color: COLORS.blue,
-        budget: Math.max(0, gross * 0.15 - ownership),
+        budget: Math.min(guideline15, debtRoom),
       },
       {
         name: "Lender maximum",
-        note: "What a lender may approve at a 45% total debt-to-income ratio. Approval is not permission.",
+        note: "What a lender may approve at a 45% total debt-to-income ratio, counting the payments you already make. Approval is not permission.",
         color: COLORS.amber,
-        budget: Math.max(0, gross * 0.45 - n(debts) - ownership),
+        budget: Math.max(0, gross * LENDER_DTI - n(debts) - ownership),
       },
     ].map((s) => {
       const price = priceFor(s.budget);
@@ -103,7 +127,7 @@ export default function Calculator() {
     const recommended = scenarios[0];
     // The 20/4/10 rule: 20% down, 4-year loan, 10% of income all-in.
     const rule20410Price = (() => {
-      const budget = Math.max(0, gross * 0.1 - ownership);
+      const budget = Math.min(guideline10, debtRoom);
       const r2 = n(rate) / 100 / 12;
       const financeable = r2 === 0 ? budget * 48 : (budget * (1 - Math.pow(1 + r2, -48))) / r2;
       return financeable / 0.8 / (1 + n(salesTax) / 100);
@@ -116,6 +140,13 @@ export default function Calculator() {
       negativeEquity,
       ownership,
       rule20410Price,
+      guideline10,
+      debtRoom,
+      boundByDebt,
+      /* Running costs alone can swallow the whole guideline, which leaves
+       * nothing for a payment — a real answer, not a broken one. */
+      noRoom: scenarios[0].budget <= 0,
+      dtiWithCar: ((n(debts) + scenarios[0].budget + ownership) / gross) * 100,
       currentDti: (n(debts) / gross) * 100,
     };
   }, [income, debts, down, tradeIn, tradeOwed, rate, term, salesTax, insurance, fuel]);
@@ -132,18 +163,19 @@ export default function Calculator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your budget" badge="INCOME">
           <div className="space-y-4">
-            <NumField label="Gross monthly income" value={income} onChange={setIncome} placeholder="7200" prefix="$" hint="Before tax, household total." />
+            <NumField label="Gross monthly income" value={income} onChange={setIncome} min={0} placeholder="7200" prefix="$" hint="Before tax, household total." />
             <NumField
               label="Other monthly debt payments"
               value={debts}
               onChange={setDebts}
+              min={0}
               placeholder="450"
               prefix="$"
-              hint="Rent or mortgage, student loans, credit cards."
+              hint="Rent or mortgage, student loans, credit cards. These hold the car payment down: everything you owe each month, the new car included, is kept under 36% of gross income."
             />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Insurance/mo" value={insurance} onChange={setInsurance} placeholder="165" prefix="$" />
-              <NumField label="Fuel & upkeep/mo" value={fuel} onChange={setFuel} placeholder="180" prefix="$" />
+              <NumField label="Insurance/mo" value={insurance} onChange={setInsurance} min={0} placeholder="165" prefix="$" />
+              <NumField label="Fuel & upkeep/mo" value={fuel} onChange={setFuel} min={0} placeholder="180" prefix="$" />
             </div>
             {r && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -156,16 +188,20 @@ export default function Calculator() {
 
         <Card title="The deal" badge="FINANCING" badgeTone="green">
           <div className="space-y-4">
-            <NumField label="Cash down payment" value={down} onChange={setDown} placeholder="4000" prefix="$" />
+            <NumField label="Cash down payment" value={down} onChange={setDown} min={0} placeholder="4000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Trade-in value" value={tradeIn} onChange={setTradeIn} placeholder="9000" prefix="$" />
-              <NumField label="Still owed on it" value={tradeOwed} onChange={setTradeOwed} placeholder="3500" prefix="$" />
+              <NumField label="Trade-in value" value={tradeIn} onChange={setTradeIn} min={0} placeholder="9000" prefix="$" />
+              <NumField label="Still owed on it" value={tradeOwed} onChange={setTradeOwed} min={0} placeholder="3500" prefix="$" />
             </div>
+            <p className="text-xs text-gray-400 leading-relaxed -mt-2">
+              Owe more than the trade is worth and the shortfall rolls into the new loan, which comes
+              straight off the car you can afford rather than off the payment.
+            </p>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Loan rate" value={rate} onChange={setRate} placeholder="6.9" suffix="%" step={0.25} />
-              <NumField label="Loan term" value={term} onChange={setTerm} placeholder="60" suffix="mo" />
+              <NumField label="Loan rate" value={rate} onChange={setRate} min={0} placeholder="6.9" suffix="%" step={0.25} />
+              <NumField label="Loan term" value={term} onChange={setTerm} min={1} placeholder="60" suffix="mo" />
             </div>
-            <NumField label="Sales tax" value={salesTax} onChange={setSalesTax} placeholder="6.5" suffix="%" step={0.25} />
+            <NumField label="Sales tax" value={salesTax} onChange={setSalesTax} min={0} placeholder="6.5" suffix="%" step={0.25} />
             {r && (
               <div className={`rounded-xl px-4 py-3 flex justify-between items-center gap-2 ${r.negativeEquity > 0 ? "bg-amber-50" : "bg-green-50"}`}>
                 <span className={`text-xs font-medium ${r.negativeEquity > 0 ? "text-amber-700" : "text-green-700"}`}>
@@ -188,12 +224,53 @@ export default function Calculator() {
               <Stat label="Loan payment" value={`${fmt(r.recommended.loanPayment)}/mo`} />
               <Stat label="All-in transportation" value={`${fmt(r.recommended.totalMonthly)}/mo`} sub={pct(r.recommended.pctOfIncome, 1) + " of income"} tone="green" />
               <Stat label="Amount financed" value={fmtK(r.recommended.financed)} />
-              <Stat label="20/4/10 rule price" value={fmtK(r.rule20410Price)} sub="20% down, 4-yr loan" />
+              <Stat
+                label="20/4/10 rule price"
+                value={fmtK(r.rule20410Price)}
+                sub="20% down, 4 years max, 10% of gross all in"
+              />
+              <Stat
+                label="Held down by"
+                value={r.boundByDebt ? "Your other debts" : "The 10% guideline"}
+                tone={r.boundByDebt ? "amber" : "green"}
+                sub={
+                  r.boundByDebt
+                    ? `${fmt(r.debtRoom)}/mo left under a 36% debt ceiling, against ${fmt(r.guideline10)} the 10% rule would allow`
+                    : `${fmt(r.guideline10)}/mo, with ${fmt(r.debtRoom)} of room under the 36% debt ceiling`
+                }
+              />
             </div>
+            {r.noRoom ? (
+              <Takeaway tone="amber">
+                <strong>There is no room for a car payment here.</strong>{" "}
+                {r.guideline10 <= 0 ? (
+                  <>
+                    Insurance and fuel alone come to {fmt(r.ownership)} a month, which is already the
+                    whole {fmt(n(income) * 0.1)} the 10% guideline allows for transportation. A cheaper
+                    car to insure and run is the only thing that changes this — the payment is not the
+                    problem.
+                  </>
+                ) : (
+                  <>
+                    Your {fmt(n(debts))} a month of other debts plus {fmt(r.ownership)} of running costs
+                    already reach 36% of gross income, so a 36% ceiling leaves nothing for a payment.
+                    Clearing other debt buys more room here than any deal on the car will.
+                  </>
+                )}
+              </Takeaway>
+            ) : (
             <Takeaway>
               At {fmtK(r.recommended.price)}, your total transportation cost lands at{" "}
               <strong>{fmt(r.recommended.totalMonthly)}/mo</strong> — {pct(r.recommended.pctOfIncome, 1)}{" "}
-              of gross income, inside the 10% guideline.
+              of gross income, inside the 10% guideline. With your other debts that puts everything you
+              owe at <strong>{pct(r.dtiWithCar, 1)}</strong> of gross, under the 36% ceiling.
+              {r.boundByDebt && (
+                <>
+                  {" "}
+                  That ceiling is what holds this figure down, not the 10% rule — on income alone you
+                  could run to {fmt(r.guideline10)}/mo.
+                </>
+              )}
               {n(term) > 60 && (
                 <>
                   {" "}
@@ -205,10 +282,13 @@ export default function Calculator() {
                 <>
                   {" "}
                   Rolling <strong>{fmt(r.negativeEquity)}</strong> of negative equity into the new loan
-                  starts you underwater on day one.
+                  starts you underwater on day one, and takes{" "}
+                  <strong>{fmt(r.negativeEquity / (1 + n(salesTax) / 100))}</strong> off the car you can
+                  afford.
                 </>
               )}
             </Takeaway>
+            )}
           </div>
 
           <ChartCard title="Three price points">
@@ -218,7 +298,7 @@ export default function Calculator() {
               bars={r.scenarios.map((s) => ({
                 label: s.name,
                 segments: [
-                  { label: "Down payment", value: Math.min(r.cashDown, s.price), color: COLORS.gray },
+                  { label: "Down payment", value: Math.max(0, Math.min(r.cashDown, s.price)), color: COLORS.gray },
                   { label: "Financed", value: Math.max(0, s.price - r.cashDown), color: s.color },
                 ],
               }))}
