@@ -17,6 +17,7 @@ export default function Calculator() {
   const [investReturn, setInvestReturn] = useState<Num>("");
   const [taxRate, setTaxRate] = useState<Num>("");
   const [cashDiscount, setCashDiscount] = useState<Num>("");
+  const [financeRebate, setFinanceRebate] = useState<Num>("");
 
   const loadExample = () => {
     setPrice(38000);
@@ -27,6 +28,7 @@ export default function Calculator() {
     setInvestReturn(5);
     setTaxRate(15);
     setCashDiscount(0);
+    setFinanceRebate(0);
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -39,25 +41,33 @@ export default function Calculator() {
     setInvestReturn("");
     setTaxRate("");
     setCashDiscount("");
+    setFinanceRebate("");
   };
 
   const r = useMemo(() => {
     if (n(price) <= 0) return null;
     const months = Math.max(1, Math.round(n(term)));
 
-    // Financing path: borrow, keep the cash invested.
-    const financed = Math.max(0, n(price) - n(down));
+    /* Financing path: borrow, keep the cash invested. A rebate conditional on
+     * financing comes off the amount borrowed, which is how dealers usually
+     * apply it — as a capitalised cost reduction rather than a cheque. It is
+     * the mirror of the cash discount, and the two are normally alternatives:
+     * you take one offer or the other, not both. */
+    const financed = Math.max(0, n(price) - n(financeRebate) - n(down));
     const monthly = payment(financed, n(rate), months);
     const schedule = amortize(financed, n(rate), months);
     if (!Number.isFinite(schedule.totalInterest)) return null;
     const totalInterest = schedule.totalInterest + n(fees);
 
     // Cash path: pay everything today, then invest the monthly payment instead.
-    const cashPrice = n(price) - n(cashDiscount);
+    // Floored, so a discount larger than the price cannot run it negative.
+    const cashPrice = Math.max(0, n(price) - n(cashDiscount));
     const cashOutlay = cashPrice;
 
     const monthlyReturn = n(investReturn) / 100 / 12;
-    let financePortfolio = cashPrice - n(down); // cash you did NOT spend
+    // The cash you did NOT spend by financing. Floored: putting more down
+    // than the car costs leaves nothing invested, not a negative portfolio.
+    let financePortfolio = Math.max(0, cashPrice - n(down));
     let cashPortfolio = 0;
     const financeNet: number[] = [];
     const cashNet: number[] = [];
@@ -99,8 +109,11 @@ export default function Calculator() {
       spread: afterTaxReturn - n(rate),
       totalPaid: monthly * months + n(down) + n(fees),
       months,
+      cashPrice,
+      bothIncentives: n(cashDiscount) > 0 && n(financeRebate) > 0,
+      hasIncentive: n(cashDiscount) > 0 || n(financeRebate) > 0,
     };
-  }, [price, down, rate, term, fees, investReturn, taxRate, cashDiscount]);
+  }, [price, down, rate, term, fees, investReturn, taxRate, cashDiscount, financeRebate]);
 
   return (
     <CalcShell
@@ -114,28 +127,68 @@ export default function Calculator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The purchase" badge="VEHICLE">
           <div className="space-y-4">
-            <NumField label="Price out the door" value={price} onChange={setPrice} placeholder="38000" prefix="$" />
-            <NumField
-              label="Cash discount offered"
-              value={cashDiscount}
-              onChange={setCashDiscount}
-              placeholder="0"
-              prefix="$"
-              hint="Some dealers discount for cash; many prefer financing and discount for that instead."
-            />
+            <NumField label="Price out the door" value={price} onChange={setPrice} min={0} placeholder="38000" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Down payment" value={down} onChange={setDown} placeholder="5000" prefix="$" />
-              <NumField label="Loan fees" value={fees} onChange={setFees} placeholder="300" prefix="$" />
+              <NumField label="Down payment" value={down} onChange={setDown} min={0} placeholder="5000" prefix="$" />
+              <NumField label="Loan fees" value={fees} onChange={setFees} min={0} placeholder="300" prefix="$" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Loan rate" value={rate} onChange={setRate} placeholder="7.4" suffix="%" step={0.25} />
-              <NumField label="Loan term" value={term} onChange={setTerm} placeholder="60" suffix="mo" />
+              <NumField label="Loan rate" value={rate} onChange={setRate} min={0} placeholder="7.4" suffix="%" step={0.25} />
+              <NumField label="Loan term" value={term} onChange={setTerm} min={1} placeholder="60" suffix="mo" />
+            </div>
+
+            {/* The two incentives decide this question more often than the
+                rates do, and the cash one used to sit alone above the fold at
+                a silent zero. They get their own heading so leaving both at
+                zero is a choice the reader can see themselves making. */}
+            <div className="border-t border-gray-100 pt-4">
+              <h3 className="text-xs font-medium text-gray-900 mb-1">Dealer incentives</h3>
+              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                These are normally alternatives, not extras — a dealer offers a discount for cash{" "}
+                <em>or</em> a rebate for financing, and you take one. Both start at zero, so nothing is
+                assumed until you enter what you were actually offered.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <NumField
+                  label="Discount for paying cash"
+                  value={cashDiscount}
+                  onChange={setCashDiscount}
+                  min={0}
+                  placeholder="0"
+                  prefix="$"
+                />
+                <NumField
+                  label="Rebate for financing"
+                  value={financeRebate}
+                  onChange={setFinanceRebate}
+                  min={0}
+                  placeholder="0"
+                  prefix="$"
+                />
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed mt-2">
+                A cash discount lowers what you hand over today. A finance rebate comes off the amount
+                borrowed, so it cuts the payment and the interest. A promotional APR goes in the loan
+                rate above — at 0% against a{" "}
+                {n(investReturn) > 0 ? pct(n(investReturn) * (1 - n(taxRate) / 100), 2) : "positive"}{" "}
+                after-tax return, borrowing is free money.
+              </p>
             </div>
             {r && (
-              <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
-                <span className="text-xs text-gray-400">Loan payment</span>
-                <span className="text-sm font-medium text-gray-900">{fmt(r.monthly)}/mo</span>
-              </div>
+              <>
+                <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
+                  <span className="text-xs text-gray-400">Loan payment</span>
+                  <span className="text-sm font-medium text-gray-900">{fmt(r.monthly)}/mo</span>
+                </div>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  The loan is {fmt(n(price))}
+                  {n(financeRebate) > 0 && <> − {fmt(n(financeRebate))} rebate</>} − {fmt(n(down))} down ={" "}
+                  <strong className="text-gray-700">{fmt(r.financed)}</strong>. Loan fees are not borrowed
+                  — they are paid at closing, and only on the financing side, because they exist only
+                  because there is a loan. Paying cash needs{" "}
+                  <strong className="text-gray-700">{fmt(r.cashPrice)}</strong> today.
+                </p>
+              </>
             )}
           </div>
         </Card>
@@ -149,9 +202,9 @@ export default function Calculator() {
               placeholder="5"
               suffix="%"
               step={0.25}
-              hint="A high-yield savings account or money market is the fair comparison — this money needs to stay safe."
+              hint="A high-yield savings account or money market is the fair comparison — this money needs to stay safe. May be negative."
             />
-            <NumField label="Tax on those earnings" value={taxRate} onChange={setTaxRate} placeholder="15" suffix="%" step={1} />
+            <NumField label="Tax on those earnings" value={taxRate} onChange={setTaxRate} min={0} placeholder="15" suffix="%" step={1} />
             {r && (
               <>
                 <div className="bg-blue-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -261,6 +314,14 @@ export default function Calculator() {
                 </>
               )}
             </Takeaway>
+            {r.bothIncentives && (
+              <Takeaway tone="amber">
+                You have entered both a {fmt(n(cashDiscount))} cash discount and a{" "}
+                {fmt(n(financeRebate))} finance rebate. Dealers almost always make these mutually
+                exclusive — check that you were genuinely offered both, because counting both makes each
+                path look better than it is.
+              </Takeaway>
+            )}
           </div>
 
           <ChartCard title="Net position month by month">
@@ -276,8 +337,11 @@ export default function Calculator() {
             <div className="mt-4">
               <Takeaway tone="amber">
                 Both paths end up owning the same car, so it is excluded from both lines. What differs is
-                cash: the financing path holds a portfolio against a shrinking loan, the cash path builds a
-                portfolio from scratch. They converge as the loan is repaid.
+                cash: the financing path holds a portfolio against a shrinking loan, the cash path builds
+                a portfolio from scratch by investing the {fmt(r.monthly)} it is not paying the lender.
+                Both earn the same {pct(n(investReturn), 2)} and are taxed at the same{" "}
+                {pct(n(taxRate), 0)} on gains, so the only difference is the shape of the money. They
+                converge as the loan is repaid.
               </Takeaway>
             </div>
           </ChartCard>
