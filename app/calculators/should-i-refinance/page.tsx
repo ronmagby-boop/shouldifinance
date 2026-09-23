@@ -8,6 +8,7 @@ import ExampleButton from "../../components/ExampleButton";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
 import { NumField } from "../../components/Inputs";
 import { related, relatedGridClass } from "../../lib/calculators";
+import GuideLink from "../../components/GuideLink";
 
 type Num = number | "";
 
@@ -527,6 +528,8 @@ export default function ShouldIRefinance() {
               ))}
             </div>
           </div>
+
+          <GuideLink slug="should-i-refinance" />
 
           <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
             Figures are estimates for discussion purposes only. Not a commitment to lend. Actual figures depend on credit, escrow, and underwriting.

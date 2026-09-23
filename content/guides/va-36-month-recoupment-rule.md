@@ -39,16 +39,19 @@ This is the part that catches people, because the number a lender puts in the
 recoupment box is usually smaller than the number on your Closing Disclosure,
 and the difference is not an error.
 
-Three things are excluded from the recoupment calculation by statute:
+The statute names exactly three exclusions — the fees and costs to be recouped
+are everything "other than taxes, amounts held in escrow, and fees paid under
+this chapter":
 
 - **The VA funding fee.** Most borrowers assume this is in there, because it is
   the single largest line item on a lot of IRRRLs. It is not. The funding fee is
-  a fee paid under the VA's own loan chapter, and the law carves those out.
-- **Property taxes and anything held in escrow.** Your new escrow account has to
-  be funded, but that money is yours and you are getting the old account's
-  balance back.
-- **Prepaid items**, for the same reason — prepaid interest and the first year of
-  homeowners insurance are costs of owning the home, not costs of refinancing it.
+  a fee paid under the VA's own loan chapter, which is the carve-out the last
+  clause describes.
+- **Property taxes.** A tax bill is a cost of owning the home, not a cost of
+  refinancing it.
+- **Amounts held in escrow.** Your new escrow account has to be funded, but that
+  money is still yours and the old account's balance comes back to you. Prepaid
+  items collected into that account fall on the same side of the line.
 
 What is left is the real cost of the transaction: the origination charge, any
 discount points, title and settlement fees, recording, appraisal if one is
@@ -102,3 +105,9 @@ Put your balance, your current rate and the costs you have actually been quoted
 into the calculator below. It will show you the recoupment month, whether it
 clears 36, what the funding fee does to the real payback, and the date both
 seasoning clocks run out.
+
+Sources: [38 U.S.C. § 3709](https://www.law.cornell.edu/uscode/text/38/3709),
+subsection (a) for the 36-month recoupment period and the three exclusions, and
+subsection (c) for both seasoning conditions. Funding fee figures from [VA
+funding fee and closing
+costs](https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/).

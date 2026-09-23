@@ -6,6 +6,7 @@ import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileB
 import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { related, relatedGridClass } from "../../lib/calculators";
+import GuideLink from "../../components/GuideLink";
 import { NumField, type Num } from "../../components/Inputs";
 
 /* Resolved once at module scope: the registry is static, and the count
@@ -372,6 +373,8 @@ export default function MortgageCalculator() {
                 ))}
               </div>
             </div>
+
+            <GuideLink slug="mortgage-payment" />
 
             {/* DISCLAIMER */}
             <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-lg border border-gray-100">

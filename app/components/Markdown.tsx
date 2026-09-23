@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
  *   - bullet              — unordered list
  *   1. item               — ordered list
  *   > quoted line         — callout
+ *   | a | b |            — table, with a |---|---| row beneath the header
  *   **bold**  *italic*  `code`  [text](/href)
  *
  * It builds React elements rather than an HTML string, so nothing is ever
@@ -145,6 +146,51 @@ export default function Markdown({ body }: { body: string }) {
       continue;
     }
 
+    /* A GFM pipe table: a header row, a row of dashes, then the body. Wrapped
+       in its own horizontal scroller — the reading column is narrow on a phone
+       and a table is the one block allowed to be wider than it. */
+    if (line.startsWith("|") && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i + 1] ?? "")) {
+      const cells = (row: string) =>
+        row.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const head = cells(line);
+      i += 2;
+      const rows: string[][] = [];
+      while (i < lines.length && lines[i].startsWith("|")) {
+        rows.push(cells(lines[i]));
+        i++;
+      }
+      blocks.push(
+        <div key={key++} className="overflow-x-auto my-4 -mx-1 px-1">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr>
+                {head.map((h, n) => (
+                  <th
+                    key={n}
+                    className="text-left font-semibold text-gray-900 border-b border-gray-200 py-2 pr-4 align-bottom"
+                  >
+                    {inline(h, `th${key}-${n}`)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, rn) => (
+                <tr key={rn}>
+                  {r.map((c, n) => (
+                    <td key={n} className="border-b border-gray-100 py-2 pr-4 align-top">
+                      {inline(c, `td${key}-${rn}-${n}`)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>,
+      );
+      continue;
+    }
+
     if (/^[-*] /.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^[-*] /.test(lines[i])) {
@@ -187,6 +233,7 @@ export default function Markdown({ body }: { body: string }) {
       !lines[i].startsWith("#") &&
       !lines[i].startsWith("> ") &&
       !/^[-*] /.test(lines[i]) &&
+      !lines[i].startsWith("|") &&
       !ORDERED_INTERRUPTING.test(lines[i])
     ) {
       para.push(lines[i]);

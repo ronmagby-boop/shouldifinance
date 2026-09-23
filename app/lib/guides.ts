@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { bySlug, CALCULATORS, GUIDED, type Category } from "./calculators";
+import { resolveTokens } from "./guide-tokens";
 
 /**
  * Guides are evergreen reference articles, one per calculator, read from
@@ -108,7 +109,10 @@ function readGuides(): Guide[] {
         calculator: data.calculator,
         category: data.category as Category,
         reviewed: data.reviewed,
-        body: body.trim(),
+        /* Figures that move with the tax year are written as {{TOKEN}} and
+         * resolved from the same constants the calculators read, so a guide
+         * cannot quote a number its calculator has stopped using. */
+        body: resolveTokens(body.trim(), file),
       };
     });
 

@@ -52,6 +52,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.",
     icon: Landmark, bg: "bg-blue-50", category: "Home", kind: "what-how",
     keywords: ["mortgage calculator", "monthly payment", "PITI", "PMI"],
+    guide: {
+      slug: "whats-in-a-mortgage-payment",
+      teaser: "Where each part of the payment goes",
+    },
   },
   {
     slug: "should-i-refinance",
@@ -60,6 +64,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See if refinancing saves money, when you break even, and what it costs to reset the clock.",
     icon: RefreshCw, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["refinance calculator", "break even", "refinance savings"],
+    guide: {
+      slug: "when-refinancing-pays-for-itself",
+      teaser: "When a refinance actually pays for itself",
+    },
   },
   {
     slug: "refinance-to-pay-off-debt",
@@ -68,6 +76,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Roll high-rate debts into a new mortgage and see the blended rate, the monthly saving, and what it costs over the full term.",
     icon: Merge, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["debt consolidation refinance", "cash out refinance to pay off debt", "blended interest rate"],
+    guide: {
+      slug: "refinance-to-pay-off-credit-cards",
+      teaser: "What rolling card balances into a mortgage really costs",
+    },
   },
   {
     slug: "rent-vs-buy",
@@ -76,6 +88,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the true cost of renting and buying over 5, 10, and 30 years.",
     icon: Home, bg: "bg-green-50", category: "Home", kind: "should-i",
     keywords: ["rent vs buy", "should I buy a house", "break even year"],
+    guide: {
+      slug: "cheaper-to-rent-or-buy",
+      teaser: "Why the rent-versus-buy answer is a year, not a verdict",
+    },
   },
   {
     slug: "home-affordability",
@@ -92,6 +108,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See how much time and interest an extra payment each month can save you.",
     icon: PlusCircle, bg: "bg-emerald-50", category: "Home", kind: "should-i",
     keywords: ["extra mortgage payment", "pay off mortgage early", "interest saved"],
+    guide: {
+      slug: "do-extra-mortgage-payments-save-money",
+      teaser: "What an extra $200 a month is actually worth",
+    },
   },
   {
     slug: "payoff-house-vs-invest",
@@ -146,6 +166,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Weigh no money down and no PMI against the VA funding fee.",
     icon: ShieldCheck, bg: "bg-blue-50", category: "Home", kind: "should-i",
     keywords: ["VA loan vs conventional", "VA funding fee", "PMI vs funding fee", "no down payment mortgage"],
+    guide: {
+      slug: "va-loan-vs-conventional",
+      teaser: "How the VA funding fee compares with PMI",
+    },
   },
   {
     slug: "rate-buydown",
@@ -154,6 +178,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Find the month your discount points start paying for themselves.",
     icon: Percent, bg: "bg-purple-50", category: "Home", kind: "should-i",
     keywords: ["mortgage points calculator", "discount points break even", "buy down interest rate"],
+    guide: {
+      slug: "are-discount-points-worth-it",
+      teaser: "How points are priced, and when they pay back",
+    },
   },
   {
     slug: "buy-now-or-wait",

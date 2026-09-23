@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { BookOpen } from "lucide-react";
 import { bySlug, CATEGORY_SECTIONS, related, relatedGridClass } from "../lib/calculators";
+import GuideLink from "./GuideLink";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import SiteNav from "./SiteNav";
@@ -43,10 +43,6 @@ export default function CalcShell({
   // Category comes from the registry rather than a prop, so it cannot drift
   // out of step with lib/calculators.ts the way the old hardcoded props did.
   const category = bySlug(slug)?.category ?? "Home";
-  // The pairing lives on the registry entry rather than being read from the
-  // markdown, because this component is client-side and lib/guides.ts touches
-  // the filesystem. lib/guides.ts fails the build if the two disagree.
-  const guide = bySlug(slug)?.guide;
   const section = CATEGORY_SECTIONS.find(s => s.category === category);
   const categoryHref = `/calculators#${section?.id ?? ""}`;
   const eyebrowText = eyebrow ?? `${category} tools`;
@@ -112,27 +108,7 @@ export default function CalcShell({
             </div>
           </div>
 
-          {/* GUIDE — the one link from a calculator into its written guide.
-              Deliberately not a fifth related card: the grid above changes
-              column count with the number of cards, so a guide sitting in it
-              would re-lay the calculators out. Renders nothing at all when the
-              calculator has no guide written yet. */}
-          {guide && (
-            <Link
-              href={`/guides/${guide.slug}`}
-              className="flex items-start gap-3 border border-gray-200 rounded-xl p-4 mb-6 bg-gray-50 hover:border-green-200 hover:shadow-sm transition-all"
-            >
-              <span className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0 text-green-700">
-                <BookOpen className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-medium text-gray-900">{guide.teaser}</span>
-                <span className="block text-xs text-gray-400 leading-relaxed mt-0.5">
-                  A written guide to the rules behind this calculator →
-                </span>
-              </span>
-            </Link>
-          )}
+          <GuideLink slug={slug} />
 
           {/* DISCLAIMER */}
           <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
