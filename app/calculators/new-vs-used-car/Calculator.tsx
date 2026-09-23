@@ -33,6 +33,8 @@ export default function Calculator() {
   const [usedDrop, setUsedDrop] = useState<Num>("");
   const [laterDrop, setLaterDrop] = useState<Num>("");
   const [maintGap, setMaintGap] = useState<Num>("");
+  const [insuranceGap, setInsuranceGap] = useState<Num>("");
+  const [salesTax, setSalesTax] = useState<Num>("");
   const [years, setYears] = useState<Num>("");
 
   const loadExample = () => {
@@ -48,6 +50,8 @@ export default function Calculator() {
     setUsedDrop(6);
     setLaterDrop(12);
     setMaintGap(900);
+    setInsuranceGap(400);
+    setSalesTax(6.5);
     setYears(7);
   };
 
@@ -65,6 +69,8 @@ export default function Calculator() {
     setUsedDrop("");
     setLaterDrop("");
     setMaintGap("");
+    setInsuranceGap("");
+    setSalesTax("");
     setYears("");
   };
 
@@ -74,8 +80,22 @@ export default function Calculator() {
     const yrs = n(years);
     if (NP <= 0 || UP <= 0 || yrs <= 0) return null;
 
-    const side = (price: number, down: number, rate: number, termYears: number, firstDrop: number, maint: number) => {
-      const loan = Math.max(0, price - down);
+    const side = (
+      price: number,
+      down: number,
+      rate: number,
+      termYears: number,
+      firstDrop: number,
+      /** Running-cost difference charged to this side, per year. */
+      extraPerYear: number,
+    ) => {
+      /* Sales tax scales with price, so it is part of what separates these two
+       * cars — and it is NOT recoverable at resale, which is why it is added
+       * to the loan but never to the depreciating value. */
+      const tax = (price * n(salesTax)) / 100;
+      // You cannot put down more than the car costs.
+      const paidDown = Math.min(Math.max(0, down), price + tax);
+      const loan = Math.max(0, price + tax - paidDown);
       const term_m = Math.round(termYears * 12);
       const pi = term_m > 0 ? payment(loan, rate, term_m) : 0;
       const held_m = Math.round(yrs * 12);
@@ -86,14 +106,18 @@ export default function Calculator() {
       const interest = paid - (loan - owed);
       const value = residual(price, firstDrop, n(laterDrop), yrs);
       const depreciation = price - value;
-      const maintenance = maint * yrs;
+      const running = extraPerYear * yrs;
       // Everything out of pocket, less what the car is still worth.
-      const netCost = down + paid + owed + maintenance - value;
-      return { loan, pi, term_m, paid, owed, interest, value, depreciation, maintenance, netCost };
+      const netCost = paidDown + paid + owed + running - value;
+      return { loan, pi, term_m, paid, owed, interest, value, depreciation, running, tax, paidDown, netCost };
     };
 
-    const newer = side(NP, n(newDown), n(newRate), n(newTerm), n(newDrop), n(maintGap));
-    const used = side(UP, n(usedDown), n(usedRate), n(usedTerm), n(usedDrop), 0);
+    /* The upkeep gap belongs to the car that incurs it. The field has always
+     * been labelled "extra upkeep on the used car" and was charged to the new
+     * one, which inflated the used car's advantage by twice the amount. The
+     * insurance gap runs the other way: the dearer car costs more to cover. */
+    const newer = side(NP, n(newDown), n(newRate), n(newTerm), n(newDrop), n(insuranceGap));
+    const used = side(UP, n(usedDown), n(usedRate), n(usedTerm), n(usedDrop), n(maintGap));
 
     const gap = newer.netCost - used.netCost;
     const usedWins = gap > 0;
@@ -110,11 +134,15 @@ export default function Calculator() {
       newer, used, gap: Math.abs(gap), usedWins,
       newCurve, usedCurve,
       priceGap: NP - UP,
+      taxGap: newer.tax - used.tax,
+      hasTax: n(salesTax) > 0,
+      hasInsuranceGap: n(insuranceGap) !== 0,
+      hasMaintGap: n(maintGap) !== 0,
       perYear: Math.abs(gap) / yrs,
       newRetained: NP > 0 ? (newer.value / NP) * 100 : 0,
       usedRetained: UP > 0 ? (used.value / UP) * 100 : 0,
     };
-  }, [newPrice, newDown, newRate, newTerm, newDrop, usedPrice, usedDown, usedRate, usedTerm, usedDrop, laterDrop, maintGap, years]);
+  }, [newPrice, newDown, newRate, newTerm, newDrop, usedPrice, usedDown, usedRate, usedTerm, usedDrop, laterDrop, maintGap, insuranceGap, salesTax, years]);
 
   return (
     <CalcShell
@@ -129,17 +157,18 @@ export default function Calculator() {
         <Card title="The new car" badge="NEW" badgeTone="blue">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Price" value={newPrice} onChange={setNewPrice} placeholder="42000" prefix="$" />
-              <NumField label="Down payment" value={newDown} onChange={setNewDown} placeholder="5000" prefix="$" />
+              <NumField label="Price" value={newPrice} onChange={setNewPrice} min={0} placeholder="42000" prefix="$" />
+              <NumField label="Down payment" value={newDown} onChange={setNewDown} min={0} placeholder="5000" prefix="$" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Rate" value={newRate} onChange={setNewRate} placeholder="6.9" suffix="%" step={0.1} />
-              <NumField label="Loan term" value={newTerm} onChange={setNewTerm} placeholder="6" suffix="yrs" />
+              <NumField label="Rate" value={newRate} onChange={setNewRate} min={0} placeholder="6.9" suffix="%" step={0.1} />
+              <NumField label="Loan term" value={newTerm} onChange={setNewTerm} min={1} placeholder="6" suffix="yrs" />
             </div>
             <NumField
               label="First-year depreciation"
               value={newDrop}
               onChange={setNewDrop}
+              min={0}
               placeholder="20"
               suffix="%"
               hint="New cars typically shed 20% or so in the first year alone."
@@ -150,17 +179,24 @@ export default function Calculator() {
         <Card title="The used car" badge="USED" badgeTone="green">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Price" value={usedPrice} onChange={setUsedPrice} placeholder="27000" prefix="$" />
-              <NumField label="Down payment" value={usedDown} onChange={setUsedDown} placeholder="5000" prefix="$" />
+              <NumField label="Price" value={usedPrice} onChange={setUsedPrice} min={0} placeholder="27000" prefix="$" />
+              <NumField label="Down payment" value={usedDown} onChange={setUsedDown} min={0} placeholder="5000" prefix="$" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Rate" value={usedRate} onChange={setUsedRate} placeholder="9.4" suffix="%" step={0.1} />
-              <NumField label="Loan term" value={usedTerm} onChange={setUsedTerm} placeholder="5" suffix="yrs" />
+              <NumField label="Rate" value={usedRate} onChange={setUsedRate} min={0} placeholder="9.4" suffix="%" step={0.1} />
+              <NumField label="Loan term" value={usedTerm} onChange={setUsedTerm} min={1} placeholder="5" suffix="yrs" />
             </div>
+            <p className="text-xs text-gray-400 leading-relaxed -mt-2">
+              A used-car loan almost always prices above a new one — lenders see faster collateral
+              depreciation and a shorter useful life — and manufacturer promotional rates are new-car
+              only. A two- to three-point gap is normal, so entering the same rate on both sides will
+              flatter the used car.
+            </p>
             <NumField
               label="First-year depreciation"
               value={usedDrop}
               onChange={setUsedDrop}
+              min={0}
               placeholder="6"
               suffix="%"
               hint="Lower, because the steep early drop already happened to someone else."
@@ -171,17 +207,34 @@ export default function Calculator() {
 
       <Card title="Shared assumptions" badge="BOTH" className="mb-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <NumField label="Years you'll keep it" value={years} onChange={setYears} placeholder="7" suffix="yrs" />
-          <NumField label="Depreciation after year one" value={laterDrop} onChange={setLaterDrop} placeholder="12" suffix="%/yr" />
+          <NumField label="Years you'll keep it" value={years} onChange={setYears} min={1} placeholder="7" suffix="yrs" />
+          <NumField label="Depreciation after year one" value={laterDrop} onChange={setLaterDrop} min={0} placeholder="12" suffix="%/yr" />
+          <NumField label="Sales tax" value={salesTax} onChange={setSalesTax} min={0} placeholder="6.5" suffix="%" step={0.25} />
+          {/* Deliberately unbounded: a used car cheaper to run than a new one
+              is unusual but possible, and a negative says so. */}
           <NumField
             label="Extra upkeep on the used car"
             value={maintGap}
             onChange={setMaintGap}
             placeholder="900"
             prefix="$"
-            hint="Per year, above what the new car costs under warranty. Entered against the new car as a saving."
+            hint="Per year, above what the new car costs under warranty. Charged to the used car. May be negative."
+          />
+          <NumField
+            label="Extra insurance on the new car"
+            value={insuranceGap}
+            onChange={setInsuranceGap}
+            placeholder="400"
+            prefix="$"
+            hint="Per year, above the used car. Premiums track what the car is worth to replace, so the dearer one costs more to cover. Replace it with the difference between your two quotes if you have them."
           />
         </div>
+        <p className="text-xs text-gray-400 leading-relaxed mt-3">
+          Sales tax applies to both prices and is financed with the loan. It is not part of what the car
+          is worth later — you do not get it back when you sell — so it never appears in the resale
+          figures below. Put registration, doc fees and anything else that scales with price into the
+          prices above.
+        </p>
       </Card>
 
       {r ? (
@@ -212,7 +265,11 @@ export default function Calculator() {
               <div className="grid grid-cols-2 gap-2">
                 <Stat label="Depreciation" value={fmtK(r.newer.depreciation)} tone="amber" sub="the biggest cost" />
                 <Stat label="Interest" value={fmtK(r.newer.interest)} />
-                <Stat label="Extra upkeep" value={r.newer.maintenance > 0 ? fmtK(r.newer.maintenance) : "None"} />
+                <Stat
+                  label="Extra insurance"
+                  value={r.newer.running !== 0 ? fmtK(r.newer.running) : "None"}
+                  sub={r.hasTax ? `plus ${fmt(r.newer.tax)} sales tax` : undefined}
+                />
                 <Stat label="Worth at the end" value={fmtK(r.newer.value)} tone="green" sub={`${r.newRetained.toFixed(0)}% retained`} />
               </div>
             </div>
@@ -222,7 +279,11 @@ export default function Calculator() {
               <div className="grid grid-cols-2 gap-2">
                 <Stat label="Depreciation" value={fmtK(r.used.depreciation)} tone="amber" />
                 <Stat label="Interest" value={fmtK(r.used.interest)} sub="higher rate, smaller loan" />
-                <Stat label="Extra upkeep" value="Included above" />
+                <Stat
+                  label="Extra upkeep"
+                  value={r.used.running !== 0 ? fmtK(r.used.running) : "None"}
+                  sub={r.hasTax ? `plus ${fmt(r.used.tax)} sales tax` : undefined}
+                />
                 <Stat label="Worth at the end" value={fmtK(r.used.value)} tone="green" sub={`${r.usedRetained.toFixed(0)}% retained`} />
               </div>
             </div>
@@ -230,7 +291,7 @@ export default function Calculator() {
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Takeaway tone={r.usedWins ? "green" : "blue"}>
-              Over <strong>{n(years)} years</strong> the{" "}
+              Over <strong>{n(years)} year{n(years) === 1 ? "" : "s"}</strong> the{" "}
               <strong>{r.usedWins ? "used car" : "new car"}</strong> costs{" "}
               <strong>{fmtK(r.gap)}</strong> less once depreciation, interest and upkeep are all counted —
               roughly <strong>{fmt(r.perYear)}</strong> a year. The sticker gap is{" "}
@@ -239,6 +300,13 @@ export default function Calculator() {
               <strong>{fmtK(r.used.depreciation)}</strong>.
               {r.newer.interest < r.used.interest && (
                 <> The new car does claw some back with a cheaper rate.</>
+              )}
+              {r.hasTax && (
+                <>
+                  {" "}
+                  Sales tax adds <strong>{fmt(r.taxGap)}</strong> more on the new car, which never comes
+                  back at resale.
+                </>
               )}
             </Takeaway>
           </div>
@@ -266,7 +334,8 @@ export default function Calculator() {
                   segments: [
                     { label: "Depreciation", value: r.newer.depreciation, color: COLORS.amber },
                     { label: "Interest", value: r.newer.interest, color: COLORS.red },
-                    { label: "Upkeep", value: r.newer.maintenance, color: COLORS.purple },
+                    { label: "Sales tax", value: r.newer.tax, color: COLORS.gray },
+                    { label: "Insurance & upkeep", value: Math.max(0, r.newer.running), color: COLORS.purple },
                   ],
                 },
                 {
@@ -274,7 +343,8 @@ export default function Calculator() {
                   segments: [
                     { label: "Depreciation", value: r.used.depreciation, color: COLORS.amber },
                     { label: "Interest", value: r.used.interest, color: COLORS.red },
-                    { label: "Upkeep", value: r.used.maintenance, color: COLORS.purple },
+                    { label: "Sales tax", value: r.used.tax, color: COLORS.gray },
+                    { label: "Insurance & upkeep", value: Math.max(0, r.used.running), color: COLORS.purple },
                   ],
                 },
               ]}
