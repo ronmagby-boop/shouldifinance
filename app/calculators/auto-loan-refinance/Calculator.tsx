@@ -8,6 +8,14 @@ import {
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { payment, amortize } from "../../lib/finance";
 
+/**
+ * A payment can sit a hair under the interest charge through floating-point
+ * noise alone, and an exact `<=` would call that a stalemate at random. Same
+ * relative epsilon debt-payoff uses.
+ */
+const INTEREST_ONLY_EPSILON = 1 + 1e-9;
+const monthlyInterest = (bal: number, rate: number) => (bal * rate) / 100 / 12;
+
 export default function Calculator() {
   const [balance, setBalance] = useState<Num>("");
   const [currentPayment, setCurrentPayment] = useState<Num>("");
@@ -44,10 +52,30 @@ export default function Calculator() {
     setRollFees(true);
   };
 
+  /* A payment that does not cover the interest never amortises, so there is
+   * no current loan to compare against. Named rather than blanked. */
+  const stalled = useMemo(() => {
+    const bal = n(balance);
+    if (bal <= 0 || n(currentPayment) <= 0) return null;
+    const interest = monthlyInterest(bal, n(currentRate));
+    if (n(currentPayment) <= interest * INTEREST_ONLY_EPSILON) {
+      return { which: "current" as const, interest, payment: n(currentPayment) };
+    }
+    // The offer has to amortise too, or there is no new loan to compare.
+    const newLoan = rollFees ? bal + n(fees) : bal;
+    const months = Math.max(1, Math.round(n(newTerm)));
+    const offerPayment = payment(newLoan, n(newRate), months);
+    const offerInterest = monthlyInterest(newLoan, n(newRate));
+    return offerPayment > 0 && offerPayment <= offerInterest * INTEREST_ONLY_EPSILON
+      ? { which: "offer" as const, interest: offerInterest, payment: offerPayment }
+      : null;
+  }, [balance, currentPayment, currentRate, newRate, newTerm, fees, rollFees]);
+
   const r = useMemo(() => {
     const bal = n(balance);
     const left = Math.round(n(monthsLeft));
     if (bal <= 0 || left <= 0 || n(currentPayment) <= 0) return null;
+    if (n(currentPayment) <= monthlyInterest(bal, n(currentRate)) * INTEREST_ONLY_EPSILON) return null;
 
     const current = amortize(bal, n(currentRate), left, 0, n(currentPayment));
     if (!Number.isFinite(current.totalInterest)) return null;
@@ -56,11 +84,21 @@ export default function Calculator() {
     const newMonths = Math.max(1, Math.round(n(newTerm)));
     const newPayment = payment(newLoan, n(newRate), newMonths);
     const refi = amortize(newLoan, n(newRate), newMonths);
+    // amortize returns Infinity when a payment cannot cover the interest. The
+    // current loan was guarded for that and the offer was not, which printed
+    // "Interest on new loan $∞" at extreme rates.
+    if (!Number.isFinite(refi.totalInterest)) return null;
     const upfront = rollFees ? 0 : n(fees);
 
     const monthlySavings = n(currentPayment) - newPayment;
     const totalInterestSaved = current.totalInterest - refi.totalInterest - n(fees);
-    const breakEven = monthlySavings > 0 && upfront > 0 ? Math.ceil(upfront / monthlySavings) : upfront === 0 ? 0 : null;
+    /* Break-even is the fees over the monthly saving in both states, the same
+     * way should-i-refinance and va-recoup compute theirs: rolling the fee
+     * into the loan changes when you pay it, not whether you pay it. This used
+     * to report "Immediate" whenever the fee was rolled, which read as though
+     * a financed cost were a free one. */
+    const breakEven =
+      monthlySavings > 0 && n(fees) > 0 ? Math.ceil(n(fees) / monthlySavings) : n(fees) === 0 ? 0 : null;
 
     // Same-horizon comparison: interest over the months you have left today.
     let sameHorizonInterest = 0;
@@ -74,6 +112,10 @@ export default function Calculator() {
 
     const equity = n(carValue) - bal;
     const ltv = n(carValue) > 0 ? (bal / n(carValue)) * 100 : 0;
+    /* The figure a lender actually underwrites: rolling fees into an already
+     * underwater loan pushes the ratio up, and it is the new loan they are
+     * being asked to write. */
+    const ltvAfter = n(carValue) > 0 ? (newLoan / n(carValue)) * 100 : 0;
 
     return {
       current,
@@ -87,7 +129,15 @@ export default function Calculator() {
       sameHorizonInterest,
       equity,
       ltv,
+      ltvAfter,
+      hasValue: n(carValue) > 0,
+      fees: n(fees),
       extendsLoan: newMonths > left,
+      /* A shorter term is a legitimate refinance, not a failed one: the
+       * payment rises and more interest is saved. The page used to colour it
+       * as a loss and quote a break-even that has nothing to recoup. */
+      shortensLoan: newMonths < left,
+      monthsSaved: left - newMonths,
       extraMonths: newMonths - left,
       totalPaidNow: n(currentPayment) * left,
       totalPaidRefi: newPayment * newMonths + upfront,
@@ -106,14 +156,14 @@ export default function Calculator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your current loan" badge="TODAY">
           <div className="space-y-4">
-            <NumField label="Current balance" value={balance} onChange={setBalance} placeholder="24500" prefix="$" />
+            <NumField label="Current balance" value={balance} onChange={setBalance} min={0} placeholder="24500" prefix="$" />
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Current rate" value={currentRate} onChange={setCurrentRate} placeholder="9.4" suffix="%" step={0.25} />
-              <NumField label="Payment" value={currentPayment} onChange={setCurrentPayment} placeholder="612" prefix="$" />
+              <NumField label="Current rate" value={currentRate} onChange={setCurrentRate} min={0} placeholder="9.4" suffix="%" step={0.25} />
+              <NumField label="Payment" value={currentPayment} onChange={setCurrentPayment} min={0} placeholder="612" prefix="$" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="Months remaining" value={monthsLeft} onChange={setMonthsLeft} placeholder="44" suffix="mo" />
-              <NumField label="Car's value" value={carValue} onChange={setCarValue} placeholder="23000" prefix="$" />
+              <NumField label="Months remaining" value={monthsLeft} onChange={setMonthsLeft} min={0} placeholder="44" suffix="mo" />
+              <NumField label="Car's value" value={carValue} onChange={setCarValue} min={0} placeholder="23000" prefix="$" />
             </div>
             {r && (
               <div className={`rounded-xl px-4 py-3 flex justify-between items-center gap-2 ${r.equity >= 0 ? "bg-gray-50" : "bg-amber-50"}`}>
@@ -131,13 +181,14 @@ export default function Calculator() {
         <Card title="The refinance offer" badge="PROPOSED" badgeTone="green">
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <NumField label="New rate" value={newRate} onChange={setNewRate} placeholder="6.25" suffix="%" step={0.25} />
-              <NumField label="New term" value={newTerm} onChange={setNewTerm} placeholder="48" suffix="mo" />
+              <NumField label="New rate" value={newRate} onChange={setNewRate} min={0} placeholder="6.25" suffix="%" step={0.25} />
+              <NumField label="New term" value={newTerm} onChange={setNewTerm} min={1} placeholder="48" suffix="mo" />
             </div>
             <NumField
               label="Fees"
               value={fees}
               onChange={setFees}
+              min={0}
               placeholder="150"
               prefix="$"
               hint="Title transfer and registration fees are typical; many auto refinances have no lender fee."
@@ -155,6 +206,12 @@ export default function Calculator() {
                   <div className="bg-amber-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                     <span className="text-xs text-amber-700 font-medium">Extends the loan by</span>
                     <span className="text-sm font-medium text-amber-800">{r.extraMonths} months</span>
+                  </div>
+                )}
+                {r.shortensLoan && (
+                  <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
+                    <span className="text-xs text-green-700 font-medium">Clears the loan</span>
+                    <span className="text-sm font-medium text-green-800">{r.monthsSaved} months sooner</span>
                   </div>
                 )}
               </>
@@ -187,7 +244,7 @@ export default function Calculator() {
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline
-              label="Total interest saved"
+              label={r.fees > 0 ? `Total interest saved, net of ${fmt(r.fees)} in fees` : "Total interest saved"}
               value={fmtK(r.totalInterestSaved)}
               tone={r.totalInterestSaved > 0 ? "green" : "red"}
             />
@@ -195,10 +252,37 @@ export default function Calculator() {
               <Stat label="Interest on current loan" value={fmt(r.current.totalInterest)} tone="amber" />
               <Stat label="Interest on new loan" value={fmt(r.refi.totalInterest)} tone={r.refi.totalInterest < r.current.totalInterest ? "green" : "red"} />
               <Stat
-                label="Break-even"
-                value={r.breakEven === null ? "Never" : r.breakEven === 0 ? "Immediate" : `${r.breakEven} mo`}
+                label="Break-even on fees"
+                value={
+                  r.fees === 0
+                    ? "No fees"
+                    : r.breakEven === null
+                      ? r.shortensLoan
+                        ? "N/A"
+                        : "Never"
+                      : `${r.breakEven} mo`
+                }
+                sub={
+                  r.fees === 0
+                    ? undefined
+                    : r.breakEven === null
+                      ? r.shortensLoan
+                        ? "the payment rises, so there is no monthly saving to recoup from"
+                        : "no monthly saving to recoup from"
+                      : rollFees
+                        ? "rolled into the loan — financed, not free"
+                        : "paid up front"
+                }
               />
               <Stat label="Rate reduction" value={pct(n(currentRate) - n(newRate), 2)} tone={n(currentRate) > n(newRate) ? "green" : "red"} />
+              {r.hasValue && (
+                <Stat
+                  label="Loan-to-value after"
+                  value={pct(r.ltvAfter, 1)}
+                  tone={r.ltvAfter > 100 ? "amber" : "green"}
+                  sub={`${pct(r.ltv, 1)} today`}
+                />
+              )}
             </div>
             <Takeaway tone={r.totalInterestSaved > 0 ? "green" : "amber"}>
               {r.extendsLoan ? (
@@ -209,6 +293,15 @@ export default function Calculator() {
                   <strong>{fmtK(r.totalPaidRefi)}</strong> in total versus {fmtK(r.totalPaidNow)} on your
                   current schedule. Over the same {n(monthsLeft)} months, the lower rate alone saves about{" "}
                   <strong>{fmt(Math.max(0, r.current.totalInterest - r.sameHorizonInterest))}</strong>.
+                </>
+              ) : r.shortensLoan && r.totalInterestSaved > 0 ? (
+                <>
+                  <strong>✓ A shorter term, on purpose.</strong> The payment rises{" "}
+                  <strong>{fmt(Math.abs(r.monthlySavings))}</strong> to {fmt(r.newPayment)}, and that is
+                  the point: clearing the loan {r.monthsSaved} months sooner at {pct(n(newRate), 2)} saves{" "}
+                  <strong>{fmtK(r.totalInterestSaved)}</strong> in interest net of fees. This is a
+                  refinance that costs more each month and less overall — worth doing if the payment
+                  fits.
                 </>
               ) : r.totalInterestSaved > 0 ? (
                 <>
@@ -222,14 +315,27 @@ export default function Calculator() {
                   <strong>{fmt(Math.abs(r.totalInterestSaved))}</strong> more in interest than staying put.
                 </>
               )}
-              {r.equity < 0 && (
-                <>
-                  {" "}
-                  You are also <strong>{fmt(Math.abs(r.equity))} underwater</strong> — most lenders cap
-                  refinance loan-to-value around 120%, so check eligibility first.
-                </>
-              )}
             </Takeaway>
+            {/* The likeliest reason this refinance does not happen, moved to
+                where the verdict is read rather than sitting beside the
+                inputs. Whether it clears is the lender's call, not ours. */}
+            {r.hasValue && r.equity < 0 && (
+              <div className="mt-2 border-2 border-amber-200 bg-amber-50 rounded-xl p-4">
+                <p className="text-sm font-medium text-amber-900 mb-1">
+                  You owe {fmt(Math.abs(r.equity))} more than the car is worth
+                </p>
+                <p className="text-xs text-amber-900 leading-relaxed">
+                  The loan is {pct(r.ltv, 1)} of the car&apos;s value today, and the refinance asks a
+                  lender to write {fmtK(r.newLoan)} against {fmtK(n(carValue))} — {pct(r.ltvAfter, 1)}.
+                  {rollFees && r.fees > 0 && (
+                    <> Rolling the {fmt(r.fees)} in fees into it is what moves the figure.</>
+                  )}{" "}
+                  Lenders commonly cap auto refinance loan-to-value somewhere around 120%, but the
+                  threshold is theirs and varies — a rate this far from the collateral is the most
+                  likely reason an otherwise sound refinance is declined. Ask before you apply.
+                </p>
+              </div>
+            )}
           </div>
 
           <ChartCard title="Loan balance over time">
@@ -273,6 +379,30 @@ export default function Calculator() {
             />
           </ChartCard>
         </>
+      ) : stalled ? (
+        <div className="border-2 border-red-200 bg-red-50 rounded-2xl p-5 mb-4">
+          <p className="text-sm font-medium text-red-800 mb-1">
+            {stalled.which === "current"
+              ? "That payment never clears the loan"
+              : "This offer never clears the loan"}
+          </p>
+          <p className="text-xs text-red-800 leading-relaxed">
+            {stalled.which === "current" ? (
+              <>
+                A {fmt(stalled.payment)} payment does not cover the {fmt(stalled.interest)} of interest{" "}
+                {fmt(n(balance))} at {pct(n(currentRate), 2)} accrues each month, so the balance never
+                falls and there is nothing to refinance against. Check the balance, the rate and the
+                payment.
+              </>
+            ) : (
+              <>
+                At {pct(n(newRate), 2)} over {n(newTerm)} months, the {fmt(stalled.payment)} payment does
+                not cover the {fmt(stalled.interest)} of monthly interest, so the new loan would never
+                amortise. Check the new rate and term.
+              </>
+            )}
+          </p>
+        </div>
       ) : (
         <div className="border border-gray-200 rounded-2xl mb-4 bg-gray-50">
           <EmptyState>Enter your balance, payment, and months remaining to compare offers.</EmptyState>
