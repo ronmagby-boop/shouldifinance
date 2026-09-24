@@ -212,8 +212,15 @@ export default function Home() {
 
       {/* DECIDE — search plus the four category doors. Replaces the old
           "Popular Tools" grid; example calculators now live inside each card. */}
+      {/* Top padding is smaller than the bottom on purpose. The rate banner
+          directly above shares this section's gray-50 and has no border, so
+          the two are one continuous area — a full py-10/py-14 above read as a
+          gap between two stacked blocks. It still has to stand alone: when the
+          rate is stale the banner renders nothing and this padding is the only
+          separation from the white stats bar, which is why it was reduced
+          rather than removed. */}
       <section id="calculators" aria-label="Browse calculators by topic"
-        className="py-10 md:py-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
+        className="pt-7 md:pt-9 pb-10 md:pb-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           {/* Browse, for anyone who would rather look around than search. */}
           <div className="text-center mb-8 md:mb-10">
