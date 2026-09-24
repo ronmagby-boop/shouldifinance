@@ -4,7 +4,6 @@ import LegalShell, { Note, Section } from "../components/LegalShell";
 import { CALCULATORS, SITE } from "../lib/calculators";
 import { TAX_YEAR } from "../lib/tax";
 import { LEGAL_CONTACT_EMAIL } from "../lib/legal";
-import { ADS_LIVE } from "../lib/ads";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
@@ -68,18 +67,34 @@ export default function Disclaimer() {
         <p>
           This Site is a separate personal project. It is operated independently, in the owner&apos;s
           own capacity, and it is <strong>not</strong> operated by, for or on behalf of the
-          owner&apos;s employer or any licensed entity. The owner does not advertise, solicit or
-          offer any lending product or service, from any institution.{ADS_LIVE ? (
-            <>
-              {" "}
-              The written guides carry third-party advertising served automatically by Google, which
-              the owner neither selects nor endorses; an advertisement appearing beside a guide is
-              not a solicitation or offer by the owner or by any institution the owner is associated
-              with, and is not a recommendation of the advertiser.
-            </>
-          ) : null} Nothing published here is a communication
+          owner&apos;s employer or any licensed entity. Nothing published here is a communication
           made in a licensed capacity, and reading it does not make you a customer, client, applicant
           or prospect of the owner or of any company the owner is associated with.
+        </p>
+        {/* Deliberately NOT behind the ADS_LIVE flag.
+
+            Phrased as "where the guides carry advertising", which is true in
+            both states: vacuously true while advertising is switched off, and
+            directly true once it is on. A flagged version would have to assert
+            that the guides carry advertising, which is false today — and this
+            is the page a reader reaches for when they want to know what the
+            Site is and is not, so it should not be the page whose answer
+            depends on a build flag.
+
+            This replaced "It does not advertise, solicit or offer any lending
+            product or service, from any institution." That sentence could not
+            survive AdSense: the owner is licensed in the mortgage industry, and
+            a lender's advertisement served beside a mortgage guide would make
+            it read as false regardless of who placed it. Saying plainly that
+            the placement is automatic and unendorsed is both accurate and a
+            better answer to the question the old sentence was trying to
+            settle. */}
+        <p>
+          Where the written guides carry advertising, it is served automatically by Google: neither
+          the Site nor its owner selects, reviews or endorses the advertisements that appear, and
+          none is a communication from the owner or from any institution the owner is associated
+          with. An advertisement is not a recommendation, and no advertiser has any influence over
+          the calculators, the guides, or the conclusions either of them reaches.
         </p>
         <p>
           If you are looking for a loan, approach a licensed lender or broker directly and rely on the
