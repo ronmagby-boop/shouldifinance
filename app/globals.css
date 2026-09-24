@@ -113,6 +113,46 @@ body {
     white-space: nowrap;
   }
 
+  /* The wordmark, as a real <img> with a data URI rather than a CSS
+     background — browsers disable background graphics in print by default, so
+     a background would silently not print for most people.
+
+     Sized by HEIGHT, not width. The nav serves two marks — logo-wide.png at
+     556x119 on wide pages and logo.png at 236x150 on the calculators — and a
+     fixed width makes the second one three times taller than the first. At
+     11mm tall the compact mark is about 17mm wide and the wide one about 51mm;
+     either sits in the header without dominating a page-one budget that is
+     comfortable but not generous. */
+  .xp-logo {
+    height: 11mm;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  /* Repeated on every printed page, appendix included. A fixed element inside
+     the print root is painted once per page box, which is the only way to get
+     a running footer without @page margin boxes — Chrome does not support
+     those. Someone handed a printout otherwise has no way back to the site. */
+  .xp-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 7.5pt;
+    color: #666;
+    text-align: center;
+    padding-top: 2pt;
+    border-top: 0.5pt solid #ddd;
+    background: #fff;
+  }
+
+  /* Clear the running footer so content never prints underneath it. */
+  .xp-sheet,
+  .xp-appendix {
+    padding-bottom: 8mm;
+  }
+
   .xp-block {
     margin-bottom: 9pt;
     break-inside: avoid;
@@ -182,9 +222,14 @@ body {
     break-inside: avoid;
   }
 
+  /* 55mm, down from 68mm. The header gained the wordmark and the sheet gained a
+     running footer, and the chart is the one block big enough to matter: the
+     heaviest summary measured 210mm of 269mm with a 37mm chart, and would have
+     been ~241mm had that chart hit the old cap. 55mm keeps the chart legible
+     and puts the worst case back under 230mm. */
   .xp-chart img {
     width: 100%;
-    max-height: 68mm;
+    max-height: 55mm;
     object-fit: contain;
     display: block;
   }

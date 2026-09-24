@@ -305,6 +305,48 @@ export function mailtoUrl(title: string, snap: Snapshot, url: string): string {
  * the print sheet shows an <img> of the on-screen canvas instead, captured at
  * beforeprint when it is known to be painted.
  */
+/**
+ * The site wordmark as a data URI, for the print header.
+ *
+ * The only logo assets in the repo are PNG — logo-wide.png (556x119) and
+ * logo.png (236x150). There is no SVG, so it cannot be inlined as markup and
+ * has to be embedded as data instead.
+ *
+ * Rather than baking ~83KB of base64 into every calculator's JS bundle, this
+ * snapshots the wordmark the nav has already loaded and painted, the same way
+ * the chart is captured. That costs no extra bytes, makes no request while
+ * printing, and leaves the printed sheet self-contained.
+ *
+ * A real <img> in the sheet, never a CSS background: browsers disable
+ * background graphics in print by default, so a background would silently not
+ * print for most people. If the capture fails for any reason the header falls
+ * back to the site name as text, so the sheet is never unbranded.
+ */
+let logoCache: string | null | undefined;
+
+export function siteLogo(root: ParentNode = document): string | null {
+  if (logoCache !== undefined) return logoCache;
+  const img = root.querySelector<HTMLImageElement>('img[alt="ShouldIFinance"]');
+  if (!img || !img.complete || !img.naturalWidth) {
+    // Not painted yet — do not cache a miss, the next print may succeed.
+    return null;
+  }
+  try {
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    const ctx = c.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0);
+    const src = c.toDataURL("image/png");
+    logoCache = src && src.length > 100 ? src : null;
+    return logoCache;
+  } catch {
+    // A tainted canvas would throw. Same-origin here, but never break printing.
+    return null;
+  }
+}
+
 export function primaryChart(root: ParentNode = document): { title: string; src: string } | null {
   const card = root.querySelector<HTMLElement>("[data-x-chart]");
   const canvas = card?.querySelector("canvas");

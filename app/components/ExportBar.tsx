@@ -8,6 +8,7 @@ import {
   mailtoUrl,
   primaryChart,
   shareUrl,
+  siteLogo,
   type Snapshot,
 } from "../lib/export";
 import { bySlug } from "../lib/calculators";
@@ -73,8 +74,14 @@ export default function ExportBar({ slug }: Props) {
     document.body.appendChild(root);
     printRoot.current = root;
 
+    /* Warm the logo capture now rather than inside beforeprint. That handler is
+     * synchronous and the print dialog can open the moment it returns, so the
+     * less work done there the better — and the nav wordmark is reliably
+     * painted by the time effects run. */
+    siteLogo();
+
     const before = () => {
-      root.innerHTML = buildSheet(slug, title, harvest(), primaryChart());
+      root.innerHTML = buildSheet(slug, title, harvest(), primaryChart(), siteLogo());
     };
     const after = () => {
       root.innerHTML = "";
@@ -194,6 +201,7 @@ function buildSheet(
   title: string,
   snap: Snapshot,
   chart: { title: string; src: string } | null,
+  logo: string | null,
 ): string {
   const date = new Date().toLocaleDateString("en-US", {
     year: "numeric",
@@ -246,7 +254,11 @@ function buildSheet(
           <p class="xp-title">${esc(title)}</p>
           <p class="xp-meta">Generated ${esc(date)} · shouldifinance.com/calculators/${esc(slug)}</p>
         </div>
-        <p class="xp-brand">ShouldIFinance</p>
+        ${
+          logo
+            ? `<img class="xp-logo" src="${logo}" alt="ShouldIFinance">`
+            : `<p class="xp-brand">ShouldIFinance</p>`
+        }
       </div>
       ${headlines ? `<div class="xp-block">${headlines}</div>` : ""}
       ${inputs ? `<div class="xp-block"><p class="xp-h3">Your numbers</p>${inputs}</div>` : ""}
@@ -255,5 +267,6 @@ function buildSheet(
       <p class="xp-disclaimer">${esc(disclaimer)}</p>
     </div>
     ${tables ? `<div class="xp-break"></div>${tables}` : ""}
+    <div class="xp-footer">shouldifinance.com/calculators/${esc(slug)}</div>
   `;
 }
