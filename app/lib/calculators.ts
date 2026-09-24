@@ -100,6 +100,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Turn your income, debts, and down payment into a realistic price range.",
     icon: Wallet, bg: "bg-amber-50", category: "Home", kind: "what-how",
     keywords: ["home affordability", "how much house can I afford", "debt to income ratio"],
+    guide: {
+      slug: "how-much-house-can-you-afford",
+      teaser: "Why the 43% rule is no longer the test",
+    },
   },
   {
     slug: "extra-payments",
@@ -120,6 +124,10 @@ export const CALCULATORS: Calc[] = [
     desc: "A guaranteed return from prepaying against a riskier one from the market.",
     icon: HandCoins, bg: "bg-emerald-50", category: "Home", kind: "should-i",
     keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
+    guide: {
+      slug: "pay-off-your-house-or-invest",
+      teaser: "Why the interest deduction usually saves nothing",
+    },
   },
   {
     slug: "va-recoup",
@@ -153,6 +161,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Put three lender quotes side by side and find the real cost of each.",
     icon: ClipboardList, bg: "bg-teal-50", category: "Home", kind: "what-how",
     keywords: ["loan estimate comparison", "compare lenders", "closing costs"],
+    guide: {
+      slug: "how-to-compare-two-mortgage-quotes",
+      teaser: "Which quoted costs are promises and which are guesses",
+    },
   },
   {
     slug: "effective-interest-rate",
@@ -198,6 +210,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See how much a home can appreciate before a lower rate stops helping.",
     icon: Clock, bg: "bg-amber-50", category: "Home", kind: "should-i",
     keywords: ["buy now or wait for rates", "wait for mortgage rates to drop", "home price appreciation"],
+    guide: {
+      slug: "does-waiting-for-rates-to-drop-save-money",
+      teaser: "How much a price rise cancels a rate cut",
+    },
   },
   {
     slug: "buy-now-or-save",
@@ -206,6 +222,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare buying now with PMI against waiting to reach a bigger down payment.",
     icon: Coins, bg: "bg-green-50", category: "Home", kind: "should-i",
     keywords: ["bigger down payment or buy now", "save for down payment", "PMI vs waiting"],
+    guide: {
+      slug: "bigger-down-payment-or-buy-sooner",
+      teaser: "What mortgage insurance really costs, and when it stops",
+    },
   },
   {
     slug: "sell-first-or-buy-first",
@@ -214,6 +234,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the cash each path needs, and the risk that comes with it.",
     icon: ArrowLeftRight, bg: "bg-teal-50", category: "Home", kind: "should-i",
     keywords: ["sell before buying", "buy before selling", "bridge loan calculator"],
+    guide: {
+      slug: "sell-first-or-buy-first",
+      teaser: "What each order actually exposes you to",
+    },
   },
 
   // ---------- Money ----------
