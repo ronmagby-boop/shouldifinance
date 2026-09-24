@@ -7,6 +7,7 @@ import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { related } from "../../lib/calculators";
 import RelatedCalculators from "../../components/RelatedCalculators";
+import AdUnit from "../../components/AdUnit";
 import GuideLink from "../../components/GuideLink";
 import ExportBar from "../../components/ExportBar";
 import { NumField, type Num } from "../../components/Inputs";
@@ -391,6 +392,10 @@ export default function MortgageCalculator() {
             {/* EXPORT — this page builds its own chrome, so CalcShell does not
                 place this for it. See the "DOES NOT USE CalcShell" note above. */}
             <ExportBar slug="mortgage-payment" />
+
+            {/* AD — same position as CalcShell: below results and export,
+                above related. See AdUnit for the separation rules. */}
+            <AdUnit placement="calculatorBelowResults" />
 
             {/* RELATED CALCULATORS — the shared component, so this page's grid
                 is tracked like the other 42. See RelatedCalculators for why. */}

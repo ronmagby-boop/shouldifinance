@@ -98,11 +98,31 @@ function absorbWrapped(lines: string[], i: number, items: string[]): number {
   return i;
 }
 
-export default function Markdown({ body }: { body: string }) {
+export default function Markdown({
+  body,
+  slot,
+  slotBeforeHeading = 3,
+}: {
+  body: string;
+  /**
+   * Optional block dropped into the flow of the guide, immediately before the
+   * nth top-level heading — used for the in-article ad.
+   *
+   * Inserted between sections rather than at a fixed word count so it always
+   * lands on a natural break, never mid-argument or between a claim and the
+   * figure supporting it. Every guide has between four and six `##` headings,
+   * so the third always exists and always leaves sections after it; if a
+   * shorter guide is ever added, the slot is simply dropped rather than being
+   * forced somewhere awkward.
+   */
+  slot?: ReactNode;
+  slotBeforeHeading?: number;
+}) {
   const lines = body.split(/\r?\n/);
   const blocks: ReactNode[] = [];
   let i = 0;
   let key = 0;
+  let headings = 0;
 
   while (i < lines.length) {
     const line = lines[i];
@@ -123,6 +143,8 @@ export default function Markdown({ body }: { body: string }) {
     }
 
     if (line.startsWith("## ")) {
+      headings++;
+      if (slot && headings === slotBeforeHeading) blocks.push(<div key={`slot${key++}`}>{slot}</div>);
       blocks.push(
         <h2 key={key++} className="text-lg font-bold text-gray-900 mt-8 mb-3 scroll-mt-20">
           {inline(line.slice(3), `h2${key}`)}

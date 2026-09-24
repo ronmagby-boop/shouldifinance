@@ -3,6 +3,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
 import RelatedCalculators from "./RelatedCalculators";
+import AdUnit from "./AdUnit";
 import GuideLink from "./GuideLink";
 import ExportBar from "./ExportBar";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
@@ -94,6 +95,17 @@ export default function CalcShell({
               count depends on card count and the guide link is a sibling of
               it, so neither is disturbed. */}
           <ExportBar slug={slug} />
+
+          {/* AD — below the results and the export bar, above the related
+              grid. Nothing sits above the calculator or between the inputs and
+              the results: people arrive for a number and an ad in that path
+              degrades the only thing they came for.
+
+              AdUnit carries its own wide margin because this position has a
+              control on each side — the export buttons above, the related
+              links below — and an ad within mis-tap range of either is an
+              invalid-click risk, not just an annoyance. */}
+          <AdUnit placement="calculatorBelowResults" />
 
           {/* RELATED */}
           <RelatedCalculators from={slug} cards={cards} />

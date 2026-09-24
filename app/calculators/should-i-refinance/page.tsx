@@ -9,6 +9,7 @@ import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/fi
 import { NumField } from "../../components/Inputs";
 import { related } from "../../lib/calculators";
 import RelatedCalculators from "../../components/RelatedCalculators";
+import AdUnit from "../../components/AdUnit";
 import GuideLink from "../../components/GuideLink";
 import ExportBar from "../../components/ExportBar";
 
@@ -547,6 +548,10 @@ export default function ShouldIRefinance() {
           <ExportBar slug="should-i-refinance" />
 
           {/* RELATED */}
+          {/* AD — same position as CalcShell: below results and export,
+              above related. See AdUnit for the separation rules. */}
+          <AdUnit placement="calculatorBelowResults" />
+
           {/* The shared component, so this page's grid is tracked like the
               other 42. See RelatedCalculators for why. */}
           <RelatedCalculators from="should-i-refinance" cards={RELATED} />

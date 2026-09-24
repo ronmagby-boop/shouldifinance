@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import GuideShell, { CalculatorCta } from "../../components/GuideShell";
 import Markdown from "../../components/Markdown";
 import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
+import AdUnit from "../../components/AdUnit";
 import { SITE } from "../../lib/calculators";
 import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
 
@@ -71,7 +72,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           counts every link into a calculator, tagged by which of the two it
           came from. display:contents — it adds no box. */}
       <GuideCalculatorLinks guide={guide.slug}>
-        <Markdown body={guide.body} />
+        <Markdown body={guide.body} slot={<AdUnit placement="guideInArticle" />} />
 
         {/* The closing call to action, for a guide that pairs with a calculator.
             The body carries its own link earlier, so a reader who stops halfway
@@ -82,6 +83,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           </div>
         )}
       </GuideCalculatorLinks>
+
+      {/* After the closing card, so the last thing a finished reader is offered
+          is still the calculator rather than an ad. */}
+      <AdUnit placement="guideEnd" />
 
       <div className="border-t border-gray-100 mt-10 pt-4">
         <Link

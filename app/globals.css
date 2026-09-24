@@ -66,6 +66,19 @@ body {
     display: block !important;
   }
 
+  /* Advertising, never printed. The rule above already excludes anything
+     outside the print root, so an in-page unit cannot reach the sheet; this
+     is here because some ad formats attach themselves to <body> or to an
+     overlay of their own rather than to the slot they were declared in, and
+     because a printed page is the one artefact a reader keeps. */
+  ins.adsbygoogle,
+  iframe[id^="aswift"],
+  iframe[name^="aswift"],
+  [id^="google_ads"],
+  [aria-label="Advertisement"] {
+    display: none !important;
+  }
+
   @page {
     margin: 14mm;
   }
