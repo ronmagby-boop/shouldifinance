@@ -41,7 +41,12 @@ export default function Calculator() {
   const [currentPayment, setCurrentPayment] = useState<Num>("");
   const [newRate, setNewRate] = useState<Num>("");
   const [newTerm, setNewTerm] = useState<Num>("");
-  const [closingCosts, setClosingCosts] = useState<Num>("");
+  /** Box D on the Loan Estimate: A + B + C. All recoupable. */
+  const [loanCosts, setLoanCosts] = useState<Num>("");
+  /** The recording-fee portion of Box E. Recoupable; the taxes in E are not. */
+  const [recordingFees, setRecordingFees] = useState<Num>("");
+  /** Box J, second line. Reduces what the veteran pays, so it reduces recoupment. */
+  const [lenderCredits, setLenderCredits] = useState<Num>("");
   const [fundingFeePct, setFundingFeePct] = useState<Num>("");
   const [escrow, setEscrow] = useState<Num>("");
   const [financeCosts, setFinanceCosts] = useState(true);
@@ -55,7 +60,9 @@ export default function Calculator() {
     setCurrentPayment(2320);
     setNewRate(6.125);
     setNewTerm(30);
-    setClosingCosts(4200);
+    setLoanCosts(4200);
+    setRecordingFees(250);
+    setLenderCredits(950);
     setFundingFeePct(0.5);
     setEscrow(0);
     setFinanceCosts(true);
@@ -71,7 +78,9 @@ export default function Calculator() {
     setCurrentPayment("");
     setNewRate("");
     setNewTerm("");
-    setClosingCosts("");
+    setLoanCosts("");
+    setRecordingFees("");
+    setLenderCredits("");
     setFundingFeePct("");
     setEscrow("");
     setFinanceCosts(true);
@@ -86,15 +95,25 @@ export default function Calculator() {
     /**
      * Two different totals, and conflating them was overstating recoupment.
      *
-     * Recoupment counts closing costs and fees only. The VA funding fee is
-     * excluded from it, as are escrows and prepaids — so a fee that is rolled
-     * into the loan still does not have to pay for itself inside 36 months.
+     * RECOUPABLE is what has to pay for itself inside 36 months. 38 U.S.C.
+     * 3709(a) counts "fees, closing costs, and expenses" other than taxes,
+     * amounts held in escrow, and fees paid under chapter 37. Mapped onto the
+     * Loan Estimate that is Box D in full, plus the recording fees inside Box
+     * E — but not the taxes that share that box, and not Boxes F or G.
      *
-     * What gets financed is the wider figure: the fee and any escrow do go into
-     * the new balance, and therefore into the new payment.
+     * Lender credits come off the top. VA Circular 26-19-22, Exhibit B is
+     * explicit that "lender credits may be used to offset allowable fees and
+     * charges (including discount points)", so a credit-heavy IRRRL genuinely
+     * recoups faster. Floored at zero: a credit larger than the costs does not
+     * make recoupment negative, it makes it immediate.
+     *
+     * FINANCED is the wider figure. The funding fee and any escrow do go into
+     * the new balance, and therefore into the new payment, even though neither
+     * has to recoup.
      */
-    const recoupableCosts = n(closingCosts);
-    const financedCosts = n(closingCosts) + fundingFee + n(escrow);
+    const grossCosts = n(loanCosts) + n(recordingFees);
+    const recoupableCosts = Math.max(0, grossCosts - n(lenderCredits));
+    const financedCosts = Math.max(0, grossCosts + fundingFee + n(escrow) - n(lenderCredits));
     const derivedLoan = financeCosts ? n(balance) + financedCosts : n(balance);
 
     // An entered figure wins, but the derived one stays on screen beside it so
@@ -107,7 +126,7 @@ export default function Calculator() {
      * allowed to be financed. Anything above this is cash going back to the
      * veteran, which VA permits only incidentally.
      */
-    const allowableMax = n(balance) + n(closingCosts) + fundingFee + n(escrow);
+    const allowableMax = n(balance) + financedCosts;
     const excess = newLoan - allowableMax;
 
     const termMonths = Math.max(1, n(newTerm) * 12);
@@ -164,6 +183,7 @@ export default function Calculator() {
 
     return {
       fundingFee,
+      grossCosts,
       recoupableCosts,
       financedCosts,
       derivedLoan,
@@ -183,7 +203,7 @@ export default function Calculator() {
       savings10yr: monthlySavings * 120 - recoupableCosts,
       maxCosts: monthlySavings > 0 ? monthlySavings * VA_LIMIT : 0,
     };
-  }, [balance, currentRate, currentPayment, newRate, newTerm, closingCosts, fundingFeePct, escrow, financeCosts, firstPayment, loanOverride]);
+  }, [balance, currentRate, currentPayment, newRate, newTerm, loanCosts, recordingFees, lenderCredits, fundingFeePct, escrow, financeCosts, firstPayment, loanOverride]);
 
   return (
     <CalcShell
@@ -217,7 +237,33 @@ export default function Calculator() {
               <NumField label="New rate" value={newRate} onChange={setNewRate} placeholder="6.125" suffix="%" step={0.125} />
               <NumField label="New term" value={newTerm} onChange={setNewTerm} placeholder="30" suffix="yrs" />
             </div>
-            <NumField label="Closing costs and fees" value={closingCosts} onChange={setClosingCosts} placeholder="4200" prefix="$" />
+            <NumField
+              label="Total Loan Costs (Box D)"
+              value={loanCosts}
+              onChange={setLoanCosts}
+              min={0}
+              placeholder="4200"
+              prefix="$"
+              hint="Page 2 of your Loan Estimate: boxes A + B + C added up — origination charges, services you cannot shop for, and services you can shop for. All of it counts toward recoupment."
+            />
+            <NumField
+              label="Recording fees (from Box E)"
+              value={recordingFees}
+              onChange={setRecordingFees}
+              min={0}
+              placeholder="250"
+              prefix="$"
+              hint="Box E is 'Taxes and Other Government Fees'. Enter only the recording fees from it — transfer and documentary stamp taxes are taxes, which the statute excludes."
+            />
+            <NumField
+              label="Lender credits (Box J, second line)"
+              value={lenderCredits}
+              onChange={setLenderCredits}
+              min={0}
+              placeholder="950"
+              prefix="$"
+              hint="Shown on the Loan Estimate as a negative under Total Closing Costs. Enter it as a positive number here. Credits offset allowable fees, so they shorten recoupment. A negative credit is a charge — put it in Box D."
+            />
             <div className="grid grid-cols-2 gap-3">
               <NumField
                 label="VA funding fee"
@@ -226,15 +272,16 @@ export default function Calculator() {
                 placeholder="0.5"
                 suffix="%"
                 step={0.05}
-                hint="0.5% for most IRRRLs."
+                hint="0.5% for most IRRRLs. Excluded from recoupment."
               />
               <NumField
-                label="Escrow/prepaids"
+                label="Prepaids and escrow (Boxes F + G)"
                 value={escrow}
                 onChange={setEscrow}
+                min={0}
                 placeholder="0"
                 prefix="$"
-                hint="Excluded from recoupment."
+                hint="Financed, but excluded from recoupment."
               />
             </div>
             <Toggle checked={financeCosts} onChange={setFinanceCosts}>
@@ -244,7 +291,7 @@ export default function Calculator() {
               label="New loan amount"
               value={loanOverride}
               onChange={setLoanOverride}
-              placeholder={r && !r.overridden ? String(Math.round(r.derivedLoan)) : "345900"}
+              placeholder={r && !r.overridden ? String(Math.round(r.derivedLoan)) : "345200"}
               prefix="$"
               hint={
                 r && r.overridden
@@ -279,7 +326,11 @@ export default function Calculator() {
               <Stat
                 label="Recoupable costs"
                 value={fmt(r.recoupableCosts)}
-                sub="funding fee and prepaids excluded"
+                sub={
+                  n(lenderCredits) > 0
+                    ? `${fmt(r.grossCosts)} less ${fmt(n(lenderCredits))} in credits`
+                    : "funding fee, taxes and prepaids excluded"
+                }
               />
               <Stat label="Rate reduction" value={pct(r.rateDrop, 3)} tone={r.rateDrop > 0 ? "green" : "red"} />
               <Stat label="New loan amount" value={fmtK(r.newLoan)} />
