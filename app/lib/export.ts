@@ -1,0 +1,319 @@
+/**
+ * Export plumbing, shared by all 43 calculators.
+ *
+ * NOTHING HERE TRANSMITS ANYTHING. Every action runs in the browser: the
+ * clipboard write is local, the share link is built and read from the URL in
+ * the address bar, printing is the browser's own, and "email to myself" is a
+ * mailto: URL handed to the user's own mail client. There is no fetch, no
+ * endpoint and no storage. The privacy policy's claim that figures entered
+ * into a calculator are never transmitted stays true, and these features were
+ * built the way they were in order to keep it true.
+ *
+ * The values are harvested from the DOM rather than passed in by each page.
+ * That is deliberate: the calculators hold their state in local useState and
+ * there are 43 of them, so a prop-based design would mean editing every page
+ * and would drift the moment one of them changed. Instead the SHARED field and
+ * result components carry data-x-* attributes, and everything here reads those.
+ * Instrument once, works everywhere.
+ */
+
+export type FieldKind = "num" | "date" | "select" | "bool";
+
+export type Harvested = {
+  /** Visible label, used as the human-readable name and the match key. */
+  label: string;
+  kind: FieldKind;
+  /** Raw value as the control holds it. */
+  value: string;
+  /** "$" or "%" or "/mo" — for rendering, not for parsing. */
+  unit: string;
+  /** Nth control with this label, so repeated rows stay distinct. */
+  index: number;
+};
+
+export type Snapshot = {
+  fields: Harvested[];
+  headlines: { label: string; value: string }[];
+  stats: { label: string; value: string }[];
+};
+
+const isVisible = (el: Element): boolean => {
+  const r = (el as HTMLElement).getBoundingClientRect();
+  return r.width > 0 || r.height > 0;
+};
+
+/** Everything the page is currently showing, in document order. */
+export function harvest(root: ParentNode = document): Snapshot {
+  const counts = new Map<string, number>();
+  const fields: Harvested[] = [];
+
+  root.querySelectorAll<HTMLElement>("[data-x-field]").forEach((el) => {
+    const label = el.dataset.xField || "";
+    if (!label) return;
+    const kind = (el.dataset.xKind || "num") as FieldKind;
+    const index = counts.get(label) ?? 0;
+    counts.set(label, index + 1);
+
+    let value = "";
+    if (kind === "bool") value = (el as HTMLInputElement).checked ? "1" : "";
+    else value = (el as HTMLInputElement | HTMLSelectElement).value ?? "";
+
+    fields.push({ label, kind, value, unit: el.dataset.xUnit || "", index });
+  });
+
+  const headlines: { label: string; value: string }[] = [];
+  root.querySelectorAll<HTMLElement>("[data-x-headline]").forEach((el) => {
+    if (!isVisible(el)) return;
+    headlines.push({ label: el.dataset.xHeadline || "", value: (el.textContent || "").trim() });
+  });
+
+  const stats: { label: string; value: string }[] = [];
+  root.querySelectorAll<HTMLElement>("[data-x-stat]").forEach((el) => {
+    if (!isVisible(el)) return;
+    const v = el.querySelector("[data-x-value]");
+    stats.push({ label: el.dataset.xStat || "", value: (v?.textContent || "").trim() });
+  });
+
+  return { fields, headlines, stats };
+}
+
+/** Fields the user actually filled in. Blank ones carry no information. */
+export const filled = (s: Snapshot) => s.fields.filter((f) => f.value !== "");
+
+/* ------------------------------------------------------------ share links -- */
+
+/**
+ * Serialization.
+ *
+ * A compact array of [label, index, value] triples, JSON, then base64url. Keyed
+ * by the field's own LABEL rather than by position, because position changes
+ * whenever a field is added and a label rarely does — and when a label does
+ * change, the old link degrades in the only safe direction.
+ *
+ * Forward and backward compatibility, both handled by ignoring what does not
+ * match:
+ *
+ *  - A field in the link that the page no longer has is skipped. An old link
+ *    opened after a calculator gains or loses an input still restores
+ *    everything it can and leaves the rest at defaults.
+ *  - A field on the page that the link does not mention keeps its default. A
+ *    link made before a new input existed does not blank it.
+ *  - A link whose `c` does not match this page's slug is ignored entirely, so
+ *    a link pasted onto the wrong calculator does nothing rather than filling
+ *    it with another calculator's numbers.
+ *  - Anything unparseable is ignored. A truncated or mangled link leaves the
+ *    page empty, which is the same as arriving without one.
+ *
+ * The failure mode is always "fewer fields restored", never a broken page.
+ */
+const b64url = {
+  encode: (s: string) =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(s)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, ""),
+  decode: (s: string) => {
+    const b = s.replace(/-/g, "+").replace(/_/g, "/");
+    const bin = atob(b + "=".repeat((4 - (b.length % 4)) % 4));
+    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+  },
+};
+
+export function encodeState(slug: string, snap: Snapshot): string {
+  const payload = {
+    c: slug,
+    v: 1,
+    f: filled(snap).map((f) => [f.label, f.index, f.value] as [string, number, string]),
+  };
+  return b64url.encode(JSON.stringify(payload));
+}
+
+export function shareUrl(slug: string, snap: Snapshot): string {
+  const u = new URL(window.location.href);
+  u.search = "";
+  u.hash = "";
+  u.searchParams.set("s", encodeState(slug, snap));
+  return u.toString();
+}
+
+/**
+ * Writes a decoded state back into the page.
+ *
+ * React owns these inputs, so setting `.value` alone is invisible to it — the
+ * native setter plus a bubbling input event is what React's synthetic layer
+ * listens for. Ugly, and the price of not editing 43 pages.
+ */
+export function applyState(slug: string, encoded: string, root: ParentNode = document): number {
+  let payload: { c?: string; f?: [string, number, string][] };
+  try {
+    payload = JSON.parse(b64url.decode(encoded));
+  } catch {
+    return 0;
+  }
+  if (!payload || payload.c !== slug || !Array.isArray(payload.f)) return 0;
+
+  const byKey = new Map<string, HTMLElement>();
+  const counts = new Map<string, number>();
+  root.querySelectorAll<HTMLElement>("[data-x-field]").forEach((el) => {
+    const label = el.dataset.xField || "";
+    const i = counts.get(label) ?? 0;
+    counts.set(label, i + 1);
+    byKey.set(`${label}||${i}`, el);
+  });
+
+  let applied = 0;
+  for (const entry of payload.f) {
+    if (!Array.isArray(entry) || entry.length < 3) continue;
+    const [label, index, value] = entry;
+    const el = byKey.get(`${label}||${index}`);
+    if (!el) continue;
+
+    const kind = el.dataset.xKind;
+    if (kind === "bool") {
+      const box = el as HTMLInputElement;
+      const want = value === "1";
+      if (box.checked !== want) box.click();
+      applied++;
+      continue;
+    }
+    const proto =
+      kind === "select" ? window.HTMLSelectElement.prototype : window.HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+    if (!setter) continue;
+    setter.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    applied++;
+  }
+  return applied;
+}
+
+/* ------------------------------------------------------------- plain text -- */
+
+const line = (label: string, value: string) => `${label}: ${value}`;
+
+/** Inputs and headline results as text, for the clipboard and for mailto. */
+export function asText(
+  title: string,
+  snap: Snapshot,
+  opts: { url?: string; stats?: boolean } = {},
+): string {
+  const out: string[] = [title, new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }), ""];
+
+  const inputs = filled(snap);
+  if (inputs.length) {
+    out.push("YOUR NUMBERS");
+    for (const f of inputs) {
+      const v =
+        f.kind === "bool"
+          ? "yes"
+          : f.unit === "$"
+            ? `$${Number(f.value).toLocaleString("en-US")}`
+            : f.unit
+              ? `${f.value}${f.unit}`
+              : f.value;
+      out.push(line(f.label, v));
+    }
+    out.push("");
+  }
+
+  if (snap.headlines.length) {
+    out.push("RESULT");
+    for (const h of snap.headlines) out.push(line(h.label, h.value));
+    out.push("");
+  }
+
+  if (opts.stats !== false && snap.stats.length) {
+    out.push("DETAIL");
+    for (const st of snap.stats) out.push(line(st.label, st.value));
+    out.push("");
+  }
+
+  if (opts.url) {
+    out.push("Open these numbers in the calculator:");
+    out.push(opts.url);
+    out.push("");
+  }
+  out.push("Estimates for discussion only, from shouldifinance.com — not advice.");
+  return out.join("\n");
+}
+
+/**
+ * mailto: has a practical ceiling around 2,000 characters across browsers and
+ * mail clients, and overflowing it truncates or fails silently.
+ *
+ * MAILTO_LIMIT is the target, set well below that ceiling on purpose.
+ * loan-estimate-comparison with three lenders filled came out at 1,974 — under
+ * 2,000, but by 26 characters, which is one longer loan amount away from
+ * breaking. Aiming at 1,600 leaves room for bigger numbers and an extra row.
+ */
+export const MAILTO_HARD_LIMIT = 2000;
+export const MAILTO_LIMIT = 1600;
+
+/**
+ * Builds the mailto, shedding detail until it fits.
+ *
+ * The ladder drops the least valuable part first and always keeps the share
+ * link, because the link is what lets the recipient reopen the calculator with
+ * every figure loaded — it makes the rest of the body a convenience rather than
+ * the payload. Tables and schedules never appear at any rung.
+ *
+ *   1. inputs + headline + detail tiles + link
+ *   2. inputs + headline + link            (drops the detail tiles)
+ *   3. headline + link                     (drops the inputs)
+ *   4. link only                           (always fits)
+ */
+export function mailtoUrl(title: string, snap: Snapshot, url: string): string {
+  const subject = `${title} — shouldifinance.com`;
+  const wrap = (body: string) =>
+    `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  const rungs: string[] = [
+    asText(title, snap, { url, stats: true }),
+    asText(title, snap, { url, stats: false }),
+    asText(title, { ...snap, fields: [], stats: [] }, { url, stats: false }),
+    [
+      title,
+      "",
+      "Open these numbers in the calculator:",
+      url,
+      "",
+      "Estimates for discussion only, from shouldifinance.com — not advice.",
+    ].join("\n"),
+  ];
+
+  for (const body of rungs) {
+    const candidate = wrap(body);
+    if (candidate.length <= MAILTO_LIMIT) return candidate;
+  }
+  // The last rung is the share link and two lines; if even that is over the
+  // target it is still comfortably inside the hard ceiling.
+  return wrap(rungs[rungs.length - 1]);
+}
+
+/* ----------------------------------------------------------------- charts -- */
+
+/**
+ * Snapshots the first chart on the page as a data URL.
+ *
+ * The charts are <canvas>, drawn once when they mount. A print-only copy of the
+ * page would contain a canvas that was never drawn — zero-sized and blank — so
+ * the print sheet shows an <img> of the on-screen canvas instead, captured at
+ * beforeprint when it is known to be painted.
+ */
+export function primaryChart(root: ParentNode = document): { title: string; src: string } | null {
+  const card = root.querySelector<HTMLElement>("[data-x-chart]");
+  const canvas = card?.querySelector("canvas");
+  if (!card || !canvas) return null;
+  try {
+    const src = canvas.toDataURL("image/png");
+    if (!src || src.length < 100) return null;
+    return { title: card.dataset.xChart || "", src };
+  } catch {
+    return null;
+  }
+}

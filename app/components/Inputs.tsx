@@ -172,6 +172,12 @@ export function NumField({
           max={max}
           placeholder={placeholder}
           disabled={disabled}
+          /* Harvested by lib/export for copy, share links, mailto and the print
+             sheet. Tagging the shared field once is what keeps the export
+             feature out of all 43 calculators. See app/lib/export.ts. */
+          data-x-field={label}
+          data-x-kind="num"
+          data-x-unit={prefix === "$" ? "$" : suffix || ""}
           onChange={(e) => onChange(clamp(e.target.value, min, max))}
           {...selectOnFocus}
           className={`${baseInput} ${pad} ${disabled ? "cursor-not-allowed bg-gray-50" : ""}`}
@@ -206,6 +212,8 @@ export function DateField({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        data-x-field={label}
+        data-x-kind="date"
         className={`${baseInput} px-3`}
       />
       {hint && <p className="text-xs text-gray-400 mt-1 leading-relaxed">{hint}</p>}
@@ -232,6 +240,8 @@ export function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        data-x-field={label}
+        data-x-kind="select"
         className={`${baseInput} px-3`}
       >
         {options.map((o) => (
@@ -249,10 +259,13 @@ export function Toggle({
   checked,
   onChange,
   children,
+  label,
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
   children: ReactNode;
+  /** Short name for exports. Falls back to the visible text, which is long. */
+  label?: string;
 }) {
   return (
     // min-h-11 keeps the whole label a >=44px touch target even when the text is
@@ -262,6 +275,8 @@ export function Toggle({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
+        data-x-field={label}
+        data-x-kind="bool"
         className="mt-0.5 w-4 h-4 accent-green-700 flex-shrink-0"
       />
       <span className="text-xs text-gray-500 leading-relaxed">{children}</span>
@@ -321,9 +336,9 @@ export function Stat({
     red: "text-red-600",
   };
   return (
-    <div className="bg-white border border-gray-100 rounded-xl p-3">
+    <div className="bg-white border border-gray-100 rounded-xl p-3" data-x-stat={label}>
       <p className="text-xs text-gray-400 mb-0.5 leading-snug">{label}</p>
-      <p className={`text-sm font-medium ${tones[tone]}`}>{value}</p>
+      <p className={`text-sm font-medium ${tones[tone]}`} data-x-value>{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5 leading-snug">{sub}</p>}
     </div>
   );
@@ -345,7 +360,10 @@ export function Headline({
   return (
     <>
       <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className={`text-3xl font-medium mb-5 tracking-tight break-words ${tones[tone]}`}>
+      <p
+        className={`text-3xl font-medium mb-5 tracking-tight break-words ${tones[tone]}`}
+        data-x-headline={label}
+      >
         {value}
         {unit && <span className="text-sm text-gray-400 font-normal">{unit}</span>}
       </p>

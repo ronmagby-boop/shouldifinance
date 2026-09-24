@@ -353,7 +353,11 @@ export function ChartCard({
   footnote?: ReactNode;
 }) {
   return (
-    <div className="border border-gray-200 rounded-2xl p-5 mb-4">
+    /* data-x-chart lets the print sheet find the FIRST chart on the page and
+       snapshot its canvas. Canvas is a bitmap drawn on mount, so a print-only
+       copy would be blank — lib/export grabs toDataURL() at beforeprint
+       instead. Secondary charts are skipped by taking only the first. */
+    <div className="border border-gray-200 rounded-2xl p-5 mb-4" data-x-chart={title}>
       <h2 className="text-sm font-medium text-gray-900 mb-4">{title}</h2>
       {children}
       {footnote && <div className="mt-4">{footnote}</div>}

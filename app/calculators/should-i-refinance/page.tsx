@@ -9,6 +9,7 @@ import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/fi
 import { NumField } from "../../components/Inputs";
 import { related, relatedGridClass } from "../../lib/calculators";
 import GuideLink from "../../components/GuideLink";
+import ExportBar from "../../components/ExportBar";
 
 /**
  * ⚠ THIS PAGE DOES NOT USE CalcShell.
@@ -473,28 +474,36 @@ export default function ShouldIRefinance() {
           {results && (
             <div className="border border-gray-200 rounded-2xl overflow-hidden mb-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
-                <div className="p-4 text-center">
+                {/* data-x-* so the shared ExportBar can harvest results here too.
+                    This page builds its own results markup instead of using
+                    Headline/Stat, so none of it is tagged for free. */}
+                <div className="p-4 text-center" data-x-stat="Payment today">
                   <p className="text-xs text-gray-400 mb-1">Payment today</p>
-                  <p className="text-lg font-medium text-gray-900">{fmt(n(currentPayment))}</p>
+                  <p className="text-lg font-medium text-gray-900" data-x-value>{fmt(n(currentPayment))}</p>
                 </div>
                 <div className={`p-4 text-center ${results.monthlySavings >= 0 ? "bg-green-800" : "bg-amber-600"}`}>
                   <p className="text-xs text-white/70 mb-0.5">
                     {results.monthlySavings >= 0 ? "You'd save" : "You'd pay"}
                   </p>
-                  <p className="text-2xl font-medium text-white">{fmt(Math.abs(results.monthlySavings))}</p>
+                  <p
+                    className="text-2xl font-medium text-white"
+                    data-x-headline={results.monthlySavings >= 0 ? "Monthly saving" : "Monthly increase"}
+                  >
+                    {fmt(Math.abs(results.monthlySavings))}
+                  </p>
                   <p className="text-xs text-white/70">
                     per month{results.monthlySavings < 0 ? " more" : ""}
                   </p>
                 </div>
-                <div className="p-4 text-center">
+                <div className="p-4 text-center" data-x-stat="New payment">
                   <p className="text-xs text-gray-400 mb-1">New payment</p>
-                  <p className="text-lg font-medium text-gray-900">{fmt(results.newPayment)}</p>
+                  <p className="text-lg font-medium text-gray-900" data-x-value>{fmt(results.newPayment)}</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100">
-                <div className="p-4 text-center">
+                <div className="p-4 text-center" data-x-stat="Break-even on closing costs">
                   <p className="text-xs text-gray-400 mb-1">Break-even on closing costs</p>
-                  <p className="text-base font-medium text-gray-900">
+                  <p className="text-base font-medium text-gray-900" data-x-value>
                     {results.breakEvenMonths ? `${results.breakEvenMonths} months` : "N/A"}
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -532,6 +541,10 @@ export default function ShouldIRefinance() {
             </div>
           )}
 
+          {/* EXPORT — this page builds its own chrome, so CalcShell does not
+              place this for it. See the "DOES NOT USE CalcShell" note above. */}
+          <ExportBar slug="should-i-refinance" />
+
           {/* RELATED */}
           <div className="mb-6">
             <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
@@ -556,7 +569,7 @@ export default function ShouldIRefinance() {
 
           <GuideLink slug="should-i-refinance" />
 
-          <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
+          <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6" data-x-disclaimer>
             Figures are estimates for discussion purposes only. Not a commitment to lend. Actual figures depend on credit, escrow, and underwriting.
           </div>
 

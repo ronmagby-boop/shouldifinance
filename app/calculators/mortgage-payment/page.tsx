@@ -7,6 +7,7 @@ import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { related, relatedGridClass } from "../../lib/calculators";
 import GuideLink from "../../components/GuideLink";
+import ExportBar from "../../components/ExportBar";
 import { NumField, type Num } from "../../components/Inputs";
 
 /**
@@ -256,7 +257,11 @@ export default function MortgageCalculator() {
                 {results && (
                   <div className="p-5 md:p-6 bg-gray-50">
                     <p className="text-xs text-gray-400 mb-1">Total monthly payment</p>
-                    <p className="text-3xl font-medium text-green-700 mb-5 tracking-tight">{fmt(results.total)}<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+                    {/* data-x-* so the shared ExportBar can harvest a result from
+                        this page too. It builds its own results markup rather than
+                        using Headline/Stat, so nothing here is tagged for free —
+                        the same duplication that has now cost five bugs. */}
+                    <p className="text-3xl font-medium text-green-700 mb-5 tracking-tight" data-x-headline="Total monthly payment">{fmt(results.total)}<span className="text-sm text-gray-400 font-normal">/mo</span></p>
 
                     <div className="grid grid-cols-2 gap-2 mb-5">
                       {[
@@ -269,9 +274,9 @@ export default function MortgageCalculator() {
                         { label: "Total loan cost", value: fmtK(results.totalCost), color: "" },
                         { label: "Payoff date", value: results.payoffStr, color: "text-green-700" },
                       ].map((m) => (
-                        <div key={m.label} className="bg-white border border-gray-100 rounded-lg p-3">
+                        <div key={m.label} className="bg-white border border-gray-100 rounded-lg p-3" data-x-stat={m.label}>
                           <p className="text-xs text-gray-400 mb-0.5">{m.label}</p>
-                          <p className={`text-sm font-medium ${m.color || "text-gray-900"}`}>{m.value}</p>
+                          <p className={`text-sm font-medium ${m.color || "text-gray-900"}`} data-x-value>{m.value}</p>
                         </div>
                       ))}
                     </div>
@@ -382,6 +387,10 @@ export default function MortgageCalculator() {
 
             )}
 
+            {/* EXPORT — this page builds its own chrome, so CalcShell does not
+                place this for it. See the "DOES NOT USE CalcShell" note above. */}
+            <ExportBar slug="mortgage-payment" />
+
             {/* RELATED CALCULATORS */}
             <div className="mb-6">
               <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">Related calculators</h2>
@@ -402,7 +411,7 @@ export default function MortgageCalculator() {
             <GuideLink slug="mortgage-payment" />
 
             {/* DISCLAIMER */}
-            <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-lg border border-gray-100" data-x-disclaimer>
               For educational purposes only. Results are estimates based on the values you enter. Actual loan terms, rates, taxes, and insurance costs will vary. Consult a licensed mortgage professional before making any financial decisions.
             </div>
 

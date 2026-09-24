@@ -3,6 +3,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { bySlug, CATEGORY_SECTIONS, related, relatedGridClass } from "../lib/calculators";
 import GuideLink from "./GuideLink";
+import ExportBar from "./ExportBar";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./MobileBottomNav";
 import SiteNav from "./SiteNav";
@@ -86,6 +87,13 @@ export default function CalcShell({
 
           {children}
 
+          {/* EXPORT — sits with the results, above the related grid, so it
+              neither competes with the headline nor gets buried at the bottom.
+              Placed before RELATED deliberately: the related grid's column
+              count depends on card count and the guide link is a sibling of
+              it, so neither is disturbed. */}
+          <ExportBar slug={slug} />
+
           {/* RELATED */}
           <div className="mb-6">
             <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
@@ -111,7 +119,10 @@ export default function CalcShell({
           <GuideLink slug={slug} />
 
           {/* DISCLAIMER */}
-          <div className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
+          <div
+            className="text-xs text-gray-400 leading-relaxed p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6"
+            data-x-disclaimer
+          >
             {disclaimer}
           </div>
         </div>
