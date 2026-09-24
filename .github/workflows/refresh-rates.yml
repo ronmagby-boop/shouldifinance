@@ -1,0 +1,57 @@
+# Rebuilds the site so the homepage picks up the week's mortgage rate.
+#
+# The rate is fetched at BUILD time by scripts/fetch-pmms.mjs, not in the
+# visitor's browser, so a new rate only appears after a new deploy. Freddie
+# Mac publishes the Primary Mortgage Market Survey weekly, Thursdays at 12:00
+# ET, so this only has to run weekly — a daily rebuild would be wasted builds.
+#
+# Two runs:
+#   Thursday 17:30 UTC  — 12:30 ET in winter, 13:30 ET in summer. Half an hour
+#                         after the earliest possible publication, and safely
+#                         after it year-round, since GitHub cron is UTC and
+#                         does not follow US daylight saving.
+#   Friday   17:30 UTC  — a safety run. If Thursday's fetch failed, or Freddie
+#                         Mac published late, this catches it before the
+#                         ten-day staleness gate would ever come into play.
+#
+# GitHub's scheduled runs are best-effort and can be delayed under load, which
+# is another reason for the second run rather than a tighter single one.
+#
+# SETUP (one time, see the repo README or the notes in the PR):
+#   1. Vercel → the project → Settings → Git → Deploy Hooks. Create a hook,
+#      name it "refresh-rates", branch "main". Copy the URL it gives you.
+#   2. GitHub → this repo → Settings → Secrets and variables → Actions →
+#      New repository secret. Name it VERCEL_DEPLOY_HOOK_URL, paste the URL.
+# The URL is a secret: anyone holding it can trigger a deploy of this project.
+
+name: Refresh mortgage rate
+
+on:
+  schedule:
+    - cron: "30 17 * * 4" # Thursday, after the PMMS publishes
+    - cron: "30 17 * * 5" # Friday, safety run
+  workflow_dispatch: # and a manual button, for testing the hook
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the hook is configured
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL is not set — see the setup notes at the top of this file."
+            exit 1
+          fi
+
+      - name: Trigger a Vercel deploy
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          code=$(curl -s -o /tmp/out -w "%{http_code}" -X POST "$HOOK")
+          echo "Deploy hook responded $code"
+          cat /tmp/out || true
+          # A non-2xx means the hook is wrong or revoked. Fail loudly: a silent
+          # no-op here would show up weeks later as a rate that stopped moving.
+          [ "$code" -ge 200 ] && [ "$code" -lt 300 ]

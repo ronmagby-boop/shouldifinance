@@ -9,6 +9,7 @@ import {
 import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
+import RateBanner from "./components/RateBanner";
 
 // hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
 // #cdeee7 / #cceee7 / #cdeee7 / #ccede7, averaging the #CCEEE7 the section uses.
@@ -203,6 +204,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* THIS WEEK'S RATE — between the hero/stats and the category grid, so it
+          is the first concrete number on the page. Renders nothing when there
+          is no fresh survey; see lib/pmms.ts for the staleness rule. */}
+      <RateBanner />
 
       {/* DECIDE — search plus the four category doors. Replaces the old
           "Popular Tools" grid; example calculators now live inside each card. */}

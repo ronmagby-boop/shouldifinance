@@ -163,7 +163,30 @@ export default function Disclaimer() {
         </p>
       </Section>
 
-      <Section id="errors" heading="7. Errors">
+      <Section id="market-data" heading="7. Mortgage rate data">
+        <p>
+          The mortgage rate shown on the home page is the 30-year fixed-rate average from{" "}
+          <strong>Freddie Mac&apos;s Primary Mortgage Market Survey</strong>, reproduced unaltered
+          and labelled with the week the survey covers. The survey is published weekly, on
+          Thursdays. Freddie Mac provides it &ldquo;as is&rdquo;, without warranty as to accuracy,
+          and disclaims liability for any use made of it.
+        </p>
+        <p>
+          It is a <strong>national average of conventional, conforming, single-family purchase
+          originations</strong>. It is not a quote, not an offer, and not the rate you will be
+          given. Your own rate depends on your credit, your down payment, the loan type, the
+          property, the day, and the lender. Averages routinely differ from individual quotes by
+          more than a percentage point in both directions.
+        </p>
+        <p>
+          The figure is retrieved when the Site is built, not when you visit, so viewing it sends
+          nothing from your browser to Freddie Mac or anyone else. If the retrieval fails, or the
+          most recent survey becomes more than ten days old, the rate is removed from the Site
+          rather than shown as current.
+        </p>
+      </Section>
+
+      <Section id="errors" heading="8. Errors">
         <p>
           The calculators are written and checked with care, but they may contain errors in formula,
           assumption, data or presentation. No representation is made that any calculation is free of
@@ -176,7 +199,7 @@ export default function Disclaimer() {
         </p>
       </Section>
 
-      <Section id="consult" heading="8. Consult a licensed professional">
+      <Section id="consult" heading="9. Consult a licensed professional">
         <p>
           Before acting on anything you read or calculate here, consult a professional licensed and
           qualified to advise you in the relevant field and jurisdiction — a mortgage loan originator
