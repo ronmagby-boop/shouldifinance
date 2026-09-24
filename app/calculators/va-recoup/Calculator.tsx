@@ -246,78 +246,19 @@ export default function Calculator() {
               <NumField label="New term" value={newTerm} onChange={setNewTerm} placeholder="30" suffix="yrs" />
             </div>
             <NumField
-              label="Total Loan Costs (Box D)"
-              value={loanCosts}
-              onChange={setLoanCosts}
-              min={0}
-              placeholder="4200"
-              prefix="$"
-              hint="Page 2 of your Loan Estimate: boxes A + B + C added up — origination charges, services you cannot shop for, and services you can shop for. All of it counts toward recoupment."
+              label="VA funding fee"
+              value={fundingFeePct}
+              onChange={setFundingFeePct}
+              placeholder="0.5"
+              suffix="%"
+              step={0.05}
+              disabled={ffExempt}
+              hint={ffExempt ? "Exempt — no fee on this loan." : "0.5% for most IRRRLs. Never recouped."}
             />
-            <NumField
-              label="Recording fees (from Box E)"
-              value={recordingFees}
-              onChange={setRecordingFees}
-              min={0}
-              placeholder="250"
-              prefix="$"
-              hint="Box E is 'Taxes and Other Government Fees'. Enter only the recording fees from it — transfer and documentary stamp taxes are taxes, which the statute excludes."
-            />
-            <NumField
-              label="Lender credits (Box J, second line)"
-              value={lenderCredits}
-              onChange={setLenderCredits}
-              min={0}
-              placeholder="950"
-              prefix="$"
-              hint="Shown on the Loan Estimate as a negative under Total Closing Costs. Enter it as a positive number here. Credits offset allowable fees, so they shorten recoupment. A negative credit is a charge — put it in Box D."
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <NumField
-                label="VA funding fee"
-                value={fundingFeePct}
-                onChange={setFundingFeePct}
-                placeholder="0.5"
-                suffix="%"
-                step={0.05}
-                disabled={ffExempt}
-                hint={
-                  ffExempt
-                    ? "Exempt — no funding fee on this loan."
-                    : "0.5% for most IRRRLs. Excluded from recoupment."
-                }
-              />
-              <NumField
-                label="Prepaids and escrow (Boxes F + G)"
-                value={escrow}
-                onChange={setEscrow}
-                min={0}
-                placeholder="0"
-                prefix="$"
-                hint="Financed, but excluded from recoupment."
-              />
-            </div>
             <Toggle checked={ffExempt} onChange={setFfExempt}>
-              I&apos;m exempt from the VA funding fee — receiving, or eligible to receive, VA
-              compensation for a service-connected disability, or a surviving spouse receiving
-              DIC, or a Purple Heart recipient on active duty. Compensation starts at a 10%
-              rating, so a 0% rating is not exempt.
+              Exempt from the funding fee — receiving or eligible for VA disability compensation,
+              DIC, or a Purple Heart on active duty. A 0% rating is not exempt.
             </Toggle>
-            <Toggle checked={financeCosts} onChange={setFinanceCosts}>
-              Roll costs into the new loan (IRRRLs are usually structured this way)
-            </Toggle>
-            <NumField
-              label="New loan amount"
-              value={loanOverride}
-              onChange={setLoanOverride}
-              placeholder={r && !r.overridden ? String(Math.round(r.derivedLoan)) : "345200"}
-              prefix="$"
-              hint={
-                r && r.overridden
-                  ? `Using your figure. Derived from the inputs above: ${fmt(r.derivedLoan)}.`
-                  : "Optional. Leave blank to use the figure derived from the balance, costs and fee above."
-              }
-            />
             {r && (
               <div className="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
                 <span className="text-xs text-green-700 font-medium">New payment (P&amp;I)</span>
@@ -327,6 +268,74 @@ export default function Calculator() {
           </div>
         </Card>
       </div>
+
+      {/* Costs get their own full-width row. Four short fields across beats a
+          stack of four inside one column — it balanced the two cards above,
+          which had drifted badly apart, and it lets one line of context carry
+          the "page 2 of your Loan Estimate" framing instead of repeating it in
+          every hint. */}
+      <Card title="Closing costs" badge="LOAN ESTIMATE, PAGE 2" badgeTone="blue" className="mb-4">
+        <p className="text-xs text-gray-500 leading-relaxed mb-4">
+          Read these straight off page 2 of the Loan Estimate your lender gave you. Only the first
+          two count toward the 36-month test — the funding fee, taxes, prepaids and escrow are
+          excluded by statute.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <NumField
+            label="Total Loan Costs (D)"
+            value={loanCosts}
+            onChange={setLoanCosts}
+            min={0}
+            placeholder="4200"
+            prefix="$"
+            hint="Boxes A + B + C. All of it recoups."
+          />
+          <NumField
+            label="Recording fees (from E)"
+            value={recordingFees}
+            onChange={setRecordingFees}
+            min={0}
+            placeholder="250"
+            prefix="$"
+            hint="Recording only — not transfer taxes."
+          />
+          <NumField
+            label="Lender credits (J)"
+            value={lenderCredits}
+            onChange={setLenderCredits}
+            min={0}
+            placeholder="950"
+            prefix="$"
+            hint="Shown negative on the form; enter it positive."
+          />
+          <NumField
+            label="Prepaids and escrow (F + G)"
+            value={escrow}
+            onChange={setEscrow}
+            min={0}
+            placeholder="0"
+            prefix="$"
+            hint="Financed, never recouped."
+          />
+        </div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 md:items-start">
+          <Toggle checked={financeCosts} onChange={setFinanceCosts}>
+            Roll costs into the new loan (IRRRLs are usually structured this way)
+          </Toggle>
+          <NumField
+            label="New loan amount"
+            value={loanOverride}
+            onChange={setLoanOverride}
+            placeholder={r && !r.overridden ? String(Math.round(r.derivedLoan)) : "345200"}
+            prefix="$"
+            hint={
+              r && r.overridden
+                ? `Using your figure. Derived from the inputs above: ${fmt(r.derivedLoan)}.`
+                : "Optional — leave blank to derive it."
+            }
+          />
+        </div>
+      </Card>
 
       {r ? (
         <>
