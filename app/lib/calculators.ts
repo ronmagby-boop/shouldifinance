@@ -382,6 +382,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare the true cost of leasing or buying your next car.",
     icon: Car, bg: "bg-teal-50", category: "Auto", kind: "should-i",
     keywords: ["lease vs buy", "car lease comparison", "cost of ownership"],
+    guide: {
+      slug: "is-leasing-or-buying-cheaper",
+      teaser: "What a lease charges you for, and the maintenance myth",
+    },
   },
   {
     slug: "loan-vs-cash",
@@ -390,6 +394,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Weigh loan interest against what your cash could earn instead.",
     icon: CreditCard, bg: "bg-blue-50", category: "Auto", kind: "should-i",
     keywords: ["pay cash or finance", "opportunity cost", "car loan interest"],
+    guide: {
+      slug: "finance-a-car-or-pay-cash",
+      teaser: "Why the rebate and the promotional rate are usually a choice",
+    },
   },
   {
     slug: "auto-loan-refinance",
@@ -398,6 +406,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See what a lower rate saves on the car loan you already have.",
     icon: Repeat, bg: "bg-purple-50", category: "Auto", kind: "should-i",
     keywords: ["auto refinance", "car loan refinance savings", "lower car payment"],
+    guide: {
+      slug: "is-refinancing-a-car-loan-worth-it",
+      teaser: "What rolled-in fees do to a depreciating asset",
+    },
   },
   {
     slug: "auto-affordability",
@@ -406,6 +418,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Set a price range that fits your income and your other bills.",
     icon: KeyRound, bg: "bg-amber-50", category: "Auto", kind: "what-how",
     keywords: ["car affordability", "how much car can I afford", "20/4/10 rule"],
+    guide: {
+      slug: "how-much-car-can-you-afford",
+      teaser: "What 20/4/10 actually says",
+    },
   },
   {
     slug: "total-cost-of-ownership",
@@ -414,6 +430,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Add up depreciation, fuel, insurance, and repairs — the real price of a car.",
     icon: Calculator, bg: "bg-green-50", category: "Auto", kind: "what-how",
     keywords: ["total cost of ownership", "cost per mile", "car ownership costs"],
+    guide: {
+      slug: "what-a-car-really-costs-to-own",
+      teaser: "The largest cost is the one that never sends a bill",
+    },
   },
   {
     slug: "lease-payment",
@@ -422,6 +442,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Build a lease payment from cap cost, residual value, and money factor.",
     icon: FileText, bg: "bg-blue-50", category: "Auto", kind: "what-how",
     keywords: ["lease payment calculator", "money factor", "residual value"],
+    guide: {
+      slug: "how-is-a-lease-payment-calculated",
+      teaser: "The formula, and why rolled-in negative equity costs more",
+    },
   },
   {
     slug: "ev-savings",
@@ -430,6 +454,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare fuel, maintenance, and incentives for electric and gas.",
     icon: Plug, bg: "bg-emerald-50", category: "Auto", kind: "should-i",
     keywords: ["EV savings calculator", "electric vs gas cost", "cost per mile"],
+    guide: {
+      slug: "do-electric-cars-save-money",
+      teaser: "What the comparison looks like now the credit has gone",
+    },
   },
   {
     slug: "depreciation",
@@ -438,6 +466,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Track what a vehicle is worth each year, and when you are underwater.",
     icon: TrendingDown, bg: "bg-red-50", category: "Auto", kind: "what-how",
     keywords: ["car depreciation", "resale value", "underwater on car loan"],
+    guide: {
+      slug: "how-fast-does-a-car-lose-value",
+      teaser: "Where the loan and the value cross, and how long you are underwater",
+    },
   },
 
   {
@@ -447,6 +479,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Depreciation, interest and repairs over the years you actually keep it.",
     icon: CarFront, bg: "bg-green-50", category: "Auto", kind: "should-i",
     keywords: ["new vs used car calculator", "car depreciation comparison", "total cost of ownership"],
+    guide: {
+      slug: "new-or-used-which-is-the-better-buy",
+      teaser: "Why the price gap is not the saving",
+    },
   },
   // ---------- Debt / Money ----------
   {

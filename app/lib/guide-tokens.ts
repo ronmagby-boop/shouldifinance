@@ -16,6 +16,8 @@ import {
   FUND_FEES_YEAR,
   LONG_RUN,
   LONG_RUN_PERIOD,
+  DEPRECIATION_5YR,
+  DEPRECIATION_SOURCE,
 } from "./markets";
 import {
   IBR_NEW_FORGIVE_MONTHS,
@@ -102,6 +104,10 @@ export const GUIDE_TOKENS: Record<string, string> = {
   INDEX_FUND_FEE: `${FUND_FEES.index}%`,
   ACTIVE_FUND_FEE: `${FUND_FEES.active}%`,
   FUND_FEES_YEAR: String(FUND_FEES_YEAR),
+
+  EV_DEPRECIATION_5YR: `${(DEPRECIATION_5YR.ev * 100).toFixed(1)}%`,
+  ALL_VEHICLE_DEPRECIATION_5YR: `${(DEPRECIATION_5YR.allVehicles * 100).toFixed(1)}%`,
+  DEPRECIATION_SOURCE,
 };
 
 const TOKEN = /\{\{([A-Z0-9_]+)\}\}/g;

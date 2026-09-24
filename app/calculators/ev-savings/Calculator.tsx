@@ -7,18 +7,13 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { CLEAN_VEHICLE_CREDITS } from "../../lib/tax";
+import { DEPRECIATION_5YR } from "../../lib/markets";
 
-/**
- * Five-year depreciation, from iSeeCars' study of 950,000 five-year-old used
- * cars sold March 2025 to February 2026, published 24 March 2026: 57.2% for
- * electric vehicles against a 41.8% average across all vehicles.
- *
- * The example defaults extend those to eight years at the same annual rate,
- * which is conservative in the EV's favour twice over — depreciation slows in
- * later years, and the "all vehicles" average includes EVs and hybrids rather
- * than being gas-only.
- */
-const DEPRECIATION_5YR = { ev: 0.572, allVehicles: 0.418 };
+/* Five-year depreciation lives in lib/markets so the guide quotes the same
+   figures. The example defaults extend those to eight years at the same annual
+   rate, which is conservative in the EV's favour twice over — depreciation
+   slows in later years, and the "all vehicles" average includes EVs and
+   hybrids rather than being gas-only. */
 
 export default function Calculator() {
   const [miles, setMiles] = useState<Num>("");

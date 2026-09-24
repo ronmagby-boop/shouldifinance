@@ -44,3 +44,16 @@ export const BENCHMARK_RETURN = 7;
  */
 export const FUND_FEES = { index: 0.05, active: 0.64 };
 export const FUND_FEES_YEAR = 2025;
+
+/**
+ * Five-year vehicle depreciation, from iSeeCars' study of 950,000
+ * five-year-old used cars sold March 2025 to February 2026, published
+ * 24 March 2026: 57.2% for electric vehicles against a 41.8% average across
+ * all vehicles.
+ *
+ * The all-vehicle figure blends in cars bought further down the curve, which
+ * is exactly why it works as the used-car comparator and not as a new-car
+ * rate — a new car's first year is much steeper than its average year.
+ */
+export const DEPRECIATION_5YR = { ev: 0.572, allVehicles: 0.418 };
+export const DEPRECIATION_SOURCE = "iSeeCars, March 2026";
