@@ -14,36 +14,42 @@ import { PMMS } from "../lib/pmms";
  * note in lib/pmms.ts before touching the formatting.
  *
  * 30-year only. The 15-year is in the source data but two rates plus a date
- * does not fit the banner at 390px, and the 30-year is what people mean when
- * they say "the rate".
+ * does not fit at 390px, and the 30-year is what people mean by "the rate".
+ *
+ * STYLING: bg-gray-50 with no border, matching the category section directly
+ * below it, so the two read as one continuous area. This used to be a white
+ * panel with border-y, which put a second bordered white slab immediately
+ * under the stats bar — same colour, but a separate card, and the homepage
+ * went mint / white / white / grey with a rule between each. Merging downward
+ * removes a band without introducing a colour. Do not give this its own fill
+ * or border again without checking what is above and below it.
  */
 export default function RateBanner() {
   if (!PMMS) return null;
 
   return (
-    <section className="bg-white border-y border-gray-100">
-      <div className="max-w-7xl mx-auto px-5 md:px-8 py-3">
+    <section className="bg-gray-50" aria-label="This week's mortgage rate">
+      <div className="max-w-7xl mx-auto px-5 md:px-8 pt-5 md:pt-6 text-center">
         <Link
           href="/calculators/mortgage-payment"
-          className="group flex flex-wrap items-center gap-x-3 gap-y-1 min-h-[44px] py-1 rounded-xl"
+          className="group inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-h-[44px] px-2 rounded-xl"
         >
-          <span className="w-9 h-9 rounded-xl bg-green-50 text-green-700 flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+          <TrendingUp
+            className="w-4 h-4 text-green-700 flex-shrink-0"
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+          <span className="text-base font-bold text-gray-900">
+            {/* Exactly as published — do not round or reformat. */}
+            {PMMS.rate30}%
           </span>
-
-          <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <span className="text-sm md:text-base font-bold text-gray-900">
-              {/* Exactly as published — do not round or reformat. */}
-              {PMMS.rate30}%
-            </span>
-            <span className="text-xs text-gray-500">
-              30-year fixed average, week ending {PMMS.weekLabel}
-            </span>
+          <span className="text-xs text-gray-500">
+            30-year fixed average, week ending {PMMS.weekLabel}
           </span>
-
-          {/* Hidden on the narrowest screens: the whole banner is already the
-              link, and at 390px this pushed the row onto a third line. */}
-          <span className="hidden sm:inline text-xs font-semibold text-green-700 group-hover:underline ml-auto whitespace-nowrap">
+          {/* Desktop only. The whole banner is already the link, and at 390px
+              this was the element forcing a third wrapped line — the rate is an
+              indicator here, not a call to action. */}
+          <span className="hidden sm:inline text-xs font-semibold text-green-700 group-hover:underline whitespace-nowrap">
             Run your numbers →
           </span>
         </Link>
