@@ -447,11 +447,11 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Company</p>
-                {/* About and Contact have no pages yet, so they stay inert
-                    rather than linking somewhere that 404s. */}
-                {["About","Contact"].map(l => (
-                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
-                ))}
+                {/* About is still a placeholder — its copy is drafted but not
+                    approved, and a page that says nothing is worse than none.
+                    Contact is real. */}
+                <a href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">About</a>
+                <Link href="/contact" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Contact</Link>
                 {[
                   { label: "Disclaimer", href: "/disclaimer" },
                   { label: "Privacy", href: "/privacy" },

@@ -42,6 +42,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
+    {
+      url: `${SITE}/contact`,
+      lastModified: LEGAL_LAST_UPDATED,
+      changeFrequency: "yearly" as const,
+      priority: 0.4,
+    },
     // The legal pages change only when they are revised, so they carry their
     // own date rather than today's.
     ...["privacy", "terms", "disclaimer"].map((slug) => ({

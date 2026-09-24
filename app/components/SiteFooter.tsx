@@ -12,6 +12,7 @@ import Link from "next/link";
 const FOOTER_LINKS = [
   { href: "/calculators", label: "All calculators" },
   { href: "/guides", label: "Guides" },
+  { href: "/contact", label: "Contact" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Use" },
   { href: "/disclaimer", label: "Disclaimer" },
