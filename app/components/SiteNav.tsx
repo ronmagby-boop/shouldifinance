@@ -86,10 +86,38 @@ export default function SiteNav({
       <nav className={`${wrapper} bg-white border-b border-gray-100 shadow-sm`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-5 md:px-8 py-2">
           <Link href="/" className="flex-shrink-0">
+            {/* `loading="eager"` rather than `preload`. Next 16 deprecated
+                `priority` in favour of `preload`, and the image docs say to
+                prefer `loading="eager"` in most cases — reserving `preload` for
+                the LCP element, which on the homepage is the hero, not this.
+
+                Measured, not assumed: `loading="eager"` still emits a
+                `<link rel="preload" as="image">` in 16.3.5. That is NOT what
+                get-img-props.js suggests (it gates the link on
+                `preload || priority`, both false here), but a clean build with
+                and without the prop differs by exactly that link. So the choice
+                here does not remove the wordmark's preload; it is made on the
+                documented prop being the non-deprecated one. If a future
+                version drops the link, nothing here needs changing — eager is
+                still what an above-the-fold logo wants.
+
+                `sizes` on the wide mark: it is declared 556 wide but painted at
+                187px (h-10) or 224px (h-12), and without `sizes` Next emits a
+                fixed 1x/2x srcset of 640w/1200w. Both cap at the 556px source
+                and cost 4,900 B where a 256w variant costs 2,150 B.
+
+                The compact mark deliberately has NO `sizes`, and must not get
+                one. ExportBar's print sheet snapshots this element to a canvas
+                at its natural size (see siteLogo in lib/export.ts), so the
+                served variant IS the print resolution. It is painted at ~57px
+                wide, so a truthful `sizes` would fetch the 64w variant — 41px
+                tall, which is about 95 dpi once the print stylesheet scales it
+                to 11mm. The 256w variant the fixed srcset gives us prints at
+                ~376 dpi. The ~1 KB per calculator page buys that. */}
             {logo === "wide" ? (
-              <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 md:h-12 w-auto" priority />
+              <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} sizes="224px" className="h-10 md:h-12 w-auto" loading="eager" />
             ) : (
-              <Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" priority />
+              <Image src="/logo.png" alt="ShouldIFinance" width={236} height={150} className="h-9 w-auto" loading="eager" />
             )}
           </Link>
 

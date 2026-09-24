@@ -26,7 +26,7 @@ export default function SiteFooter() {
         <div className="flex flex-col md:flex-row items-start justify-between gap-6">
           <div className="max-w-xs">
             <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-              <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 w-auto" />
+              <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} sizes="187px" className="h-10 w-auto" />
             </span>
             <p className="text-xs text-gray-400 leading-relaxed">
               Better Questions. Smarter Decisions. Free financial tools for every stage of life.

@@ -174,7 +174,12 @@ export default function Home() {
               alt="Phone showing a portfolio allocation chart alongside a financial checklist"
               fill
               preload
-              sizes="(max-width: 768px) 90vw, 40vw"
+              /* The frame is capped by max-w-sm (384px) below md and max-w-md
+                 (448px) above it, so it is NEVER 40vw of a wide screen. The old
+                 40vw made a 1920px viewport ask for 768px and fetch the 828w
+                 variant (16,244 B) to paint 448px; the min() keeps the tablet
+                 band from asking for 750w to paint 384px. */
+              sizes="(max-width: 768px) min(90vw, 384px), 448px"
               className="object-cover object-[95%_center]"
             />
           </div>
@@ -441,7 +446,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
             <div className="max-w-xs">
               <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} className="h-10 w-auto" />
+                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} sizes="187px" className="h-10 w-auto" />
               </span>
               <p className="text-xs text-gray-400 leading-relaxed">Better Questions. Smarter Decisions. Free financial tools for every stage of life.</p>
             </div>
