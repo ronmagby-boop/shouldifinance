@@ -248,6 +248,10 @@ export const CALCULATORS: Calc[] = [
     desc: "See how your money grows when interest starts earning interest.",
     icon: TrendingUp, bg: "bg-emerald-50", category: "Money", kind: "what-how",
     keywords: ["compound interest", "investment growth", "compounding frequency"],
+    guide: {
+      slug: "how-compound-interest-works",
+      teaser: "Why the curve bends late, and the rule of 72",
+    },
   },
   {
     slug: "savings-apy",
@@ -256,6 +260,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Turn a quoted savings rate into the yield you actually collect.",
     icon: Percent, bg: "bg-blue-50", category: "Money", kind: "what-how",
     keywords: ["APY calculator", "annual percentage yield", "compounding frequency", "savings account interest"],
+    guide: {
+      slug: "what-does-a-savings-account-really-earn",
+      teaser: "Why APY is the number, and what inflation does to it",
+    },
   },
   {
     slug: "investment-growth",
@@ -264,6 +272,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Project a portfolio with contributions, fees, taxes, and inflation.",
     icon: Sprout, bg: "bg-green-50", category: "Money", kind: "what-how",
     keywords: ["investment growth", "portfolio projection", "real return"],
+    guide: {
+      slug: "what-will-your-investments-be-worth",
+      teaser: "What one percentage point of fees actually costs",
+    },
   },
   {
     slug: "retirement-savings",
@@ -272,6 +284,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Find out if you are on track and how long your savings will last.",
     icon: PiggyBank, bg: "bg-orange-50", category: "Money", kind: "what-how",
     keywords: ["retirement calculator", "401k projection", "retirement income"],
+    guide: {
+      slug: "are-you-on-track-for-retirement",
+      teaser: "The four numbers a retirement target is built from",
+    },
   },
   {
     slug: "dividend-reinvestment",
@@ -280,6 +296,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Compare taking dividends as cash against reinvesting every one.",
     icon: Banknote, bg: "bg-teal-50", category: "Money", kind: "should-i",
     keywords: ["DRIP calculator", "dividend reinvestment", "dividend growth"],
+    guide: {
+      slug: "reinvest-dividends-or-take-the-cash",
+      teaser: "The tax bill that arrives whether you took the cash or not",
+    },
   },
   {
     slug: "dollar-cost-averaging",
@@ -288,6 +308,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Invest all at once or spread it out — see how each plays out.",
     icon: CalendarDays, bg: "bg-blue-50", category: "Money", kind: "should-i",
     keywords: ["dollar cost averaging", "DCA vs lump sum", "average share cost"],
+    guide: {
+      slug: "lump-sum-or-dollar-cost-averaging",
+      teaser: "Why lump sum usually wins, and when it does not",
+    },
   },
   {
     slug: "capital-gains",
@@ -296,6 +320,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Estimate what you will owe on a sale, and what waiting for long-term rates saves.",
     icon: Receipt, bg: "bg-amber-50", category: "Money", kind: "what-how",
     keywords: ["capital gains tax", "long term vs short term", "investment taxes"],
+    guide: {
+      slug: "what-will-you-owe-in-capital-gains-tax",
+      teaser: "Why the rate is bracketed, not flat",
+    },
   },
   {
     slug: "required-rate-of-return",
@@ -304,6 +332,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Work out the return you would need to hit a savings goal on time.",
     icon: Target, bg: "bg-purple-50", category: "Money", kind: "what-how",
     keywords: ["required rate of return", "savings goal", "target return"],
+    guide: {
+      slug: "what-return-do-you-need",
+      teaser: "What makes a required return reasonable",
+    },
   },
   {
     slug: "early-withdrawal",
@@ -312,6 +344,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Count the taxes, the 10% penalty, and the growth you would give up.",
     icon: AlertTriangle, bg: "bg-red-50", category: "Money", kind: "should-i",
     keywords: ["401k early withdrawal", "10% penalty", "IRA withdrawal tax"],
+    guide: {
+      slug: "what-early-retirement-withdrawal-costs",
+      teaser: "Why the 10% penalty is the smallest part of the bill",
+    },
   },
 
   {
@@ -321,6 +357,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Weigh an employer match against the guaranteed return of clearing debt.",
     icon: Scale3d, bg: "bg-green-50", category: "Money", kind: "should-i",
     keywords: ["401k match or pay off debt", "employer match vs debt", "capture full 401k match", "invest or pay down debt"],
+    guide: {
+      slug: "take-the-401k-match-or-pay-down-debt",
+      teaser: "Why this one is not a close call",
+    },
   },
   {
     slug: "roth-vs-traditional",
@@ -329,6 +369,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Pay tax now or later, decided by the bracket you expect in retirement.",
     icon: Split, bg: "bg-blue-50", category: "Money", kind: "should-i",
     keywords: ["Roth vs traditional 401k", "Roth IRA comparison", "pre-tax vs after-tax retirement"],
+    guide: {
+      slug: "roth-or-traditional",
+      teaser: "The contribution-limit argument most comparisons miss",
+    },
   },
   // ---------- Auto ----------
   {
@@ -424,6 +468,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Size the cushion you need and see how fast you can build it.",
     icon: LifeBuoy, bg: "bg-teal-50", category: "Money", kind: "what-how",
     keywords: ["emergency fund", "months of expenses", "savings cushion"],
+    guide: {
+      slug: "how-big-should-an-emergency-fund-be",
+      teaser: "Three to six months of what, exactly",
+    },
   },
   {
     slug: "student-loan-repayment",
@@ -444,6 +492,10 @@ export const CALCULATORS: Calc[] = [
     desc: "Add up what you own and what you owe, then project it forward.",
     icon: Trophy, bg: "bg-amber-50", category: "Money", kind: "what-how",
     keywords: ["net worth calculator", "assets minus liabilities", "track net worth"],
+    guide: {
+      slug: "how-to-calculate-your-net-worth",
+      teaser: "The four judgment calls inside the number",
+    },
   },
   // ---------- Debt ----------
   {

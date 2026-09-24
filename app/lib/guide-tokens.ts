@@ -10,6 +10,14 @@ import {
 } from "./tax";
 import { PMI_TERMINATION_LTV } from "./finance";
 import {
+  BENCHMARK_RETURN,
+  FANCIFUL_RETURN,
+  FUND_FEES,
+  FUND_FEES_YEAR,
+  LONG_RUN,
+  LONG_RUN_PERIOD,
+} from "./markets";
+import {
   IBR_NEW_FORGIVE_MONTHS,
   IBR_NEW_PCT,
   IBR_POVERTY_MULTIPLE,
@@ -84,6 +92,16 @@ export const GUIDE_TOKENS: Record<string, string> = {
   IBR_PRIOR_PCT: `${IBR_PRIOR_PCT}%`,
   IBR_PRIOR_FORGIVE_YEARS: String(IBR_PRIOR_FORGIVE_MONTHS / 12),
   IBR_POVERTY_MULTIPLE: `${Math.round(IBR_POVERTY_MULTIPLE * 100)}%`,
+
+  LONG_RUN_STOCKS: `${LONG_RUN.stocks}%`,
+  LONG_RUN_BONDS: `${LONG_RUN.bonds}%`,
+  LONG_RUN_BILLS: `${LONG_RUN.bills}%`,
+  LONG_RUN_PERIOD,
+  BENCHMARK_RETURN: `${BENCHMARK_RETURN}%`,
+  FANCIFUL_RETURN: `${FANCIFUL_RETURN}%`,
+  INDEX_FUND_FEE: `${FUND_FEES.index}%`,
+  ACTIVE_FUND_FEE: `${FUND_FEES.active}%`,
+  FUND_FEES_YEAR: String(FUND_FEES_YEAR),
 };
 
 const TOKEN = /\{\{([A-Z0-9_]+)\}\}/g;

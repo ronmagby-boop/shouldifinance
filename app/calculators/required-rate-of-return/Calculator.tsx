@@ -7,31 +7,10 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, LineChart, COLORS } from "../../components/Charts";
 import { growthSeries } from "../../lib/finance";
+import { BENCHMARK_RETURN as BENCHMARK, FANCIFUL_RETURN as FANCIFUL, LONG_RUN } from "../../lib/markets";
 
-/**
- * Long-run US returns, 1928-2025, as geometric averages over 98 years of
- * annual returns. From Aswath Damodaran's dataset at NYU Stern: $100 invested
- * at the start of 1928 ended 2025 at $1,157,598.95 in the S&P 500 with
- * dividends reinvested, $7,752.88 in 10-year Treasuries and $2,578.30 in
- * 3-month bills.
- *
- * The verdict bands hang off these rather than off round numbers, because the
- * useful fact about a required return is where it sits against what the broad
- * asset classes have actually delivered. Any mix of stocks and bonds has a
- * long-run return somewhere between the bond and stock figures, so a required
- * return above the stock figure is a bet on beating the best of them.
- */
-const LONG_RUN = { stocks: 10.02, bonds: 4.54, bills: 3.37 };
-
-/**
- * The top of "aggressive". Unlike the three above this is a judgement, not a
- * measurement — it marks where a required return stops describing a portfolio
- * and starts describing a hope.
- */
-const FANCIFUL = 15;
-
-/** Sits between the long-run bond and stock figures — a mixed portfolio. */
-const BENCHMARK = 7;
+/* LONG_RUN, FANCIFUL and BENCHMARK live in lib/markets so the guide that
+   explains this page quotes the same figures. */
 
 function endingBalance(initial: number, monthly: number, rate: number, years: number): number {
   const g = growthSeries({ initial, contribution: monthly, annualRate: rate, years, periodsPerYear: 12 });

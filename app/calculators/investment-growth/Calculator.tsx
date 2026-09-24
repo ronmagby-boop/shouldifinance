@@ -7,15 +7,11 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, LineChart, COLORS } from "../../components/Charts";
 import { growthSeries } from "../../lib/finance";
+import { FUND_FEES, FUND_FEES_YEAR } from "../../lib/markets";
 
-/**
- * What a broad index fund costs, for the side-by-side against whatever the
- * user typed. Index equity mutual funds averaged 0.05% in 2025 on an
- * asset-weighted basis, against 0.64% for actively managed equity funds —
- * ICI Research Perspective 32, no. 1 (March 2026), "Trends in the Expenses
- * and Fees of Funds, 2025", Figure 6.
- */
-const LOW_COST_FEE = 0.05;
+/* Fund expense ratios live in lib/markets so the guide quotes the same
+   figures. */
+const LOW_COST_FEE = FUND_FEES.index;
 
 export default function Calculator() {
   const [initial, setInitial] = useState<Num>("");
@@ -133,7 +129,7 @@ export default function Calculator() {
               <NumField label="Inflation" value={inflation} onChange={setInflation} min={0} placeholder="2.5" suffix="%" step={0.1} />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed -mt-2">
-              Actively managed equity funds averaged 0.64% in 2025; index equity funds averaged 0.05%
+              Actively managed equity funds averaged {FUND_FEES.active}% in {FUND_FEES_YEAR}; index equity funds averaged {FUND_FEES.index}%
               (ICI, asset-weighted).
             </p>
             <NumField
