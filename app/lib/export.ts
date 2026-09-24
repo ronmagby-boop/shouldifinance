@@ -1,13 +1,13 @@
 /**
  * Export plumbing, shared by all 43 calculators.
  *
- * NOTHING HERE TRANSMITS ANYTHING. Every action runs in the browser: the
- * clipboard write is local, the share link is built and read from the URL in
- * the address bar, printing is the browser's own, and "email to myself" is a
+ * NOTHING HERE TRANSMITS THE USER'S FIGURES. Every action runs in the browser:
+ * the clipboard write is local, the share link is built and read from the URL
+ * in the address bar, printing is the browser's own, and "email to myself" is a
  * mailto: URL handed to the user's own mail client. There is no fetch, no
- * endpoint and no storage. The privacy policy's claim that figures entered
- * into a calculator are never transmitted stays true, and these features were
- * built the way they were in order to keep it true.
+ * endpoint and no storage in this file. The privacy policy's claim that figures
+ * entered into a calculator are never transmitted stays true, and these
+ * features were built the way they were in order to keep it true.
  *
  * The values are harvested from the DOM rather than passed in by each page.
  * That is deliberate: the calculators hold their state in local useState and

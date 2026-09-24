@@ -29,11 +29,10 @@ export const metadata: Metadata = {
 /**
  * Deliberately not a form.
  *
- * A form needs somewhere to post to, and this site has no backend — the
- * calculators run entirely in your browser and nothing is transmitted
- * anywhere. The privacy policy says exactly that, and it is true because there
- * is no server-side anything. Adding a form would make it false, for the sake
- * of saving a reader one click into their mail client.
+ * A form needs a server to post to and this site is static, so there is nothing
+ * to receive one. That is the whole reason — note that it is NOT "a form would
+ * break the no-transmission promise". The promise is about figures entered into
+ * a calculator, which a contact form would never touch. Keep the two apart.
  */
 export default function Contact() {
   const mailto = `mailto:${LEGAL_CONTACT_EMAIL}`;
@@ -113,17 +112,22 @@ export default function Contact() {
           <h2 className="text-base font-bold text-gray-900 mb-2">Why there is no form</h2>
           <p>
             A contact form has to post somewhere, which means a server that receives and stores what
-            you typed. This site has neither. All {CALCULATORS.length} calculators run entirely in
-            your browser — the figures you enter are never sent anywhere, and the{" "}
-            <Link href="/privacy" className="text-green-700 underline">
-              Privacy Policy
-            </Link>{" "}
-            says so plainly.
+            you typed. This site is static and has no such server, so there is nothing for a form to
+            submit to.
           </p>
           <p className="mt-3">
-            Adding a form would make that untrue, in exchange for saving you one click. Your mail
-            client is a better place for the message anyway: you keep a copy, and you can see
-            exactly what you sent.
+            Your mail client is a better place for the message anyway: you keep a copy, and you can
+            see exactly what you sent and to whom.
+          </p>
+          <p className="mt-3">
+            Worth separating from that, because the two get confused: the figures you type into any
+            of the {CALCULATORS.length} calculators are computed in your browser and are never
+            transmitted or stored. That holds whatever else the Site loads, and it is set out in the{" "}
+            <Link href="/privacy" className="text-green-700 underline">
+              Privacy Policy
+            </Link>
+            . A contact form would not have changed it — an email is simply the honest way to reach
+            one person.
           </p>
         </section>
 

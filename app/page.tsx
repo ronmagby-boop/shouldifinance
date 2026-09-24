@@ -374,7 +374,12 @@ export default function Home() {
             {[
               { Icon: FileText, num: `${GUIDE_COUNT}`, label: GUIDE_COUNT === 1 ? "In-Depth Guide" : "In-Depth Guides" },
               { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Calculators & Tools" },
-              { Icon: ShieldCheck, num: "No Signup", label: "Free, And Nothing Tracked" },
+              /* "Nothing Tracked" was removed: the site will carry analytics and
+                 eventually advertising, and a tile contradicting the privacy
+                 policy is worse than a narrower one. What replaced it is the
+                 claim that survives all of that — calculator figures are
+                 computed in the browser and never transmitted. */
+              { Icon: ShieldCheck, num: "Private", label: "Your Figures Stay In Your Browser" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 md:px-8">
                 <span className="w-9 h-9 rounded-xl bg-white/10 text-green-300 flex items-center justify-center flex-shrink-0">

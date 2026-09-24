@@ -13,10 +13,11 @@
  * │ or "clean it up" for display. If it reads 6.95, it shows 6.95.       │
  * └──────────────────────────────────────────────────────────────────────┘
  *
- * Why build time: the site is static and the privacy policy says a visitor's
- * browser makes no third-party requests. A client-side fetch would break that
- * claim. This runs on the build machine; the visitor receives a number baked
- * into the HTML and their browser never contacts Freddie Mac.
+ * Why build time: a weekly figure does not need fetching on every page view,
+ * and baking it in means one less third party in the page. The visitor receives
+ * a number already in the HTML. This is not what upholds the privacy policy —
+ * that rests on the narrower and unconditional claim that figures typed into a
+ * calculator are never transmitted, which nothing here touches.
  *
  * Why Freddie Mac directly rather than FRED: FRED is a redistributor. Going to
  * the owner means one set of terms instead of two, no API key to keep secret,

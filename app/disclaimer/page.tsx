@@ -179,8 +179,8 @@ export default function Disclaimer() {
           more than a percentage point in both directions.
         </p>
         <p>
-          The figure is retrieved when the Site is built, not when you visit, so viewing it sends
-          nothing from your browser to Freddie Mac or anyone else. If the retrieval fails, or the
+          The figure is retrieved when the Site is built, not when you visit, so your browser does
+          not contact Freddie Mac to display it. If the retrieval fails, or the
           most recent survey becomes more than ten days old, the rate is removed from the Site
           rather than shown as current.
         </p>

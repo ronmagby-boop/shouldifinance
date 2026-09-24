@@ -16,10 +16,12 @@ import raw from "./pmms.json";
  * │ Attribution must appear wherever the rate does.                      │
  * └──────────────────────────────────────────────────────────────────────┘
  *
- * The figure is baked in at build time by scripts/fetch-pmms.mjs. A visitor's
- * browser never contacts Freddie Mac — the site is static and the privacy
- * policy's claim that no third-party requests are made from the browser has to
- * stay true, which is the whole reason this is a build step and not a fetch.
+ * The figure is baked in at build time by scripts/fetch-pmms.mjs, so a visitor's
+ * browser does not contact Freddie Mac to show it. That is a deliberate choice
+ * about this feature, not a promise about the whole site: the site does use
+ * measurement and will carry advertising, and the privacy policy says so. What
+ * is promised is narrower and unconditional — figures typed into a calculator
+ * are never transmitted. Nothing here touches those.
  */
 
 type Payload = {

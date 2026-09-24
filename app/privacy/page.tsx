@@ -7,7 +7,7 @@ import { LEGAL_CONTACT_EMAIL, LEGAL_UPDATED_LABEL } from "../lib/legal";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How ShouldIFinance handles your information. Calculator inputs are processed in your browser and never sent to us. No analytics, no tracking, no accounts.",
+    "How ShouldIFinance handles your information. The figures you enter into a calculator are processed in your browser and are never transmitted or stored.",
   alternates: { canonical: `${SITE}/privacy` },
   openGraph: {
     type: "website",
@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
     <LegalShell
       eyebrow="Privacy"
       title="Privacy Policy"
-      intro="The short version: the calculators run inside your browser, the numbers you type never reach us, and there is nothing to sign up for. The rest of this page explains that in detail and tells you what would change if that ever stops being true."
+      intro="The short version: the calculators run inside your browser, and the numbers you type into them never reach us or anyone else. The rest of this page explains that in detail, and sets out what the Site does and does not do with everything else."
       current="/privacy"
     >
       <Note tone="green">
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
         own browser. Your income, balances, debts and the rest are held in the page while you have it
         open and are discarded when you close the tab. They are not sent to a server, not written to
         your device, and not seen by us. You can confirm this yourself: open your browser&apos;s
-        network tools, fill in a calculator, and watch that no request is made.
+        network tools, fill in a calculator, and watch that nothing you typed is sent anywhere.
       </Note>
 
       <Section id="who-we-are" heading="1. Who this policy covers">
@@ -49,29 +49,63 @@ export default function PrivacyPolicy() {
           stored in a database, and not retained after you close or reload the page.
         </p>
         <p>
-          The Site has no accounts, no sign-up, no login and no forms that submit anywhere. There is
-          no mechanism by which a figure you enter could reach us, because none was built.
+          This is the claim worth holding the Site to, and it does not depend on anything else on
+          this page. Whatever else the Site may come to load — measurement, an embedded widget,
+          advertising — the figures you type into a calculator are computed where you typed them.
+          Nothing carries them off the page, because no such mechanism was built.
+        </p>
+        <p>
+          There are also no accounts, no sign-up and no login, so there is nothing to attach a
+          calculation to even if one were captured.
         </p>
       </Section>
 
-      <Section id="what-we-dont-collect" heading="3. What the Site does not collect">
-        <p>As of {LEGAL_UPDATED_LABEL}, the Site does not:</p>
+      <Section id="what-we-dont-collect" heading="3. What the Site does not ask you for">
+        <p>However the Site is built at any given time, it does not:</p>
         <ul className="list-disc pl-5 space-y-1.5">
-          <li>collect names, email addresses, phone numbers or postal addresses;</li>
+          <li>ask you for your name, email address, phone number or postal address;</li>
           <li>ask for or process financial account numbers, Social Security numbers or credit information;</li>
-          <li>use analytics or measurement tools of any kind — there is no Google Analytics, Tag Manager, Plausible, Fathom, PostHog, Mixpanel, Hotjar, Meta pixel or equivalent;</li>
-          <li>use advertising networks, retargeting pixels or data brokers;</li>
-          <li>embed third-party scripts, iframes, chat widgets, video players or social media embeds;</li>
-          <li>write cookies, <code className="text-xs">localStorage</code>, <code className="text-xs">sessionStorage</code> or any other data to your device;</li>
-          <li>build profiles of visitors, or sell or share personal information with anyone.</li>
+          <li>require an account, a login or any registration to use a calculator;</li>
+          <li>transmit, store or retain the figures you enter into a calculator;</li>
+          <li>sell personal information, or build a profile of you from what you calculate.</li>
         </ul>
         <p>
-          Web fonts are served from this Site&apos;s own servers rather than loaded from a font
-          provider, so viewing a page does not reveal your visit to a third party in that way either.
+          That list is about what the Site asks of <em>you</em>. It is separate from the ordinary
+          technical processing that happens when any page loads, covered in sections 4 and 5, and
+          from advertising, covered in section 7.
         </p>
       </Section>
 
-      <Section id="hosting-and-logs" heading="4. Hosting and server logs">
+      <Section id="measurement" heading="4. Measurement and third-party components">
+        <p>
+          Like most websites, this one may use privacy-respecting analytics to understand which
+          pages are read and which calculators are used — aggregate counts of page views, referring
+          sites, approximate region, device type and the like. The purpose is to know which tools are
+          worth maintaining, not to identify you.
+        </p>
+        <p>
+          The Site may also load components served by third parties — for example a market-data
+          widget, or in future the advertising described in section 7. Where it does, your browser
+          makes a request to that provider, and that provider can see the ordinary technical
+          information any web request carries, including your IP address and the page you are on.
+          Those providers act under their own privacy policies, not this one.
+        </p>
+        <Note tone="green">
+          <strong>What this does not change.</strong> None of it has access to what you type into a
+          calculator. Those figures are held in the page and used there; no script on the Site sends
+          them anywhere, and there is nothing for a third party to receive. Measurement tells us that
+          a mortgage calculator was opened. It does not, and cannot, tell us your salary.
+        </Note>
+        <Note>
+          <strong>To be completed before publication.</strong> Once analytics is live, name the
+          provider here, link its privacy documentation, state what it collects and whether it uses
+          cookies, and say whether data leaves the visitor&apos;s region. The same applies to any
+          embedded third-party component. Do not leave this section describing the general case once
+          the specific case is known.
+        </Note>
+      </Section>
+
+      <Section id="hosting-and-logs" heading="5. Hosting and server logs">
         <p>
           The Site is delivered by a third-party hosting provider. Like essentially all web hosts,
           that provider processes the technical information your browser sends in order to deliver a
@@ -89,36 +123,40 @@ export default function PrivacyPolicy() {
         <Note>
           <strong>To be completed before publication.</strong> The hosting provider must be named
           here, with a link to its privacy documentation, and its actual log-retention period stated.
-          At the time of drafting, the domain was still served by a previous host that sets its own
-          cookies, which this Site does not. Confirm which platform is live and restate this section
-          to match it.
+          At the time of drafting, the domain was still served by a previous host that set its own
+          cookies. Confirm which platform is live and restate this section to match it.
         </Note>
       </Section>
 
-      <Section id="cookies" heading="5. Cookies">
+      <Section id="cookies" heading="6. Cookies and similar technologies">
         <p>
-          This Site sets no cookies of its own. It has no cookie banner because, as built, it has
-          nothing to ask consent for beyond the strictly necessary operational cookies a host may use
-          to deliver the page, which do not require consent in most jurisdictions.
+          Cookies, and the storage mechanisms that work like them, fall into three groups here.
+          <strong> Strictly necessary</strong> ones may be set by the hosting provider to deliver and
+          secure the page; these do not require consent in most jurisdictions.
+          <strong> Measurement</strong> may be used as described in section 4, depending on the tool
+          in use — some analytics work without cookies at all.
+          <strong> Advertising</strong> cookies are covered in section 7 and are not in use today.
         </p>
         <p>
-          If advertising is added in future, that will change — see section 6. Any such change will
-          be reflected here, with the date at the top of this page updated, before the change goes
-          live.
+          Where the law requires consent for any of these, a consent mechanism will be added before
+          the thing requiring it goes live, and this section will be rewritten to describe exactly
+          what is set, by whom and for how long — with the date at the top of this page updated.
         </p>
       </Section>
 
-      <Section id="not-yet-in-use" heading="6. Advertising and email — not in use today">
+      <Section id="not-yet-in-use" heading="7. Advertising and email — not in use today">
         <Note>
-          <strong>Nothing in this section is active.</strong> There is no advertising on this Site
-          and no email collection of any kind today. This section exists so you can see what would
-          change, not to describe something already happening.
+          <strong>Nothing in this section is active as of {LEGAL_UPDATED_LABEL}.</strong> There is no
+          advertising on this Site and no email collection of any kind on that date. This section
+          exists so you can see what would change, not to describe something already happening — and
+          the date matters, because it is the thing that tells you whether this paragraph can still
+          be relied on.
         </Note>
         <p>
-          The Site may in future carry advertising or offer an email newsletter. Rather than publish
-          terms for things that do not exist — which would describe the Site inaccurately — this
-          policy will be rewritten and re-dated <em>before</em> either is introduced. When that
-          happens, expect the following to be addressed:
+          The Site is expected to carry advertising in future, and may offer an email newsletter.
+          Rather than publish terms for something not yet built — which would describe the Site
+          inaccurately — this policy will be rewritten and re-dated <em>before</em> either goes live.
+          When that happens, expect the following to be addressed:
         </p>
         <ul className="list-disc pl-5 space-y-1.5">
           <li>
@@ -146,7 +184,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="third-parties" heading="7. Links to other sites">
+      <Section id="third-parties" heading="8. Links to other sites">
         <p>
           The Site links to external resources — government and regulatory sources such as the IRS,
           and social media profiles in the footer. Following a link takes you to a site we do not
@@ -156,26 +194,27 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="retention" heading="8. Data retention">
+      <Section id="retention" heading="9. Data retention">
         <p>
-          We retain no personal information, because we collect none. There is no database of
-          visitors, no stored calculator history and no archive to request deletion from. Hosting
+          We operate no database of visitors and keep no calculator history — there is no archive of
+          your calculations to request deletion from, because the figures never reach us. Hosting
           logs are retained by the hosting provider for its own operational period, described in
+          section 5, and any measurement data is retained by that provider under the terms named in
           section 4.
         </p>
       </Section>
 
-      <Section id="security" heading="9. Security">
+      <Section id="security" heading="10. Security">
         <p>
           The Site is served over HTTPS. Because the figures you enter never leave your browser, the
           most sensitive information involved in using this Site is never in transit and never at
-          rest on our side — which is a stronger protection than any security measure applied to
-          stored data. No method of transmission over the internet is completely secure, and no
+          rest on our side — which is a stronger protection than any security measure that could be
+          applied to it once stored. No method of transmission over the internet is completely secure, and no
           assurance of absolute security is given.
         </p>
       </Section>
 
-      <Section id="your-rights" heading="10. Your rights (CCPA and GDPR)">
+      <Section id="your-rights" heading="11. Your rights (CCPA and GDPR)">
         <p>
           Depending on where you live, you may have rights over personal information a business holds
           about you — including the right to know what is held, to obtain a copy, to correct it, to
@@ -183,18 +222,20 @@ export default function PrivacyPolicy() {
           exercising any of these.
         </p>
         <p>
-          <strong>California residents (CCPA/CPRA).</strong> We do not collect, sell or share
-          personal information as those terms are defined by California law, and we do not use
-          personal information for cross-context behavioural advertising. There is therefore nothing
-          for us to disclose, delete or opt you out of. If that changes — see section 6 — this
-          section will be rewritten with the disclosures and the opt-out mechanism California law
-          requires.
+          <strong>California residents (CCPA/CPRA).</strong> We do not sell personal information,
+          and we do not use it for cross-context behavioural advertising. Advertising is not in use
+          today; if it is introduced — see section 7 — some ad arrangements count as
+          &ldquo;sharing&rdquo; under California law, and this section will be rewritten with the
+          disclosures and the opt-out mechanism that requires, before it goes live. The figures you
+          enter into a calculator are not personal information we hold, under this or any other law,
+          because they are never transmitted to us.
         </p>
         <p>
-          <strong>UK and EU residents (UK GDPR / EU GDPR).</strong> We are not a controller of any
-          personal data about you, because we hold none. Server-log processing by the hosting
-          provider is carried out on the basis of legitimate interests in delivering and securing the
-          Site. You retain your rights of access, rectification, erasure, restriction, portability
+          <strong>UK and EU residents (UK GDPR / EU GDPR).</strong> Server-log processing by the
+          hosting provider, and any measurement described in section 4, are carried out on the basis
+          of legitimate interests in delivering, securing and understanding use of the Site — except
+          where consent is required, in which case it will be asked for. We hold no account data
+          about you, and the figures you enter into a calculator are not processed by us at all. You retain your rights of access, rectification, erasure, restriction, portability
           and objection, and the right to complain to your supervisory authority — in the UK, the
           Information Commissioner&apos;s Office.
         </p>
@@ -208,7 +249,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="children" heading="11. Children&rsquo;s privacy">
+      <Section id="children" heading="12. Children&rsquo;s privacy">
         <p>
           The Site is intended for adults making financial decisions. It is not directed to children
           under 13, and we do not knowingly collect personal information from children under 13 —
@@ -221,7 +262,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="changes" heading="12. Changes to this policy">
+      <Section id="changes" heading="13. Changes to this policy">
         <p>
           This policy may be revised as the Site changes. The date at the top of the page shows when
           it was last altered. Material changes — particularly the introduction of advertising or
@@ -229,7 +270,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="contact" heading="13. Contact">
+      <Section id="contact" heading="14. Contact">
         <p>
           Questions about this policy, or about privacy on this Site, can be sent to{" "}
           <a href={`mailto:${LEGAL_CONTACT_EMAIL}`} className="text-green-700 underline">

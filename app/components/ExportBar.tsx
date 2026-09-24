@@ -16,11 +16,12 @@ import { bySlug } from "../lib/calculators";
 /**
  * The four export actions, shared by all 43 calculators.
  *
- * Nothing here leaves the browser. Copy writes to the clipboard, the share link
- * is assembled from the address bar, print is the browser's own dialog, and
- * email is a mailto: URL handed to the user's mail client. There is no fetch
- * anywhere in this component or in lib/export, which is what keeps the privacy
- * policy's "nothing is transmitted" true.
+ * None of the user's figures leave the browser. Copy writes to the clipboard,
+ * the share link is assembled from the address bar, print is the browser's own
+ * dialog, and email is a mailto: URL handed to the user's mail client. There is
+ * no fetch anywhere in this component or in lib/export — which is what keeps
+ * the privacy policy's claim about CALCULATOR FIGURES true. That claim is the
+ * narrow one and the one that matters; do not widen it.
  *
  * It reads values out of the DOM through the data-x-* attributes on the shared
  * field and result components, so adding it to a calculator is one line and

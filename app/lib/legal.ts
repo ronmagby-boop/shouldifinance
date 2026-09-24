@@ -5,7 +5,7 @@
  * revision updates every page at once and they cannot drift apart. Bump it
  * whenever any of the three is edited in a way that changes its meaning.
  */
-export const LEGAL_LAST_UPDATED = new Date("2026-09-23T00:00:00Z");
+export const LEGAL_LAST_UPDATED = new Date("2026-09-24T00:00:00Z");
 
 export const LEGAL_UPDATED_LABEL = LEGAL_LAST_UPDATED.toLocaleDateString("en-US", {
   year: "numeric",
