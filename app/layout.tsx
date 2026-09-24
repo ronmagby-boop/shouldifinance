@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE } from "./lib/calculators";
 
 const geistSans = Geist({
@@ -53,7 +54,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        {/* Vercel Web Analytics. Cookieless — visitors are counted by a hash of
+            the incoming request, and no IP address is stored. The custom events
+            it carries are defined in lib/analytics.ts, which allows only
+            registry slugs and fixed labels through, so nothing a visitor typed
+            can reach it. Section 4 of the privacy policy describes both. */}
+        <Analytics />
+      </body>
     </html>
   );
 }

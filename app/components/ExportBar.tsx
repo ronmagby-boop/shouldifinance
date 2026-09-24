@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Copy, Link2, Printer, Mail, Check } from "lucide-react";
+import { trackExportUsed } from "../lib/analytics";
 import {
   applyState,
   asText,
@@ -99,6 +100,9 @@ export default function ExportBar({ slug }: Props) {
   const snap = (): Snapshot => harvest();
 
   const onCopy = useCallback(async () => {
+    // Records the action and the calculator only. `text` below holds the
+    // visitor's own figures and is never passed to an event.
+    trackExportUsed("copy", slug);
     const text = asText(title, snap(), { url: shareUrl(slug, snap()) });
     try {
       await navigator.clipboard.writeText(text);
@@ -122,6 +126,7 @@ export default function ExportBar({ slug }: Props) {
   }, [slug, title]);
 
   const onShare = useCallback(async () => {
+    trackExportUsed("share", slug);
     const url = shareUrl(slug, snap());
     try {
       await navigator.clipboard.writeText(url);
@@ -131,7 +136,10 @@ export default function ExportBar({ slug }: Props) {
     }
   }, [slug]);
 
-  const onPrint = useCallback(() => window.print(), []);
+  const onPrint = useCallback(() => {
+    trackExportUsed("print", slug);
+    window.print();
+  }, [slug]);
 
   /**
    * Email is a real anchor rather than a button that assigns location, so it
@@ -144,6 +152,10 @@ export default function ExportBar({ slug }: Props) {
   const prepEmail = useCallback(() => {
     if (mailRef.current) mailRef.current.href = mailtoUrl(title, snap(), shareUrl(slug, snap()));
   }, [slug, title]);
+
+  // Tracked on activation rather than in prepEmail: prepEmail also runs on
+  // focus, so counting it there would log an event for anyone tabbing past.
+  const onEmail = useCallback(() => trackExportUsed("email", slug), [slug]);
 
   return (
     <div className="mb-6 border border-gray-200 rounded-2xl p-4 bg-gray-50 print:hidden">
@@ -167,6 +179,7 @@ export default function ExportBar({ slug }: Props) {
           onMouseDown={prepEmail}
           onFocus={prepEmail}
           onTouchStart={prepEmail}
+          onClick={onEmail}
           className={BTN}
           aria-label="Email these results to yourself"
         >

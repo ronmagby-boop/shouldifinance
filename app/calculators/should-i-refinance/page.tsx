@@ -7,7 +7,8 @@ import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { payment, amortize, monthsFromPayment, interestOver } from "../../lib/finance";
 import { NumField } from "../../components/Inputs";
-import { related, relatedGridClass } from "../../lib/calculators";
+import { related } from "../../lib/calculators";
+import RelatedCalculators from "../../components/RelatedCalculators";
 import GuideLink from "../../components/GuideLink";
 import ExportBar from "../../components/ExportBar";
 
@@ -326,7 +327,7 @@ export default function ShouldIRefinance() {
           <h1 className="text-2xl font-medium text-gray-900 mb-2">Should I refinance?</h1>
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-2xl">Enter your current loan and a new loan you&apos;re considering. We&apos;ll compare monthly payments, chart both payoff timelines, and show real interest savings — including any extra payments.</p>
 
-            <ExampleButton onLoad={loadExample} onClear={clearExample} />
+            <ExampleButton slug="should-i-refinance" onLoad={loadExample} onClear={clearExample} />
 
           {/* TWO COLUMN ON DESKTOP, STACKED ON MOBILE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -546,26 +547,9 @@ export default function ShouldIRefinance() {
           <ExportBar slug="should-i-refinance" />
 
           {/* RELATED */}
-          <div className="mb-6">
-            <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
-              Related calculators
-            </h2>
-            <div className={relatedGridClass(RELATED.length)}>
-              {RELATED.map((card) => (
-                <Link
-                  key={card.slug}
-                  href={`/calculators/${card.slug}`}
-                  className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block"
-                >
-                  <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
-                    <card.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">{card.nav}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          {/* The shared component, so this page's grid is tracked like the
+              other 42. See RelatedCalculators for why. */}
+          <RelatedCalculators from="should-i-refinance" cards={RELATED} />
 
           <GuideLink slug="should-i-refinance" />
 

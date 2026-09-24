@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { TrendingUp } from "lucide-react";
 import { PMMS } from "../lib/pmms";
+import RateBannerLink from "./RateBannerLink";
 
 /**
  * The week's 30-year fixed average, on the homepage.
@@ -30,10 +30,7 @@ export default function RateBanner() {
   return (
     <section className="bg-gray-50" aria-label="This week's mortgage rate">
       <div className="max-w-7xl mx-auto px-5 md:px-8 pt-5 md:pt-6 text-center">
-        <Link
-          href="/calculators/mortgage-payment"
-          className="group inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-h-[44px] px-2 rounded-xl"
-        >
+        <RateBannerLink className="group inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-h-[44px] px-2 rounded-xl">
           <TrendingUp
             className="w-4 h-4 text-green-700 flex-shrink-0"
             strokeWidth={2}
@@ -52,7 +49,7 @@ export default function RateBanner() {
           <span className="hidden sm:inline text-xs font-semibold text-green-700 group-hover:underline whitespace-nowrap">
             Run your numbers →
           </span>
-        </Link>
+        </RateBannerLink>
 
         <p className="text-xs text-gray-400 leading-relaxed">
           Source: {PMMS.attribution}. A national average, not a quote.

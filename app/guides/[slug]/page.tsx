@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GuideShell, { CalculatorCta } from "../../components/GuideShell";
 import Markdown from "../../components/Markdown";
+import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
 import { SITE } from "../../lib/calculators";
 import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
 
@@ -66,16 +67,21 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         </>
       }
     >
-      <Markdown body={guide.body} />
+      {/* Wraps both the prose and the closing card so one delegated listener
+          counts every link into a calculator, tagged by which of the two it
+          came from. display:contents — it adds no box. */}
+      <GuideCalculatorLinks guide={guide.slug}>
+        <Markdown body={guide.body} />
 
-      {/* The closing call to action, for a guide that pairs with a calculator.
-          The body carries its own link earlier, so a reader who stops halfway
-          has already been offered it. An unpaired guide simply ends. */}
-      {calc && (
-        <div className="mt-8">
-          <CalculatorCta href={`/calculators/${calc.slug}`} title={calc.title} desc={calc.desc} />
-        </div>
-      )}
+        {/* The closing call to action, for a guide that pairs with a calculator.
+            The body carries its own link earlier, so a reader who stops halfway
+            has already been offered it. An unpaired guide simply ends. */}
+        {calc && (
+          <div className="mt-8" data-x-guide-cta>
+            <CalculatorCta href={`/calculators/${calc.slug}`} title={calc.title} desc={calc.desc} />
+          </div>
+        )}
+      </GuideCalculatorLinks>
 
       <div className="border-t border-gray-100 mt-10 pt-4">
         <Link

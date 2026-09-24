@@ -1,6 +1,8 @@
+"use client";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { bySlug } from "../lib/calculators";
+import { trackGuideOpened } from "../lib/analytics";
 
 /**
  * The one link from a calculator into its written guide.
@@ -24,6 +26,7 @@ export default function GuideLink({ slug }: { slug: string }) {
   return (
     <Link
       href={`/guides/${guide.slug}`}
+      onClick={() => trackGuideOpened(slug, guide.slug)}
       className="flex items-start gap-3 border border-gray-200 rounded-xl p-4 mb-6 bg-gray-50 hover:border-green-200 hover:shadow-sm transition-all"
     >
       <span className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0 text-green-700">

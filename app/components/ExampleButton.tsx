@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Sparkles, Eraser } from "lucide-react";
+import { trackExampleCleared, trackExampleLoaded } from "../lib/analytics";
 
 /**
  * The one control that fills a calculator with example numbers, and empties it
@@ -15,9 +16,12 @@ import { Sparkles, Eraser } from "lucide-react";
  * likely to press by reflex. Clearing stays valid whatever you have edited.
  */
 export default function ExampleButton({
+  slug,
   onLoad,
   onClear,
 }: {
+  /** The calculator this sits on — the only thing the event records. */
+  slug: string;
   onLoad: () => void;
   /** Resets every field to the page's initial state. */
   onClear?: () => void;
@@ -31,9 +35,11 @@ export default function ExampleButton({
         if (canClear) {
           onClear?.();
           setLoaded(false);
+          trackExampleCleared(slug);
         } else {
           onLoad();
           setLoaded(true);
+          trackExampleLoaded(slug);
         }
       }}
       className="inline-flex items-center gap-2 mb-4 text-sm font-semibold border border-green-200 bg-green-50 text-green-800 rounded-xl px-4 py-2.5 hover:bg-green-100 hover:border-green-300 transition-colors"

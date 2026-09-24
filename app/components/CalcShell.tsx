@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { bySlug, CATEGORY_SECTIONS, related, relatedGridClass } from "../lib/calculators";
+import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
+import RelatedCalculators from "./RelatedCalculators";
 import GuideLink from "./GuideLink";
 import ExportBar from "./ExportBar";
 import CalculatorSidebar, { CalculatorBrowseMobile } from "./CalculatorSidebar";
@@ -83,7 +84,7 @@ export default function CalcShell({
 
           {/* Sits directly above the inputs — this is the moment someone decides
               whether to type their own numbers or see it working first. */}
-          <ExampleButton onLoad={onExample} onClear={onClear} />
+          <ExampleButton slug={slug} onLoad={onExample} onClear={onClear} />
 
           {children}
 
@@ -95,26 +96,7 @@ export default function CalcShell({
           <ExportBar slug={slug} />
 
           {/* RELATED */}
-          <div className="mb-6">
-            <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">
-              Related calculators
-            </h2>
-            <div className={relatedGridClass(cards.length)}>
-              {cards.map((card) => (
-                <Link
-                  key={card.slug}
-                  href={`/calculators/${card.slug}`}
-                  className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block"
-                >
-                  <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
-                    <card.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">{card.nav}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <RelatedCalculators from={slug} cards={cards} />
 
           <GuideLink slug={slug} />
 

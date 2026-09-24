@@ -5,7 +5,8 @@ import CalculatorSidebar, { CalculatorBrowseMobile } from "../../components/Calc
 import MobileBottomNav, { MobileBottomNavSpacer } from "../../components/MobileBottomNav";
 import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
-import { related, relatedGridClass } from "../../lib/calculators";
+import { related } from "../../lib/calculators";
+import RelatedCalculators from "../../components/RelatedCalculators";
 import GuideLink from "../../components/GuideLink";
 import ExportBar from "../../components/ExportBar";
 import { NumField, type Num } from "../../components/Inputs";
@@ -223,7 +224,7 @@ export default function MortgageCalculator() {
               <p className="text-sm text-gray-500 leading-relaxed">Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.</p>
             </div>
 
-            <ExampleButton onLoad={loadExample} onClear={clearExample} />
+            <ExampleButton slug="mortgage-payment" onLoad={loadExample} onClear={clearExample} />
 
             {/* CALCULATOR */}
             <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
@@ -391,22 +392,9 @@ export default function MortgageCalculator() {
                 place this for it. See the "DOES NOT USE CalcShell" note above. */}
             <ExportBar slug="mortgage-payment" />
 
-            {/* RELATED CALCULATORS */}
-            <div className="mb-6">
-              <h2 className="text-base font-medium text-gray-900 mb-3 pb-2 border-b border-gray-100">Related calculators</h2>
-              <div className={relatedGridClass(RELATED.length)}>
-                {RELATED.map((card) => (
-                  <Link key={card.slug} href={`/calculators/${card.slug}`}
-                    className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block">
-                    <div className={`w-9 h-9 ${card.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}>
-                      <card.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
-                    </div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">{card.nav}</h3>
-                    <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            {/* RELATED CALCULATORS — the shared component, so this page's grid
+                is tracked like the other 42. See RelatedCalculators for why. */}
+            <RelatedCalculators from="mortgage-payment" cards={RELATED} />
 
             <GuideLink slug="mortgage-payment" />
 
