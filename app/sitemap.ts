@@ -43,6 +43,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     {
+      url: `${SITE}/about`,
+      lastModified: LEGAL_LAST_UPDATED,
+      changeFrequency: "yearly" as const,
+      priority: 0.4,
+    },
+    {
       url: `${SITE}/contact`,
       lastModified: LEGAL_LAST_UPDATED,
       changeFrequency: "yearly" as const,

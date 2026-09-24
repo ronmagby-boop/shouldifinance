@@ -465,10 +465,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Company</p>
-                {/* About is still a placeholder — its copy is drafted but not
-                    approved, and a page that says nothing is worse than none.
-                    Contact is real. */}
-                <a href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">About</a>
+                <Link href="/about" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">About</Link>
                 <Link href="/contact" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Contact</Link>
                 {[
                   { label: "Disclaimer", href: "/disclaimer" },
