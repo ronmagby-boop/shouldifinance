@@ -4,6 +4,7 @@ import LegalShell, { Note, Section } from "../components/LegalShell";
 import { CALCULATORS, SITE } from "../lib/calculators";
 import { TAX_YEAR } from "../lib/tax";
 import { LEGAL_CONTACT_EMAIL } from "../lib/legal";
+import { ADS_LIVE } from "../lib/ads";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
@@ -67,8 +68,16 @@ export default function Disclaimer() {
         <p>
           This Site is a separate personal project. It is operated independently, in the owner&apos;s
           own capacity, and it is <strong>not</strong> operated by, for or on behalf of the
-          owner&apos;s employer or any licensed entity. It does not advertise, solicit or offer any
-          lending product or service, from any institution. Nothing published here is a communication
+          owner&apos;s employer or any licensed entity. The owner does not advertise, solicit or
+          offer any lending product or service, from any institution.{ADS_LIVE ? (
+            <>
+              {" "}
+              The written guides carry third-party advertising served automatically by Google, which
+              the owner neither selects nor endorses; an advertisement appearing beside a guide is
+              not a solicitation or offer by the owner or by any institution the owner is associated
+              with, and is not a recommendation of the advertiser.
+            </>
+          ) : null} Nothing published here is a communication
           made in a licensed capacity, and reading it does not make you a customer, client, applicant
           or prospect of the owner or of any company the owner is associated with.
         </p>

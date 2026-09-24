@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GuideShell from "../components/GuideShell";
 import { CALCULATORS, SITE } from "../lib/calculators";
+import { ADS_LIVE } from "../lib/ads";
 import { GUIDES } from "../lib/guides";
 
 const DESCRIPTION =
@@ -63,8 +64,17 @@ export default function About() {
           </p>
           <p className="mt-3">
             The {GUIDES.length} guides do the same in prose — what a rule actually says, what it
-            excludes, and where two readings are possible. There is nothing here to buy and nobody
-            to hand you to. The numbers are the product.
+            excludes, and where two readings are possible.{" "}
+            {ADS_LIVE ? (
+              <>
+                The guides carry advertising, which is what pays for the site; it is bought by
+                whoever buys it and is not a recommendation, and no calculator carries any. Nothing
+                on the Site is sold by us, and no result is steered toward anyone.
+              </>
+            ) : (
+              <>There is nothing here to buy and nobody to hand you to.</>
+            )}{" "}
+            The numbers are the product.
           </p>
         </section>
 

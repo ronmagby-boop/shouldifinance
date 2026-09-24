@@ -3,6 +3,7 @@ import Link from "next/link";
 import LegalShell, { Note, Section } from "../components/LegalShell";
 import { SITE } from "../lib/calculators";
 import { LEGAL_CONTACT_EMAIL, LEGAL_UPDATED_LABEL } from "../lib/legal";
+import { ADS_LIVE } from "../lib/ads";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -137,7 +138,7 @@ export default function PrivacyPolicy() {
         </p>
         <p>
           The Site may also load components served by third parties — for example a market-data
-          widget, or in future the advertising described in section 7. Where it does, your browser
+          widget{ADS_LIVE ? ", and the advertising described in section 7" : ", or in future the advertising described in section 7"}. Where it does, your browser
           makes a request to that provider, and that provider can see the ordinary technical
           information any web request carries, including your IP address and the page you are on.
           Those providers act under their own privacy policies, not this one.
@@ -178,6 +179,51 @@ export default function PrivacyPolicy() {
       </Section>
 
       <Section id="cookies" heading="6. Cookies and similar technologies">
+{ADS_LIVE ? (
+        <>
+        <p>
+          Cookies, and the storage mechanisms that work like them, fall into three groups here, and
+          the three behave differently enough that it is worth separating them.
+        </p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>
+            <strong>Strictly necessary.</strong> The hosting provider may set operational cookies to
+            deliver and secure the page — routing a request, managing caching. These serve the
+            delivery of the page rather than any tracking purpose, and in most jurisdictions they do
+            not require consent. Section 5 covers the hosting relationship.
+          </li>
+          <li>
+            <strong>Measurement — sets nothing.</strong> This is the part most often assumed to work
+            the other way, so to be explicit: the analytics described in section 4 writes{" "}
+            <em>no cookie at all</em>, and nothing to local storage, session storage or IndexedDB.
+            There is no measurement cookie on this Site for you to accept or refuse, and no part of
+            the consent dialog described below concerns it. It counts a repeat view from a hash of
+            the request instead, which is discarded after 24 hours.
+          </li>
+          <li>
+            <strong>Advertising — cookies, and consent-gated.</strong> The advertising described in
+            section 7 does set cookies and read them. It runs on the written guides only. On those
+            pages, and only those, a consent dialog appears before personalised advertising cookies
+            are used, and your choice is recorded and respected. Section 7 lists the cookies, who
+            sets them and how long they last.
+          </li>
+        </ul>
+        <p>
+          So whether you are asked anything at all depends on where you are. The home page, the
+          calculators, the guide index and these legal pages carry no advertising, therefore set no
+          advertising cookie, therefore ask you nothing — putting a consent dialog on them would be
+          machinery for a purpose that does not exist there. Open a written guide and the dialog
+          appears, because that is where there is something to consent to.
+        </p>
+        <p>
+          You can change or withdraw an advertising choice at any time from the privacy link the
+          dialog leaves on the page, and your browser&apos;s own settings can block or clear any of
+          these cookies independently of anything here. The Site does not attempt to detect, defeat
+          or work around a blocker.
+        </p>
+        </>
+      ) : (
+        <>
         <p>
           Cookies, and the storage mechanisms that work like them, fall into three groups here.
           <strong> Strictly necessary</strong> ones may be set by the hosting provider to deliver and
@@ -194,9 +240,108 @@ export default function PrivacyPolicy() {
           this section will be rewritten to describe exactly what is set, by whom and for how long,
           with the date at the top of this page updated.
         </p>
+        </>
+      )}
       </Section>
 
-      <Section id="not-yet-in-use" heading="7. Advertising and email — not in use today">
+      <Section
+        id={ADS_LIVE ? "advertising" : "not-yet-in-use"}
+        heading={ADS_LIVE ? "7. Advertising" : "7. Advertising and email — not in use today"}
+      >
+{ADS_LIVE ? (
+        <>
+        <p>
+          The Site carries advertising supplied by <strong>Google AdSense</strong>, and it carries it
+          on the written guides only. There is no advertising on the home page, on any of the
+          calculators, on the guide or calculator indexes, or on these legal pages. That is a
+          deliberate limit, not an accident of layout: the calculators are the thing people come
+          for, and the code that loads advertising is not requested at all on a page without an ad
+          unit — so on those pages no Google advertising script runs and no advertising cookie is
+          set.
+        </p>
+        <p>
+          On a guide page, your browser requests the advertisement from Google and from its ad
+          partners. Those requests carry the ordinary technical information any web request carries,
+          including your IP address, your device and browser, and the page you are on. Google uses
+          this to select and measure advertising, and to detect invalid traffic.
+        </p>
+        <p>
+          <strong>Google is an independent controller of that data for its own purposes.</strong> It
+          is not simply acting on instructions from this Site: Google determines how it uses the
+          information it collects through advertising, under its own policies rather than this one.
+          What it collects, why, and the controls you have over it are set out in{" "}
+          <a
+            href="https://policies.google.com/technologies/ads"
+            className="text-green-700 underline"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Google&apos;s advertising privacy documentation
+          </a>
+          , and ad personalisation can be turned off for your Google account at{" "}
+          <a
+            href="https://myadcenter.google.com/"
+            className="text-green-700 underline"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            My Ad Center
+          </a>
+          .
+        </p>
+        <p>
+          <strong>Cookies Google&apos;s documentation lists for advertising</strong>, with the
+          durations it states:
+        </p>
+        <ul className="list-disc pl-5 space-y-1.5">
+          <li>
+            <strong>__gads</strong> — set on this Site&apos;s own domain; enables the display of
+            advertising and measures interaction with it. Google states a lifetime of 13 months.
+          </li>
+          <li>
+            <strong>IDE</strong> — set on doubleclick.net; used to show Google advertising on
+            non-Google sites and to personalise it. Google states 13 months in the EEA, the UK and
+            Switzerland, and 24 months elsewhere.
+          </li>
+          <li>
+            <strong>test_cookie</strong> — set on doubleclick.net to check whether your browser
+            accepts cookies at all. It is short-lived, a matter of minutes.
+          </li>
+          <li>
+            <strong>DSID</strong> — used to identify a signed-in user across non-Google sites so
+            that their Google ad-personalisation setting is respected. Google states 2 weeks.
+          </li>
+        </ul>
+        <p>
+          Google may set others, and the exact set depends on your location, your Google account
+          settings and the choice you make in the consent dialog. The list Google maintains is
+          authoritative and is linked above; this list is the advertising subset of it as at the
+          date on this page.
+        </p>
+        <p>
+          <strong>Consent.</strong> In the European Economic Area, the United Kingdom and
+          Switzerland, Google requires publishers to use a certified consent management platform
+          before personalised advertising may be served. This Site uses Google&apos;s own certified
+          platform. The dialog appears on a guide page, before personalised advertising cookies are
+          used, and records your choice. Declining does not remove the advertising — it means you
+          are shown non-personalised or limited advertising instead, which is selected from the
+          content of the page rather than from anything about you.
+        </p>
+        <p>
+          <strong>Email.</strong> There is still no email collection of any kind on this Site, and no
+          newsletter. If one is added it will be opt-in, every message will carry an unsubscribe
+          link, and the address will not be sold or rented.
+        </p>
+        <Note tone="green">
+          <strong>What advertising does not reach.</strong> It does not reach the figures you type
+          into a calculator — there is no advertising on a calculator page at all, and even if there
+          were, those figures are never transmitted anywhere by anything (section 2). Nothing you
+          enter is used to select an advertisement, because nothing you enter leaves the page you
+          entered it on.
+        </Note>
+        </>
+      ) : (
+        <>
         <Note>
           <strong>Nothing in this section is active as of {LEGAL_UPDATED_LABEL}.</strong> There is no
           advertising on this Site and no email collection of any kind on that date. This section
@@ -225,6 +370,8 @@ export default function PrivacyPolicy() {
             the address would not be sold or rented.
           </li>
         </ul>
+        </>
+      )}
         <p>
           Until this section says otherwise, neither applies. If you are reading this and the Site is
           showing you adverts, this policy is out of date and should not be relied on — please tell
@@ -274,11 +421,28 @@ export default function PrivacyPolicy() {
           exercising any of these.
         </p>
         <p>
-          <strong>California residents (CCPA/CPRA).</strong> We do not sell personal information,
-          and we do not use it for cross-context behavioural advertising. Advertising is not in use
-          today; if it is introduced — see section 7 — some ad arrangements count as
-          &ldquo;sharing&rdquo; under California law, and this section will be rewritten with the
-          disclosures and the opt-out mechanism that requires, before it goes live. The figures you
+          <strong>California residents (CCPA/CPRA).</strong> We do not sell personal information
+          for money. {ADS_LIVE ? (
+            <>
+              The Site does carry advertising on its written guides (section 7), and the delivery of
+              personalised advertising can amount to &ldquo;sharing&rdquo; personal information for
+              cross-context behavioural advertising under California law. You may opt out of that
+              sharing: use the advertising choice offered on any guide page, or a{" "}
+              <a href="https://globalprivacycontrol.org/" className="text-green-700 underline" rel="noopener noreferrer" target="_blank">
+                Global Privacy Control
+              </a>{" "}
+              signal sent by your browser, which is treated as a valid opt-out request. You will not
+              be treated differently for exercising it — the calculators and the guides work
+              identically either way.
+            </>
+          ) : (
+            <>
+              and we do not use it for cross-context behavioural advertising. Advertising is not in
+              use today; if it is introduced — see section 7 — some ad arrangements count as
+              &ldquo;sharing&rdquo; under California law, and this section will be rewritten with the
+              disclosures and the opt-out mechanism that requires, before it goes live.
+            </>
+          )} The figures you
           enter into a calculator are not personal information we hold, under this or any other law,
           because they are never transmitted to us.
         </p>
