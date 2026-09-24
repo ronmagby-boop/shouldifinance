@@ -439,14 +439,11 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Learn</p>
-                {/* Guides is a real section now. Articles, Blog and FAQ have
-                    no pages yet, so they stay inert rather than 404ing —
-                    Blog in particular is being held back for time-sensitive
-                    writing, which the guides deliberately are not. */}
+                {/* Guides is the whole of it. Articles, Blog and FAQ used to sit
+                    here as "#" placeholders, which read as an unfinished site;
+                    there is one content section and this is it. An unpaired
+                    piece still belongs in Guides. */}
                 <Link href="/guides" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Guides</Link>
-                {["Articles","Blog","FAQ"].map(l => (
-                  <a key={l} href="#" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l}</a>
-                ))}
               </div>
               <div>
                 <p className="font-bold text-white mb-3 text-sm">Company</p>

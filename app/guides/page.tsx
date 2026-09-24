@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import GuideShell from "../components/GuideShell";
+import { BookOpen } from "lucide-react";
 import { CATEGORY_SECTIONS, SITE } from "../lib/calculators";
 import { calculatorForGuide, GUIDE_CATEGORIES, GUIDES, guidesByCategory } from "../lib/guides";
 
@@ -35,8 +36,8 @@ export default function GuidesIndex() {
       meta={
         GUIDES.length > 0
           ? GUIDES.length === 1
-            ? "One guide, paired with the calculator it explains"
-            : `${GUIDES.length} guides, each paired with the calculator it explains`
+            ? "One guide"
+            : `${GUIDES.length} guides, grouped the way the calculators are`
           : null
       }
     >
@@ -73,6 +74,12 @@ export default function GuidesIndex() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {guides.map((guide) => {
                     const calc = calculatorForGuide(guide);
+                    /* A paired guide borrows its calculator's icon and tint, so
+                       the two read as the same thing seen twice. An unpaired one
+                       has nothing to borrow and takes the category's own colour
+                       with a generic mark. */
+                    const Icon = calc ? calc.icon : BookOpen;
+                    const tint = calc ? calc.bg : section.tint;
                     return (
                       <Link
                         key={guide.slug}
@@ -80,17 +87,19 @@ export default function GuidesIndex() {
                         className="border border-gray-200 rounded-xl p-4 hover:border-green-200 hover:shadow-sm transition-all block"
                       >
                         <div
-                          className={`w-9 h-9 ${calc.bg} rounded-lg flex items-center justify-center mb-3 text-gray-700`}
+                          className={`w-9 h-9 ${tint} rounded-lg flex items-center justify-center mb-3 text-gray-700`}
                         >
-                          <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
+                          <Icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                         </div>
                         <h3 className="text-sm font-medium text-gray-900 mb-1">{guide.title}</h3>
                         <p className="text-xs text-gray-400 leading-relaxed mb-2">
                           {guide.description}
                         </p>
-                        <p className="text-xs text-gray-400">
-                          Pairs with <span className="text-gray-500">{calc.nav}</span>
-                        </p>
+                        {calc && (
+                          <p className="text-xs text-gray-400">
+                            Pairs with <span className="text-gray-500">{calc.nav}</span>
+                          </p>
+                        )}
                       </Link>
                     );
                   })}

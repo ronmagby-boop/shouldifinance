@@ -27,7 +27,7 @@ export async function generateMetadata({
   return {
     title: guide.title,
     description: guide.description,
-    keywords: calc.keywords,
+    keywords: calc?.keywords,
     alternates: { canonical: url },
     openGraph: {
       title: `${guide.title} | ShouldIFinance`,
@@ -68,15 +68,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     >
       <Markdown body={guide.body} />
 
-      {/* The closing call to action. The body carries its own link earlier, so
-          a reader who stops halfway has already been offered the calculator. */}
-      <div className="mt-8">
-        <CalculatorCta
-          href={`/calculators/${calc.slug}`}
-          title={calc.title}
-          desc={calc.desc}
-        />
-      </div>
+      {/* The closing call to action, for a guide that pairs with a calculator.
+          The body carries its own link earlier, so a reader who stops halfway
+          has already been offered it. An unpaired guide simply ends. */}
+      {calc && (
+        <div className="mt-8">
+          <CalculatorCta href={`/calculators/${calc.slug}`} title={calc.title} desc={calc.desc} />
+        </div>
+      )}
 
       <div className="border-t border-gray-100 mt-10 pt-4">
         <Link

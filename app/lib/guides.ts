@@ -18,8 +18,15 @@ export type Guide = {
   slug: string;
   title: string;
   description: string;
-  /** Slug of the calculator this guide explains. Must exist in CALCULATORS. */
-  calculator: string;
+  /**
+   * Slug of the calculator this guide explains, when it explains one.
+   *
+   * Optional. Guides is the site's only content section, so a piece that does
+   * not belong to a calculator still belongs here. A guide that DOES declare a
+   * pairing is checked in both directions and fails the build on a mismatch —
+   * the looser requirement is on whether to pair, not on pairing correctly.
+   */
+  calculator?: string;
   category: Category;
   /** ISO date the content was last checked against its sources. */
   reviewed: string;
@@ -57,7 +64,10 @@ function parseFrontmatter(raw: string): { data: Record<string, string>; body: st
   return { data, body: match[2] };
 }
 
-const REQUIRED = ["title", "slug", "description", "calculator", "category", "reviewed"] as const;
+const REQUIRED = ["title", "slug", "description", "category", "reviewed"] as const;
+
+/** A guide is filed under one of these whether or not it pairs with a calculator. */
+const CATEGORIES: Category[] = ["Home", "Debt", "Money", "Auto"];
 
 function readGuides(): Guide[] {
   if (!fs.existsSync(GUIDES_DIR)) return [];
@@ -73,30 +83,39 @@ function readGuides(): Guide[] {
         if (!data[key]) throw new Error(`content/guides/${file} is missing "${key}"`);
       }
 
-      const calc = bySlug(data.calculator);
-      if (!calc) {
+      if (!CATEGORIES.includes(data.category as Category)) {
         throw new Error(
-          `content/guides/${file} pairs with "${data.calculator}", which is not a calculator slug`,
+          `content/guides/${file} has category "${data.category}" — expected one of ` +
+            CATEGORIES.join(", "),
         );
       }
-      /* The registry names the guide and the guide names the calculator. Both
-       * halves have to agree or the build stops here — that is what keeps the
-       * two sides from drifting once there are forty of these. */
-      if (calc.guide?.slug !== data.slug) {
-        throw new Error(
-          `content/guides/${file} says it explains "${data.calculator}", but that ` +
-            `calculator's registry entry points at ` +
-            `${calc.guide ? `"${calc.guide.slug}"` : "no guide"}. Update app/lib/calculators.ts.`,
-        );
-      }
-      /* Category is on the guide so the markdown reads as a complete document,
-       * but a guide filed under a different heading from its own calculator
-       * would split the /guides index away from /calculators. */
-      if (data.category !== calc.category) {
-        throw new Error(
-          `content/guides/${file} is filed under "${data.category}" but ` +
-            `${calc.slug} is a "${calc.category}" calculator`,
-        );
+
+      /* Pairing is optional, but a declared pairing is checked hard. */
+      if (data.calculator) {
+        const calc = bySlug(data.calculator);
+        if (!calc) {
+          throw new Error(
+            `content/guides/${file} pairs with "${data.calculator}", which is not a calculator slug`,
+          );
+        }
+        /* The registry names the guide and the guide names the calculator.
+         * Both halves have to agree or the build stops here — that is what
+         * keeps the two sides from drifting once there are forty of these. */
+        if (calc.guide?.slug !== data.slug) {
+          throw new Error(
+            `content/guides/${file} says it explains "${data.calculator}", but that ` +
+              `calculator's registry entry points at ` +
+              `${calc.guide ? `"${calc.guide.slug}"` : "no guide"}. Update app/lib/calculators.ts.`,
+          );
+        }
+        /* A paired guide filed under a different heading from its own
+         * calculator would split the /guides index away from /calculators. */
+        if (data.category !== calc.category) {
+          throw new Error(
+            `content/guides/${file} is filed under "${data.category}" but ` +
+              `${calc.slug} is a "${calc.category}" calculator`,
+          );
+        }
       }
       const reviewed = Date.parse(data.reviewed);
       if (Number.isNaN(reviewed)) {
@@ -114,7 +133,7 @@ function readGuides(): Guide[] {
         slug: data.slug,
         title: data.title,
         description: data.description,
-        calculator: data.calculator,
+        calculator: data.calculator || undefined,
         category: data.category as Category,
         reviewed: data.reviewed,
         /* Figures that move with the tax year are written as {{TOKEN}} and
@@ -156,9 +175,14 @@ export const GUIDE_CATEGORIES: Category[] = ["Home", "Debt", "Money", "Auto"].fi
   GUIDES.some((g) => g.category === c),
 ) as Category[];
 
-/** The calculator a guide explains. Always defined — readGuides checks it. */
+/**
+ * The calculator a guide explains, or undefined for an unpaired guide.
+ *
+ * When a slug IS declared, readGuides has already proved it resolves, so a
+ * miss here can only mean the guide is unpaired.
+ */
 export const calculatorForGuide = (guide: Guide) =>
-  CALCULATORS.find((c) => c.slug === guide.calculator)!;
+  guide.calculator ? CALCULATORS.find((c) => c.slug === guide.calculator) : undefined;
 
 export const formatReviewed = (iso: string): string =>
   new Date(iso).toLocaleDateString("en-US", {
