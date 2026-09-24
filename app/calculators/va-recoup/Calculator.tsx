@@ -48,6 +48,12 @@ export default function Calculator() {
   /** Box J, second line. Reduces what the veteran pays, so it reduces recoupment. */
   const [lenderCredits, setLenderCredits] = useState<Num>("");
   const [fundingFeePct, setFundingFeePct] = useState<Num>("");
+  /**
+   * Exemption is a property of the borrower, not of the loan, so it overrides
+   * the rate rather than zeroing the field — the percentage stays typed and
+   * comes back if the box is unticked.
+   */
+  const [ffExempt, setFfExempt] = useState(false);
   const [escrow, setEscrow] = useState<Num>("");
   const [financeCosts, setFinanceCosts] = useState(true);
   const [firstPayment, setFirstPayment] = useState("");
@@ -64,6 +70,7 @@ export default function Calculator() {
     setRecordingFees(250);
     setLenderCredits(950);
     setFundingFeePct(0.5);
+    setFfExempt(false);
     setEscrow(0);
     setFinanceCosts(true);
     const seasoned = addMonths(new Date(), -18);
@@ -82,6 +89,7 @@ export default function Calculator() {
     setRecordingFees("");
     setLenderCredits("");
     setFundingFeePct("");
+    setFfExempt(false);
     setEscrow("");
     setFinanceCosts(true);
     setFirstPayment("");
@@ -91,7 +99,7 @@ export default function Calculator() {
   const r = useMemo(() => {
     if (n(balance) <= 0 || n(currentPayment) <= 0) return null;
 
-    const fundingFee = (n(balance) * n(fundingFeePct)) / 100;
+    const fundingFee = ffExempt ? 0 : (n(balance) * n(fundingFeePct)) / 100;
     /**
      * Two different totals, and conflating them was overstating recoupment.
      *
@@ -203,7 +211,7 @@ export default function Calculator() {
       savings10yr: monthlySavings * 120 - recoupableCosts,
       maxCosts: monthlySavings > 0 ? monthlySavings * VA_LIMIT : 0,
     };
-  }, [balance, currentRate, currentPayment, newRate, newTerm, loanCosts, recordingFees, lenderCredits, fundingFeePct, escrow, financeCosts, firstPayment, loanOverride]);
+  }, [balance, currentRate, currentPayment, newRate, newTerm, loanCosts, recordingFees, lenderCredits, fundingFeePct, ffExempt, escrow, financeCosts, firstPayment, loanOverride]);
 
   return (
     <CalcShell
@@ -272,7 +280,12 @@ export default function Calculator() {
                 placeholder="0.5"
                 suffix="%"
                 step={0.05}
-                hint="0.5% for most IRRRLs. Excluded from recoupment."
+                disabled={ffExempt}
+                hint={
+                  ffExempt
+                    ? "Exempt — no funding fee on this loan."
+                    : "0.5% for most IRRRLs. Excluded from recoupment."
+                }
               />
               <NumField
                 label="Prepaids and escrow (Boxes F + G)"
@@ -284,6 +297,12 @@ export default function Calculator() {
                 hint="Financed, but excluded from recoupment."
               />
             </div>
+            <Toggle checked={ffExempt} onChange={setFfExempt}>
+              I&apos;m exempt from the VA funding fee — receiving, or eligible to receive, VA
+              compensation for a service-connected disability, or a surviving spouse receiving
+              DIC, or a Purple Heart recipient on active duty. Compensation starts at a 10%
+              rating, so a 0% rating is not exempt.
+            </Toggle>
             <Toggle checked={financeCosts} onChange={setFinanceCosts}>
               Roll costs into the new loan (IRRRLs are usually structured this way)
             </Toggle>
