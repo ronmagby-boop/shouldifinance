@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, Eraser } from "lucide-react";
 import { trackExampleCleared, trackExampleLoaded } from "../lib/analytics";
+import { RESTORED_EVENT } from "../lib/export";
 
 /**
  * The one control that fills a calculator with example numbers, and empties it
@@ -28,6 +29,26 @@ export default function ExampleButton({
 }) {
   const [loaded, setLoaded] = useState(false);
   const canClear = loaded && Boolean(onClear);
+
+  /**
+   * A restored share link counts as loaded.
+   *
+   * Not because the figures are the example — they are someone else's — but
+   * because of what the label controls. This button is the reflex one, and the
+   * rule above is that the destructive action must never be what it does when
+   * the page holds numbers worth keeping. A recipient arriving on a share link
+   * holds exactly that: figures they did not type and cannot retype, under a
+   * button offering to overwrite them with the example.
+   *
+   * "Clear all numbers" is also simply true — there are numbers, and pressing
+   * it empties them. The example stays one tap further away, because clearing
+   * flips the label back.
+   */
+  useEffect(() => {
+    const onRestored = () => setLoaded(true);
+    window.addEventListener(RESTORED_EVENT, onRestored);
+    return () => window.removeEventListener(RESTORED_EVENT, onRestored);
+  }, []);
 
   return (
     <button

@@ -282,6 +282,16 @@ export function applyState(
   return applied;
 }
 
+/**
+ * Fired on window once a share link has actually put values into the page.
+ *
+ * ExampleButton listens for it. An event rather than a mount-time check
+ * because ExampleButton sits ABOVE ExportBar in CalcShell, so its effect runs
+ * first — before the restore has happened — and anything it read at mount
+ * would always say "empty".
+ */
+export const RESTORED_EVENT = "x-share-restored";
+
 /* ------------------------------------------------------------- plain text -- */
 
 const line = (label: string, value: string) => `${label}: ${value}`;

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Copy, Link2, Printer, Mail, Check } from "lucide-react";
 import { trackExportUsed } from "../lib/analytics";
 import {
+  RESTORED_EVENT,
   applyState,
   asText,
   harvest,
@@ -63,8 +64,16 @@ export default function ExportBar({ slug }: Props) {
      * the browser at startup) would sit unrestored until the tab was focused.
      * A timeout retry covers anything that mounts a beat later, and applying
      * twice is harmless because the second pass writes the same values. */
-    if (applyState(slug, s) === 0) {
-      const t = window.setTimeout(() => applyState(slug, s), 0);
+    /* Tell ExampleButton the page is no longer empty, so it offers to clear
+       rather than to overwrite. Only on an apply that actually did something:
+       a link for another calculator, or a mangled one, restores nothing and
+       must leave the button alone. */
+    const announce = (n: number) => {
+      if (n > 0) window.dispatchEvent(new Event(RESTORED_EVENT));
+      return n;
+    };
+    if (announce(applyState(slug, s)) === 0) {
+      const t = window.setTimeout(() => announce(applyState(slug, s)), 0);
       return () => window.clearTimeout(t);
     }
   }, [slug]);
