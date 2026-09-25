@@ -10,7 +10,7 @@ import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calcul
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
-import RateBanner from "./components/RateBanner";
+import RatesPill from "./components/RatesPill";
 
 // hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
 // #cdeee7 / #cceee7 / #cdeee7 / #ccede7, averaging the #CCEEE7 the section uses.
@@ -214,7 +214,6 @@ export default function Home() {
       {/* THIS WEEK'S RATE — between the hero/stats and the category grid, so it
           is the first concrete number on the page. Renders nothing when there
           is no fresh survey; see lib/pmms.ts for the staleness rule. */}
-      <RateBanner />
 
       {/* DECIDE — search plus the four category doors. Replaces the old
           "Popular Tools" grid; example calculators now live inside each card. */}
@@ -228,14 +227,29 @@ export default function Home() {
       <section id="calculators" aria-label="Browse calculators by topic"
         className="pt-9 md:pt-12 pb-10 md:pb-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          {/* Browse, for anyone who would rather look around than search. */}
-          <div className="text-center mb-8 md:mb-10">
+          {/* Browse, for anyone who would rather look around than search — and
+              beside it, the way into the rates page.
+
+              STACKED BELOW sm, SIDE BY SIDE ABOVE IT. Two pills across 390px
+              leaves about 165px each, and "Explore Our Calculators" does not
+              fit that on its own, never mind the rates wording. So the primary
+              pill is what forces the stack, not the secondary one.
+
+              justify-center rather than a grid: when the rates pill is absent —
+              the stale-data state — Explore is left centred on its own exactly
+              as it was before, with no gap where the second pill would be. */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 md:mb-10">
             <Link href="/calculators"
-              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md">
-              <Calculator className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+              /* border-2 border-transparent so the two pills are the same HEIGHT.
+                 The rates pill's green outline is a real 2px border, which
+                 would otherwise make it 4px taller than this one — visible as
+                 soon as they sit side by side. */
+              className="inline-flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full px-7 py-3.5 text-sm transition-colors shadow-md w-full sm:w-auto border-2 border-transparent">
+              <Calculator className="w-4 h-4 flex-shrink-0" strokeWidth={2} aria-hidden="true" />
               Explore Our Calculators
-              <ArrowRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+              <ArrowRight className="w-4 h-4 flex-shrink-0" strokeWidth={2.2} aria-hidden="true" />
             </Link>
+            <RatesPill />
           </div>
 
           {/* Four category doors; byCategory puts the "Should I ...?" tools first */}
