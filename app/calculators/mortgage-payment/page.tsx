@@ -7,6 +7,7 @@ import SiteNav from "../../components/SiteNav";
 import ExampleButton from "../../components/ExampleButton";
 import { related } from "../../lib/calculators";
 import RelatedCalculators from "../../components/RelatedCalculators";
+import SiteFooter from "../../components/SiteFooter";
 import AdUnit from "../../components/AdUnit";
 import GuideLink from "../../components/GuideLink";
 import ExportBar from "../../components/ExportBar";
@@ -197,7 +198,7 @@ export default function MortgageCalculator() {
   };
 
   return (
-    <main className="min-h-screen bg-white font-sans">
+    <main className="min-h-screen bg-white font-sans flex flex-col">
       <div className="max-w-7xl mx-auto">
 
         <SiteNav position="sticky" logo="compact" />
@@ -416,6 +417,11 @@ export default function MortgageCalculator() {
         <MobileBottomNavSpacer />
 
       </div>
+
+      {/* Shared footer. This page still builds its own chrome, so it does not
+          get this from CalcShell — the eighth thing that had to be added here
+          by hand. See the "DOES NOT USE CalcShell" note above. */}
+      <SiteFooter />
     </main>
   );
 }

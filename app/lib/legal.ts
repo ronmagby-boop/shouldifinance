@@ -82,3 +82,14 @@ export const GOVERNING_STATE = "Arizona";
  * arrives, not when it is noticed.
  */
 export const LEGAL_CONTACT_EMAIL = "shouldifinance@gmail.com";
+
+/**
+ * Social profiles, linked from the footer on every page.
+ *
+ * Here rather than in the footer component for the same reason the contact
+ * address is: these are identity, they appear in more than one place over
+ * time, and a dead link in a footer is the kind of thing nobody notices.
+ * Both were confirmed to resolve (HTTP 200) when they were added.
+ */
+export const SOCIAL_INSTAGRAM = "https://www.instagram.com/shouldifinance/";
+export const SOCIAL_LINKEDIN = "https://www.linkedin.com/company/shouldifinance-com/";

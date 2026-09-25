@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import SiteFooter from "../components/SiteFooter";
 import Link from "next/link";
 import { byCategory, CALCULATORS, CATEGORY_SECTIONS, SITE } from "../lib/calculators";
 import SiteNav from "../components/SiteNav";
@@ -101,39 +101,7 @@ export default function AllCalculators() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#1a2744] text-white mt-auto">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-            <div className="max-w-xs">
-              <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} sizes="187px" className="h-10 w-auto" />
-              </span>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Better Questions. Smarter Decisions. Free financial tools for every stage of life.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-2">
-              {CATEGORY_SECTIONS.map(s => (
-                <a key={s.id} href={`#${s.id}`} className="text-xs text-gray-400 hover:text-white transition-colors">
-                  {s.category}
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="border-t border-white/10 mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
-            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
-              {[
-                { label: "Privacy Policy", href: "/privacy" },
-                { label: "Terms of Use", href: "/terms" },
-                { label: "Disclaimer", href: "/disclaimer" },
-              ].map(l => (
-                <Link key={l.href} href={l.href} className="text-xs text-gray-500 hover:text-white transition-colors">{l.label}</Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <MobileBottomNav />
       <MobileBottomNavSpacer />

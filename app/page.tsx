@@ -9,6 +9,7 @@ import {
 import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
+import SiteFooter from "./components/SiteFooter";
 import RateBanner from "./components/RateBanner";
 
 // hero.png (1176x628) has a near-uniform mint backdrop — its four corners sample
@@ -441,74 +442,9 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#1a2744] text-white">
-        <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 md:py-10">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
-            <div className="max-w-xs">
-              <span className="inline-flex bg-white rounded-lg px-3 py-2 mb-3">
-                <Image src="/logo-wide.png" alt="ShouldIFinance" width={556} height={119} sizes="187px" className="h-10 w-auto" />
-              </span>
-              <p className="text-xs text-gray-400 leading-relaxed">Better Questions. Smarter Decisions. Free financial tools for every stage of life.</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-sm w-full md:w-auto">
-              <div>
-                <p className="font-bold text-white mb-3 text-sm">Tools</p>
-                {[
-                  { label: "All calculators", href: "/calculators" },
-                  ...CATEGORY_SECTIONS.map(s => ({ label: s.category, href: `/calculators#${s.id}` })),
-                ].map(l => (
-                  <Link key={l.label} href={l.href} className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l.label}</Link>
-                ))}
-              </div>
-              <div>
-                <p className="font-bold text-white mb-3 text-sm">Learn</p>
-                {/* Guides is the whole of it. Articles, Blog and FAQ used to sit
-                    here as "#" placeholders, which read as an unfinished site;
-                    there is one content section and this is it. An unpaired
-                    piece still belongs in Guides. */}
-                <Link href="/guides" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Guides</Link>
-              </div>
-              <div>
-                <p className="font-bold text-white mb-3 text-sm">Company</p>
-                <Link href="/about" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">About</Link>
-                <Link href="/contact" className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">Contact</Link>
-                {[
-                  { label: "Disclaimer", href: "/disclaimer" },
-                  { label: "Privacy", href: "/privacy" },
-                  { label: "Terms", href: "/terms" },
-                ].map(l => (
-                  <Link key={l.label} href={l.href} className="block text-gray-400 hover:text-white mb-2 text-xs transition-colors">{l.label}</Link>
-                ))}
-              </div>
-              <div>
-                <p className="font-bold text-white mb-3 text-sm">Follow Us</p>
-                <div className="flex gap-3">
-                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-                    className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors text-xs font-bold">
-                    in
-                  </a>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                    className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors text-xs font-bold">
-                    ig
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
-            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
-              {[
-                { label: "Privacy Policy", href: "/privacy" },
-                { label: "Terms of Use", href: "/terms" },
-                { label: "Disclaimer", href: "/disclaimer" },
-              ].map(l => (
-                <Link key={l.href} href={l.href} className="text-xs text-gray-500 hover:text-white transition-colors">{l.label}</Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Shared with every other page — see components/SiteFooter. This was
+          the full copy the others were cut down from. */}
+      <SiteFooter />
 
       <MobileBottomNav />
       <MobileBottomNavSpacer />

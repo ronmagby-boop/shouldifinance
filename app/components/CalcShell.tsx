@@ -3,6 +3,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
 import RelatedCalculators from "./RelatedCalculators";
+import SiteFooter from "./SiteFooter";
 import AdUnit from "./AdUnit";
 import GuideLink from "./GuideLink";
 import ExportBar from "./ExportBar";
@@ -53,7 +54,7 @@ export default function CalcShell({
   const crumbText = crumb ?? bySlug(slug)?.nav ?? "";
 
   return (
-    <main className="min-h-screen bg-white font-sans">
+    <main className="min-h-screen bg-white font-sans flex flex-col">
       {/* Widened from max-w-5xl to make room for the sidebar rail without
           narrowing the calculator itself (1280 - 220 rail > the old 1024). */}
       <div className="max-w-7xl mx-auto">
@@ -126,6 +127,11 @@ export default function CalcShell({
         <MobileBottomNav />
         <MobileBottomNavSpacer />
       </div>
+
+      {/* Outside the max-w-7xl wrapper so the footer's own band spans the full
+          width, as it does on every other page. CalcShell rendered no footer at
+          all until now, which is why all 43 calculators had none. */}
+      <SiteFooter />
     </main>
   );
 }
