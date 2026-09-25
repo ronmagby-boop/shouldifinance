@@ -1,7 +1,7 @@
 "use client";
 import type { ReactNode } from "react";
 import { Plus, X } from "lucide-react";
-import { NumField, type Num } from "./Inputs";
+import { NumField, TextField, type Num } from "./Inputs";
 
 export type DebtRow = {
   name: string;
@@ -53,10 +53,6 @@ export default function DebtList({
   /** Optional line under a row — a warning, a figure, anything per-debt. */
   rowNote?: (debt: DebtRow, index: number) => ReactNode;
 }) {
-  // py-3 rather than py-2.5: at 2.5 the name field came out 42px, under the
-  // 44px tap target the number fields beside it already meet.
-  const textInput =
-    "w-full px-3 py-3 border border-gray-200 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white";
   const headCell = "text-xs font-medium text-gray-400";
   const cols =
     "xl:grid-cols-[auto_minmax(120px,1.6fr)_minmax(112px,1fr)_minmax(100px,0.92fr)_minmax(96px,0.86fr)_auto]";
@@ -81,22 +77,30 @@ export default function DebtList({
           <div key={i} className="border-b border-gray-100 xl:border-0 pb-2 xl:pb-0">
             <div className={`grid grid-cols-[auto_minmax(0,1fr)_auto] ${cols} gap-2 items-center`}>
               <label className="flex items-center justify-center w-8 h-11 cursor-pointer xl:order-1">
+                {/* Tagged for export too. This was missing alongside the name
+                    and is the worse of the two: a blank name is visibly blank,
+                    whereas a payoff flag that silently reverts to its default
+                    changes the totals on the restored page without anything
+                    looking wrong. */}
                 <input
                   type="checkbox"
                   checked={d.payoff}
                   onChange={(e) => onUpdate(i, { payoff: e.target.checked })}
+                  data-x-field={`${checkboxAction} debt`}
+                  data-x-kind="bool"
                   className="w-4 h-4 accent-green-700"
                   aria-label={`${checkboxAction} ${label}`}
                 />
               </label>
-              <input
-                type="text"
-                value={d.name}
-                onChange={(e) => onUpdate(i, { name: e.target.value })}
-                placeholder={`Debt ${i + 1}`}
-                aria-label={`Name of debt ${i + 1}`}
-                className={`${textInput} xl:order-2`}
-              />
+              <div className="xl:order-2">
+                <TextField
+                  label="Debt"
+                  labelClass="sr-only"
+                  value={d.name}
+                  onChange={(v) => onUpdate(i, { name: v })}
+                  placeholder={`Debt ${i + 1}`}
+                />
+              </div>
               <button
                 onClick={() => onRemove(i)}
                 disabled={debts.length <= 1}
@@ -148,8 +152,12 @@ export default function DebtList({
         );
       })}
 
+      {/* data-x-add-row lets a share link rebuild rows that do not exist yet.
+          Without it a link carrying four debts, opened on a page that starts
+          with one, restored the first and dropped the rest in silence. */}
       <button
         onClick={onAdd}
+        data-x-add-row="Debt"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-green-700 min-h-11 px-1 -mx-1"
       >
         <Plus className="w-4 h-4" aria-hidden="true" />

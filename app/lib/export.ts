@@ -17,7 +17,7 @@
  * Instrument once, works everywhere.
  */
 
-export type FieldKind = "num" | "date" | "select" | "bool";
+export type FieldKind = "num" | "date" | "select" | "bool" | "text";
 
 export type Harvested = {
   /** Visible label, used as the human-readable name and the match key. */
@@ -120,10 +120,18 @@ const b64url = {
 };
 
 export function encodeState(slug: string, snap: Snapshot): string {
+  // Bools go in even when false; everything else only when filled.
+  //
+  // A cleared text or number field carries no information — the page default
+  // for one is empty. A cleared CHECKBOX does: several default to ticked (every
+  // row of a debt list, for one), so omitting an unticked box does not restore
+  // it unticked, it restores it TICKED. That is the worst kind of wrong, because
+  // the figures on the restored page change and nothing looks broken.
+  const forLink = snap.fields.filter((f) => f.value !== "" || f.kind === "bool");
   const payload = {
     c: slug,
     v: 1,
-    f: filled(snap).map((f) => [f.label, f.index, f.value] as [string, number, string]),
+    f: forLink.map((f) => [f.label, f.index, f.value] as [string, number, string]),
   };
   return b64url.encode(JSON.stringify(payload));
 }
@@ -151,6 +159,45 @@ export function applyState(slug: string, encoded: string, root: ParentNode = doc
     return 0;
   }
   if (!payload || payload.c !== slug || !Array.isArray(payload.f)) return 0;
+
+  // Rebuild any rows the link needs and the page does not have yet.
+  //
+  // A dynamic list starts at its own default length — one debt on
+  // debt-consolidation and heloc-debt-payoff, three on
+  // refinance-to-pay-off-debt — so a link carrying four debts used to restore
+  // only as many as happened to exist and drop the rest without saying so.
+  // Indices are per-label, so the highest index the link mentions is the row
+  // count it needs; clicking the list's own "add" control is what creates them,
+  // which keeps this working through whatever state the page holds them in.
+  const addRow = root.querySelector<HTMLElement>("[data-x-add-row]");
+  if (addRow) {
+    const rowLabel = addRow.dataset.xAddRow || "";
+    const have = root.querySelectorAll(`[data-x-field="${CSS.escape(rowLabel)}"]`).length;
+    // Indices are per-label and zero-based, so the highest one the link
+    // mentions for this label is the row count it needs.
+    const needed = payload.f.reduce(
+      (max, e) =>
+        Array.isArray(e) && e[0] === rowLabel && typeof e[1] === "number"
+          ? Math.max(max, e[1] + 1)
+          : max,
+      0,
+    );
+    // Bounded, so a mangled or hostile link cannot spin this.
+    const MAX_ROWS = 24;
+    const deficit = Math.min(needed, MAX_ROWS) - have;
+    if (deficit > 0) {
+      // Click exactly the shortfall, without re-reading the DOM between clicks.
+      // The add handlers use a functional state update, so N clicks appends N
+      // rows even though React batches them — whereas re-counting inside the
+      // loop reads a DOM that has not re-rendered yet and clicks until the
+      // guard stops it. That mistake produced 27 rows from a 4-row link.
+      for (let k = 0; k < deficit; k++) addRow.click();
+      // Those rows exist only after React re-renders, so come back for them.
+      // Idempotent: the second pass finds the rows present, computes a deficit
+      // of zero, adds nothing and simply writes the values.
+      setTimeout(() => applyState(slug, encoded, root), 0);
+    }
+  }
 
   const byKey = new Map<string, HTMLElement>();
   const counts = new Map<string, number>();

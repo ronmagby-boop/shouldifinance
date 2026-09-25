@@ -1,10 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
-import {
-  Card, NumField, Headline, Stat, Takeaway, EmptyState,
-  fmt, fmtK, pct, months as fmtMonths, n, type Num,
-} from "../../components/Inputs";
+import { Card, NumField, Headline, Stat, Takeaway, EmptyState, fmt, fmtK, pct, months as fmtMonths, n, type Num, TextField } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 
 type Debt = { name: string; balance: Num; rate: Num; minimum: Num };
@@ -207,16 +204,14 @@ export default function Calculator() {
                 className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_0.8fr_1fr] gap-3 items-end md:items-center border-b border-gray-100 md:border-0 pb-3 md:pb-0"
               >
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor={`debt-name-${i}`} className="block text-xs font-medium text-gray-500 mb-1.5 md:sr-only">
-                    Debt name
-                  </label>
-                  <input
-                    id={`debt-name-${i}`}
-                    type="text"
+                  {/* This page predates DebtList and keeps its own list, so the
+                      shared TextField is what makes the name export here too. */}
+                  <TextField
+                    label="Debt name"
+                    labelClass="md:sr-only"
                     value={d.name}
-                    onChange={(e) => update(i, { name: e.target.value })}
+                    onChange={(v) => update(i, { name: v })}
                     placeholder={`Debt ${i + 1}`}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
                   />
                 </div>
                 <NumField label="Balance" labelClass="md:sr-only" min={0} value={d.balance} onChange={(v) => update(i, { balance: v })} placeholder="12400" prefix="$" />
@@ -231,6 +226,7 @@ export default function Calculator() {
           </div>
           <button
             onClick={addDebt}
+            data-x-add-row="Debt name"
             className="inline-flex items-center text-sm font-medium text-green-700 min-h-11 px-1 -mx-1"
           >
             + Add another debt

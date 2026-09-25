@@ -193,6 +193,72 @@ export function NumField({
   );
 }
 
+/**
+ * A free-text field, styled to match NumField so a form can mix the two.
+ *
+ * It exists because free text was the one input kind the export feature could
+ * not see. Every other control on the site runs through this file and carries
+ * data-x-field, so copy, share links, mailto and the print sheet pick it up for
+ * free; a debt called "Chase card" or a lender called "Third Federal" was typed
+ * into a raw <input> and vanished from all four. A shared text field means a
+ * name now serializes exactly the way the number beside it does, and any future
+ * text input gets that by using this rather than rolling its own.
+ *
+ * `labelClass="xl:sr-only"` is the inline-table case: the grid already has a
+ * column heading, so the per-row label is for screen readers only.
+ */
+export function TextField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  hint,
+  labelClass = "",
+  maxLength = 60,
+  inputClass,
+}: {
+  /** Also the export key — see data-x-field below. */
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  hint?: ReactNode;
+  labelClass?: string;
+  /** A name, not an essay. Also keeps a share link from growing without limit. */
+  maxLength?: number;
+  /**
+   * Replaces the default field styling.
+   *
+   * For the one place that needs a text field which does not look like a text
+   * field — the lender headings on loan-estimate-comparison, which are
+   * borderless and sit inline with a colour swatch. The point of the escape
+   * hatch is that the styling can differ while the export plumbing cannot:
+   * data-x-field is emitted here and nowhere else, so a bespoke look does not
+   * mean a bespoke, and silently unserialized, input.
+   */
+  inputClass?: string;
+}) {
+  return (
+    <div>
+      <label className={`block text-xs font-medium text-gray-500 mb-1.5 ${labelClass}`}>
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        /* Harvested by lib/export, exactly as NumField is. */
+        data-x-field={label}
+        data-x-kind="text"
+        onChange={(e) => onChange(e.target.value)}
+        className={inputClass ?? `${baseInput} px-3`}
+      />
+      {hint && <p className="text-xs text-gray-400 mt-1 leading-relaxed">{hint}</p>}
+    </div>
+  );
+}
+
 /** A date, styled to match NumField so a form can mix the two. */
 export function DateField({
   label,

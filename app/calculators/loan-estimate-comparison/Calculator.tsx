@@ -1,10 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
-import {
-  Card, NumField, Headline, Stat, Takeaway, EmptyState,
-  fmt, fmtK, pct, n, type Num,
-} from "../../components/Inputs";
+import { Card, NumField, Headline, Stat, Takeaway, EmptyState, fmt, fmtK, pct, n, type Num, TextField } from "../../components/Inputs";
 import { ChartCard, BarChart, LineChart, COLORS } from "../../components/Charts";
 import { payment, aprFromFees, balanceAfter } from "../../lib/finance";
 
@@ -215,12 +212,16 @@ export default function Calculator() {
         {quotes.map((q, i) => (
           <div key={i} className="border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center justify-between gap-2 mb-5">
-              <input
-                type="text"
+              {/* Borderless by design — it is the card's heading, not a form
+                  field. inputClass keeps that look; the export plumbing is the
+                  shared component's either way. */}
+              <TextField
+                label="Lender"
+                labelClass="sr-only"
                 value={q.name}
-                onChange={(e) => update(i, { name: e.target.value })}
+                onChange={(v) => update(i, { name: v })}
                 placeholder={`Lender ${i + 1}`}
-                className="text-base sm:text-sm font-medium text-gray-900 border-b border-gray-200 focus:outline-none focus:border-green-400 pb-1 w-full mr-2 bg-transparent"
+                inputClass="text-base sm:text-sm font-medium text-gray-900 border-b border-gray-200 focus:outline-none focus:border-green-400 pb-1 w-full bg-transparent"
               />
               <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: TONES[i] }} />
             </div>
