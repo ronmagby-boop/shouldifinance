@@ -90,11 +90,12 @@ export default function Disclaimer() {
             better answer to the question the old sentence was trying to
             settle. */}
         <p>
-          Where the written guides carry advertising, it is served automatically by Google: neither
-          the Site nor its owner selects, reviews or endorses the advertisements that appear, and
-          none is a communication from the owner or from any institution the owner is associated
-          with. An advertisement is not a recommendation, and no advertiser has any influence over
-          the calculators, the guides, or the conclusions either of them reaches.
+          Where the written guides or the rates page carry advertising, it is served automatically
+          by Google: neither the Site nor its owner selects, reviews or endorses the advertisements
+          that appear, and none is a communication from the owner or from any institution the owner
+          is associated with. An advertisement is not a recommendation, and no advertiser has any
+          influence over the calculators, the guides, the rates shown, or the conclusions any of
+          them reaches.
         </p>
         <p>
           If you are looking for a loan, approach a licensed lender or broker directly and rely on the
