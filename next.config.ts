@@ -20,6 +20,19 @@ import type { NextConfig } from "next";
 const INDEXABLE_HOST = "(www\\.)?shouldifinance\\.com";
 
 const nextConfig: NextConfig = {
+  /**
+   * Values here are inlined into the bundle at build time, which is the point:
+   * the footer's copyright year has to be the same string on the server and in
+   * the browser. Calling new Date() in the component instead would render the
+   * build year into the static HTML and the visitor's year on hydration, and
+   * those differ for everyone who visits after 1 January.
+   *
+   * The site rebuilds weekly for the mortgage-rate banner, so this is never
+   * more than a week stale.
+   */
+  env: {
+    BUILD_YEAR: String(new Date().getFullYear()),
+  },
   async headers() {
     return [
       {

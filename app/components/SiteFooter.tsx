@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CATEGORY_SECTIONS } from "../lib/calculators";
-import { SOCIAL_INSTAGRAM, SOCIAL_LINKEDIN } from "../lib/legal";
+import { COPYRIGHT_YEAR, SOCIAL_INSTAGRAM, SOCIAL_LINKEDIN } from "../lib/legal";
 
 /**
  * The site's only footer.
@@ -56,8 +56,23 @@ const SOCIAL = [
   { href: SOCIAL_INSTAGRAM, label: "ig", title: "ShouldIFinance on Instagram" },
 ];
 
-const LINK = "block text-gray-400 hover:text-white mb-2 text-xs transition-colors";
+/**
+ * Footer links are 44px tall, not 16px.
+ *
+ * inline-flex + min-h-11 makes the ANCHOR the target rather than just the
+ * glyphs, so the whole row is tappable. The old 16px came from the home page,
+ * where the footer was one block among many; it is now on all 96 pages
+ * including 43 calculators that had no footer at all, and a column of 16px
+ * targets 2px apart is the hardest thing on the site to hit on a phone.
+ *
+ * mb-2 goes: min-h-11 supplies the spacing, and keeping both would have made
+ * the columns enormous.
+ */
+const LINK = "inline-flex items-center min-h-11 text-gray-400 hover:text-white text-xs transition-colors";
 const HEAD = "font-bold text-white mb-3 text-sm";
+/* The columns must be flex columns: LINK is inline-flex, so in a plain block
+   the anchors flow inline and wrap into rows instead of stacking. */
+const COL = "flex flex-col items-start";
 
 export default function SiteFooter() {
   return (
@@ -81,7 +96,7 @@ export default function SiteFooter() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-sm w-full md:w-auto">
-            <div>
+            <div className={COL}>
               <p className={HEAD}>Tools</p>
               {TOOLS.map((l) => (
                 <Link key={l.href} href={l.href} className={LINK}>
@@ -90,7 +105,7 @@ export default function SiteFooter() {
               ))}
             </div>
 
-            <div>
+            <div className={COL}>
               <p className={HEAD}>Learn</p>
               {/* Guides is the whole of it. Articles, Blog and FAQ used to sit
                   here as "#" placeholders, which read as an unfinished site;
@@ -100,7 +115,7 @@ export default function SiteFooter() {
               </Link>
             </div>
 
-            <div>
+            <div className={COL}>
               <p className={HEAD}>Company</p>
               {COMPANY.map((l) => (
                 <Link key={l.href} href={l.href} className={LINK}>
@@ -131,10 +146,10 @@ export default function SiteFooter() {
         </div>
 
         <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-gray-500">© 2025 ShouldIFinance.com. All rights reserved.</p>
+          <p className="text-xs text-gray-500">© {COPYRIGHT_YEAR} ShouldIFinance.com. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
             {LEGAL_ROW.map((l) => (
-              <Link key={l.href} href={l.href} className="text-xs text-gray-500 hover:text-white transition-colors">
+              <Link key={l.href} href={l.href} className="inline-flex items-center min-h-11 text-xs text-gray-500 hover:text-white transition-colors">
                 {l.label}
               </Link>
             ))}

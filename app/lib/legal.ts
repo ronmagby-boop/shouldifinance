@@ -91,5 +91,14 @@ export const LEGAL_CONTACT_EMAIL = "shouldifinance@gmail.com";
  * time, and a dead link in a footer is the kind of thing nobody notices.
  * Both were confirmed to resolve (HTTP 200) when they were added.
  */
+/**
+ * The year shown in the footer's copyright line.
+ *
+ * Inlined by next.config at build time rather than read from a clock at render
+ * time — see the note there. The fallback is only for a context without the
+ * build env, such as a unit run; a real build always provides it.
+ */
+export const COPYRIGHT_YEAR = process.env.BUILD_YEAR || "2026";
+
 export const SOCIAL_INSTAGRAM = "https://www.instagram.com/shouldifinance/";
 export const SOCIAL_LINKEDIN = "https://www.linkedin.com/company/shouldifinance-com/";
