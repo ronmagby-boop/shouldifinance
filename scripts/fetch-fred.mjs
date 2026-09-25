@@ -81,7 +81,13 @@ async function latest(id) {
   // the wrong thing. Better to drop the series than to publish nonsense.
   if (!(value > 0 && value < 100)) throw new Error(`${id}: ${value} is out of range`);
 
-  return { value, date: hit.date };
+  // `text` is what gets displayed; `value` exists only for the range check
+  // above and for anything that needs to compute. FRED publishes two decimals,
+  // so a 30-year at "5.40" becomes 5.4 the moment it is a JavaScript number,
+  // and the site would then show a figure one digit less precise than the
+  // Federal Reserve published. That is the exact reformatting the note at the
+  // top of this file forbids, and it took a reader spotting "5.4" to catch it.
+  return { value, text: String(hit.value).trim(), date: hit.date };
 }
 
 async function main() {

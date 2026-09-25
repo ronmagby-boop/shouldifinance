@@ -36,7 +36,7 @@ import { PMMS } from "./pmms";
 
 type Raw = {
   ok?: boolean;
-  series?: Record<string, { value?: number; date?: string; series?: string }>;
+  series?: Record<string, { value?: number; text?: string; date?: string; series?: string }>;
 };
 
 const data = fred as Raw;
@@ -47,7 +47,9 @@ export type Rate = {
   key: string;
   /** What the figure is, in the reader's words. */
   label: string;
-  /** Exactly as published. Never transform this. */
+  /** Exactly as published, including trailing zeros. This is what is shown. */
+  text: string;
+  /** The same figure as a number, for comparisons only — never for display. */
   value: number;
   /** ISO date of the observation the figure belongs to. */
   date: string;
@@ -78,9 +80,29 @@ const MAX_AGE_DAYS: Record<string, number> = {
   mortgage30: 10,
   mortgage15: 10,
   cd12: 45,
-  creditCard: 120,
-  personalLoan: 120,
-  autoNew48: 120,
+  /*
+   * 180, not 120, and the difference is the whole G.19 release pattern.
+   *
+   * These three are quarterly — observations dated 1 February, 1 May, 1 August,
+   * 1 November — and the Federal Reserve publishes each about 67 days after the
+   * month it belongs to. The 1 May figures appeared on 8 July; the 1 August
+   * ones are due on 7 October. So the newest observation available is never
+   * fresher than about 68 days old, and by the day before the next release it
+   * is about 159.
+   *
+   * A 120-day window sat inside that range, which is the worst place for it to
+   * be: the cards appeared for 52 days of every 92-day cycle and vanished for
+   * the other 40, with nothing wrong. They were missing when this was first
+   * reported because the 1 May figures were 147 days old.
+   *
+   * 180 clears the 159-day peak with three weeks to spare for a delayed
+   * release, and still hides a series that genuinely stops being published.
+   * The cost is honest and visible: these three routinely read between two and
+   * five months old, and each card says so on its face.
+   */
+  creditCard: 180,
+  personalLoan: 180,
+  autoNew48: 180,
 };
 
 const fmtDate = (iso: string) =>
@@ -101,7 +123,7 @@ function fresh(key: string, date: string): boolean {
   return ageDays <= (MAX_AGE_DAYS[key] ?? 30);
 }
 
-type Def = Omit<Rate, "value" | "date" | "dateLabel">;
+type Def = Omit<Rate, "value" | "text" | "date" | "dateLabel">;
 
 const DEFS: Record<string, Def> = {
   mortgage30: {
@@ -181,24 +203,34 @@ const DEFS: Record<string, Def> = {
 function build(): Rate[] {
   const out: Rate[] = [];
 
-  const push = (key: string, value: number | null | undefined, date: string | undefined) => {
+  const push = (
+    key: string,
+    value: number | null | undefined,
+    date: string | undefined,
+    text?: string,
+  ) => {
     const def = DEFS[key];
     if (!def || typeof value !== "number" || !Number.isFinite(value) || !date) return;
     if (!fresh(key, date)) return;
-    out.push({ ...def, value, date, dateLabel: fmtDate(date) });
+    // Fall back to the number only when no published string was captured.
+    out.push({ ...def, value, text: text ?? String(value), date, dateLabel: fmtDate(date) });
   };
 
   // The two mortgage rates come from the survey the site already downloads
   // weekly for the home page; the 15-year is column D of the same sheet.
   if (PMMS) {
-    push("mortgage30", PMMS.rate30, PMMS.week);
-    push("mortgage15", PMMS.rate15, PMMS.week);
+    /* toFixed(2) rather than the bare number: Freddie Mac publishes two
+       decimals, so a week at 7.00 would otherwise render as "7". This is the
+       same precision loss the Treasury figures had — see MAX_AGE_DAYS above
+       and the note in scripts/fetch-fred.mjs. */
+    push("mortgage30", PMMS.rate30, PMMS.week, PMMS.rate30.toFixed(2));
+    push("mortgage15", PMMS.rate15, PMMS.week, PMMS.rate15?.toFixed(2));
   }
 
   if (data?.ok && data.series) {
     for (const key of ["treasury10", "treasury30", "cd12", "creditCard", "personalLoan", "autoNew48"]) {
       const s = data.series[key];
-      push(key, s?.value, s?.date);
+      push(key, s?.value, s?.date, s?.text);
     }
   }
 

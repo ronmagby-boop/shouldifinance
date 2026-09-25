@@ -49,7 +49,7 @@ function RateCard({ rate }: { rate: Rate }) {
       <div className="flex items-baseline justify-between gap-3 mb-1">
         <h3 className="text-sm font-medium text-gray-900">{rate.label}</h3>
         {/* Exactly as published — see the alteration note in lib/rates.ts. */}
-        <span className="text-2xl font-medium text-green-700 tabular-nums shrink-0">{rate.value}%</span>
+        <span className="text-2xl font-medium text-green-700 tabular-nums shrink-0">{rate.text}%</span>
       </div>
       <p className="text-xs text-gray-400 mb-3">
         {rate.dateLabel} · {rate.cadence}
