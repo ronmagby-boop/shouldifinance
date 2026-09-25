@@ -394,7 +394,14 @@ export default function ShouldIRefinance() {
                   <NumField label="Closing costs" value={closingCosts} onChange={setClosingCosts} placeholder="5000" prefix="$" />
                 </div>
                 <label className="flex items-start gap-2 cursor-pointer">
-                  <input type="checkbox" checked={financeClosing} onChange={e => setFinanceClosing(e.target.checked)} className="mt-0.5 w-4 h-4 accent-green-700 flex-shrink-0" />
+                  {/* data-x-* because this page builds its own chrome and so
+                      misses what CalcShell's shared Checkbox gives the other 42.
+                      It defaults to CHECKED, which is what makes it dangerous:
+                      a link made with it unticked used to restore it ticked,
+                      quietly swapping closing costs from out-of-pocket into the
+                      loan and changing the payment, the loan amount and the
+                      whole comparison. See lib/analytics.ts and lib/export.ts. */}
+                  <input type="checkbox" checked={financeClosing} onChange={e => setFinanceClosing(e.target.checked)} data-x-field="Finance closing costs" data-x-kind="bool" className="mt-0.5 w-4 h-4 accent-green-700 flex-shrink-0" />
                   <span className="text-xs text-gray-500 leading-relaxed">Finance closing costs into the new loan (unchecked = paid out of pocket)</span>
                 </label>
                 {results && (
