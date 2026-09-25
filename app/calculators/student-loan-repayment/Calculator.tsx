@@ -15,6 +15,8 @@ import {
   IBR_NEW_PCT, IBR_NEW_FORGIVE_MONTHS, IBR_PRIOR_PCT, IBR_PRIOR_FORGIVE_MONTHS,
   IBR_NEW_BORROWER_FROM, IBR_POVERTY_MULTIPLE,
   FPL_YEAR, povertyLine,
+  FILING_OPTIONS, householdAgi, type FilingStatus,
+  SPOUSAL_DEBT_NOTE, RAP_DEPENDENTS_SEPARATE_NOTE, FILING_SEPARATELY_TAX_WARNING,
   IDR_FORGIVENESS_TAXABLE, IDR_FORGIVENESS_TAX_NOTE,
 } from "../../lib/studentLoans";
 
@@ -38,6 +40,8 @@ export default function Calculator() {
   const [balance, setBalance] = useState<Num>("");
   const [rate, setRate] = useState<Num>("");
   const [income, setIncome] = useState<Num>("");
+  const [filing, setFiling] = useState<FilingStatus>("single");
+  const [spouseIncome, setSpouseIncome] = useState<Num>("");
   const [incomeGrowth, setIncomeGrowth] = useState<Num>("");
   const [familySize, setFamilySize] = useState<Num>("");
   const [dependents, setDependents] = useState<Num>("");
@@ -68,6 +72,12 @@ export default function Calculator() {
 
   const newBorrower = disbursed === "after";
 
+  /* Whose income counts. Joint adds the spouse's; separate excludes it, under
+     20 U.S.C. 1087e for RAP and 1098e(d) for IBR. Single has no spouse to add.
+     Computed here rather than inside the memo so the RAP band shown beside the
+     inputs is read off the same figure the payment is. */
+  const agi = householdAgi(filing, n(income), n(spouseIncome));
+
   const r = useMemo(() => {
     const bal = n(balance);
     if (bal <= 0 || n(rate) < 0) return null;
@@ -86,14 +96,14 @@ export default function Calculator() {
 
     /* ---- IBR: a percentage of income above 150% of the guideline. ---- */
     const poverty = povertyLine(n(familySize));
-    const discretionary = Math.max(0, n(income) - poverty * IBR_POVERTY_MULTIPLE);
+    const discretionary = Math.max(0, agi - poverty * IBR_POVERTY_MULTIPLE);
 
     const runIbr = (pctOfDiscretionary: number, forgiveAt: number) => {
       const balances: number[] = [bal];
       let b = bal;
       let interestTotal = 0;
       let paid = 0;
-      let inc = n(income);
+      let inc = agi;
       let pmt = ((Math.max(0, inc - poverty * IBR_POVERTY_MULTIPLE) * pctOfDiscretionary) / 100) / 12;
       const startPayment = pmt;
       let monthsTaken = 0;
@@ -135,7 +145,7 @@ export default function Calculator() {
     let rapInterestPaid = 0;
     let rapWaived = 0;
     let rapMatched = 0;
-    let rapIncome = n(income);
+    let rapIncome = agi;
     let rapPmt = rapMonthlyPayment(rapIncome, n(dependents));
     const rapStartPayment = rapPmt;
     let rapMonths = 0;
@@ -246,13 +256,13 @@ export default function Calculator() {
         matched: rapMatched,
         forgiven: rapForgiven,
       },
-      paymentToIncome: n(income) > 0 ? (standardPayment / (n(income) / 12)) * 100 : 0,
+      paymentToIncome: agi > 0 ? (standardPayment / (agi / 12)) * 100 : 0,
       // Only IBR can negatively amortise. RAP cannot: the waiver takes the
       // unpaid interest off rather than adding it to the balance.
       ibrNegativeAmortization: !newBorrower && ibr.startPayment < bal * monthlyRate,
       monthlyInterest: bal * monthlyRate,
     };
-  }, [balance, rate, income, incomeGrowth, familySize, dependents, extra, newBorrower]);
+  }, [balance, rate, agi, incomeGrowth, familySize, dependents, extra, newBorrower]);
 
   return (
     <CalcShell
@@ -324,7 +334,44 @@ export default function Calculator() {
 
         <Card title="Your income" badge="FOR RAP AND IBR" badgeTone="blue">
           <div className="space-y-4">
-            <NumField label="Annual gross income" value={income} onChange={setIncome} min={0} placeholder="68000" prefix="$" />
+            <NumField
+              label="Your annual gross income"
+              value={income}
+              onChange={setIncome}
+              min={0}
+              placeholder="68000"
+              prefix="$"
+            />
+
+            <SelectField
+              label="Tax filing status"
+              value={filing}
+              onChange={(v) => setFiling(v as FilingStatus)}
+              options={FILING_OPTIONS}
+              hint="Both plans read your income off your tax return, so how you file decides whose income counts."
+            />
+
+            {filing === "joint" && (
+              <NumField
+                label="Spouse's annual gross income"
+                value={spouseIncome}
+                onChange={setSpouseIncome}
+                min={0}
+                placeholder="52000"
+                prefix="$"
+                hint="Filing jointly, both incomes count toward RAP and IBR."
+              />
+            )}
+
+            {filing === "separate" && (
+              <div className="border border-amber-200 bg-amber-50 rounded-xl p-4 text-xs text-amber-900 leading-relaxed space-y-2">
+                <p>
+                  <strong>Your spouse&apos;s income is excluded</strong> from both plans, by statute
+                  — 20 U.S.C. 1087e for RAP and 1098e(d) for IBR. {RAP_DEPENDENTS_SEPARATE_NOTE}
+                </p>
+                <p>{FILING_SEPARATELY_TAX_WARNING}</p>
+              </div>
+            )}
             <NumField
               label="Income growth/yr"
               value={incomeGrowth}
@@ -341,7 +388,7 @@ export default function Calculator() {
                 onChange={setDependents}
                 min={0}
                 placeholder="0"
-                hint={`RAP only. Takes ${fmt(RAP_DEPENDENT_DEDUCTION)}/mo off the payment each. Counts dependents on your return — not you.`}
+                hint={`RAP only. Takes ${fmt(RAP_DEPENDENT_DEDUCTION)}/mo off the payment each. Counts dependents on your return — not you.${filing === "separate" ? " Filing separately, only the ones you claim." : ""}`}
               />
               <NumField
                 label="Family size"
@@ -349,7 +396,7 @@ export default function Calculator() {
                 onChange={setFamilySize}
                 min={0}
                 placeholder="1"
-                hint="IBR only. Sets the poverty line your discretionary income is measured from — it includes you."
+                hint={`IBR only. Sets the poverty line your discretionary income is measured from — it includes you${filing === "joint" ? " and your spouse" : ""}.`}
               />
             </div>
             {r && (
@@ -357,7 +404,7 @@ export default function Calculator() {
                 <div className="bg-blue-50 rounded-xl px-4 py-3 space-y-2">
                   <div className="flex justify-between items-center gap-2">
                     <span className="text-xs text-blue-700 font-medium">RAP band</span>
-                    <span className="text-sm font-medium text-blue-800">{rapBandLabel(n(income))}</span>
+                    <span className="text-sm font-medium text-blue-800">{rapBandLabel(agi)}</span>
                   </div>
                   <div className="flex justify-between items-center gap-2">
                     <span className="text-xs text-blue-700 font-medium">Discretionary income (IBR)</span>
@@ -434,6 +481,16 @@ export default function Calculator() {
                 dates decide it, and this page does not ask for them.
               </p>
             )}
+            {filing !== "single" && (
+              /* Stated rather than computed. The debt half of 1098e(d) bears on
+                 IBR eligibility and the standard-payment cap, neither of which
+                 this page models — so it must not look like it is in the
+                 figures above. See SPOUSAL_DEBT_NOTE. */
+              <p className="border-t border-gray-100 bg-gray-50 px-3 py-3 text-xs text-gray-500 leading-relaxed">
+                <strong className="text-gray-600">Spouses, debt and the two plans.</strong>{" "}
+                {SPOUSAL_DEBT_NOTE}
+              </p>
+            )}
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
@@ -502,7 +559,7 @@ export default function Calculator() {
               up to {fmt(RAP_PRINCIPAL_MATCH)}.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <Stat label="Starting payment" value={`${fmt(r.rap.startPayment)}/mo`} sub={rapBandLabel(n(income))} />
+              <Stat label="Starting payment" value={`${fmt(r.rap.startPayment)}/mo`} sub={rapBandLabel(agi)} />
               <Stat
                 label="Interest waived"
                 value={r.rap.waived > 0 ? fmtK(r.rap.waived) : "None"}

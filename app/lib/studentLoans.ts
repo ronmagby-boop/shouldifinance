@@ -135,6 +135,91 @@ export const IBR_PRIOR_FORGIVE_MONTHS = 300;
 /** Discretionary income for IBR is AGI above this multiple of the guideline. */
 export const IBR_POVERTY_MULTIPLE = 1.5;
 
+/* --------------------------------------------- Marriage and filing status -- */
+
+export type FilingStatus = "single" | "joint" | "separate";
+
+export const FILING_OPTIONS: { value: FilingStatus; label: string }[] = [
+  { value: "single", label: "Single / head of household" },
+  { value: "joint", label: "Married filing jointly" },
+  { value: "separate", label: "Married filing separately" },
+];
+
+/**
+ * Whose income counts, under each plan.
+ *
+ * BOTH plans exclude a spouse's income when the borrower files separately, and
+ * both say so in statute rather than by regulation.
+ *
+ * RAP — 20 U.S.C. 1087e, Repayment Assistance Plan definitions:
+ *
+ *   "The term 'adjusted gross income', when used with respect to a borrower,
+ *   means the adjusted gross income (as such term is defined in section 62 of
+ *   title 26) of the borrower (and the borrower's spouse, as applicable) for
+ *   the most recent taxable year, except that, in the case of a married
+ *   borrower who files a separate Federal income tax return, the term does not
+ *   include the adjusted gross income of the borrower's spouse."
+ *
+ * IBR — 20 U.S.C. 1098e(d):
+ *
+ *   "In the case of a married borrower who files a separate Federal income tax
+ *   return, the Secretary shall calculate the amount of the borrower's
+ *   income-based repayment under this section solely on the basis of the
+ *   borrower's student loan debt and adjusted gross income."
+ *
+ * Both quoted from the Office of Law Revision Counsel's text at
+ * uscode.house.gov; Cornell's copy of 1087e truncates before the RAP
+ * definitions and cannot be used to check this.
+ */
+export function householdAgi(status: FilingStatus, borrower: number, spouse: number): number {
+  return status === "joint" ? borrower + Math.max(0, spouse) : borrower;
+}
+
+/**
+ * THE ASYMMETRY, and it is not the one you would guess.
+ *
+ * IBR's separate-filing rule covers the spouse's STUDENT LOAN DEBT as well as
+ * their income — "solely on the basis of the borrower's student loan debt and
+ * adjusted gross income". RAP's rule covers income only; there is no debt
+ * provision in its text at all.
+ *
+ * That is not an oversight in RAP, and it does not mean a separate filer is
+ * worse off there. Debt does not enter RAP's payment at any point, for anyone:
+ * the payment is a band of AGI less the dependent reduction, and a borrower's
+ * own balance does not appear in it either. There is simply nothing for a
+ * spousal-debt exclusion to exclude.
+ *
+ * Nor does it change a number on this page. Neither plan's MONTHLY PAYMENT is
+ * computed from debt here — IBR's is a percentage of discretionary income. The
+ * debt half of 1098e(d) bears on the partial-financial-hardship test that
+ * gates entry to IBR and on the cap at the ten-year standard payment, neither
+ * of which this calculator models. So it is stated, not computed.
+ */
+export const SPOUSAL_DEBT_NOTE =
+  "IBR's separate-filing rule also excludes a spouse's student loan debt, not just their income — it says the payment is worked out \u201Csolely on the basis of the borrower's student loan debt and adjusted gross income\u201D. RAP has no equivalent, because no debt figure enters a RAP payment for anyone. Neither affects the monthly payments shown here, which are worked out from income; a spouse's debt matters for whether you qualify for IBR and for the cap at the standard ten-year payment, which this page does not model.";
+
+/**
+ * Dependents, when filing separately.
+ *
+ * 20 U.S.C. 1087e narrows the RAP reduction to the borrower's own return:
+ *
+ *   "$50 for each dependent of the borrower (which, in the case of a married
+ *   borrower filing a separate Federal income tax return, shall include only
+ *   each dependent that the borrower claims on that return)."
+ */
+export const RAP_DEPENDENTS_SEPARATE_NOTE =
+  "Filing separately, count only the dependents claimed on your own return \u2014 a dependent your spouse claims does not reduce your RAP payment.";
+
+/**
+ * The part a repayment calculator cannot see, and must not imply away.
+ *
+ * Filing separately lowers the payment by removing a spouse's income from it.
+ * It usually raises the tax bill by more than people expect, and none of that
+ * is modelled here — this page knows nothing about the household's taxes.
+ */
+export const FILING_SEPARATELY_TAX_WARNING =
+  "Filing separately almost always costs more in tax. It disqualifies you from the Earned Income Tax Credit and the student loan interest deduction outright, cuts or removes the education credits, and applies less favourable brackets and a smaller standard deduction to each of you. None of that is modelled here. A lower loan payment can easily cost more than it saves, and the only way to know is to work out both returns.";
+
 /* ------------------------------------------------- Poverty and tax bits -- */
 
 export const FPL_YEAR = 2026;
