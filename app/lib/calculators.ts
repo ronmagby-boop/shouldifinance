@@ -654,10 +654,24 @@ export function related(slug: string, picks: string[] = []): Calc[] {
  * row of its own. Both strings are written out in full because Tailwind
  * scans source text and never sees an interpolated class name.
  */
+/**
+ * Column counts for the related grid.
+ *
+ * Both step up at lg, not md, because md is exactly where the 220px sidebar
+ * rail appears: the content column loses 220px at the same width the grid was
+ * asking for another column, and the cards collapse. Three cards at md used to
+ * be 156px wide against 241px for four, which is the wrong way round — the
+ * three-card grid went straight from one column to three with nothing in
+ * between, while the four-card one had an sm:grid-cols-2 step to land on.
+ *
+ * Holding at two columns through the md band and taking the third at lg costs
+ * a second row between 768px and 1023px and is worth it: 241px reads, 156px
+ * does not.
+ */
 export const relatedGridClass = (count: number): string =>
   count > RELATED_MIN
     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
-    : "grid grid-cols-1 md:grid-cols-3 gap-3";
+    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3";
 
 /**
  * Calculators that have a guide written for them. The homepage guide count is
