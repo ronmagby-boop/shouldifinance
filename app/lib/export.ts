@@ -17,7 +17,7 @@
  * Instrument once, works everywhere.
  */
 
-export type FieldKind = "num" | "date" | "select" | "bool" | "text";
+export type FieldKind = "num" | "date" | "select" | "bool" | "text" | "range";
 
 export type Harvested = {
   /** Visible label, used as the human-readable name and the match key. */

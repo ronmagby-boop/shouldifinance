@@ -259,6 +259,118 @@ export function TextField({
   );
 }
 
+/**
+ * A slider, with an optional row of preset buttons and a live readout.
+ *
+ * The sixth and last input kind. It exists for the same reason TextField does:
+ * the one on rent-vs-buy was a raw <input type="range"> outside this file, so
+ * the export layer could not see it and a share link restored it to its
+ * default. That matters more than a missing name — that slider moves the
+ * rent-vs-buy break-even from roughly year 3 to year 17, so a link that
+ * silently reset it sent the recipient a different answer to the one the
+ * sender was looking at.
+ *
+ * The whole control lives here — label, readout, track and presets — rather
+ * than just the input, because the presets and the readout have to agree with
+ * the slider. All three read the same `value` prop, so there is no second
+ * source of truth that a restore could miss: set the value and the readout and
+ * the pressed preset follow.
+ *
+ * There is deliberately no internal "the user has touched this" state. A
+ * restored value is written with the same input and change events a drag
+ * fires, so React, the readout, the presets and the results cannot tell the
+ * difference — which is what makes the restored page show the sender's answer
+ * rather than a default.
+ */
+export function RangeField({
+  label,
+  value,
+  onChange,
+  min = 0,
+  max = 100,
+  step = 1,
+  presets,
+  suffix = "%",
+  hint,
+  id,
+}: {
+  /** Also the export key — see data-x-field below. */
+  label: string;
+  value: Num;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  /** Values offered as one-tap buttons beside the track. */
+  presets?: number[];
+  suffix?: string;
+  hint?: ReactNode;
+  id?: string;
+}) {
+  const current = n(value);
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-3 mb-1.5">
+        <label htmlFor={id} className="block text-xs text-gray-400">
+          {label}
+        </label>
+        <span className="text-sm font-medium text-gray-900 tabular-nums shrink-0">
+          {current}
+          {suffix}
+        </span>
+      </div>
+      {/* On a phone the presets drop to their own row so the slider keeps the
+          full width — sharing it left about 137px, which is too fine to drag. */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        {/* touch-action: pan-y lets a vertical swipe scroll the page instead of
+            dragging the thumb, which is the iOS Safari failure mode. The 44px
+            height is the touch target; the thumb is drawn smaller inside it. */}
+        <input
+          id={id}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={current}
+          onChange={(e) => onChange(Number(e.target.value))}
+          style={{ touchAction: "pan-y" }}
+          aria-label={label}
+          /* Harvested by lib/export, exactly as NumField and TextField are. */
+          data-x-field={label}
+          data-x-kind="range"
+          data-x-unit={suffix}
+          className="w-full sm:flex-1 min-w-0 h-11 cursor-pointer appearance-none bg-transparent
+            [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-gray-200
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:-mt-[9px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-800 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow
+            [&::-moz-range-track]:h-1.5 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-gray-200
+            [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-800 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
+        />
+        {presets && presets.length > 0 && (
+          <div className="flex gap-1.5 shrink-0 self-start sm:self-auto">
+            {presets.map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => onChange(v)}
+                aria-pressed={current === v}
+                className={`h-11 w-11 rounded-lg text-xs font-medium tabular-nums transition-colors ${
+                  current === v
+                    ? "bg-green-800 text-white"
+                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              >
+                {v}
+                {suffix}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {hint && <p className="text-xs text-gray-400 mt-1.5">{hint}</p>}
+    </div>
+  );
+}
+
 /** A date, styled to match NumField so a form can mix the two. */
 export function DateField({
   label,

@@ -1,10 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
-import {
-  Card, NumField, SelectField, Toggle, Headline, Stat, Takeaway, EmptyState,
-  fmt, fmtK, n, type Num,
-} from "../../components/Inputs";
+import { Card, NumField, SelectField, Toggle, Headline, Stat, Takeaway, EmptyState, fmt, fmtK, n, type Num, RangeField } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
 
@@ -311,61 +308,21 @@ export default function Calculator() {
               step={0.25}
               hint="What the renter earns investing the down payment and any monthly savings."
             />
-            <div>
-              <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                <label htmlFor="discipline" className="block text-xs text-gray-400">
-                  Share of the monthly difference actually invested
-                </label>
-                <span className="text-sm font-medium text-gray-900 tabular-nums shrink-0">
-                  {n(discipline)}%
-                </span>
-              </div>
-              {/* On a phone the presets drop to their own row so the slider keeps the
-                  full width — sharing it left about 137px, which is too fine to drag. */}
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                {/* touch-action: pan-y lets a vertical swipe scroll the page instead of
-                    dragging the thumb, which is the iOS Safari failure mode. The 44px
-                    height is the touch target; the thumb is drawn smaller inside it. */}
-                <input
-                  id="discipline"
-                  type="range"
-                  min={0}
-                  max={100}
-                  step={5}
-                  value={n(discipline)}
-                  onChange={(e) => setDiscipline(Number(e.target.value))}
-                  style={{ touchAction: "pan-y" }}
-                  aria-label="Share of the monthly difference actually invested"
-                  className="w-full sm:flex-1 min-w-0 h-11 cursor-pointer appearance-none bg-transparent
-                    [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-gray-200
-                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:-mt-[9px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-800 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow
-                    [&::-moz-range-track]:h-1.5 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-gray-200
-                    [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-800 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
-                />
-                <div className="flex gap-1.5 shrink-0 self-start sm:self-auto">
-                  {[0, 50, 100].map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setDiscipline(v)}
-                      aria-pressed={n(discipline) === v}
-                      className={`h-11 w-11 rounded-lg text-xs font-medium tabular-nums transition-colors ${
-                        n(discipline) === v
-                          ? "bg-green-800 text-white"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                      }`}
-                    >
-                      {v}%
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs text-gray-400 mt-1.5">
-                This is the single biggest lever on the answer. Whichever side pays less
-                each month only comes out ahead if they actually invest the difference
-                instead of spending it — and the same share is applied to both sides.
-              </p>
-            </div>
+            {/* The shared RangeField, so this slider exports like every other
+                input. It was the last control on the site outside Inputs.tsx,
+                and the most costly one to lose: it moves the break-even from
+                about year 3 to year 17. */}
+            <RangeField
+              id="discipline"
+              label="Share of the monthly difference actually invested"
+              value={discipline}
+              onChange={setDiscipline}
+              min={0}
+              max={100}
+              step={5}
+              presets={[0, 50, 100]}
+              hint="This is the single biggest lever on the answer. Whichever side pays less each month only comes out ahead if they actually invest the difference instead of spending it — and the same share is applied to both sides."
+            />
             <NumField label="How long you'll stay" value={years} onChange={setYears} placeholder="10" suffix="yrs" />
             <SelectField
               label="At the end of that period"
