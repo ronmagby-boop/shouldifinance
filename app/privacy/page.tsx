@@ -202,18 +202,18 @@ export default function PrivacyPolicy() {
           </li>
           <li>
             <strong>Advertising — cookies, and consent-gated.</strong> The advertising described in
-            section 7 does set cookies and read them. It runs on the written guides only. On those
-            pages, and only those, a consent dialog appears before personalised advertising cookies
-            are used, and your choice is recorded and respected. Section 7 lists the cookies, who
-            sets them and how long they last.
+            section 7 does set cookies and read them. It runs on the written guides and on the
+            rates page. On those pages, and only those, a consent dialog appears before personalised
+            advertising cookies are used, and your choice is recorded and respected. Section 7 lists
+            the cookies, who sets them and how long they last.
           </li>
         </ul>
         <p>
           So whether you are asked anything at all depends on where you are. The home page, the
           calculators, the guide index and these legal pages carry no advertising, therefore set no
           advertising cookie, therefore ask you nothing — putting a consent dialog on them would be
-          machinery for a purpose that does not exist there. Open a written guide and the dialog
-          appears, because that is where there is something to consent to.
+          machinery for a purpose that does not exist there. Open a written guide, or the rates
+          page, and the dialog appears, because that is where there is something to consent to.
         </p>
         <p>
           You can change or withdraw an advertising choice at any time from the privacy link the
@@ -252,8 +252,8 @@ export default function PrivacyPolicy() {
         <>
         <p>
           The Site carries advertising supplied by <strong>Google AdSense</strong>, and it carries it
-          on the written guides only. There is no advertising on the home page, on any of the
-          calculators, on the guide or calculator indexes, or on these legal pages. That is a
+          on the written guides and on the rates page. There is no advertising on the home page, on
+          any of the calculators, on the guide or calculator indexes, or on these legal pages. That is a
           deliberate limit, not an accident of layout: the calculators are the thing people come
           for, and the code that loads advertising is not requested at all on a page without an ad
           unit — so on those pages no Google advertising script runs and no advertising cookie is

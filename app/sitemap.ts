@@ -18,6 +18,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      // A page that changes every build, and the only one that does.
+      url: `${SITE}/rates`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    },
     ...CALCULATORS.map((c) => ({
       url: `${SITE}/calculators/${c.slug}`,
       lastModified: now,

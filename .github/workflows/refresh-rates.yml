@@ -24,12 +24,20 @@
 #      New repository secret. Name it VERCEL_DEPLOY_HOOK_URL, paste the URL.
 # The URL is a secret: anyone holding it can trigger a deploy of this project.
 
-name: Refresh mortgage rate
+name: Refresh rates
 
 on:
   schedule:
-    - cron: "30 17 * * 4" # Thursday, after the PMMS publishes
-    - cron: "30 17 * * 5" # Friday, safety run
+    # Daily. The mortgage survey is weekly, but the rates page also carries
+    # Treasury yields, which the Federal Reserve publishes every business day —
+    # a weekly rebuild would show Monday's ten-year on Friday. Same mechanism,
+    # one run a day instead of two a week.
+    #
+    # 17:30 UTC is 12:30 ET in winter and 13:30 ET in summer: after the PMMS
+    # publishes on Thursdays, and after the H.15 release on any weekday. Runs
+    # at the weekend are near no-ops — nothing has published — but they cost
+    # one build and keep the schedule simple.
+    - cron: "30 17 * * *"
   workflow_dispatch: # and a manual button, for testing the hook
 
 jobs:

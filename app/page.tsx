@@ -226,7 +226,7 @@ export default function Home() {
           separation from the white stats bar, which is why it was reduced
           rather than removed. */}
       <section id="calculators" aria-label="Browse calculators by topic"
-        className="pt-7 md:pt-9 pb-10 md:pb-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
+        className="pt-9 md:pt-12 pb-10 md:pb-14 bg-gray-50 scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           {/* Browse, for anyone who would rather look around than search. */}
           <div className="text-center mb-8 md:mb-10">

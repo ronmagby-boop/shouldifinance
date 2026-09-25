@@ -27,6 +27,7 @@ import { COPYRIGHT_YEAR, SOCIAL_INSTAGRAM, SOCIAL_LINKEDIN } from "../lib/legal"
 
 const TOOLS = [
   { href: "/calculators", label: "All calculators" },
+  { href: "/rates", label: "Current rates" },
   ...CATEGORY_SECTIONS.map((s) => ({ href: `/calculators#${s.id}`, label: s.category })),
 ];
 

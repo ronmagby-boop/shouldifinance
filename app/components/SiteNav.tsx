@@ -17,6 +17,12 @@ import { bySlug, CALCULATORS, CATEGORY_SECTIONS } from "../lib/calculators";
 
 const NAV_LINKS = [
   { label: "Calculators", href: "/calculators", match: "calculators" as const },
+  /* Beside Calculators rather than among the four categories, because it is a
+     section of the site like they are, not a category of tool. Only rendered
+     from md up — below that the header is the logo, search and the CTA, and
+     the bottom nav is four CATEGORY tabs by design, so a sixth link costs
+     nothing at phone width. */
+  { label: "Rates", href: "/rates", match: "rates" as const },
   ...CATEGORY_SECTIONS.map(s => ({
     label: s.category,
     href: `/calculators#${s.id}`,

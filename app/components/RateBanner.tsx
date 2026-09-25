@@ -1,60 +1,59 @@
+import Link from "next/link";
 import { TrendingUp } from "lucide-react";
-import { PMMS } from "../lib/pmms";
-import RateBannerLink from "./RateBannerLink";
+import { HAS_RATES } from "../lib/rates";
 
 /**
- * The week's 30-year fixed average, on the homepage.
+ * The home page signpost to /rates.
  *
- * Renders nothing at all when there is no fresh survey — a failed fetch or a
- * rate past the staleness window. That is deliberate: an absent banner is a
- * non-event, while a stale rate presented as this week's is something a reader
- * would plan around.
+ * WHAT CHANGED, AND WHY. This used to display the 30-year rate itself, with
+ * the survey week and the Freddie Mac attribution beneath it. Both of those
+ * existed only to support the number — a rate without its date and its source
+ * is not honest — and together they were most of the 103px it occupied at
+ * 390px. Once the figure moves to /rates, the scaffolding goes with it: there
+ * is nothing to date and nothing to attribute, because nothing is quoted.
  *
- * The rate is printed exactly as Freddie Mac published it. See the alteration
- * note in lib/pmms.ts before touching the formatting.
+ * STYLING. A tint of its own, deliberately. It previously shared bg-gray-50
+ * with the category grid below so the two read as one continuous area, which
+ * was right when this was a block of content. It is now a control, and a
+ * control that looks like the section under it does not get pressed. green-50
+ * is the site's action hue at its lightest: distinct from the white stats bar
+ * above and the grey grid below, in the same family as the mint hero so it
+ * reads as furniture rather than a foreign band, and light enough at ~50px
+ * that it is a strip rather than another storey in the stack.
  *
- * 30-year only. The 15-year is in the source data but two rates plus a date
- * does not fit at 390px, and the 30-year is what people mean by "the rate".
- *
- * STYLING: bg-gray-50 with no border, matching the category section directly
- * below it, so the two read as one continuous area. This used to be a white
- * panel with border-y, which put a second bordered white slab immediately
- * under the stats bar — same colour, but a separate card, and the homepage
- * went mint / white / white / grey with a rule between each. Merging downward
- * removes a band without introducing a colour. Do not give this its own fill
- * or border again without checking what is above and below it.
+ * STALENESS. Gated on HAS_RATES, not on any one series. Every figure on /rates
+ * is behind its own per-series age check, so HAS_RATES is false exactly when
+ * that page would be empty — and a signpost to an empty page is worse than no
+ * signpost. It is the same reasoning the rate banner always used, applied to
+ * the whole page instead of one number.
  */
 export default function RateBanner() {
-  if (!PMMS) return null;
+  if (!HAS_RATES) return null;
 
   return (
-    <section className="bg-gray-50" aria-label="This week's mortgage rate">
-      <div className="max-w-7xl mx-auto px-5 md:px-8 pt-5 md:pt-6 text-center">
-        <RateBannerLink className="group inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-h-[44px] px-2 rounded-xl">
+    <section className="bg-green-50 border-y border-green-100" aria-label="Current rates">
+      <Link
+        href="/rates"
+        className="group block hover:bg-green-100/70 transition-colors"
+      >
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-2 flex items-center justify-center gap-2 text-center">
           <TrendingUp
             className="w-4 h-4 text-green-700 flex-shrink-0"
             strokeWidth={2}
             aria-hidden="true"
           />
-          <span className="text-base font-bold text-gray-900">
-            {/* Exactly as published — do not round or reformat. */}
-            {PMMS.rate30}%
+          {/* One text run, so the arrow trails the last word instead of
+              wrapping onto a line of its own and costing a whole row. */}
+          <span className="text-xs sm:text-sm font-medium text-green-900">
+            Current rates
+            <span className="text-green-800/80 font-normal">
+              {" "}
+              — mortgage, auto, credit card and Treasury
+            </span>
+            <span className="text-green-700 font-semibold group-hover:underline"> →</span>
           </span>
-          <span className="text-xs text-gray-500">
-            30-year fixed average, week ending {PMMS.weekLabel}
-          </span>
-          {/* Desktop only. The whole banner is already the link, and at 390px
-              this was the element forcing a third wrapped line — the rate is an
-              indicator here, not a call to action. */}
-          <span className="hidden sm:inline text-xs font-semibold text-green-700 group-hover:underline whitespace-nowrap">
-            Run your numbers →
-          </span>
-        </RateBannerLink>
-
-        <p className="text-xs text-gray-400 leading-relaxed">
-          Source: {PMMS.attribution}. A national average, not a quote.
-        </p>
-      </div>
+        </div>
+      </Link>
     </section>
   );
 }

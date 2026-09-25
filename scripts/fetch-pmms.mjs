@@ -112,7 +112,14 @@ async function main() {
       const rate = Number(cells.B);
       if (!Number.isFinite(serial) || !Number.isFinite(rate)) continue;
       if (serial < 20000 || rate <= 0 || rate >= 30) continue;
-      rows.push({ week: serialToISO(serial), rate });
+      /* Column D is the 15-year, confirmed from the sheet's own headings in
+         rows 5-7: A Week, B 30 yr FRM, C 30 yr fees & points, D 15 yr FRM,
+         E 15 yr fees & points. It is absent on the oldest rows — the 15-year
+         series starts in 1991, the 30-year in 1971 — so it is optional and
+         the 30-year alone still makes a usable row. */
+      const rate15raw = Number(cells.D);
+      const rate15 = Number.isFinite(rate15raw) && rate15raw > 0 && rate15raw < 30 ? rate15raw : null;
+      rows.push({ week: serialToISO(serial), rate, rate15 });
     }
   } catch (err) {
     console.warn(`[pmms] parse failed (${err.message}). Leaving existing data in place.`);
@@ -131,6 +138,9 @@ async function main() {
     ok: true,
     /* Exactly as published. See the alteration note at the top of this file. */
     rate30: latest.rate,
+    /* Null rather than absent when the sheet has no 15-year for that week, so
+       the consumer can tell "not published" from "not parsed". */
+    rate15: latest.rate15,
     week: latest.week,
     fetchedAt: new Date().toISOString(),
     source: SOURCE,
@@ -138,7 +148,9 @@ async function main() {
   };
 
   fs.writeFileSync(OUT, JSON.stringify(payload, null, 2) + "\n");
-  console.log(`[pmms] ${payload.rate30}% for week ending ${payload.week} → app/lib/pmms.json`);
+  console.log(
+    `[pmms] 30yr ${payload.rate30}%, 15yr ${payload.rate15 ?? "n/a"}% for week ending ${payload.week} → app/lib/pmms.json`,
+  );
   return 0;
 }
 

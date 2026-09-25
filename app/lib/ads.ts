@@ -42,6 +42,8 @@ export const AD_SLOTS = {
   guideEnd: process.env.NEXT_PUBLIC_AD_SLOT_GUIDE_END ?? "",
   /** On a calculator, below the results and export bar, above related. */
   calculatorBelowResults: process.env.NEXT_PUBLIC_AD_SLOT_CALC_BELOW ?? "",
+  /** On the rates page, below the table and above the footer. */
+  ratesBelow: process.env.NEXT_PUBLIC_AD_SLOT_RATES_BELOW ?? "",
 } as const;
 
 export type AdPlacement = keyof typeof AD_SLOTS;
@@ -63,6 +65,7 @@ export const AD_HEIGHT: Record<AdPlacement, number> = {
   guideInArticle: 280,
   guideEnd: 280,
   calculatorBelowResults: 280,
+  ratesBelow: 280,
 };
 
 /** True when a given placement is fully configured and may render. */

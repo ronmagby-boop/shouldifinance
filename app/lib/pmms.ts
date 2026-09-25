@@ -27,6 +27,7 @@ import raw from "./pmms.json";
 type Payload = {
   ok?: boolean;
   rate30?: number;
+  rate15?: number | null;
   week?: string;
   fetchedAt?: string;
   attribution?: string;
@@ -49,6 +50,8 @@ export const PMMS_MAX_AGE_DAYS = 10;
 export type Pmms = {
   /** Exactly as published. Never transform this. */
   rate30: number;
+  /** The 15-year from the same survey week, or null if the sheet had none. */
+  rate15: number | null;
   /** ISO date of the week the survey covers. */
   week: string;
   /** Rendered survey date, for display next to the rate. */
@@ -69,6 +72,7 @@ function read(): Pmms | null {
 
   return {
     rate30: data.rate30,
+    rate15: typeof data.rate15 === "number" ? data.rate15 : null,
     week: data.week,
     weekLabel: new Date(week).toLocaleDateString("en-US", {
       month: "long",
