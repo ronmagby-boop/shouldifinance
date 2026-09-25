@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import GuideShell from "../components/GuideShell";
-import { CALCULATORS, SITE } from "../lib/calculators";
+import { CALCULATORS, SITE, OG_IMAGE } from "../lib/calculators";
 import { LEGAL_CONTACT_EMAIL } from "../lib/legal";
 import { GUIDES } from "../lib/guides";
 
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: `${SITE}/contact` },
   openGraph: {
+    images: [OG_IMAGE],
     type: "website",
     siteName: "ShouldIFinance",
     url: `${SITE}/contact`,
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
   },
   twitter: {
+    images: [OG_IMAGE.url],
     card: "summary_large_image",
     title: "Contact | ShouldIFinance",
     description: DESCRIPTION,

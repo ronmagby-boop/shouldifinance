@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import LegalShell, { Note, Section } from "../components/LegalShell";
-import { CALCULATORS, SITE } from "../lib/calculators";
+import { CALCULATORS, SITE, OG_IMAGE } from "../lib/calculators";
 import { TAX_YEAR } from "../lib/tax";
 import { LEGAL_CONTACT_EMAIL } from "../lib/legal";
 
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     "ShouldIFinance is an independent educational project. It is not a lender, broker or financial advisor, and nothing on it is personalized advice or a commitment to lend.",
   alternates: { canonical: `${SITE}/disclaimer` },
   openGraph: {
+    images: [OG_IMAGE],
     type: "website",
     siteName: "ShouldIFinance",
     url: `${SITE}/disclaimer`,

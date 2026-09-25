@@ -5,7 +5,7 @@ import GuideShell, { CalculatorCta } from "../../components/GuideShell";
 import Markdown from "../../components/Markdown";
 import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
 import AdUnit from "../../components/AdUnit";
-import { SITE } from "../../lib/calculators";
+import { SITE, OG_IMAGE } from "../../lib/calculators";
 import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
 
 /** Every guide is known at build time; anything else is a 404, not a render. */
@@ -32,6 +32,7 @@ export async function generateMetadata({
     keywords: calc?.keywords,
     alternates: { canonical: url },
     openGraph: {
+    images: [OG_IMAGE],
       title: `${guide.title} | ShouldIFinance`,
       description: guide.description,
       url,
@@ -39,6 +40,7 @@ export async function generateMetadata({
       type: "article",
     },
     twitter: {
+    images: [OG_IMAGE.url],
       card: "summary_large_image",
       title: `${guide.title} | ShouldIFinance`,
       description: guide.description,

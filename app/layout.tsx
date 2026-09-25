@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { SITE } from "./lib/calculators";
+import { OG_IMAGE, SITE } from "./lib/calculators";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,12 +38,14 @@ export const metadata: Metadata = {
     title: "ShouldIFinance — Free Financial Calculators & Guidance",
     description:
       "Free calculators for mortgages, refinancing, investing, retirement, auto loans, and debt payoff. Better questions, smarter decisions.",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "ShouldIFinance — Free Financial Calculators & Guidance",
     description:
       "Free calculators for mortgages, refinancing, investing, retirement, auto loans, and debt payoff.",
+    images: [OG_IMAGE.url],
   },
   robots: { index: true, follow: true },
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GuideShell from "../components/GuideShell";
 import AdUnit from "../components/AdUnit";
-import { SITE, bySlug } from "../lib/calculators";
+import { SITE, bySlug, OG_IMAGE } from "../lib/calculators";
 import {
   FRED_NOTICE,
   HAS_RATES,
@@ -19,13 +19,15 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: `${SITE}/rates` },
   openGraph: {
+    images: [OG_IMAGE],
     type: "website",
     siteName: "ShouldIFinance",
     url: `${SITE}/rates`,
     title: "Current rates | ShouldIFinance",
     description: DESCRIPTION,
   },
-  twitter: { card: "summary_large_image", title: "Current rates | ShouldIFinance", description: DESCRIPTION },
+  twitter: {
+    images: [OG_IMAGE.url], card: "summary_large_image", title: "Current rates | ShouldIFinance", description: DESCRIPTION },
 };
 
 /**

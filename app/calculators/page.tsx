@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SiteFooter from "../components/SiteFooter";
 import Link from "next/link";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS, SITE } from "../lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, SITE, OG_IMAGE } from "../lib/calculators";
 import SiteNav from "../components/SiteNav";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../components/MobileBottomNav";
 
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: `${SITE}/calculators` },
   openGraph: {
+    images: [OG_IMAGE],
     type: "website",
     siteName: "ShouldIFinance",
     url: `${SITE}/calculators`,

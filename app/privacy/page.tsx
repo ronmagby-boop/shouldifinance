@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import LegalShell, { Note, Section } from "../components/LegalShell";
-import { SITE } from "../lib/calculators";
+import { SITE, OG_IMAGE } from "../lib/calculators";
 import { LEGAL_CONTACT_EMAIL, LEGAL_UPDATED_LABEL } from "../lib/legal";
 import { ADS_LIVE } from "../lib/ads";
 
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     "How ShouldIFinance handles your information. The figures you enter into a calculator are processed in your browser and are never transmitted or stored.",
   alternates: { canonical: `${SITE}/privacy` },
   openGraph: {
+    images: [OG_IMAGE],
     type: "website",
     siteName: "ShouldIFinance",
     url: `${SITE}/privacy`,

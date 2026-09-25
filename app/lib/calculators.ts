@@ -683,6 +683,26 @@ export const GUIDED = CALCULATORS.filter((c) => c.guide);
 export const SITE = "https://shouldifinance.com";
 
 /**
+ * The share card, used by every page's Open Graph and Twitter metadata.
+ *
+ * ONE DEFINITION, IMPORTED EVERYWHERE — not inherited. Next replaces the
+ * `openGraph` and `twitter` objects wholesale rather than merging their
+ * fields, so a page that sets either one loses whatever the root layout put
+ * there. Declaring the image only in the layout left 95 of 97 pages without
+ * it while still advertising `card: "summary_large_image"`, which promises an
+ * image and gave scrapers nothing to show.
+ *
+ * The URL is absolute and has to stay that way: a scraper fetches og:image
+ * with no page context, so a relative path is simply dropped.
+ */
+export const OG_IMAGE = {
+  url: `${SITE}/og-image.png`,
+  width: 1200,
+  height: 630,
+  alt: "ShouldIFinance — better questions, smarter decisions. Free financial calculators and guides.",
+};
+
+/**
  * Shared metadata builder. Title and keywords come from the registry, so a
  * rename in CALCULATORS updates the page <title> without touching 29 files.
  */
@@ -697,6 +717,7 @@ export function calcMetadata(slug: string, description: string) {
     keywords,
     alternates: { canonical: url },
     openGraph: {
+    images: [OG_IMAGE],
       title: `${title} | ShouldIFinance`,
       description,
       url,
@@ -704,6 +725,7 @@ export function calcMetadata(slug: string, description: string) {
       type: "website" as const,
     },
     twitter: {
+    images: [OG_IMAGE.url],
       card: "summary_large_image" as const,
       title: `${title} | ShouldIFinance`,
       description,

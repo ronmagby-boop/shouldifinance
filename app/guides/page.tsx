@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GuideShell from "../components/GuideShell";
 import { BookOpen } from "lucide-react";
-import { CATEGORY_SECTIONS, SITE } from "../lib/calculators";
+import { CATEGORY_SECTIONS, SITE, OG_IMAGE } from "../lib/calculators";
 import { calculatorForGuide, GUIDE_CATEGORIES, GUIDES, guidesByCategory } from "../lib/guides";
 
 const DESCRIPTION =
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: `${SITE}/guides` },
   openGraph: {
+    images: [OG_IMAGE],
     title: "Guides | ShouldIFinance",
     description: DESCRIPTION,
     url: `${SITE}/guides`,
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
+    images: [OG_IMAGE.url],
     card: "summary_large_image",
     title: "Guides | ShouldIFinance",
     description: DESCRIPTION,
