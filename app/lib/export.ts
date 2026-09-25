@@ -151,7 +151,37 @@ export function shareUrl(slug: string, snap: Snapshot): string {
  * native setter plus a bubbling input event is what React's synthetic layer
  * listens for. Ugly, and the price of not editing 43 pages.
  */
-export function applyState(slug: string, encoded: string, root: ParentNode = document): number {
+/**
+ * How many times a restore will re-assert its values.
+ *
+ * One pass is not enough when a page couples two inputs. should-i-refinance
+ * derives the monthly payment from the term and vice versa, so writing "Years
+ * left" runs the page's own onYears, which recomputes the payment from the
+ * balance and rate. Inside a single synchronous pass those are still the React
+ * state from before the restore — empty — so the payment was recomputed from
+ * zero and came back blank, taking the headline with it.
+ *
+ * Re-asserting after React has re-rendered fixes it: by the second pass the
+ * balance and rate are really there, so the recompute produces the partner
+ * value the sender had. A third pass exists only to confirm nothing still
+ * disagrees, and to terminate.
+ *
+ * WHICH HALF OF A COUPLED PAIR WINS: the page, not the link. Each pass writes
+ * the link's values and then lets the page's own handlers react, so the pair
+ * settles wherever the page's model puts it. For a link made on the same
+ * version that is the same place the sender was — the pair is self-consistent,
+ * so recomputing either half reproduces the other. Where they could disagree,
+ * a page showing its own consistent pair is better than one showing two
+ * numbers that contradict each other because a link asserted both.
+ */
+const MAX_RESTORE_PASSES = 3;
+
+export function applyState(
+  slug: string,
+  encoded: string,
+  root: ParentNode = document,
+  pass = 0,
+): number {
   let payload: { c?: string; f?: [string, number, string][] };
   try {
     payload = JSON.parse(b64url.decode(encoded));
@@ -192,10 +222,10 @@ export function applyState(slug: string, encoded: string, root: ParentNode = doc
       // loop reads a DOM that has not re-rendered yet and clicks until the
       // guard stops it. That mistake produced 27 rows from a 4-row link.
       for (let k = 0; k < deficit; k++) addRow.click();
-      // Those rows exist only after React re-renders, so come back for them.
-      // Idempotent: the second pass finds the rows present, computes a deficit
-      // of zero, adds nothing and simply writes the values.
-      setTimeout(() => applyState(slug, encoded, root), 0);
+      // The rows exist only after React re-renders. The reconcile pass at the
+      // foot of this function comes back for them; it is idempotent, so that
+      // pass finds the rows present, computes a deficit of zero and just
+      // writes the values.
     }
   }
 
@@ -209,6 +239,8 @@ export function applyState(slug: string, encoded: string, root: ParentNode = doc
   });
 
   let applied = 0;
+  /** Fields a later pass found showing something other than the link's value. */
+  let disagreed = 0;
   for (const entry of payload.f) {
     if (!Array.isArray(entry) || entry.length < 3) continue;
     const [label, index, value] = entry;
@@ -216,6 +248,14 @@ export function applyState(slug: string, encoded: string, root: ParentNode = doc
     if (!el) continue;
 
     const kind = el.dataset.xKind;
+
+    // After the first pass, touch only what does not already match. Rewriting
+    // a field that is already correct would re-run the page's handler for it,
+    // which on a coupled page is how the two halves end up fighting.
+    const shown = kind === "bool" ? ((el as HTMLInputElement).checked ? "1" : "") : (el as HTMLInputElement | HTMLSelectElement).value;
+    if (pass > 0 && shown === value) continue;
+    if (pass > 0) disagreed++;
+
     if (kind === "bool") {
       const box = el as HTMLInputElement;
       const want = value === "1";
@@ -231,6 +271,13 @@ export function applyState(slug: string, encoded: string, root: ParentNode = doc
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
     applied++;
+  }
+
+  // Come back once React has re-rendered, and again only while something still
+  // disagrees. A page with no coupled inputs settles on the first check and
+  // costs one extra no-op pass.
+  if (pass < MAX_RESTORE_PASSES && (pass === 0 || disagreed > 0)) {
+    setTimeout(() => applyState(slug, encoded, root, pass + 1), 0);
   }
   return applied;
 }
