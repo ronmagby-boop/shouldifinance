@@ -1,0 +1,1353 @@
+{
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 43 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_extracted": "2026-09-25",
+  "_fields": {
+    "id": "Stable handle for scheduling. Not used by any code.",
+    "card": "The fact as it appears on the image. Target under 15 words.",
+    "caption": "Post body. Two or three sentences, ending with the guide URL.",
+    "guide": "Slug in content/guides. The fact is checkable against that file.",
+    "source": "The citation the guide itself used. Where a guide states something as market practice rather than a sourced rule, that is said here in those words rather than dressed up as a citation.",
+    "category": "Home | Debt | Money | Auto",
+    "shelfLife": "null when the fact is a fixed rule or a structural relationship. Otherwise an object naming what goes stale and when to recheck."
+  },
+  "facts": [
+    {
+      "id": "pmi-original-value",
+      "card": "A hot housing market cannot move your PMI end date by a single month.",
+      "caption": "PMI termination is measured against your home's \"original value\" — the purchase price or the appraisal at purchase, whichever was lower. That number is fixed at closing and never updates, so appreciation gives you grounds to ask early but does not move the date your servicer must act. Read how the five parts of a mortgage payment work: https://shouldifinance.com/guides/whats-in-a-mortgage-payment",
+      "guide": "whats-in-a-mortgage-payment",
+      "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "pmi-midpoint",
+      "card": "PMI must stop at your loan's halfway point even if the balance never got there.",
+      "caption": "Two thresholds get quoted — request at 80% of original value, automatic at 78%. The third one is the backstop nobody mentions: PMI ends the month after you reach the midpoint of the amortization schedule, year 15 of a 30-year loan, regardless of the balance. https://shouldifinance.com/guides/whats-in-a-mortgage-payment",
+      "guide": "whats-in-a-mortgage-payment",
+      "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "pmi-80-78-gap",
+      "card": "You can ask to cancel PMI at 80%. Your servicer must cancel it at 78%.",
+      "caption": "That two-point gap is yours to close, and it is worth real money. On a $400,000 purchase with 10% down at 6.5%, scheduled payments reach 80% at month 95 and 78% at month 109 — 14 months of PMI, about $2,184, sitting between the date you could have asked and the date they had to act. https://shouldifinance.com/guides/whats-in-a-mortgage-payment",
+      "guide": "whats-in-a-mortgage-payment",
+      "source": "CFPB, when PMI can be removed; payment figures computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "dti-43-not-the-rule",
+      "card": "The 43% debt-to-income limit everyone quotes is no longer the legal test.",
+      "caption": "That figure came from the original Qualified Mortgage definition. The CFPB's General QM Final Rule removed it and replaced it with price-based thresholds, so the safe harbour now turns on how the loan is priced against the market. Being under 43% is not an approval and being over it is not a denial. https://shouldifinance.com/guides/how-much-house-can-you-afford",
+      "guide": "how-much-house-can-you-afford",
+      "source": "CFPB, General QM Final Rule",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "car-loan-vs-down-payment",
+      "card": "Clearing a $450 car payment can buy more house than the same cash as a deposit.",
+      "caption": "Underwriting divides your monthly obligations by your gross income, so removing a monthly payment frees borrowing capacity directly. A modest remaining car balance is often worth more approval than putting the same money toward the down payment. https://shouldifinance.com/guides/how-much-house-can-you-afford",
+      "guide": "how-much-house-can-you-afford",
+      "source": "CFPB, General QM Final Rule; debt-to-income mechanics as described in the guide",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "extra-payments-timing",
+      "card": "$200 a month extra from year one saves $111,892. From year 15, $21,475.",
+      "caption": "Same habit, same loan, started fourteen years apart — and worth about a fifth as much. On a $400,000 mortgage at 6.5%, starting in month one clears the loan 67 months early; starting in month 181 clears it 21 months early. The option depreciates every month you hold it. https://shouldifinance.com/guides/do-extra-mortgage-payments-save-money",
+      "guide": "do-extra-mortgage-payments-save-money",
+      "source": "Computed with the site's own amortization, the same code the calculator runs",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "principal-beats-interest-233",
+      "card": "On a 30-year mortgage, principal does not beat interest until month 233.",
+      "caption": "A mortgage is front-loaded. On a $400,000 loan at 6.5% the first payment of $2,528 splits into $2,167 of interest and $362 of principal, and it takes more than 19 years before the principal half is the bigger one. For the first two decades you are mostly renting money. https://shouldifinance.com/guides/do-extra-mortgage-payments-save-money",
+      "guide": "do-extra-mortgage-payments-save-money",
+      "source": "Computed with the site's own amortization, the same code the calculator runs",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "extra-payments-dont-lower-payment",
+      "card": "Extra mortgage payments shorten the loan. They do not lower what you owe each month.",
+      "caption": "Extra principal does not re-amortize the loan, so your required payment stays exactly what it was. If you want the payment itself to fall, that is a recast — a different request, usually with a fee and a minimum lump sum, and not available on every loan. https://shouldifinance.com/guides/do-extra-mortgage-payments-save-money",
+      "guide": "do-extra-mortgage-payments-save-money",
+      "source": "CFPB, how paying down a mortgage works",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "extra-payment-misapplied",
+      "card": "Money sent with your mortgage payment is not automatically applied to principal.",
+      "caption": "Some servicers hold an extra amount as a partial payment toward next month, which does nothing for you at all. Send it as a separate, labelled principal-only payment and check the next statement to confirm the balance moved by the full amount. https://shouldifinance.com/guides/do-extra-mortgage-payments-save-money",
+      "guide": "do-extra-mortgage-payments-save-money",
+      "source": "CFPB, how paying down a mortgage works",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "cashout-not-deductible",
+      "card": "Rolling credit card debt into your mortgage does not make the interest deductible.",
+      "caption": "The mortgage interest deduction is limited to acquisition debt — money used to buy, build or substantially improve the home. Publication 936 is explicit that it does not matter when the debt was incurred. Paying off a card is none of those three, so that portion produces no deduction and has to be tracked separately for as long as you hold the loan. https://shouldifinance.com/guides/refinance-to-pay-off-credit-cards",
+      "guide": "refinance-to-pay-off-credit-cards",
+      "source": "IRS Publication 936, Home Mortgage Interest Deduction",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "cashout-reprices-everything",
+      "card": "A cash-out refinance reprices your whole mortgage, not just the new money.",
+      "caption": "Owe $280,000 at 4.5% and roll in $20,000 of card debt at 7%, and you are not paying 7% on $20,000 — you are paying it on all $300,000. The extra 2.5% on the balance that was already cheap costs $7,000 a year and usually swamps the interest saved on the cards. https://shouldifinance.com/guides/refinance-to-pay-off-credit-cards",
+      "guide": "refinance-to-pay-off-credit-cards",
+      "source": "Computed in the guide from the stated balances and rates; deduction treatment from IRS Publication 936",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "lower-rate-longer-term",
+      "card": "A lower rate over a longer schedule can cost more while costing less each month.",
+      "caption": "A $20,000 card balance at 24% you would have cleared in four years costs about $27,900 in interest once it sits on a 30-year mortgage at 7% — more than the card would have. Both statements are true at once, and which one matters depends entirely on what you do with the monthly relief. https://shouldifinance.com/guides/refinance-to-pay-off-credit-cards",
+      "guide": "refinance-to-pay-off-credit-cards",
+      "source": "Computed in the guide from the stated balance, rate and term",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "section-121-exclusion",
+      "card": "You can exclude $250,000 of gain when you sell your home. $500,000 if married.",
+      "caption": "Under Section 121, gain on a main home is excluded from income within those limits — not taxed at a lower rate, excluded. Investment gains elsewhere are taxable when realized, which is why two paths that look even on paper are not even after tax. https://shouldifinance.com/guides/cheaper-to-rent-or-buy",
+      "guide": "cheaper-to-rent-or-buy",
+      "source": "IRS Topic No. 701, Sale of your home",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "section-121-not-same-24-months",
+      "card": "The ownership test and the residence test need not cover the same two years.",
+      "caption": "Section 121 asks for 24 months of ownership and 24 months of use as your residence, both within the five years ending on the sale date. They are separate tests against the same window, and people assume a single continuous period that the rule never required. https://shouldifinance.com/guides/cheaper-to-rent-or-buy",
+      "guide": "cheaper-to-rent-or-buy",
+      "source": "IRS Topic No. 701, Sale of your home",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "rent-vs-buy-is-a-year",
+      "card": "Rent versus buy has no answer. It has a break-even year.",
+      "caption": "Transaction costs land at the start and equity builds slowly, so buying begins far behind and catches up. The useful output is how many years you must stay before buying pulls ahead — and the two things that move it most are appreciation and what your down payment would have earned, neither of which is a fact. https://shouldifinance.com/guides/cheaper-to-rent-or-buy",
+      "guide": "cheaper-to-rent-or-buy",
+      "source": "Structural argument set out in the guide; Section 121 treatment from IRS Topic No. 701",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "year-one-87-percent",
+      "card": "87% of what you pay in year one of a mortgage buys nothing but time.",
+      "caption": "On a $300,000 balance at 7% over 30 years, the first twelve months send roughly $20,903 to interest and $3,047 to principal. Every refinance restarts that schedule — which is why a lower payment on a fresh 30-year term can raise what the loan costs over its life. https://shouldifinance.com/guides/when-refinancing-pays-for-itself",
+      "guide": "when-refinancing-pays-for-itself",
+      "source": "Computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "loan-estimate-three-days",
+      "card": "Give a lender six facts and they must send a Loan Estimate within three business days.",
+      "caption": "Name, income, Social Security number, property address, an estimate of the property's value and the loan amount. That is an application, and a lender cannot require anything beyond those six before issuing one. Being told you need more paperwork first is a sales step, not a rule. https://shouldifinance.com/guides/when-refinancing-pays-for-itself",
+      "guide": "when-refinancing-pays-for-itself",
+      "source": "CFPB TILA-RESPA Integrated Disclosure FAQs",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "no-cost-refinance-tell",
+      "card": "A genuine no-cost refinance has a rate visibly above that day's market rate.",
+      "caption": "There is no refinance without costs — only ones where the lender pays them in exchange for a higher rate, which is a real option and sometimes the right one. If you are offered the market rate and no costs, the costs are in the loan amount. Ask what the balance will be on day one. https://shouldifinance.com/guides/when-refinancing-pays-for-itself",
+      "guide": "when-refinancing-pays-for-itself",
+      "source": "Structural argument set out in the guide, alongside the CFPB TILA-RESPA disclosure rules it cites",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "half-point-cancelled",
+      "card": "A half-point rate cut is cancelled by 5.3% appreciation.",
+      "caption": "On a $400,000 home with 10% down, waiting for 7% to become 6.5% leaves you exactly where you started if the price rises 5.3% — an unremarkable year in a lot of markets. A full point needs 11%. The bet is not whether rates fall, but whether they fall faster than prices rise. https://shouldifinance.com/guides/does-waiting-for-rates-to-drop-save-money",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "source": "Break-even appreciation computed with the site's own code at $400,000 with 10% down over 30 years",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "refinance-rate-not-price",
+      "card": "You can refinance a rate. You cannot refinance a price.",
+      "caption": "Buy at a high rate and a lower price and the rate is temporary while the price is locked in your favour forever. Wait, and the lower rate is the part you keep — but you paid for it up front, in principal, for thirty years. One of those two numbers is revisable and the other is not. https://shouldifinance.com/guides/does-waiting-for-rates-to-drop-save-money",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "source": "Structural argument set out in the guide; break-even figures computed with the site's own code",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "waiting-lower-rate-more-bidders",
+      "card": "The high rate you dislike is also what is keeping other bidders out of the room.",
+      "caption": "Lower rates bring buyers back, which is why the low-rate market is frequently the one with waived contingencies and offers over asking. The rate you waited for arrives with the competition you were not counting on. https://shouldifinance.com/guides/does-waiting-for-rates-to-drop-save-money",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "source": "Market behaviour described in the guide; break-even figures computed with the site's own code",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "loan-estimate-tolerances",
+      "card": "Your lender's own fees cannot legally rise. The escrow figures can rise by any amount.",
+      "caption": "Between Loan Estimate and Closing Disclosure, charges fall into three tolerance buckets: lender and broker fees cannot increase at all, some third-party costs can move 10% in total, and prepaids, insurance and initial escrow can move without limit. Section A is a promise. The escrow line is optimism. https://shouldifinance.com/guides/how-to-compare-two-mortgage-quotes",
+      "guide": "how-to-compare-two-mortgage-quotes",
+      "source": "CFPB, can my final mortgage costs increase from what was on my Loan Estimate?",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "compare-section-a",
+      "card": "Compare two mortgage quotes on section A. Everything else is a guess about your county.",
+      "caption": "Monthly payments differ because one lender used the seller's stale tax assessment and the other used the likely reassessment. Section A — origination, points, underwriting, processing — is the part the lender actually controls, and asking each to match the best one you received works more often than people expect. https://shouldifinance.com/guides/how-to-compare-two-mortgage-quotes",
+      "guide": "how-to-compare-two-mortgage-quotes",
+      "source": "CFPB, can my final mortgage costs increase from what was on my Loan Estimate?, and the CFPB TILA-RESPA Integrated Disclosure FAQs",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "tip-page-three",
+      "card": "Total Interest Percentage sits on page 3 of every Loan Estimate. Almost nobody reads it.",
+      "caption": "It is the total interest you will pay over the loan's life, as a percentage of the amount borrowed. That makes it the one figure on the form answering what the loan costs rather than what it costs this month. https://shouldifinance.com/guides/how-to-compare-two-mortgage-quotes",
+      "guide": "how-to-compare-two-mortgage-quotes",
+      "source": "CFPB TILA-RESPA Integrated Disclosure FAQs; Loan Estimate contents under Regulation Z",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-no-monthly-mi",
+      "card": "A VA loan charges no monthly mortgage insurance at all.",
+      "caption": "In its place there is a one-time funding fee, financed or paid at closing. That is the whole structural difference: the VA charges once, and a conventional loan charges every month until you reach 78% of original value. Short holds favour the loan with the smaller up-front cost; long holds favour the one that stops. https://shouldifinance.com/guides/va-loan-vs-conventional",
+      "guide": "va-loan-vs-conventional",
+      "source": "VA funding fee and closing costs; CFPB on PMI removal",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-zero-rating-not-exempt",
+      "card": "A 0% VA disability rating does not exempt you from the funding fee. Any compensable rating does.",
+      "caption": "The test is whether you are receiving, or entitled to receive, disability compensation — not a particular rating number. Compensation begins at 10%, so a 0% service-connected rating is non-compensable and does not exempt you. On a $400,000 nothing-down purchase the fee is $8,600, and exemption removes all of it. https://shouldifinance.com/guides/va-loan-vs-conventional",
+      "guide": "va-loan-vs-conventional",
+      "source": "VA funding fee and closing costs, for the fee tiers and exemptions",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-no-loan-limit",
+      "card": "With full VA entitlement there is no VA loan limit.",
+      "caption": "You are bounded by what you can afford and what the appraisal supports, not by a county figure. Loan limits only re-enter for borrowers without full entitlement, typically because another VA loan is still outstanding. https://shouldifinance.com/guides/va-loan-vs-conventional",
+      "guide": "va-loan-vs-conventional",
+      "source": "VA loan limits",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-first-vs-subsequent",
+      "card": "Using VA entitlement a second time nearly doubles the funding fee at low down payments.",
+      "caption": "Under 5% down, the purchase funding fee is 2.15% on first use and 3.3% on subsequent use. At 5% or more it is 1.5% either way, and at 10% or more, 1.25%. A streamline refinance is 0.5%. https://shouldifinance.com/guides/va-loan-vs-conventional",
+      "guide": "va-loan-vs-conventional",
+      "source": "VA funding fee and closing costs, for the fee tiers",
+      "category": "Home",
+      "shelfLife": {
+        "risk": "Funding fee percentages are set by the VA and have been changed by legislation before.",
+        "recheck": "Annually, against va.gov"
+      }
+    },
+    {
+      "id": "section-121-two-year-bar",
+      "card": "Sell two main homes inside two years and the second gain is likely fully taxable.",
+      "caption": "You generally cannot use the Section 121 exclusion if you already excluded gain from another home sale in the two years before this one. On a house that appreciated $80,000 that is a real bill, arriving in the same year as two sets of closing costs. https://shouldifinance.com/guides/sell-first-or-buy-first",
+      "guide": "sell-first-or-buy-first",
+      "source": "IRS Topic No. 701, Sale of your home",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "rent-back",
+      "card": "Sell first, then rent your own house back from the buyer for 30 to 60 days.",
+      "caption": "A rent-back is cheap, common, and removes most of the sell-first problem — you get a clean offer with no contingency and somewhere to live while you find the next place. Longer and shorter closing periods do the same job and are the most underused tool in the process. https://shouldifinance.com/guides/sell-first-or-buy-first",
+      "guide": "sell-first-or-buy-first",
+      "source": "Transaction practice described in the guide; Section 121 timing from IRS Topic No. 701",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "prepay-returns-exactly",
+      "card": "Prepaying a mortgage returns exactly your rate. Guaranteed, and tax-free.",
+      "caption": "Not expected, not on average — exactly. There is no tax on interest you did not pay, so for the many households that take the standard deduction a 6.5% mortgage really does cost a full 6.5%, and killing it really does return 6.5%. https://shouldifinance.com/guides/pay-off-your-house-or-invest",
+      "guide": "pay-off-your-house-or-invest",
+      "source": "IRS Publication 936 for the deduction limits; interest and payoff figures computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "thousand-a-month",
+      "card": "$1,000 a month extra on a $300,000 mortgage saves $241,162 and clears it 12 years early.",
+      "caption": "At 6.5% over 30 years that balance costs about $382,633 in interest if left alone. Adding $1,000 a month to principal drops it to about $141,471 and retires the loan in 153 months instead of 360. https://shouldifinance.com/guides/pay-off-your-house-or-invest",
+      "guide": "pay-off-your-house-or-invest",
+      "source": "Computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "paid-off-house-lowers-floor",
+      "card": "A paid-off house permanently lowers the amount you must earn each month.",
+      "caption": "That is a real financial effect, not a feeling, and it does not appear in a rate comparison. It changes what a job loss or an early retirement looks like. Running the other way: money in the house is unreachable without selling or borrowing on that day's terms. https://shouldifinance.com/guides/pay-off-your-house-or-invest",
+      "guide": "pay-off-your-house-or-invest",
+      "source": "Argument set out in the guide; interest and payoff figures computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "fha-mip-never-comes-off",
+      "card": "FHA mortgage insurance never comes off a 3.5%-down loan.",
+      "caption": "FHA's annual MIP duration is fixed by your loan-to-value at origination, and paying the balance down does not end it. Above 90% LTV — which includes the 3.5% minimum — it runs for the first 30 years or the end of the term. Reaching 78% does nothing. Reaching 50% does nothing. https://shouldifinance.com/guides/bigger-down-payment-or-buy-sooner",
+      "guide": "bigger-down-payment-or-buy-sooner",
+      "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "fha-nine-vs-ten",
+      "card": "On an FHA loan, 9% down versus 10% down is 19 extra years of mortgage insurance.",
+      "caption": "At or below 90% LTV at origination the annual MIP runs 11 years. Above it, 30. That single percentage point of down payment is often worth more than the entire rate difference between FHA and conventional, and it is rarely what the conversation is about. https://shouldifinance.com/guides/bigger-down-payment-or-buy-sooner",
+      "guide": "bigger-down-payment-or-buy-sooner",
+      "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "pmi-is-not-forever",
+      "card": "PMI at 5% down is not $247 a month forever. It is about $33,000 over eleven years.",
+      "caption": "On a $400,000 home at 6.5%, a 5%-down conventional loan reaches 80% of original value at month 124 and 78% at month 135. That total is the figure to weigh against three more years of renting while you save — not a monthly number with no end date attached. https://shouldifinance.com/guides/bigger-down-payment-or-buy-sooner",
+      "guide": "bigger-down-payment-or-buy-sooner",
+      "source": "CFPB on removing PMI for the thresholds; payment and PMI figures computed with the site's own code at representative PMI rates",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "points-purchase-vs-refi",
+      "card": "Points on a purchase are deductible that year. Points on a refinance are spread over thirty.",
+      "caption": "Same dollar, two completely different treatments. The IRS is direct: points paid to refinance are not deductible in full in the year you pay them, but are spread over the life of the loan. Which makes a point on a refinance worth less than the same point on a purchase. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "guide": "are-discount-points-worth-it",
+      "source": "IRS Publication 936, Home Mortgage Interest Deduction",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "unamortized-points",
+      "card": "Refinance again and the unamortized points from last time generally become deductible.",
+      "caption": "Points on a refinance are spread across the loan's life, so retiring that loan early usually releases the remainder in that year. It is one of the few places where refinancing again actually helps. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "guide": "are-discount-points-worth-it",
+      "source": "IRS Publication 936, Home Mortgage Interest Deduction",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "points-no-fixed-rate",
+      "card": "There is no fixed exchange rate for mortgage points. What one buys changes daily.",
+      "caption": "A quarter of a percent per point is common, but it moves with the bond market and varies by lender, loan type and credit profile. Some days the pricing is generous; some days a point buys almost nothing. Get the number in writing on the Loan Estimate rather than as a rule of thumb. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "guide": "are-discount-points-worth-it",
+      "source": "Pricing practice described in the guide; deduction treatment from IRS Publication 936",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "points-bet-on-not-refinancing",
+      "card": "Buying points is a bet on keeping this exact loan — not on staying in the house.",
+      "caption": "Most people remember that selling ends the payback. Fewer factor in refinancing. If rates fall you refinance, and the point stops earning the moment that loan is retired — so you are paying up front for protection against the scenario where you were already going to be fine. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "guide": "are-discount-points-worth-it",
+      "source": "Structural argument set out in the guide; payment figures computed with the site's own amortization",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "card-and-car-interest-never-deductible",
+      "card": "Credit card and car loan interest is not tax-deductible. It never has been.",
+      "caption": "Mortgage interest on acquisition debt can be, if you itemize, and student loan interest is deductible above the line up to an annual cap. Consumer debt is not in that list at all, which is worth knowing before anyone tells you a card balance is cheaper than it looks. https://shouldifinance.com/guides/pay-off-debt-or-invest",
+      "guide": "pay-off-debt-or-invest",
+      "source": "IRS Publication 936 for home mortgage interest; deductibility treatment as set out in the guide",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "guaranteed-vs-expected",
+      "card": "A guaranteed 6% and an expected 6% are not the same number.",
+      "caption": "Paying down debt returns the loan rate, after tax, with certainty. Investing returns an unknown number, before tax, with a wide range of outcomes — including a 40% drawdown in year three, arriving alongside a payment schedule that does not care. https://shouldifinance.com/guides/pay-off-debt-or-invest",
+      "guide": "pay-off-debt-or-invest",
+      "source": "Argument set out in the guide; tax figures from IRS Revenue Procedure 2025-32 and IRS, net investment income tax",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-funding-fee-excluded",
+      "card": "The VA funding fee doesn't count toward the 36-month recoupment test.",
+      "caption": "The statute counts everything other than taxes, escrow, and fees paid under the VA's own loan chapter — and the funding fee is exactly that, despite often being the largest line on an IRRRL. So the number your lender puts in the recoupment box is legitimately smaller than your closing costs. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
+      "guide": "va-36-month-recoupment-rule",
+      "source": "38 U.S.C. § 3709(a); VA Circular 26-19-22 and its Exhibit B",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-210-days",
+      "card": "A VA streamline needs 210 days since your first payment was due. Paying ahead does not help.",
+      "caption": "Two seasoning clocks run at once and you need both: 210 days from the first payment due date, and six consecutive monthly payments made. Six payments means six months of payments, not six payments' worth of money. Close in March with a first payment due 1 May and the earliest IRRRL is around late November. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
+      "guide": "va-36-month-recoupment-rule",
+      "source": "38 U.S.C. § 3709(c), for both seasoning conditions",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-lender-credit-instant",
+      "card": "A lender credit big enough to cover the fees makes a VA refinance recoup instantly.",
+      "caption": "Credits come straight off the recoupable total, and Exhibit B says so directly. Two IRRRLs with identical fees can therefore recoup at very different speeds. The catch: a credit is bought with a higher rate, which shrinks the monthly saving, so it is a calculation rather than a given. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
+      "guide": "va-36-month-recoupment-rule",
+      "source": "VA Circular 26-19-22, Exhibit B, on the treatment of lender credits",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "va-passes-but-costs",
+      "card": "A VA refinance can pass the 36-month test and still take 51 months to pay you back.",
+      "caption": "The recoupment figure says whether the loan may close. It does not say what the refinance cost you. Add the excluded funding fee back and divide again — a $3,000 fee against a $140 monthly saving is 21 extra months. The VA test says 30 and passes; your own money says 51. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
+      "guide": "va-36-month-recoupment-rule",
+      "source": "38 U.S.C. § 3709(a) for the test; funding fee figures from VA funding fee and closing costs",
+      "category": "Home",
+      "shelfLife": null
+    },
+    {
+      "id": "apr-excludes-real-costs",
+      "card": "Title insurance, the appraisal and your escrow deposit are all legally excluded from APR.",
+      "caption": "Regulation Z § 1026.4(c)(7) carves them out of the finance charge on loans secured by real property, along with document preparation, notary, credit report and inspection fees. Every one of those is money you pay. None of them is in the number you were told to compare loans with. https://shouldifinance.com/guides/what-rate-are-you-really-paying",
+      "guide": "what-rate-are-you-really-paying",
+      "source": "Regulation Z § 1026.4, finance charge definition and the real-property exclusions in § 1026.4(c)(7)",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "fees-are-a-bet-on-time",
+      "card": "Sell a loan early and every up-front dollar of fees turns out to have cost more.",
+      "caption": "A fee is paid on day one and recovered slowly through a lower payment, so the effective rate depends entirely on how long you keep the loan. Spread over 360 payments it barely registers; spread over 48 it jumps. Paying points and fees is a bet on keeping the loan. https://shouldifinance.com/guides/what-rate-are-you-really-paying",
+      "guide": "what-rate-are-you-really-paying",
+      "source": "Computed with the site's own model; APR definition from Regulation Z § 1026.4",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "apr-vs-apy",
+      "card": "Compare APRs when borrowing and APYs when saving. Comparing one to the other tells you nothing.",
+      "caption": "APY includes the effect of compounding and APR does not. A 5% rate compounded monthly is an APY of about 5.12%. Ignoring compounding understates the cost when you borrow and understates the benefit when you save. https://shouldifinance.com/guides/what-rate-are-you-really-paying",
+      "guide": "what-rate-are-you-really-paying",
+      "source": "Regulation Z § 1026.4 for the finance charge definition; yield arithmetic computed with the site's own code",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "avalanche-always-wins",
+      "card": "The avalanche always costs less. That is a mathematical property, not an opinion.",
+      "caption": "Interest accrues on balances at their own rates, so every dollar moved to a higher-rate balance removes more future interest than the same dollar anywhere else. Order by rate and total interest is minimized by construction — no other order can beat it. The real question is by how much. https://shouldifinance.com/guides/snowball-or-avalanche",
+      "guide": "snowball-or-avalanche",
+      "source": "Property of the payoff arithmetic, as set out in the guide; minimum payment rules from Regulation Z § 1026.7",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "snowball-cost-is-rate-spread",
+      "card": "The snowball's cost is not fixed. It is exactly your rate spread.",
+      "caption": "Three cards at 24%, 22% and 19% and the two methods finish within months and a few hundred dollars of each other. A 29% card and a 4% car loan and the gap is large. Run both totals before deciding whether the argument is worth having — if it is $200, take the one you will actually finish. https://shouldifinance.com/guides/snowball-or-avalanche",
+      "guide": "snowball-or-avalanche",
+      "source": "Property of the payoff arithmetic, as set out in the guide",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "minimums-shrink",
+      "card": "Credit card minimum payments shrink as your balance falls. That is why they never end.",
+      "caption": "The minimum is usually a percentage of the balance plus that month's interest, subject to a floor — so the payment falls just as fast as the debt does. Both the snowball and the avalanche work because they fix a total monthly amount and hold it steady. That fixed total does more work than the ordering. https://shouldifinance.com/guides/snowball-or-avalanche",
+      "guide": "snowball-or-avalanche",
+      "source": "Regulation Z § 1026.7, periodic statement content for credit card accounts",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "minimum-payment-box",
+      "card": "Your card statement must legally show how long minimum payments would take.",
+      "caption": "Regulation Z requires every periodic statement to carry a minimum payment warning, an estimate of the payoff time at minimums only, and where applicable the payment that would clear the balance in 36 months. On a mid-sized balance the minimum-only figure is frequently over a decade. Go and look. https://shouldifinance.com/guides/snowball-or-avalanche",
+      "guide": "snowball-or-avalanche",
+      "source": "Regulation Z § 1026.7, periodic statement content for credit card accounts",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "heloc-interest-only-decade",
+      "card": "Ten years of interest-only on a $30,000 HELOC: you have paid $27,000 and still owe $30,000.",
+      "caption": "During the draw period the required payment covers the month's interest and nothing else. You can pay on time for a decade and owe precisely what you started with. Cards at least shrink when you pay the minimum — an interest-only HELOC does not shrink at all. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
+      "guide": "home-equity-to-pay-off-credit-cards",
+      "source": "Computed with the site's own amortization at $30,000 and 9%",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "heloc-payment-steps",
+      "card": "When a HELOC's draw period ends, the payment steps up. It does not drift.",
+      "caption": "$30,000 at 9% is $225 a month interest-only. Amortized over 15 years at the same rate it becomes about $304 — a third higher, assuming the rate has not moved. On a shorter repayment period, or after a rate rise, the step is much larger. Ask for the figure, not the formula. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
+      "guide": "home-equity-to-pay-off-credit-cards",
+      "source": "Computed with the site's own amortization at $30,000 and 9%",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "heloc-payment-beats-rate",
+      "card": "On a HELOC, what you choose to pay matters far more than the rate you got.",
+      "caption": "$30,000 at 9% paid interest-only for ten years costs $27,000 and clears nothing. The same balance at $625 a month clears in about five years for roughly $7,400 of interest. Same rate, same balance — a bigger difference than 9% versus 7% could ever make. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
+      "guide": "home-equity-to-pay-off-credit-cards",
+      "source": "Computed with the site's own amortization at $30,000 and 9%",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "heloc-not-deductible",
+      "card": "A HELOC used to clear a credit card produces no deductible interest.",
+      "caption": "Publication 936 limits the deduction to proceeds used to buy, build or substantially improve the home the loan relates to. Paying off a card is none of the three. The suspension for home equity borrowing outside those purposes was made permanent by P.L. 119-21. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
+      "guide": "home-equity-to-pay-off-credit-cards",
+      "source": "IRS Publication 936, for the buy-build-improve requirement",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "origination-fee-from-proceeds",
+      "card": "Borrow $20,000 with a 5% origination fee and $19,000 arrives.",
+      "caption": "The fee is normally deducted from the proceeds rather than billed, so to actually clear $20,000 of balances you have to borrow about $21,053 — and pay interest on the whole amount. That fee belongs in the rate, which is why the APR is the number to compare and the note rate is not. https://shouldifinance.com/guides/does-debt-consolidation-save-money",
+      "guide": "does-debt-consolidation-save-money",
+      "source": "Regulation Z § 1026.4, definition of the finance charge",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "dont-consolidate-cheap-debt",
+      "card": "There is no rule that a consolidation loan has to include all your debts.",
+      "caption": "Rolling a 6% loan into an 11% consolidation loan makes that debt more expensive. Consolidation is not tidiness for its own sake — the answer for \"all of them\" is frequently worse than the answer for \"these three\". Leave the cheap debts where they are. https://shouldifinance.com/guides/does-debt-consolidation-save-money",
+      "guide": "does-debt-consolidation-save-money",
+      "source": "Regulation Z § 1026.4 for the APR treatment; selection argument set out in the guide",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "consolidation-advertised-rate",
+      "card": "The advertised consolidation rate is the best tier, not the offered tier.",
+      "caption": "Consolidation fails quietly in three ways: the payment falls mainly because the term doubled, the origination fee pushes the real cost near what the cards charged, or the rate you are actually approved for is nothing like the advertised one. Ask for the APR rather than the interest rate, and for the total interest over the full term against the total if you kept paying what you pay now. https://shouldifinance.com/guides/does-debt-consolidation-save-money",
+      "guide": "does-debt-consolidation-save-money",
+      "source": "Lending practice described in the guide; APR treatment from Regulation Z § 1026.4",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "one-late-payment",
+      "card": "A single late payment cannot end a 0% promotional rate.",
+      "caption": "Regulation Z permits an issuer to raise a rate for delinquency only when the required minimum payment is more than 60 days overdue. One missed due date costs you a late fee and a mark on your credit file — it does not by itself cost you the promotion. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Regulation Z § 1026.55, limitations on increasing annual percentage rates",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "payment-allocation-highest-rate",
+      "card": "Pay more than the minimum and the issuer must apply the excess to your highest rate first.",
+      "caption": "Regulation Z requires the amount above the minimum to go to the balance with the highest APR, then the rest in descending rate order. So if you have a 0% transferred balance and later make purchases at 22%, your extra payments attack the 22% automatically. You do not have to ask. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Regulation Z § 1026.53, allocation of payments",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "grace-period-gone",
+      "card": "Carry a balance and new purchases start accruing interest the moment you make them.",
+      "caption": "The usual interest-free window until the due date disappears while a balance is outstanding — and a freshly transferred balance is exactly what removes it. Move the debt, then put that card away and spend on a different one. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Grace period treatment described in the guide, alongside the Regulation Z rules it cites at §§ 1026.53 and 1026.55",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "promo-rate-six-months",
+      "card": "A promotional credit card rate has to run at least six months.",
+      "caption": "Regulation Z requires a temporary rate to be disclosed in advance, for a stated period of six months or longer, together with the rate that applies afterwards. That go-to rate is the one that takes over anything still outstanding when the clock runs out. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Regulation Z § 1026.55, including the temporary-rate provisions",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "transfer-fee-six-weeks",
+      "card": "A 3% balance transfer fee on $8,000 pays for itself in about six weeks.",
+      "caption": "The fee is $240. The interest you would have paid on $8,000 at 24% is roughly $160 a month at the start. Everything after those six weeks is yours. It stops being worth it when the window is short, the fee is 5% and the rate you are escaping is modest. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Computed in the guide from the stated balance, fee and rate",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "transfer-real-number",
+      "card": "The number that decides a balance transfer is not the fee. It is $458 a month.",
+      "caption": "$8,000 plus a $240 fee, cleared inside an 18-month promotion, is about $458 every month. Work that figure out before you apply: it tells you whether the offer is a solution or a postponement, because anything left at the end gets repriced at the go-to rate. https://shouldifinance.com/guides/is-a-balance-transfer-worth-the-fee",
+      "guide": "is-a-balance-transfer-worth-the-fee",
+      "source": "Computed in the guide from the stated balance, fee and promotional window",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "rap-balance-cannot-grow",
+      "card": "On the Repayment Assistance Plan your student loan balance cannot grow.",
+      "caption": "If your payment does not cover the month's interest, the shortfall is waived rather than capitalized. And if a full on-time payment retires less than a set amount of principal, the Secretary covers the difference. That is the biggest practical break from IBR, where a low payment on a large balance can leave it climbing for years. https://shouldifinance.com/guides/which-student-loan-repayment-plan",
+      "guide": "which-student-loan-repayment-plan",
+      "source": "20 U.S.C. 1087e(q) as added by P.L. 119-21",
+      "category": "Debt",
+      "shelfLife": {
+        "risk": "RAP was created by P.L. 119-21 and its parameters are recent statute. Amounts and availability can change with legislation.",
+        "recheck": "Before each post, against studentaid.gov"
+      }
+    },
+    {
+      "id": "rap-hard-boundaries",
+      "card": "On RAP, $20,000 of income pays 1%. $20,001 pays 2%.",
+      "caption": "The rate steps up a percentage point per $10,000 of adjusted gross income, and the bands are written as hard boundaries rather than a sliding scale. That is the statute as written, not a rounding artifact — so a small raise near a boundary can cost more than it pays. https://shouldifinance.com/guides/which-student-loan-repayment-plan",
+      "guide": "which-student-loan-repayment-plan",
+      "source": "20 U.S.C. 1087e(q) as added by P.L. 119-21",
+      "category": "Debt",
+      "shelfLife": {
+        "risk": "RAP band structure is recent statute and can change with legislation.",
+        "recheck": "Before each post, against studentaid.gov"
+      }
+    },
+    {
+      "id": "rap-disbursement-date",
+      "card": "One loan taken for a final semester can change which repayment plans you are allowed.",
+      "caption": "The dividing line is whether any of your loans was first disbursed on or after a specific date — not when you enrolled, not when you graduated. One new loan moves you into the group with two options instead of the older, wider set. Find your disbursement dates before anything else. https://shouldifinance.com/guides/which-student-loan-repayment-plan",
+      "guide": "which-student-loan-repayment-plan",
+      "source": "20 U.S.C. 1087e(d), plan availability and the transition deadline",
+      "category": "Debt",
+      "shelfLife": {
+        "risk": "Plan availability and the cutoff date come from P.L. 119-21 and the wind-down of the older income-driven plans.",
+        "recheck": "Before each post, against studentaid.gov"
+      }
+    },
+    {
+      "id": "lowest-payment-trap",
+      "card": "The student loan plan with the smallest payment is very often the most expensive one.",
+      "caption": "You pay for longer and interest keeps accruing. That reverses completely if you are genuinely heading for forgiveness, where every extra dollar paid is a dollar that would have been forgiven. So the real question is whether you are on a payoff path or a forgiveness path — and picking wrong is expensive either way. https://shouldifinance.com/guides/which-student-loan-repayment-plan",
+      "guide": "which-student-loan-repayment-plan",
+      "source": "20 U.S.C. 1087e(q) and 20 U.S.C. 1098e for the plan terms the comparison rests on",
+      "category": "Debt",
+      "shelfLife": {
+        "risk": "The underlying plan set changed with P.L. 119-21 and remains in transition.",
+        "recheck": "Before each post, against studentaid.gov"
+      }
+    },
+    {
+      "id": "depreciation-no-bill",
+      "card": "The largest cost of owning a car is the only one that never sends a bill.",
+      "caption": "Fuel bills you weekly. Insurance bills you every six months. Depreciation bills you once, silently, on the day you hand the keys over — which is why it is simultaneously the biggest line and the one nobody budgets for. A $36,000 car kept seven years and sold for $14,000 gave up $22,000. https://shouldifinance.com/guides/what-a-car-really-costs-to-own",
+      "guide": "what-a-car-really-costs-to-own",
+      "source": "Computed with the site's own model on a $36,000 car held seven years — the calculator's own example",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "buy-the-depreciation-not-the-rate",
+      "card": "Choosing the car matters far more than negotiating the loan rate.",
+      "caption": "Depreciation beats fuel, insurance and maintenance individually and usually by a wide margin. So the most effective way to cut what a car costs is to buy one that depreciates less, or one that has already done its depreciating — not to negotiate the financing. https://shouldifinance.com/guides/what-a-car-really-costs-to-own",
+      "guide": "what-a-car-really-costs-to-own",
+      "source": "Computed with the site's own model on a $36,000 car held seven years; five-year depreciation benchmarks from iSeeCars, March 2026",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "cost-per-mile-counterintuitive",
+      "card": "Driving more miles usually lowers your cost per mile.",
+      "caption": "Depreciation and insurance are largely fixed regardless of use, so spreading them over more miles brings the per-mile figure down. Keeping a car longer does the same — right up until repairs take over. The cheapest mile you will ever drive is in a car you already own and have finished depreciating. https://shouldifinance.com/guides/what-a-car-really-costs-to-own",
+      "guide": "what-a-car-really-costs-to-own",
+      "source": "Computed with the site's own model on a $36,000 car held seven years",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "underwater-month-29",
+      "card": "$40,000 car, nothing down, 72 months: you are underwater until month 29.",
+      "caption": "Depreciation is steepest at the start and loan balances fall slowest at the start, so the two curves diverge immediately — about $7,550 in month one. For nearly two and a half years, selling the car or writing it off leaves you owing money on a car you no longer have. https://shouldifinance.com/guides/how-fast-does-a-car-lose-value",
+      "guide": "how-fast-does-a-car-lose-value",
+      "source": "Computed with the site's own amortization on a $40,000 car at 6.9% over 72 months with nothing down",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "gap-insurance-window",
+      "card": "Gap insurance is worth nothing once you are no longer underwater.",
+      "caption": "It covers the difference between what an insurer pays out — the car's value — and what you still owe. Outside that window there is no gap to insure. Carry it while the loan exceeds the car's value, and cancel it when the lines cross. https://shouldifinance.com/guides/how-fast-does-a-car-lose-value",
+      "guide": "how-fast-does-a-car-lose-value",
+      "source": "Computed with the site's own amortization on a $40,000 car at 6.9% over 72 months",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "year-one-beats-four-and-five",
+      "card": "A new car loses more value in year one than in years four and five combined.",
+      "caption": "A $40,000 car at 20% in the first year and 14% thereafter is worth about $32,000 after twelve months — $8,000 gone, roughly $667 a month, more than most people's payment. It is why buying a one-year-old car saves so much: someone else already paid the steepest part. https://shouldifinance.com/guides/how-fast-does-a-car-lose-value",
+      "guide": "how-fast-does-a-car-lose-value",
+      "source": "Computed with the site's own model at 20% first-year and 14% subsequent depreciation",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "negative-equity-rollforward",
+      "card": "Rolling negative equity into the next car starts that loan underwater on day one.",
+      "caption": "It raises the amount financed above the new car's price, you pay interest on it for the full new term, and it pushes you toward a longer term to keep the payment tolerable — which extends the period you are underwater. That is the mechanism by which one underwater car becomes two. https://shouldifinance.com/guides/how-fast-does-a-car-lose-value",
+      "guide": "how-fast-does-a-car-lose-value",
+      "source": "Computed with the site's own amortization; mechanism set out in the guide",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "used-saving-is-depreciation",
+      "card": "A used car's saving isn't the price gap. It's the depreciation someone else absorbed.",
+      "caption": "A new $42,000 car held seven years gives up about $26,400. A three-year-old $27,000 car over the same seven years gives up about $15,200. The $11,200 difference is the actual saving — and the higher used-car rate and the shorter warranty eat into it. https://shouldifinance.com/guides/new-or-used-which-is-the-better-buy",
+      "guide": "new-or-used-which-is-the-better-buy",
+      "source": "Computed with the site's own model at 20% then 12% for the new car and 6% then 12% for the three-year-old car — the calculator's own example",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "promo-financing-new-only",
+      "card": "Promotional 0.9% financing never appears on a used car.",
+      "caption": "Manufacturer-subsidized rates are a new-car product. Used loans price above new, often by two or three points, because the collateral is worth less and harder to value — so when promotional financing is on the table the rate gap widens considerably and can flip the comparison. https://shouldifinance.com/guides/new-or-used-which-is-the-better-buy",
+      "guide": "new-or-used-which-is-the-better-buy",
+      "source": "Lending practice described in the guide; depreciation figures computed with the site's own model",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "rebate-or-rate-not-both",
+      "card": "The cash rebate and the 0.9% financing are alternatives. You do not get both.",
+      "caption": "Take the promotional rate and the rebate disappears; take the rebate and you finance at the standard rate or pay cash. That turns the question into a head-to-head: is the interest saved by the promotional rate worth more than the rebate you gave up to get it? https://shouldifinance.com/guides/finance-a-car-or-pay-cash",
+      "guide": "finance-a-car-or-pay-cash",
+      "source": "The guide states these terms are set by each manufacturer and are not a published national rule",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "cash-loses-the-incentive",
+      "card": "Paying cash for a car can cost you the incentive entirely.",
+      "caption": "A cash discount is frequently smaller than the rebate available with financing, because the manufacturer is subsidizing the financing rather than the car. Ask for three separate numbers: the price with cash, with the rebate, and with promotional financing. https://shouldifinance.com/guides/finance-a-car-or-pay-cash",
+      "guide": "finance-a-car-or-pay-cash",
+      "source": "The guide states these terms are set by each manufacturer and are not a published national rule",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "money-factor-2400",
+      "card": "Multiply a lease money factor by 2,400 to get the APR.",
+      "caption": "A money factor of 0.00275 is about 6.6%. They are quoted as small decimals precisely because a small decimal does not look like a rate, and a great many lessees have never converted it. Ask for the money factor and the buy rate — dealers can mark it up over what the finance company charges. https://shouldifinance.com/guides/how-is-a-lease-payment-calculated",
+      "guide": "how-is-a-lease-payment-calculated",
+      "source": "Computed with the site's own model, the same arithmetic the calculator runs",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "lease-rent-on-the-sum",
+      "card": "Lease interest is charged on the car's price plus its residual, not the difference.",
+      "caption": "The rent charge is (capitalized cost + residual) × money factor. On a $40,000 car with a $22,000 residual that is $62,000 earning interest, not $18,000 — which is why the money factor moves a lease payment far more than people expect. https://shouldifinance.com/guides/how-is-a-lease-payment-calculated",
+      "guide": "how-is-a-lease-payment-calculated",
+      "source": "Computed with the site's own model on a $40,000 car with a $22,000 residual over 36 months at a money factor of 0.00275",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "lease-negative-equity",
+      "card": "Roll $5,000 of negative equity into a lease and it costs you $5,495.",
+      "caption": "The residual does not move — the car is not worth more because you owed money on the last one — so the whole $5,000 lands on the depreciation half of the payment, about $139 a month, and then picks up a rent charge on top. On a purchase that money is at least attached to an asset you keep. https://shouldifinance.com/guides/how-is-a-lease-payment-calculated",
+      "guide": "how-is-a-lease-payment-calculated",
+      "source": "Computed with the site's own model on a $40,000 car with a $22,000 residual over 36 months at a money factor of 0.00275",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "lease-money-down-gone",
+      "card": "Money down on a lease is generally gone if the car is written off.",
+      "caption": "A cap cost reduction lowers the payment, but you have prepaid depreciation on a car you may no longer have. It is why many people put less down on a lease than on a purchase, and why negotiating on the monthly payment rather than the capitalized cost hands the dealer three different levers. https://shouldifinance.com/guides/how-is-a-lease-payment-calculated",
+      "guide": "how-is-a-lease-payment-calculated",
+      "source": "Lease structure set out in the guide; payment figures computed with the site's own model",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "residual-not-negotiable",
+      "card": "You can negotiate a lease's price and its money factor. You cannot negotiate the residual.",
+      "caption": "The residual is set by the finance company, and a high one is good for you — it is a large part of why some cars lease far better than others. Agree the capitalized cost first, then ask for the money factor, then check the payment against the formula yourself. https://shouldifinance.com/guides/how-is-a-lease-payment-calculated",
+      "guide": "how-is-a-lease-payment-calculated",
+      "source": "Lease structure set out in the guide; payment figures computed with the site's own model",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "lease-not-maintenance-free",
+      "card": "A leased car is not maintenance-free. Tires, brakes and wear charges are all yours.",
+      "caption": "The factory warranty covers major repairs, and that is worth counting. It does not cover tires — which on a three-year lease frequently need replacing before turn-in — brakes, routine servicing, excess wear, or miles over the allowance. Charging maintenance only to the buying side moves a comparison by thousands. https://shouldifinance.com/guides/is-leasing-or-buying-cheaper",
+      "guide": "is-leasing-or-buying-cheaper",
+      "source": "Lease terms are set by each lessor and vary, which is why the guide asks for them in writing rather than quoting figures",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "lease-lower-payment-not-saving",
+      "card": "A lease payment is lower because you are financing less of the car, not saving money.",
+      "caption": "A loan repays the whole car; a lease pays only for the part you use up. Over one lease term the two are closer than people think. Over a decade it is not close at all, because the buyer spends years with no car payment and the lessee never does. https://shouldifinance.com/guides/is-leasing-or-buying-cheaper",
+      "guide": "is-leasing-or-buying-cheaper",
+      "source": "Structural argument set out in the guide; money factor conversion from the lease payment guide",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "auto-refi-fees-worse",
+      "card": "Rolling fees into a car loan is worse than into a mortgage. The collateral is shrinking.",
+      "caption": "$600 added to a mortgage sits on an asset that may appreciate. $600 added to a car loan sits on one losing value every month, pushing your loan-to-value higher on a loan that may already be underwater — and lenders cap how far past the car's value they will lend. https://shouldifinance.com/guides/is-refinancing-a-car-loan-worth-it",
+      "guide": "is-refinancing-a-car-loan-worth-it",
+      "source": "Computed with the site's own amortization; the guide states the loan-to-value threshold is general market practice rather than a published rule",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "auto-refi-cancels-gap",
+      "card": "Refinancing your car loan can cancel your gap insurance.",
+      "caption": "Gap cover is attached to the old loan, and the new lender may or may not offer it. If you are still underwater — which on a long term you probably are — sort this out before closing rather than after. https://shouldifinance.com/guides/is-refinancing-a-car-loan-worth-it",
+      "guide": "is-refinancing-a-car-loan-worth-it",
+      "source": "Refinancing mechanics set out in the guide; break-even figures computed with the site's own amortization",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "auto-refi-dealer-markup",
+      "card": "Dealer financing is frequently marked up over the lender's buy rate.",
+      "caption": "Refinancing with a credit union or bank a few months later often captures the difference, and it is the single most common reason an auto refinance pays. Worth checking roughly a year after any dealer-financed purchase — just keep the new term no longer than what you have left. https://shouldifinance.com/guides/is-refinancing-a-car-loan-worth-it",
+      "guide": "is-refinancing-a-car-loan-worth-it",
+      "source": "Lending practice described in the guide; total-interest figures computed with the site's own amortization",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "twenty-four-ten",
+      "card": "The 10% in the 20/4/10 car rule is not the payment. It is everything.",
+      "caption": "Payment plus insurance plus fuel plus maintenance, all inside 10% of gross monthly income. Insurance alone can be $150 a month and fuel another $150, so a payment that looked fine at 10% is at 16% once the rest is counted. https://shouldifinance.com/guides/how-much-car-can-you-afford",
+      "guide": "how-much-car-can-you-afford",
+      "source": "The guide states 20/4/10 is a widely used planning rule of thumb rather than a lending standard",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "long-terms-exist-for-a-reason",
+      "card": "72- and 84-month car loans exist to make expensive cars produce affordable-looking payments.",
+      "caption": "They also guarantee years of negative equity along the way. Four years keeps the loan shorter than the steep part of the depreciation curve, which is the whole point of that number in the 20/4/10 rule. https://shouldifinance.com/guides/how-much-car-can-you-afford",
+      "guide": "how-much-car-can-you-afford",
+      "source": "The guide states 20/4/10 is a planning rule of thumb rather than a lending standard; depreciation behaviour computed with the site's own model",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "ev-home-charging",
+      "card": "Without home charging, most of an electric car's fuel saving disappears.",
+      "caption": "Public DC fast charging is frequently priced close to the per-mile cost of gasoline. Home charging at residential rates is where the saving actually lives — and that assumption is buried in most EV cost comparisons without ever being stated. https://shouldifinance.com/guides/do-electric-cars-save-money",
+      "guide": "do-electric-cars-save-money",
+      "source": "Charging cost behaviour described in the guide; the calculator lets you set your own electricity price and charging mix",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "ev-maintenance",
+      "card": "An electric car has no oil changes, no spark plugs and brake pads that last far longer.",
+      "caption": "Regenerative braking does most of the slowing, so pads wear slowly. Running the other way, EVs are heavier and torquier, so tires wear faster — which offsets part of the saving. https://shouldifinance.com/guides/do-electric-cars-save-money",
+      "guide": "do-electric-cars-save-money",
+      "source": "Maintenance differences described in the guide",
+      "category": "Auto",
+      "shelfLife": null
+    },
+    {
+      "id": "ev-depreciation-gap",
+      "card": "The EV depreciation gap can cost $7,000 over five years.",
+      "caption": "Electric vehicles have depreciated faster than the market as a whole, and on a $45,000 car that gap is worth roughly $7,000 over five years. The comparison is against an all-vehicle average that itself includes EVs and hybrids, so the gap against a gas-only comparator is if anything wider. https://shouldifinance.com/guides/do-electric-cars-save-money",
+      "guide": "do-electric-cars-save-money",
+      "source": "iSeeCars' study of 950,000 five-year-old used cars sold March 2025 to February 2026, published 24 March 2026",
+      "category": "Auto",
+      "shelfLife": {
+        "risk": "The iSeeCars depreciation study is republished annually and the EV gap has been narrowing as the used market matures.",
+        "recheck": "Annually, when the constants in app/lib/markets.ts are updated"
+      }
+    },
+    {
+      "id": "ev-credits-ended",
+      "card": "The federal tax credits for electric cars have ended.",
+      "caption": "Public Law 119-21 terminated all three clean vehicle credits early — new, previously-owned, and the home charging equipment credit, which runs slightly longer. State and utility incentives are a separate matter and many still exist. Advice written before this assumes a credit that is no longer there. https://shouldifinance.com/guides/do-electric-cars-save-money",
+      "guide": "do-electric-cars-save-money",
+      "source": "IRS, credits for new clean vehicles; used clean vehicle credit; alternative fuel vehicle refueling property credit — implementing P.L. 119-21",
+      "category": "Auto",
+      "shelfLife": {
+        "risk": "This is framed as recent news. By 2028 \"have ended\" reads as stale even though it stays true, and a future Congress could restore something similar.",
+        "recheck": "Before posting, and retire this card once the termination is no longer news"
+      }
+    },
+    {
+      "id": "hundred-dollars-1928",
+      "card": "$100 in the S&P 500 in 1928 was worth $1,157,598.95 by the end of 2025.",
+      "caption": "The same $100 in 3-month Treasury bills came to $2,578.30. A 6.65-point difference in annual return, compounded across 98 years, is the difference between $2,578 and $1.16 million. That is what the word compounding is doing. https://shouldifinance.com/guides/how-compound-interest-works",
+      "guide": "how-compound-interest-works",
+      "source": "Aswath Damodaran's annual returns dataset, NYU Stern",
+      "category": "Money",
+      "shelfLife": {
+        "risk": "The end date and the dollar figures move every year as the dataset is updated.",
+        "recheck": "Annually, when the constants in app/lib/markets.ts are updated"
+      }
+    },
+    {
+      "id": "simple-vs-compound",
+      "card": "$10,000 at 7% for thirty years: $31,000 simple, $76,000 compound.",
+      "caption": "Same rate, same deposit, more than double the result. The extra $45,000 is entirely interest that earned interest — and the first year is identical in both, which is exactly why the difference is so easy to underestimate. https://shouldifinance.com/guides/how-compound-interest-works",
+      "guide": "how-compound-interest-works",
+      "source": "Computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "third-decade",
+      "card": "The third decade of compounding adds more than the first two combined.",
+      "caption": "$10,000 at 7% reaches about $19,700 after ten years, $38,700 after twenty and $76,100 after thirty. You cannot get to the third decade without sitting through the first — and the first is the one that feels like it is not working. https://shouldifinance.com/guides/how-compound-interest-works",
+      "guide": "how-compound-interest-works",
+      "source": "Computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "rule-of-72",
+      "card": "Divide 72 by your rate and you get the years for money to double.",
+      "caption": "At 3%, about 24 years. At 6%, about 12. At 9%, about 8. It drifts at high rates, but it is close enough to do in your head and it shows that rate and time are interchangeable in a way people do not expect — double the rate and you halve the waiting. https://shouldifinance.com/guides/how-compound-interest-works",
+      "guide": "how-compound-interest-works",
+      "source": "Standard approximation, set out in the guide; growth figures computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "balance-up-money-down",
+      "card": "At 2% interest and 3% inflation your balance grows and your money shrinks.",
+      "caption": "You earned $400 on $20,000 and lost purchasing power. Both statements are true at once, and only one of them appears on the statement. At 4.5% against 3% inflation the real gain on that $20,000 is about $300, not $900. https://shouldifinance.com/guides/what-does-a-savings-account-really-earn",
+      "guide": "what-does-a-savings-account-really-earn",
+      "source": "Yield and inflation figures computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "same-deposit-820-difference",
+      "card": "$20,000 at 0.40% versus 4.50% is about $820 a year for identical insured deposits.",
+      "caption": "Large national banks and online banks can differ by several percentage points on the same product. And the advertised rate is often a new-money or promotional tier that reverts — rates on existing accounts are frequently adjusted downward without any announcement you would notice. Check what yours pays today. https://shouldifinance.com/guides/what-does-a-savings-account-really-earn",
+      "guide": "what-does-a-savings-account-really-earn",
+      "source": "Computed with the site's own code from the stated balance and rates",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "fdic-guarantees-dollars",
+      "card": "FDIC insurance guarantees your dollars. It does not guarantee what they buy.",
+      "caption": "Deposits are insured to at least $250,000 at each insured bank, and that is a genuine guarantee about the number. Over long periods, cash has been the reliable way to lose purchasing power slowly while never losing a dollar of principal. https://shouldifinance.com/guides/what-does-a-savings-account-really-earn",
+      "guide": "what-does-a-savings-account-really-earn",
+      "source": "FDIC, deposit insurance",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "match-is-fifty-percent",
+      "card": "A 50% employer match is a 50% return before the money is invested in anything.",
+      "caption": "A dollar-for-dollar match is 100%. There is no debt in ordinary personal finance that costs 50% a year — a card at 24% does not come close. And the match is use-it-or-lose-it each year; last year's unclaimed match does not come back. https://shouldifinance.com/guides/take-the-401k-match-or-pay-down-debt",
+      "guide": "take-the-401k-match-or-pay-down-debt",
+      "source": "IRS, retirement topics — vesting; match arithmetic set out in the guide",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "your-contributions-always-vested",
+      "card": "Your own 401(k) contributions are always 100% yours. Vesting only touches your employer's money.",
+      "caption": "Employer contributions may use a cliff schedule of up to three years or a graded schedule of up to six. If you are on a cliff and expect to leave before it, the match is worth less than face value — which is the one thing that makes this decision close. It is in the plan summary, and most people have never looked. https://shouldifinance.com/guides/take-the-401k-match-or-pay-down-debt",
+      "guide": "take-the-401k-match-or-pay-down-debt",
+      "source": "IRS, retirement topics — vesting",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "true-up",
+      "card": "If your plan matches per paycheck and does not true up, front-loading your 401(k) loses match.",
+      "caption": "Hit the annual limit in September and there is nothing to match in October, November or December. Some plans true up at year end and some do not. Ask — it is a question almost nobody asks and the answer is worth real money. https://shouldifinance.com/guides/take-the-401k-match-or-pay-down-debt",
+      "guide": "take-the-401k-match-or-pay-down-debt",
+      "source": "Plan mechanics described in the guide; vesting rules from IRS, retirement topics — vesting",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "match-formula-confusion",
+      "card": "\"Up to 6%\" and \"50% of the first 6%\" are different offers. People conflate them constantly.",
+      "caption": "A surprising number of people are one percentage point short of the full match and have never checked. Ten minutes with the plan documents is usually worth more than any other ten minutes in personal finance. https://shouldifinance.com/guides/take-the-401k-match-or-pay-down-debt",
+      "guide": "take-the-401k-match-or-pay-down-debt",
+      "source": "Plan mechanics described in the guide; vesting rules from IRS, retirement topics — vesting",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "reinvested-dividends-taxed",
+      "card": "A reinvested dividend is taxed the year it is paid. You never saw the cash.",
+      "caption": "In a taxable account, reinvestment defers nothing — it produces a tax liability with no cash attached to pay it, so the tax comes out of your other money. Inside a 401(k), IRA or Roth none of this applies, which is why the question has two different answers and most discussions never say which account they mean. https://shouldifinance.com/guides/reinvest-dividends-or-take-the-cash",
+      "guide": "reinvest-dividends-or-take-the-cash",
+      "source": "IRS Publication 550, Investment Income and Expenses",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "cost-basis-twice",
+      "card": "Untracked reinvested dividends mean paying tax twice on the same dollars.",
+      "caption": "Every reinvested dividend buys shares with their own cost basis. If that is not tracked, the basis you report at sale is only what you originally deposited — so you are taxed on gain you do not have. Brokers report basis on covered shares now; the cases that still bite are transfers between brokers, long-held positions, company DRIPs and inherited shares. https://shouldifinance.com/guides/reinvest-dividends-or-take-the-cash",
+      "guide": "reinvest-dividends-or-take-the-cash",
+      "source": "IRS Publication 550, Investment Income and Expenses",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "reinvestment-concentrates",
+      "card": "Automatic reinvestment quietly buys more of whatever you already own most of.",
+      "caption": "It buys more of whatever just paid, which drifts your allocation toward your existing holdings. Taking the cash and directing it yourself is a free rebalancing opportunity — and it works against you if you are deliberately trying to shrink a position. Check the allocation once a year rather than assuming automatic is neutral. https://shouldifinance.com/guides/reinvest-dividends-or-take-the-cash",
+      "guide": "reinvest-dividends-or-take-the-cash",
+      "source": "Portfolio behaviour described in the guide; dividend taxation from IRS Publication 550",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "roth-limit-counts-dollars",
+      "card": "Roth and traditional share one limit, and it counts dollars in, not after-tax value.",
+      "caption": "A maxed-out Roth is entirely yours. The same maxed-out traditional carries a future tax bill, so at a 22% retirement rate it is worth meaningfully less in spendable terms. Tax-advantaged space is the scarce resource, not the dollars. Note the condition: this only applies at or near the cap. https://shouldifinance.com/guides/roth-or-traditional",
+      "guide": "roth-or-traditional",
+      "source": "IRS Notice 2025-67, contribution and catch-up limits",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "match-always-traditional",
+      "card": "Your employer's match is always traditional, whichever one you chose.",
+      "caption": "So a Roth contributor already has a traditional balance building — tax diversification arriving whether you planned it or not. It is one of the reasons splitting contributions is less of a decision than it looks. https://shouldifinance.com/guides/roth-or-traditional",
+      "guide": "roth-or-traditional",
+      "source": "Plan treatment described in the guide; contribution limits from IRS Notice 2025-67",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "deduct-top-withdraw-bottom",
+      "card": "With a traditional account you deduct at the top and withdraw from the bottom.",
+      "caption": "The deduction comes at your marginal rate — the rate on your last dollar. Withdrawals are taxed at your effective rate, filling brackets from the bottom after the standard deduction shelters the first dollars entirely. That asymmetry is a real point in traditional's favour that the rate-forecast framing hides. https://shouldifinance.com/guides/roth-or-traditional",
+      "guide": "roth-or-traditional",
+      "source": "IRS Revenue Procedure 2025-32 for the standard deduction; bracket mechanics set out in the guide",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "roth-five-year",
+      "card": "Roth contributions can come out any time. The earnings need five years and age 59½.",
+      "caption": "Contributions were already taxed, so they are generally available. Treating the whole balance as a flexible savings account tends to end badly on the earnings side. https://shouldifinance.com/guides/roth-or-traditional",
+      "guide": "roth-or-traditional",
+      "source": "Withdrawal rules set out in the guide; contribution limits from IRS Notice 2025-67",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "fee-drag-86000",
+      "card": "Moving from a 0.05% fund to a 1.00% fund can cost $86,000 over 25 years.",
+      "caption": "On $25,000 plus $500 a month at 7%. Not because the fees totalled that — because the fees plus everything those fees would have earned did. A 1% annual charge is taken from the balance that would otherwise have been compounding. https://shouldifinance.com/guides/what-will-your-investments-be-worth",
+      "guide": "what-will-your-investments-be-worth",
+      "source": "Computed with the site's own code; fund expense ratios from ICI Research Perspective 32, no. 1 (March 2026), Figure 6",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "sequence-risk",
+      "card": "Two retirees can average 7% and only one of them runs out of money.",
+      "caption": "An average says nothing about the order returns arrive in. While you are only contributing, the order does not matter. Once you are drawing an income, selling into a falling market locks the loss in permanently — so a bad first decade is materially worse than the same decade later. https://shouldifinance.com/guides/what-will-your-investments-be-worth",
+      "guide": "what-will-your-investments-be-worth",
+      "source": "Sequence-of-returns argument set out in the guide; long-run returns from Aswath Damodaran's dataset, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "projection-is-sensitivity",
+      "card": "Change only the return assumption and a 25-year projection doubles: $386,000 to $800,000.",
+      "caption": "$25,000 plus $500 a month for 25 years gives about $386,000 at 5%, $551,000 at 7% and $800,000 at 9%. Nobody can tell you which is right. Run it three times — if your plan works in all three it is a plan, and if it only works in the optimistic one it is a hope with a spreadsheet. https://shouldifinance.com/guides/what-will-your-investments-be-worth",
+      "guide": "what-will-your-investments-be-worth",
+      "source": "Computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "nominal-vs-real",
+      "card": "$551,000 in 25 years buys what about $297,000 buys today.",
+      "caption": "At 2.5% inflation. Neither number is wrong, but retirement income is spent in future dollars, so compare like with like — either inflate the spending target or deflate the projection. Doing neither is how people arrive at a number that looks sufficient and is not. https://shouldifinance.com/guides/what-will-your-investments-be-worth",
+      "guide": "what-will-your-investments-be-worth",
+      "source": "Computed with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "seven-becomes-ten",
+      "card": "A 7% target quietly becomes a 10% gross requirement after inflation, fees and tax.",
+      "caption": "A required return is nominal, before fees, and before tax in a taxable account. Stack all three and the number lands in a different band from the one you started in — which is the whole point of working it out before choosing investments rather than after. https://shouldifinance.com/guides/what-return-do-you-need",
+      "guide": "what-return-do-you-need",
+      "source": "Long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern; adjustments set out in the guide",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "cannot-choose-a-return",
+      "card": "You cannot choose a return. You can only choose an allocation.",
+      "caption": "If the return your goal requires comes back above what the best-performing broad asset class has delivered over nearly a century, that is not a signal to find a riskier investment. It is a signal that one of the other inputs — the contribution, the timeline, the target — has to move. https://shouldifinance.com/guides/what-return-do-you-need",
+      "guide": "what-return-do-you-need",
+      "source": "Long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "two-more-years",
+      "card": "Retiring two years later can cut the return your plan needs by over a point.",
+      "caption": "Time enters the formula as an exponent, so adding years reduces a required return sharply. It is one of four levers — save more, extend the timeline, lower the target, or start with more. Reaching for a higher return is not on the list, because it is not actually available. https://shouldifinance.com/guides/what-return-do-you-need",
+      "guide": "what-return-do-you-need",
+      "source": "Long-run returns from Aswath Damodaran's dataset, NYU Stern; solved with the site's own code",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "dca-half-in-cash",
+      "card": "Spreading $60,000 over a year means half of it sits in cash for that year.",
+      "caption": "That is the whole mechanism, and it has nothing to do with forecasting. Markets rise more often than they fall, so any strategy that leaves money out of the market longer gives up expected return. Dollar-cost averaging beats a lump sum exactly when the market falls over the window, and loses in every other case. https://shouldifinance.com/guides/lump-sum-or-dollar-cost-averaging",
+      "guide": "lump-sum-or-dollar-cost-averaging",
+      "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "paycheck-is-not-dca",
+      "card": "Investing each paycheck is not dollar-cost averaging. It is lump sum, every payday.",
+      "caption": "Two different things share the name and only one is a decision. Investing money the moment you have it is the lump-sum strategy applied repeatedly — nobody should stop doing that. The actual choice is holding a sum you already have and releasing it gradually. https://shouldifinance.com/guides/lump-sum-or-dollar-cost-averaging",
+      "guide": "lump-sum-or-dollar-cost-averaging",
+      "source": "Distinction set out in the guide; long-run returns from Aswath Damodaran's dataset, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "dca-is-insurance",
+      "card": "Dollar-cost averaging is insurance, and like insurance it has a price.",
+      "caption": "Lump sum has the higher expected outcome. Averaging has the lower worst case and better odds that you stay with the plan. If you would genuinely sell after a bad first quarter, averaging is not the inferior choice — it matches the investor you actually are, and that is the one that compounds. https://shouldifinance.com/guides/lump-sum-or-dollar-cost-averaging",
+      "guide": "lump-sum-or-dollar-cost-averaging",
+      "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "dca-failure-mode",
+      "card": "The failure mode of dollar-cost averaging is pausing it when the market falls.",
+      "caption": "That inverts the entire point, since the falling market is precisely when your remaining cash buys the most. Decide the schedule in advance and automate it — and if twelve months feels long, three captures most of the emotional benefit and gives up much less expected return. https://shouldifinance.com/guides/lump-sum-or-dollar-cost-averaging",
+      "guide": "lump-sum-or-dollar-cost-averaging",
+      "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "niit-never-indexed",
+      "card": "The net investment income tax thresholds have never been adjusted for inflation.",
+      "caption": "Unlike almost every other figure in the tax code, they are written into the statute and left there. They have been the same since the tax took effect, which means more households cross them every year without anything changing in their own circumstances. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "IRS, net investment income tax, for the rate, formula and thresholds",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "day-364-vs-366",
+      "card": "Selling on day 366 instead of day 364 can be worth five figures.",
+      "caption": "One year and one day is the line. Held less, the gain is taxed as ordinary income at your marginal rate. Held more, it gets the preferential long-term rates. Nothing else in capital gains matters as much as that date, and it is entirely within your control. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "gain-stacks",
+      "card": "A single sale can be taxed at 0%, 15% and 20% all at once.",
+      "caption": "Long-term gains are bracketed, not flat, and the gain stacks on top of your other taxable income rather than being taxed in isolation. So a large gain can start in the 0% band, cross into 15% and finish in 20% — which is why a flat-rate estimate so often disagrees with the real answer. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "niit-lesser-of",
+      "card": "You owe the investment surtax on the lesser of two amounts — not on everything.",
+      "caption": "It applies to the smaller of your net investment income, or the amount by which your modified AGI exceeds the threshold. And net investment income does not include wages, unemployment, Social Security or most self-employment income. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "IRS, net investment income tax, for the rate, formula and thresholds",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "zero-percent-band",
+      "card": "There is a 0% long-term capital gains band, and it is not small.",
+      "caption": "A filer with modest taxable income can realize a long-term gain and owe nothing federally on part or all of it. That is the basis of deliberate gain harvesting in low-income years — a gap year, a sabbatical, the years between retiring and claiming Social Security. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "state-can-exceed-federal",
+      "card": "Your state capital gains bill can be larger than your federal one.",
+      "caption": "Most states tax capital gains as ordinary income with no preferential rate at all — so someone sitting in the federal 0% band can still owe real money. A few states have no income tax. It varies enough that a national figure is meaningless. https://shouldifinance.com/guides/what-will-you-owe-in-capital-gains-tax",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "source": "State treatment described in the guide; federal brackets from IRS Revenue Procedure 2025-32",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "four-percent-rule-misread",
+      "card": "The 4% rule is not 4% of your balance each year.",
+      "caption": "It is 4% in year one, and then that same dollar amount adjusted for inflation every year after. The dollar figure is set once and then indexed. It came from studies of historical US 30-year retirements and is a planning anchor, not a withdrawal policy. https://shouldifinance.com/guides/are-you-on-track-for-retirement",
+      "guide": "are-you-on-track-for-retirement",
+      "source": "William Bengen, \"Determining Withdrawal Rates Using Historical Data\", Journal of Financial Planning (1994), and the subsequent Trinity study",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "house-is-not-retirement-income",
+      "card": "Your house counts toward net worth, not toward retirement income.",
+      "caption": "It is likely your largest asset and it produces nothing to live on. It only becomes retirement income with a concrete plan to sell and downsize — and then you count the difference between the sale proceeds and the next place, not the whole value. https://shouldifinance.com/guides/are-you-on-track-for-retirement",
+      "guide": "are-you-on-track-for-retirement",
+      "source": "Planning treatment set out in the guide; Section 121 exclusion from IRS Topic No. 701 via the rent-versus-buy guide",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "unindexed-pension",
+      "card": "Social Security is indexed to inflation. Most pensions are not.",
+      "caption": "Over a 30-year retirement, 3% inflation roughly halves what a fixed dollar buys — so an unindexed pension is worth far less at 85 than at 65. Any projection that does not inflate the spending target produces a number that looks sufficient and is not. https://shouldifinance.com/guides/are-you-on-track-for-retirement",
+      "guide": "are-you-on-track-for-retirement",
+      "source": "Planning treatment set out in the guide; the 4% anchor from Bengen (1994) and the Trinity study",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "emergency-fund-unit",
+      "card": "Three to six months of essential expenses. Not income. For one household, $24,000 not $48,000.",
+      "caption": "Income includes taxes, retirement contributions and discretionary spending you would stop immediately. A household earning $8,000 a month might spend $6,000 with essentials of $4,000. Six months of income is a reason to give up; six months of essentials is a target you can reach this year. https://shouldifinance.com/guides/how-big-should-an-emergency-fund-be",
+      "guide": "how-big-should-an-emergency-fund-be",
+      "source": "The guide states the three-to-six-month rule is conventional planning guidance implemented by the site's calculator",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "emergency-fund-negative-real",
+      "card": "Your emergency fund should lose slightly to inflation. That is the correct price.",
+      "caption": "You are buying availability, not growth. Two requirements in order: available the day you need it, and not worth less than you put in — which rules out almost everything except a savings or money market account. Trying to make it productive is how it stops being an emergency fund. https://shouldifinance.com/guides/how-big-should-an-emergency-fund-be",
+      "guide": "how-big-should-an-emergency-fund-be",
+      "source": "FDIC, deposit insurance; planning guidance as implemented by the site's calculator",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "emergency-test",
+      "card": "Unexpected, necessary and urgent. An emergency has to be all three.",
+      "caption": "Replacing a failed water heater is all three. Replacing a working one is not. The failure mode is not people raiding the fund for holidays — it is a slow drift where it becomes a general-purpose buffer, never gets replenished, and is at $800 when something real happens. https://shouldifinance.com/guides/how-big-should-an-emergency-fund-be",
+      "guide": "how-big-should-an-emergency-fund-be",
+      "source": "Planning guidance as implemented by the site's calculator, documented in the calculator's own source",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "sixty-day-trap",
+      "card": "Take $10,000 from a 401(k), $8,000 arrives — and rolling over the $8,000 still triggers tax.",
+      "caption": "The $2,000 withheld counts as a taxable distribution, with the 10% additional tax on top. To roll the whole thing over you have to add $2,000 of your own money within 60 days. A direct trustee-to-trustee rollover avoids it entirely, because nothing is withheld. https://shouldifinance.com/guides/what-early-retirement-withdrawal-costs",
+      "guide": "what-early-retirement-withdrawal-costs",
+      "source": "IRS, rollovers of retirement plan and IRA distributions, for the withholding and 60-day rules",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "mandatory-twenty-percent",
+      "card": "20% withholding on an eligible rollover distribution is mandatory and cannot be waived.",
+      "caption": "Even if you intend to roll it over later. An IRA distribution is different — 10% default withholding, and the owner may elect out. Neither figure is likely to be your actual tax, which is how people end up owing money in April on a withdrawal they thought was settled. https://shouldifinance.com/guides/what-early-retirement-withdrawal-costs",
+      "guide": "what-early-retirement-withdrawal-costs",
+      "source": "IRS, rollovers of retirement plan and IRA distributions",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "exception-removes-ten-percent-only",
+      "card": "An exception to the early withdrawal penalty removes the 10%. That is all it removes.",
+      "caption": "The income tax on the full distribution stays, and so does the growth you gave up. Two of the three costs remain, and the income tax is almost always the largest of them. https://shouldifinance.com/guides/what-early-retirement-withdrawal-costs",
+      "guide": "what-early-retirement-withdrawal-costs",
+      "source": "IRS Topic No. 558, for the 10% additional tax, the 59½ threshold and the exception list",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "thirty-k-at-forty",
+      "card": "$30,000 withdrawn at 40 is about $163,000 you will not have at 65.",
+      "caption": "At 7%. And the space cannot be refilled, because contribution limits are annual — you do not get to make up a missed year later. That lost growth is the third cost of an early withdrawal and the one that never appears on any statement. https://shouldifinance.com/guides/what-early-retirement-withdrawal-costs",
+      "guide": "what-early-retirement-withdrawal-costs",
+      "source": "Computed with the site's own code; penalty and threshold from IRS Topic No. 558",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "differential-tax",
+      "card": "The tax on a withdrawal is the change in your total tax bill.",
+      "caption": "A $30,000 distribution on top of $95,000 of income does not sit neatly in one band — part fills your current bracket and the rest pushes into the next. Multiplying by one marginal rate understates the bill when the withdrawal crosses upward, and overstates it when most of it still fits. https://shouldifinance.com/guides/what-early-retirement-withdrawal-costs",
+      "guide": "what-early-retirement-withdrawal-costs",
+      "source": "IRS Topic No. 558 for the penalty and threshold; the differential calculation is what the site's calculator implements",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "traditional-balance-is-not-yours",
+      "card": "A traditional 401(k) showing $400,000 is not $400,000 of spendable money.",
+      "caption": "It carries a future tax bill. A Roth balance genuinely is what it says. Most people count the full traditional balance in their net worth, which is a reasonable convention as long as you know you are doing it. https://shouldifinance.com/guides/how-to-calculate-your-net-worth",
+      "guide": "how-to-calculate-your-net-worth",
+      "source": "Distribution treatment described in IRS Topic No. 558",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "liquid-net-worth",
+      "card": "The useful number is not net worth. It is net worth without the house.",
+      "caption": "Your home is probably the largest figure on the list and the hardest to spend. Liquid net worth — excluding anything you cannot sell quickly — is the number that tells you what you could actually do. https://shouldifinance.com/guides/how-to-calculate-your-net-worth",
+      "guide": "how-to-calculate-your-net-worth",
+      "source": "Net worth is definitional — assets minus liabilities — so the guide cites no external rule for the formula",
+      "category": "Money",
+      "shelfLife": null
+    },
+    {
+      "id": "net-worth-catches-what-budget-misses",
+      "card": "You can have excellent monthly cash flow and a net worth going sideways.",
+      "caption": "That happens when debt grows as fast as savings, and a monthly budget view cannot see it. One number a year, same method each time — a single snapshot is nearly meaningless, and five annual snapshots are a picture of whether your financial life is working. https://shouldifinance.com/guides/how-to-calculate-your-net-worth",
+      "guide": "how-to-calculate-your-net-worth",
+      "source": "Net worth is definitional — assets minus liabilities — so the guide cites no external rule for the formula",
+      "category": "Money",
+      "shelfLife": null
+    }
+  ]
+}
