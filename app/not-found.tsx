@@ -3,7 +3,7 @@ import Link from "next/link";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDE_COVERAGE } from "./lib/calculators";
 
 /**
  * The 404 page.
@@ -80,7 +80,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-2">
           {[
             { href: "/calculators", label: `All ${CALCULATORS.length} calculators`, sub: "The full list, grouped by category" },
-            { href: "/guides", label: `${GUIDED.length} written guides`, sub: "The rules behind the arithmetic, with sources" },
+            { href: "/guides", label: GUIDE_COVERAGE.prose, sub: "The rules behind the arithmetic, with sources" },
             { href: "/rates", label: "Current rates", sub: "Mortgage, auto, credit card and Treasury" },
             { href: "/", label: "Home", sub: "Start from the beginning" },
           ].map((l) => (

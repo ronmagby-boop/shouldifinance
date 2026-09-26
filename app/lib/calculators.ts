@@ -680,6 +680,49 @@ export const relatedGridClass = (count: number): string =>
  */
 export const GUIDED = CALCULATORS.filter((c) => c.guide);
 
+/** True while every calculator has a guide written for it. */
+export const EVERY_CALC_GUIDED = GUIDED.length === CALCULATORS.length;
+
+const GUIDED_NOUN = GUIDED.length === 1 ? "Calculator With a Guide" : "Calculators With a Guide";
+
+/**
+ * The guides claim, stated as coverage rather than as a count, in the three
+ * places that make it: both homepage stat bars and the 404 page.
+ *
+ * It reads as one fact instead of two. Every calculator has a guide, so
+ * printing the guide count beside the calculator count showed the same number
+ * twice — on the homepage, side by side in the same row — and read as a
+ * copy-paste slip rather than as two figures.
+ *
+ * Coverage is also the only guides statement those three can make truthfully.
+ * All are client components, and the real guide list in lib/guides.ts reads the
+ * filesystem, so none of them can import it. What they CAN see is GUIDED, which
+ * is CALCULATORS.filter(c => c.guide) — a count of calculators that have a
+ * guide, not a count of guides. The two are equal today and come apart the
+ * moment content/guides gains an unpaired guide, which its frontmatter allows
+ * (`calculator` is optional). A tile labelled "In-Depth Guides" showing
+ * GUIDED.length would then be quietly undercounting, with no way to notice.
+ *
+ * An unpaired guide cannot falsify "a guide for every tool": the claim is about
+ * covering the calculators, so a guide belonging to none of them only adds
+ * something never claimed. The claim fails the other way — a calculator shipped
+ * before its guide is written — and that direction IS visible from here, as
+ * GUIDED.length < CALCULATORS.length. In that state the wording falls back to a
+ * figure, which is no longer a repeat of the calculator count because the two
+ * numbers now differ, under a label that says exactly what GUIDED counts.
+ *
+ * Deliberately not a build error, unlike the pairing checks in lib/guides.ts: a
+ * calculator landing before its guide is a legitimate intermediate state, and
+ * forcing guide-first ordering would buy nothing.
+ */
+export const GUIDE_COVERAGE = EVERY_CALC_GUIDED
+  ? { headline: "A Guide", detail: "For Every Tool", prose: "A guide for every tool" }
+  : {
+      headline: `${GUIDED.length}`,
+      detail: GUIDED_NOUN,
+      prose: `${GUIDED.length} ${GUIDED_NOUN.toLowerCase()}`,
+    };
+
 export const SITE = "https://shouldifinance.com";
 
 /**

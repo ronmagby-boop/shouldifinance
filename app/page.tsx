@@ -6,7 +6,7 @@ import {
   Calculator, FileText, BadgeCheck, ShieldCheck,
   ArrowRight, CheckCircle2, Search, Compass, ClipboardCheck,
 } from "lucide-react";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDED } from "./lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDE_COVERAGE } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
@@ -37,7 +37,6 @@ const HERO_MASK = [
  * "Updated Weekly"; neither was true. This one cannot go stale — lib/guides.ts
  * fails the build if the registry and content/guides/ disagree.
  */
-const GUIDE_COUNT = GUIDED.length;
 
 // Two gradients intersected: any pixel transparent in either layer is hidden.
 const HERO_MASK_STYLE: React.CSSProperties = {
@@ -193,7 +192,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
               { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Free Calculators" },
-              { Icon: FileText, num: `${GUIDE_COUNT}`, label: GUIDE_COUNT === 1 ? "In-Depth Guide" : "In-Depth Guides" },
+              { Icon: FileText, num: GUIDE_COVERAGE.headline, label: GUIDE_COVERAGE.detail },
               { Icon: BadgeCheck, num: "Expert", label: "Real-World Advice" },
               { Icon: ShieldCheck, num: "Trusted", label: "For Every Stage of Life" },
             ].map((s) => (
@@ -392,7 +391,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-0 sm:divide-x sm:divide-white/10">
             {[
-              { Icon: FileText, num: `${GUIDE_COUNT}`, label: GUIDE_COUNT === 1 ? "In-Depth Guide" : "In-Depth Guides" },
+              { Icon: FileText, num: GUIDE_COVERAGE.headline, label: GUIDE_COVERAGE.detail },
               { Icon: Calculator, num: `${CALCULATORS.length}`, label: "Calculators & Tools" },
               /* "Nothing Tracked" was removed: the site will carry analytics and
                  eventually advertising, and a tile contradicting the privacy
