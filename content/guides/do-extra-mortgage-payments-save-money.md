@@ -4,6 +4,7 @@ slug: do-extra-mortgage-payments-save-money
 description: "Yes, and far more than most people expect — but only if the timing is right and the servicer applies the money where you think. Here is what an extra $200 a month is actually worth, and why the same $200 later is worth a fifth as much."
 calculator: extra-payments
 category: Home
+published: 2026-07-29
 reviewed: 2026-07-29
 ---
 

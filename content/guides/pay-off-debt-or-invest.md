@@ -4,6 +4,7 @@ slug: pay-off-debt-or-invest
 description: "Paying down a loan returns exactly its interest rate, guaranteed. Investing might do better. Here is how to compare them honestly — after tax, after the match, and after admitting which number is a forecast."
 calculator: pay-off-debt
 category: Home
+published: 2026-09-21
 reviewed: 2026-09-21
 ---
 

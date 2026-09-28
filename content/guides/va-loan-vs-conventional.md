@@ -4,6 +4,7 @@ slug: va-loan-vs-conventional
 description: "The real comparison is a one-time funding fee against monthly mortgage insurance that eventually stops. Here are the actual fee tiers, who pays nothing at all, and the point where the conventional loan catches up."
 calculator: va-vs-conventional
 category: Home
+published: 2026-08-18
 reviewed: 2026-08-18
 ---
 

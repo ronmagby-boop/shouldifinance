@@ -4,6 +4,7 @@ slug: how-to-calculate-your-net-worth
 description: "Everything you own minus everything you owe. The arithmetic takes a minute; the judgment calls are what make the number useful or misleading."
 calculator: net-worth
 category: Money
+published: 2026-07-17
 reviewed: 2026-07-17
 ---
 

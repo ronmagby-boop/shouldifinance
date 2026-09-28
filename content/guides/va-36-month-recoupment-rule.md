@@ -4,6 +4,7 @@ slug: va-36-month-recoupment-rule
 description: "The VA requires a streamline refinance to pay back its own closing costs within 36 months. Here is what counts toward that math, what is left out, and the two seasoning clocks you have to clear first."
 calculator: va-recoup
 category: Home
+published: 2026-09-23
 reviewed: 2026-09-23
 ---
 

@@ -4,6 +4,7 @@ slug: what-early-retirement-withdrawal-costs
 description: "The 10% penalty is the part everyone knows and the smallest part of the bill. Here is how the tax is actually computed, why withholding is not the tax, and the cost that never appears on any statement."
 calculator: early-withdrawal
 category: Money
+published: 2026-07-09
 reviewed: 2026-07-09
 ---
 

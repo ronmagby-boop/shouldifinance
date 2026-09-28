@@ -4,6 +4,7 @@ slug: how-much-car-can-you-afford
 description: "A lender's maximum and a sensible budget are different numbers. Here is what the 20/4/10 rule actually says, why the payment is the wrong thing to shop for, and what a trade-in you still owe on does to the answer."
 calculator: auto-affordability
 category: Auto
+published: 2026-05-21
 reviewed: 2026-05-21
 ---
 

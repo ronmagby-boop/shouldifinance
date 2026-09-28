@@ -4,6 +4,7 @@ slug: when-refinancing-pays-for-itself
 description: "Break-even is the first question and the easiest one. Here is how to calculate it, what it leaves out, why a lower payment is not the same as saving money, and the disclosure that lets you compare lenders properly."
 calculator: should-i-refinance
 category: Home
+published: 2026-08-04
 reviewed: 2026-08-04
 ---
 

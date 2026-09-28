@@ -4,6 +4,7 @@ slug: what-a-car-really-costs-to-own
 description: "The payment is the smallest part of the answer. Here is the full list, which line is largest, and why the biggest cost of owning a car is the one that never sends an invoice."
 calculator: total-cost-of-ownership
 category: Auto
+published: 2026-05-07
 reviewed: 2026-05-07
 ---
 

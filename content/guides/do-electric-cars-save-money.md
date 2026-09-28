@@ -4,6 +4,7 @@ slug: do-electric-cars-save-money
 description: "Fuel and maintenance are genuinely cheaper. Depreciation has been worse, and the federal credits have ended. Here is what the comparison looks like now that the incentive is gone."
 calculator: ev-savings
 category: Auto
+published: 2026-06-01
 reviewed: 2026-06-01
 ---
 

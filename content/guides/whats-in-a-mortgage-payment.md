@@ -4,6 +4,7 @@ slug: whats-in-a-mortgage-payment
 description: "A mortgage payment is four separate bills collected as one, and sometimes a fifth. Here is what each part is, which ones move after closing, and the rule that decides when the fifth one stops."
 calculator: mortgage-payment
 category: Home
+published: 2026-07-14
 reviewed: 2026-07-14
 ---
 

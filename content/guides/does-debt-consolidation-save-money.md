@@ -4,6 +4,7 @@ slug: does-debt-consolidation-save-money
 description: "One payment instead of five is easier to live with. Whether it is cheaper depends on the rate after the fee, the term, and which debts you roll in — and the fee is usually taken out of what you receive."
 calculator: debt-consolidation
 category: Debt
+published: 2026-09-08
 reviewed: 2026-09-08
 ---
 

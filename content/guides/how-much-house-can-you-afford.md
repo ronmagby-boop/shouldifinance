@@ -4,6 +4,7 @@ slug: how-much-house-can-you-afford
 description: "What a lender will approve and what you can comfortably carry are two different numbers. Here is how the approval is actually calculated — including why the 43% rule everyone quotes is no longer the legal test."
 calculator: home-affordability
 category: Home
+published: 2026-07-31
 reviewed: 2026-07-31
 ---
 

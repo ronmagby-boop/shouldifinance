@@ -28,6 +28,8 @@ export type Guide = {
    */
   calculator?: string;
   category: Category;
+  /** ISO date the guide first went up. */
+  published: string;
   /** ISO date the content was last checked against its sources. */
   reviewed: string;
   body: string;
@@ -64,7 +66,7 @@ function parseFrontmatter(raw: string): { data: Record<string, string>; body: st
   return { data, body: match[2] };
 }
 
-const REQUIRED = ["title", "slug", "description", "category", "reviewed"] as const;
+const REQUIRED = ["title", "slug", "description", "category", "published", "reviewed"] as const;
 
 /** A guide is filed under one of these whether or not it pairs with a calculator. */
 const CATEGORIES: Category[] = ["Home", "Debt", "Money", "Auto"];
@@ -128,6 +130,24 @@ function readGuides(): Guide[] {
           `content/guides/${file} is reviewed ${data.reviewed}, which is in the future`,
         );
       }
+      const published = Date.parse(data.published);
+      if (Number.isNaN(published)) {
+        throw new Error(`content/guides/${file} has an unparseable published date`);
+      }
+      if (published > Date.now()) {
+        throw new Error(
+          `content/guides/${file} is published ${data.published}, which is in the future`,
+        );
+      }
+      /* A guide cannot have been reviewed before it existed. The two dates are
+       * equal on every guide written before the field was added, which is the
+       * boundary case this allows rather than rejects. */
+      if (published > reviewed) {
+        throw new Error(
+          `content/guides/${file} is published ${data.published} but reviewed ` +
+            `${data.reviewed} — a guide cannot be reviewed before it was published`,
+        );
+      }
 
       return {
         slug: data.slug,
@@ -135,6 +155,7 @@ function readGuides(): Guide[] {
         description: data.description,
         calculator: data.calculator || undefined,
         category: data.category as Category,
+        published: data.published,
         reviewed: data.reviewed,
         /* Figures that move with the tax year are written as {{TOKEN}} and
          * resolved from the same constants the calculators read, so a guide

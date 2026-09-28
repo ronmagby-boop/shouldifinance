@@ -4,6 +4,7 @@ slug: what-return-do-you-need
 description: "Work backwards from the goal and you get a required return. Whether that number is reasonable depends entirely on what the asset classes have actually delivered — which is a measurement, not an opinion."
 calculator: required-rate-of-return
 category: Money
+published: 2026-06-23
 reviewed: 2026-06-23
 ---
 

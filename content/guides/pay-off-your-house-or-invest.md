@@ -4,6 +4,7 @@ slug: pay-off-your-house-or-invest
 description: "A mortgage is the cheapest money most people will ever borrow, which argues for keeping it. It is also a guaranteed return, which argues for killing it. Here is how the comparison actually resolves."
 calculator: payoff-house-vs-invest
 category: Home
+published: 2026-08-14
 reviewed: 2026-08-14
 ---
 

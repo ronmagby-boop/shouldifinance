@@ -4,6 +4,7 @@ slug: how-compound-interest-works
 description: "Interest on interest, and why the curve bends late. The short version of a short subject, with the one number that shows why starting early beats saving more."
 calculator: compound-interest
 category: Money
+published: 2026-06-02
 reviewed: 2026-06-02
 ---
 

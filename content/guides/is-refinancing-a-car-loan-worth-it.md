@@ -4,6 +4,7 @@ slug: is-refinancing-a-car-loan-worth-it
 description: "The saving is real when your rate or your credit has moved. The two things that quietly undo it are a longer term and rolled-in fees — and rolled-in fees are worse on a car than on a house."
 calculator: auto-loan-refinance
 category: Auto
+published: 2026-05-28
 reviewed: 2026-05-28
 ---
 

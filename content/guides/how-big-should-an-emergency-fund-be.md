@@ -4,6 +4,7 @@ slug: how-big-should-an-emergency-fund-be
 description: "Three to six months — but of what? The unit is the part people get wrong, and getting it wrong in either direction is expensive. Here is the rule, what it is measured in, and where the money should sit."
 calculator: emergency-fund
 category: Money
+published: 2026-07-13
 reviewed: 2026-07-13
 ---
 

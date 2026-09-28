@@ -4,6 +4,7 @@ slug: lump-sum-or-dollar-cost-averaging
 description: "Investing it all at once usually finishes ahead, for a reason that has nothing to do with market timing. Here is why, when the reverse is true, and what you are actually buying when you spread it out."
 calculator: dollar-cost-averaging
 category: Money
+published: 2026-06-12
 reviewed: 2026-06-12
 ---
 

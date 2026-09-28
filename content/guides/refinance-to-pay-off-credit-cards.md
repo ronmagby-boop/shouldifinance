@@ -4,6 +4,7 @@ slug: refinance-to-pay-off-credit-cards
 description: "Trading a 24% card rate for a 7% mortgage rate looks obvious. The arithmetic that decides it is the blended rate and the schedule, and there is a tax rule most borrowers get backwards."
 calculator: refinance-to-pay-off-debt
 category: Home
+published: 2026-08-25
 reviewed: 2026-08-25
 ---
 

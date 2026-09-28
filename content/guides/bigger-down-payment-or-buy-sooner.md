@@ -4,6 +4,7 @@ slug: bigger-down-payment-or-buy-sooner
 description: "Twenty percent avoids mortgage insurance, and that is worth real money. Whether it is worth waiting three years for depends on what the insurance actually costs, when it stops, and one FHA rule that changes the answer entirely."
 calculator: buy-now-or-save
 category: Home
+published: 2026-07-16
 reviewed: 2026-07-16
 ---
 

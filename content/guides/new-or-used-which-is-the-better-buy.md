@@ -4,6 +4,7 @@ slug: new-or-used-which-is-the-better-buy
 description: "The price gap is not the saving. The saving is the depreciation someone else already absorbed — set against a higher rate, more repairs and a shorter remaining life."
 calculator: new-vs-used-car
 category: Auto
+published: 2026-05-11
 reviewed: 2026-05-11
 ---
 

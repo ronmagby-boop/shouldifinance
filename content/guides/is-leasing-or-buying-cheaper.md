@@ -4,6 +4,7 @@ slug: is-leasing-or-buying-cheaper
 description: "Leasing has the lower payment and buying has the lower cost, in almost every case. Here is why, what a lease actually charges you for, and the maintenance myth that makes the comparison look closer than it is."
 calculator: lease-vs-buy
 category: Auto
+published: 2026-05-14
 reviewed: 2026-05-14
 ---
 

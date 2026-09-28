@@ -1,4 +1,4 @@
-import { bySlug, CATEGORY_SECTIONS, OG_IMAGE, SITE, type Calc } from "./calculators";
+import { bySlug, categoryCrumb, CATEGORY_SECTIONS, OG_IMAGE, SITE, type Calc } from "./calculators";
 import { SOCIAL_INSTAGRAM, SOCIAL_LINKEDIN } from "./legal";
 import type { Guide } from "./guides";
 
@@ -68,12 +68,16 @@ export function siteSchema() {
   ];
 }
 
-/** Home › Category › Page, matching the trail CalcShell actually renders. */
+/**
+ * Home › Category › Page, matching the trail CalcShell actually renders — both
+ * read the middle label from categoryCrumb(), so the markup cannot say one
+ * thing while the page says another.
+ */
 function calculatorCrumbs(calc: Calc) {
   const section = CATEGORY_SECTIONS.find((s) => s.category === calc.category);
   return breadcrumbs([
     { name: "Home", url: SITE },
-    { name: calc.category, url: `${SITE}/calculators#${section?.id ?? ""}` },
+    { name: categoryCrumb(calc.category), url: `${SITE}/calculators#${section?.id ?? ""}` },
     { name: calc.nav, url: `${SITE}/calculators/${calc.slug}` },
   ]);
 }
@@ -161,15 +165,16 @@ export function guideSchema(guide: Guide) {
       url,
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
       /**
-       * dateModified only, and no datePublished — the frontmatter carries one
-       * date, `reviewed`, which is when the content was last checked against
-       * its sources. There is no publication date anywhere in the data: git
-       * added all 43 guides in a single commit, and for most of them `reviewed`
-       * predates even that. Emitting it as datePublished would assert a fact
-       * the site does not hold. Adding a `published:` frontmatter field, which
-       * lib/guides.ts could validate the way it already validates `reviewed`,
-       * is the clean way to gain one.
+       * Both dates come from frontmatter, and lib/guides.ts fails the build if
+       * either is unparseable, in the future, or if published falls after
+       * reviewed — a guide cannot be checked before it existed.
+       *
+       * On the 43 guides written before the field was added the two are equal,
+       * because no separate publication date was ever recorded and inventing a
+       * spread would be worse than stating the one date that is known. They
+       * diverge from the next review onward.
        */
+      datePublished: guide.published,
       dateModified: guide.reviewed,
       /**
        * The site, not a person. No guide carries a byline, and inventing an

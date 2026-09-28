@@ -587,12 +587,24 @@ export const CATEGORY_SECTIONS: {
    * working. Display name and id are free to differ.
    */
   id: string;
+  /**
+   * Label for the middle crumb on a calculator page, when the category name
+   * alone would be ambiguous there. Optional: omitted means the category name
+   * is used, which is right for three of the four.
+   *
+   * Only Home needs it, for the same reason `id` is "real-estate": a trail
+   * reading "Home › Home › …" puts the site root and the category side by side
+   * under one word pointing at two different places. That was visible on the
+   * page before, and is now also emitted as BreadcrumbList structured data,
+   * where it would reach search results.
+   */
+  crumb?: string;
   /** One accent colour per category. Full class strings — Tailwind only ships
    *  classes it can see written out in source. */
   text: string;
   tint: string;
 }[] = [
-  { category: "Home",  icon: Home,        id: "real-estate", text: "text-green-700", tint: "bg-green-50",
+  { category: "Home",  icon: Home,        id: "real-estate", crumb: "Home calculators", text: "text-green-700", tint: "bg-green-50",
     blurb: "Buying, refinancing, and everything that comes with a mortgage." },
   { category: "Debt",  icon: CreditCard,  id: "debt",  text: "text-amber-700", tint: "bg-amber-50",
     blurb: "Paying down what you owe, and what it is really costing you." },
@@ -601,6 +613,13 @@ export const CATEGORY_SECTIONS: {
   { category: "Auto",  icon: Car,         id: "auto",  text: "text-teal-600",  tint: "bg-teal-50",
     blurb: "What a car really costs, from the lot to the day you sell it." },
 ];
+
+/**
+ * The middle crumb on a calculator page. Read by CalcShell for the visible
+ * trail and by lib/schema.ts for the BreadcrumbList, so the two cannot drift.
+ */
+export const categoryCrumb = (category: Category): string =>
+  CATEGORY_SECTIONS.find((s) => s.category === category)?.crumb ?? category;
 
 export const bySlug = (slug: string): Calc | undefined =>
   CALCULATORS.find((c) => c.slug === slug);

@@ -4,6 +4,7 @@ slug: home-equity-to-pay-off-credit-cards
 description: "A HELOC can cut a 25% rate to single digits. What it costs depends far more on how you repay it than on the rate — and the interest-only draw period is where most of the money goes missing."
 calculator: heloc-debt-payoff
 category: Debt
+published: 2026-09-11
 reviewed: 2026-09-11
 ---
 

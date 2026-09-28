@@ -4,6 +4,7 @@ slug: how-fast-does-a-car-lose-value
 description: "Steeply at first, then more slowly — and the loan does not follow the same shape. Here is where the two lines cross, how long a typical new car spends underwater, and why nobody notices the largest cost of owning one."
 calculator: depreciation
 category: Auto
+published: 2026-05-04
 reviewed: 2026-05-04
 ---
 

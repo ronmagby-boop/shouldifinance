@@ -4,6 +4,7 @@ slug: snowball-or-avalanche
 description: "The avalanche always costs less. The snowball is the one more people finish. Here is how big the gap usually is, why minimum payments make both look better than doing nothing, and how to pick."
 calculator: debt-payoff
 category: Debt
+published: 2026-09-01
 reviewed: 2026-09-01
 ---
 

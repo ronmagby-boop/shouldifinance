@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { bySlug, CATEGORY_SECTIONS, related } from "../lib/calculators";
+import { bySlug, categoryCrumb, CATEGORY_SECTIONS, related } from "../lib/calculators";
 import RelatedCalculators from "./RelatedCalculators";
 import SiteFooter from "./SiteFooter";
 import AdUnit from "./AdUnit";
@@ -67,7 +67,7 @@ export default function CalcShell({
           </Link>
           <span>›</span>
           <Link href={categoryHref} className="hover:text-green-700">
-            {category}
+            {categoryCrumb(category)}
           </Link>
           <span>›</span>
           <span className="text-gray-900">{crumbText}</span>
