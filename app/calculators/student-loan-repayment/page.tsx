@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { calcMetadata } from "../../lib/calculators";
 import Calculator from "./Calculator";
+import { CalculatorSchema } from "../../components/JsonLd";
 
 export const metadata: Metadata = calcMetadata(
   "student-loan-repayment",
@@ -8,5 +9,10 @@ export const metadata: Metadata = calcMetadata(
 );
 
 export default function Page() {
-  return <Calculator />;
+  return (
+    <>
+      <CalculatorSchema slug="student-loan-repayment" />
+      <Calculator />
+    </>
+  );
 }

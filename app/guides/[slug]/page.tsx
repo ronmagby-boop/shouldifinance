@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import GuideShell, { CalculatorCta } from "../../components/GuideShell";
 import Markdown from "../../components/Markdown";
 import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
+import { GuideSchema } from "../../components/JsonLd";
 import AdUnit from "../../components/AdUnit";
 import { SITE, OG_IMAGE } from "../../lib/calculators";
 import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
@@ -56,6 +57,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const calc = calculatorForGuide(guide);
 
   return (
+    <>
+      {/* Article and BreadcrumbList. Outside GuideShell because GuideShell is a
+          client component; emitted here it is in the prerendered HTML. */}
+      <GuideSchema guide={guide} />
     <GuideShell
       eyebrow={`${guide.category} guide`}
       title={guide.title}
@@ -99,5 +104,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         </Link>
       </div>
     </GuideShell>
+    </>
   );
 }

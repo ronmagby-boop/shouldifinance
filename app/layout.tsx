@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { OG_IMAGE, SITE } from "./lib/calculators";
+import { SiteSchema } from "./components/JsonLd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* Organization and WebSite, once for the whole site. Every other page's
+            JSON-LD refers to these by @id rather than restating them, and this
+            layout renders on all 97 pages so the reference always resolves. */}
+        <SiteSchema />
         {children}
         {/* Vercel Web Analytics. Cookieless — visitors are counted by a hash of
             the incoming request, and no IP address is stored. The custom events
