@@ -410,7 +410,7 @@ export default function Home() {
           value and went no further. That is worse than an empty space, since
           the visitor leaves believing they have subscribed.
 
-          It also contradicted the privacy policy in terms — §6 says there is no
+          It also contradicted the privacy policy in terms — §8 says there is no
           email collection and no newsletter, while this section promised one,
           with "No spam" and "Unsubscribe anytime" as claims about a service
           that did not exist.

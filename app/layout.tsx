@@ -67,7 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             the incoming request, and no IP address is stored. The custom events
             it carries are defined in lib/analytics.ts, which allows only
             registry slugs and fixed labels through, so nothing a visitor typed
-            can reach it. Section 4 of the privacy policy describes both. */}
+            can reach it. Section 5 of the privacy policy describes both. */}
         <Analytics />
       </body>
     </html>

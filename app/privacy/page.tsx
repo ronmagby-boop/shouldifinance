@@ -4,6 +4,7 @@ import LegalShell, { Note, Section } from "../components/LegalShell";
 import { SITE, OG_IMAGE } from "../lib/calculators";
 import { LEGAL_CONTACT_EMAIL, LEGAL_UPDATED_LABEL } from "../lib/legal";
 import { ADS_LIVE } from "../lib/ads";
+import { FEEDBACK_ENABLED, OPT_IN_LABEL } from "../lib/feedback";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -62,10 +63,90 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="what-we-dont-collect" heading="3. What the Site does not ask you for">
+      <Section id="contact-form" heading="3. The contact form">
+        {FEEDBACK_ENABLED ? (
+          <>
+            <Note tone="green">
+              <strong>This is the only place on the Site that sends anything you typed.</strong> It
+              is on the Contact page alone, it runs only when you press Send, and it carries only
+              what you wrote in it. Section 2 is unaffected by it: a calculator has no path to this
+              form and the form has no field that could carry a calculation.
+            </Note>
+            <p>
+              The form takes a <strong>message</strong>, which is required, and an{" "}
+              <strong>email address</strong>, which is not. Leave the address blank and the message
+              arrives with no way to reply to it. There is also an unticked checkbox —
+              &ldquo;{OPT_IN_LABEL}&rdquo; — and whether you ticked it is sent with the message, as
+              a plain Yes or No, so that a declined opt-in is recorded as a decision rather than as
+              a missing field.
+            </p>
+            <p>
+              Those three values are the whole submission. Nothing is added to it: no page history,
+              no identifier, no device information gathered in the background, and nothing carried
+              over from anywhere else on the Site.
+            </p>
+            <p>
+              <strong>Who processes it.</strong> The form posts to{" "}
+              <a href="https://web3forms.com" className="text-green-700 underline" rel="noopener">
+                Web3Forms
+              </a>
+              , operated by Web3Creative, which converts the submission into an email and delivers
+              it to the address on the Contact page. For that data this Site is the controller and
+              Web3Forms is a processor acting on its instructions, under their published Data
+              Processing Agreement. Their infrastructure is Amazon Web Services, Cloudflare and
+              Hetzner; transfers out of the EEA, UK or Switzerland are made under Standard
+              Contractual Clauses.
+            </p>
+            <p>
+              <strong>How long they keep it.</strong> Web3Forms&rsquo; privacy policy states that
+              form submission data is retained for a maximum of three years from the date of
+              submission and then automatically deleted. The message also sits in an ordinary email
+              inbox afterwards, and is kept only as long as it is useful to keep — see section 10.
+            </p>
+            <p>
+              <strong>Spam filtering.</strong> To block automated submissions, Web3Forms names
+              CleanTalk and Akismet as spam-prevention providers, and states that the IP address and
+              email address of a form submitter may be sent to them. That is disclosed here because
+              it is the one part of sending this form that reaches a company neither you nor this
+              Site chose directly. The form itself loads no captcha and no third-party script; the
+              only bot protection on the page is a hidden field that a person never sees.
+            </p>
+            <p>
+              <strong>The opt-in.</strong> Ticking the box records that you would like occasional
+              email about new calculators and guides. There is no mailing list at the time of
+              writing, so ticking it adds you to nothing that exists yet; it is a stated preference,
+              held with your message, and it will be honoured as an opt-in if a list is ever
+              started. Leaving it unticked is the default and costs you nothing.
+            </p>
+            <p>
+              You can avoid the form entirely. The email address is published on the{" "}
+              <Link href="/contact" className="text-green-700 underline">
+                Contact page
+              </Link>{" "}
+              and writing to it directly involves no third party but your own mail provider.
+            </p>
+          </>
+        ) : (
+          <p>
+            There is no contact form on this Site. The{" "}
+            <Link href="/contact" className="text-green-700 underline">
+              Contact page
+            </Link>{" "}
+            publishes an email address and nothing else, so the only way to send a message is from
+            your own mail client, and nothing on this Site receives it. If a form is ever added,
+            this section will describe exactly what it sends and to whom before it goes live.
+          </p>
+        )}
+      </Section>
+
+      <Section id="what-we-dont-collect" heading="4. What the Site does not ask you for">
         <p>However the Site is built at any given time, it does not:</p>
         <ul className="list-disc pl-5 space-y-1.5">
-          <li>ask you for your name, email address, phone number or postal address;</li>
+          <li>
+            {FEEDBACK_ENABLED
+              ? "ask you for your name, phone number or postal address, or require an email address for anything — the contact form has one optional field for a reply address, covered in section 3, and that is the only place on the Site that offers to take one;"
+              : "ask you for your name, email address, phone number or postal address;"}
+          </li>
           <li>ask for or process financial account numbers, Social Security numbers or credit information;</li>
           <li>require an account, a login or any registration to use a calculator;</li>
           <li>transmit, store or retain the figures you enter into a calculator;</li>
@@ -73,12 +154,12 @@ export default function PrivacyPolicy() {
         </ul>
         <p>
           That list is about what the Site asks of <em>you</em>. It is separate from the ordinary
-          technical processing that happens when any page loads, covered in sections 4 and 5, and
-          from advertising, covered in section 7.
+          technical processing that happens when any page loads, covered in sections 5 and 6, and
+          from advertising, covered in section 8.
         </p>
       </Section>
 
-      <Section id="measurement" heading="4. Measurement and third-party components">
+      <Section id="measurement" heading="5. Measurement and third-party components">
         <p>
           The Site uses <strong>Vercel Web Analytics</strong>, provided by Vercel Inc. It is used to
           count how often each page is read and which calculators and guides are actually used, so
@@ -134,12 +215,12 @@ export default function PrivacyPolicy() {
           6 of PECR) is not engaged, which is why the Site shows no cookie banner for measurement.
           The 24-hour figure above is the lifespan of the visitor identifier, not of the aggregate
           counts, which Vercel retains for the period applicable to the Site&apos;s plan. You can
-          object to this processing by writing to the address in section 14, or by using any tracking
+          object to this processing by writing to the address in section 15, or by using any tracking
           protection or content blocker — the Site does not attempt to detect or defeat them.
         </p>
         <p>
           The Site may also load components served by third parties — for example a market-data
-          widget{ADS_LIVE ? ", and the advertising described in section 7" : ", or in future the advertising described in section 7"}. Where it does, your browser
+          widget{ADS_LIVE ? ", and the advertising described in section 8" : ", or in future the advertising described in section 8"}. Where it does, your browser
           makes a request to that provider, and that provider can see the ordinary technical
           information any web request carries, including your IP address and the page you are on.
           Those providers act under their own privacy policies, not this one.
@@ -156,7 +237,7 @@ export default function PrivacyPolicy() {
         </Note>
       </Section>
 
-      <Section id="hosting-and-logs" heading="5. Hosting and server logs">
+      <Section id="hosting-and-logs" heading="6. Hosting and server logs">
         <p>
           The Site is delivered by a third-party hosting provider. Like essentially all web hosts,
           that provider processes the technical information your browser sends in order to deliver a
@@ -179,7 +260,7 @@ export default function PrivacyPolicy() {
         </Note>
       </Section>
 
-      <Section id="cookies" heading="6. Cookies and similar technologies">
+      <Section id="cookies" heading="7. Cookies and similar technologies">
 {ADS_LIVE ? (
         <>
         <p>
@@ -191,11 +272,11 @@ export default function PrivacyPolicy() {
             <strong>Strictly necessary.</strong> The hosting provider may set operational cookies to
             deliver and secure the page — routing a request, managing caching. These serve the
             delivery of the page rather than any tracking purpose, and in most jurisdictions they do
-            not require consent. Section 5 covers the hosting relationship.
+            not require consent. Section 6 covers the hosting relationship.
           </li>
           <li>
             <strong>Measurement — sets nothing.</strong> This is the part most often assumed to work
-            the other way, so to be explicit: the analytics described in section 4 writes{" "}
+            the other way, so to be explicit: the analytics described in section 5 writes{" "}
             <em>no cookie at all</em>, and nothing to local storage, session storage or IndexedDB.
             There is no measurement cookie on this Site for you to accept or refuse, and no part of
             the consent dialog described below concerns it. It counts a repeat view from a hash of
@@ -203,9 +284,9 @@ export default function PrivacyPolicy() {
           </li>
           <li>
             <strong>Advertising — cookies, and consent-gated.</strong> The advertising described in
-            section 7 does set cookies and read them. It runs on the written guides and on the
+            section 8 does set cookies and read them. It runs on the written guides and on the
             rates page. On those pages, and only those, a consent dialog appears before personalised
-            advertising cookies are used, and your choice is recorded and respected. Section 7 lists
+            advertising cookies are used, and your choice is recorded and respected. Section 8 lists
             the cookies, who sets them and how long they last.
           </li>
         </ul>
@@ -229,10 +310,10 @@ export default function PrivacyPolicy() {
           Cookies, and the storage mechanisms that work like them, fall into three groups here.
           <strong> Strictly necessary</strong> ones may be set by the hosting provider to deliver and
           secure the page; these do not require consent in most jurisdictions.
-          <strong> Measurement</strong> sets nothing at all — the analytics described in section 4 is
+          <strong> Measurement</strong> sets nothing at all — the analytics described in section 5 is
           cookieless and writes nothing to your browser&apos;s storage, so there is no measurement
           cookie for you to consent to and no banner asking you about one.
-          <strong> Advertising</strong> cookies are covered in section 7 and are not in use today.
+          <strong> Advertising</strong> cookies are covered in section 8 and are not in use today.
         </p>
         <p>
           That is the position today, and it is why this page carries no consent prompt: nothing
@@ -247,7 +328,13 @@ export default function PrivacyPolicy() {
 
       <Section
         id={ADS_LIVE ? "advertising" : "not-yet-in-use"}
-        heading={ADS_LIVE ? "7. Advertising" : "7. Advertising and email — not in use today"}
+        heading={
+          ADS_LIVE
+            ? "8. Advertising"
+            : FEEDBACK_ENABLED
+              ? "8. Advertising — not in use today"
+              : "8. Advertising and email — not in use today"
+        }
       >
 {ADS_LIVE ? (
         <>
@@ -329,9 +416,12 @@ export default function PrivacyPolicy() {
           content of the page rather than from anything about you.
         </p>
         <p>
-          <strong>Email.</strong> There is still no email collection of any kind on this Site, and no
-          newsletter. If one is added it will be opt-in, every message will carry an unsubscribe
-          link, and the address will not be sold or rented.
+          <strong>Email.</strong> There is no newsletter and no mailing list.{" "}
+          {FEEDBACK_ENABLED
+            ? "The only address the Site ever receives is one you choose to type into the contact form, which is optional even there — section 3 sets out what happens to it. The opt-in box on that form records a preference for a list that does not exist yet."
+            : "There is still no email collection of any kind on this Site."}{" "}
+          If a list is added it will be opt-in, every message will carry an unsubscribe link, and
+          the address will not be sold or rented.
         </p>
         <Note tone="green">
           <strong>What advertising does not reach.</strong> It does not reach the figures you type
@@ -345,7 +435,10 @@ export default function PrivacyPolicy() {
         <>
         <Note>
           <strong>Nothing in this section is active as of {LEGAL_UPDATED_LABEL}.</strong> There is no
-          advertising on this Site and no email collection of any kind on that date. This section
+          advertising on this Site on that date
+          {FEEDBACK_ENABLED
+            ? ", and no newsletter — the contact form in section 3 is the only thing that receives an email address, and only one you chose to give"
+            : " and no email collection of any kind"}. This section
           exists so you can see what would change, not to describe something already happening — and
           the date matters, because it is the thing that tells you whether this paragraph can still
           be relied on.
@@ -384,7 +477,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="third-parties" heading="8. Links to other sites">
+      <Section id="third-parties" heading="9. Links to other sites">
         <p>
           The Site links to external resources — government and regulatory sources such as the IRS,
           and social media profiles in the footer. Following a link takes you to a site we do not
@@ -394,17 +487,17 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="retention" heading="9. Data retention">
+      <Section id="retention" heading="10. Data retention">
         <p>
           We operate no database of visitors and keep no calculator history — there is no archive of
           your calculations to request deletion from, because the figures never reach us. Hosting
           logs are retained by the hosting provider for its own operational period, described in
-          section 5, and any measurement data is retained by that provider under the terms named in
-          section 4.
+          section 6, and any measurement data is retained by that provider under the terms named in
+          section 5.
         </p>
       </Section>
 
-      <Section id="security" heading="10. Security">
+      <Section id="security" heading="11. Security">
         <p>
           The Site is served over HTTPS. Because the figures you enter never leave your browser, the
           most sensitive information involved in using this Site is never in transit and never at
@@ -414,7 +507,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="your-rights" heading="11. Your rights (CCPA and GDPR)">
+      <Section id="your-rights" heading="12. Your rights (CCPA and GDPR)">
         <p>
           Depending on where you live, you may have rights over personal information a business holds
           about you — including the right to know what is held, to obtain a copy, to correct it, to
@@ -425,7 +518,7 @@ export default function PrivacyPolicy() {
           <strong>California residents (CCPA/CPRA).</strong> We do not sell personal information
           for money. {ADS_LIVE ? (
             <>
-              The Site does carry advertising on its written guides (section 7), and the delivery of
+              The Site does carry advertising on its written guides (section 8), and the delivery of
               personalised advertising can amount to &ldquo;sharing&rdquo; personal information for
               cross-context behavioural advertising under California law. You may opt out of that
               sharing: use the advertising choice offered on any guide page, or a{" "}
@@ -439,7 +532,7 @@ export default function PrivacyPolicy() {
           ) : (
             <>
               and we do not use it for cross-context behavioural advertising. Advertising is not in
-              use today; if it is introduced — see section 7 — some ad arrangements count as
+              use today; if it is introduced — see section 8 — some ad arrangements count as
               &ldquo;sharing&rdquo; under California law, and this section will be rewritten with the
               disclosures and the opt-out mechanism that requires, before it goes live.
             </>
@@ -449,7 +542,7 @@ export default function PrivacyPolicy() {
         </p>
         <p>
           <strong>UK and EU residents (UK GDPR / EU GDPR).</strong> Server-log processing by the
-          hosting provider, and any measurement described in section 4, are carried out on the basis
+          hosting provider, and any measurement described in section 5, are carried out on the basis
           of legitimate interests in delivering, securing and understanding use of the Site — except
           where consent is required, in which case it will be asked for. We hold no account data
           about you, and the figures you enter into a calculator are not processed by us at all. You retain your rights of access, rectification, erasure, restriction, portability
@@ -466,7 +559,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="children" heading="12. Children&rsquo;s privacy">
+      <Section id="children" heading="13. Children&rsquo;s privacy">
         <p>
           The Site is intended for adults making financial decisions. It is not directed to children
           under 13, and we do not knowingly collect personal information from children under 13 —
@@ -479,7 +572,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="changes" heading="13. Changes to this policy">
+      <Section id="changes" heading="14. Changes to this policy">
         <p>
           This policy may be revised as the Site changes. The date at the top of the page shows when
           it was last altered. Material changes — particularly the introduction of advertising or
@@ -487,7 +580,7 @@ export default function PrivacyPolicy() {
         </p>
       </Section>
 
-      <Section id="contact" heading="14. Contact">
+      <Section id="contact" heading="15. Contact">
         <p>
           Questions about this policy, or about privacy on this Site, can be sent to{" "}
           <a href={`mailto:${LEGAL_CONTACT_EMAIL}`} className="text-green-700 underline">
