@@ -32,6 +32,92 @@ export function pmiRateForLtv(ltv: number): number {
  */
 export const PMI_TERMINATION_LTV = 0.78;
 
+/* ----------------------------------------------------------------------------
+ * FHA mortgage insurance.
+ *
+ * Every figure below is read off a HUD primary source, named beside it. FHA
+ * insurance is priced and timed by rules, not by market convention, so unlike
+ * the PMI bands above these are not representative estimates — they are the
+ * schedule, and a wrong digit here is a wrong answer rather than a rough one.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * The annual MIP schedule in force, and the date it took effect.
+ *
+ * Mortgagee Letter 2023-05 cut the rates and applies to case numbers endorsed
+ * on or after this date. Nothing since has superseded it — HUD's mortgagee
+ * letter index carries no later MIP rate letter, and a February 2026 draft is
+ * still out for comment rather than in force.
+ */
+export const FHA_MIP_AS_OF = "20 March 2023";
+export const FHA_MIP_SOURCE = "HUD Mortgagee Letter 2023-05";
+
+/**
+ * Upfront MIP, charged once on the base loan amount and normally financed into
+ * the loan. 175 basis points, from Handbook 4000.1 Appendix 1.0.
+ */
+export const FHA_UFMIP_RATE = 1.75;
+
+/**
+ * The base loan amount that splits the two annual MIP rate tables. Written as
+ * the figure ML 2023-05 states rather than tracked against the conforming
+ * limit, because the letter states a number and that number is the rule.
+ */
+export const FHA_MIP_LOAN_THRESHOLD = 726_200;
+
+/**
+ * Minimum down payment, which is a credit rule rather than a pricing one:
+ * 3.5% (96.5% LTV) needs a decision credit score of 580 or above, and 500-579
+ * is capped at 90% LTV. Below 500 there is no FHA loan at all.
+ *
+ * Worth holding on to, because it interacts with the duration cliff below in a
+ * way nobody expects: a borrower under 580 is forced to 10% down, which puts
+ * them on the RIGHT side of the 90% line and gets them the 11-year MIP rather
+ * than the full term.
+ */
+export const FHA_MIN_DOWN_PCT = 3.5;
+export const FHA_LOW_SCORE_MIN_DOWN_PCT = 10;
+
+/** The LTV at which the annual MIP duration changes from 11 years to the term. */
+export const FHA_MIP_DURATION_CLIFF_LTV = 90;
+
+/**
+ * Annual MIP in basis points, from the ML 2023-05 tables.
+ *
+ * `ltv` is the base loan over the lesser of price or appraised value, EXCLUDING
+ * any financed upfront MIP — ML 2013-04 says so explicitly, and it matters:
+ * financing the UFMIP cannot push a borrower over the 90% cliff.
+ */
+export function fhaAnnualMipBps(baseLoan: number, ltv: number, termYears: number): number {
+  const big = baseLoan > FHA_MIP_LOAN_THRESHOLD;
+  if (termYears > 15) {
+    if (ltv <= 90) return big ? 70 : 50;
+    if (ltv <= 95) return big ? 70 : 50;
+    return big ? 75 : 55;
+  }
+  if (big) {
+    if (ltv <= 78) return 15;
+    if (ltv <= 90) return 40;
+    return 65;
+  }
+  return ltv <= 90 ? 15 : 40;
+}
+
+/**
+ * How many months the annual MIP is charged for.
+ *
+ * Mortgagee Letter 2013-04: at or below 90% LTV it runs for the first 11 years
+ * or the end of the term, whichever comes first; above 90% it runs for the term
+ * (capped at 30 years by the same letter). There is no balance-based
+ * cancellation — the 78% automatic termination is a conventional rule under the
+ * Homeowners Protection Act and has never applied to FHA.
+ */
+export function fhaMipDurationMonths(ltv: number, termMonths: number): number {
+  return ltv <= FHA_MIP_DURATION_CLIFF_LTV
+    ? Math.min(132, termMonths)
+    : Math.min(360, termMonths);
+}
+
 export type AmortResult = {
   /** Balance at the end of each month, starting with the opening balance. */
   balances: number[];

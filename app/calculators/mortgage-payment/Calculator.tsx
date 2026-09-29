@@ -177,7 +177,7 @@ export default function MortgageCalculator() {
       intro="Estimate your monthly payment including principal, interest, taxes, insurance, and PMI."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["should-i-refinance", "rent-vs-buy", "extra-payments", "payoff-house-vs-invest"]}
+      relatedSlugs={["fha-vs-conventional", "should-i-refinance", "rent-vs-buy", "extra-payments"]}
       disclaimer="For educational purposes only. Results are estimates based on the values you enter. Actual loan terms, rates, taxes, and insurance costs will vary. Consult a licensed mortgage professional before making any financial decisions."
     >
           {/* CALCULATOR */}

@@ -156,7 +156,7 @@ export default function Calculator() {
       intro="Buying sooner with less down means PMI and a bigger loan. Saving longer means a smaller loan and no PMI — but home prices keep rising while you save, so the amount you need keeps growing too. This shows how long the saving actually takes and what each path costs in total."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["home-affordability", "mortgage-payment", "buy-now-or-wait"]}
+      relatedSlugs={["fha-vs-conventional", "home-affordability", "mortgage-payment", "buy-now-or-wait"]}
       disclaimer="For educational purposes only. PMI rates here are typical bands, not a quote, and price growth is an assumption rather than a forecast. Rent while saving is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

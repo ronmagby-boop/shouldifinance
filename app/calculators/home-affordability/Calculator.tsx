@@ -154,7 +154,7 @@ export default function Calculator() {
       intro="Lenders answer this with two ratios: how much of your income goes to housing, and how much goes to all debt combined. Here are three price points — what's comfortable, what's standard, and what's the ceiling."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["mortgage-payment", "rent-vs-buy", "extra-payments"]}
+      relatedSlugs={["mortgage-payment", "fha-vs-conventional", "rent-vs-buy", "extra-payments"]}
       disclaimer="For educational purposes only. Qualifying depends on credit score, assets, employment history, loan program, and the lender's own overlays — this is not a pre-approval. What you can borrow and what you should borrow are different questions; leave room for maintenance, repairs, and life."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

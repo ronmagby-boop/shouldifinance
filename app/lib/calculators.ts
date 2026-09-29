@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -115,6 +115,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "va-loan-vs-conventional",
       teaser: "How the VA funding fee compares with PMI",
+    },
+  },
+  {
+    slug: "fha-vs-conventional",
+    title: "Should I use an FHA or conventional loan?",
+    nav: "Should I use FHA or conventional?",
+    desc: "Compare FHA mortgage insurance against PMI, and find the 90% line that decides whether it ever comes off.",
+    icon: Layers, bg: "bg-blue-50", category: "Home", kind: "should-i",
+    keywords: ["FHA vs conventional", "FHA mortgage insurance", "MIP", "PMI", "90% LTV"],
+    guide: {
+      slug: "fha-or-conventional",
+      teaser: "The rule that decides whether the insurance ever stops",
     },
   },
   {
