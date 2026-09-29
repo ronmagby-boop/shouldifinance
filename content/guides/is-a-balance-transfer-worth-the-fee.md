@@ -1,7 +1,7 @@
 ---
 title: "Is a 0% balance transfer worth the fee?"
 slug: is-a-balance-transfer-worth-the-fee
-description: "The fee is charged up front and the new rate takes over the day the promotion ends. Here is the break-even, two federal rules that protect you more than most people realize, and the one that does not."
+description: "The fee is up front and the new rate takes over the day the promotion ends. Here is the break-even, and two federal rules that protect you more than you think."
 calculator: balance-transfer
 category: Debt
 published: 2026-09-15

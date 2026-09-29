@@ -5,7 +5,7 @@ import { CalculatorSchema } from "../../components/JsonLd";
 
 export const metadata: Metadata = calcMetadata(
   "va-vs-conventional",
-  "Compare a VA loan and a conventional loan side by side: monthly payment, cash at closing, the VA funding fee against PMI, and total interest over the life of each.",
+  "Compare a VA loan and a conventional loan side by side: monthly payment, cash at closing, the funding fee against PMI, and total interest.",
 );
 
 export default function Page() {

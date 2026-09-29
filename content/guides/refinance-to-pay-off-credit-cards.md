@@ -1,7 +1,7 @@
 ---
 title: "Should I refinance to pay off credit card debt?"
 slug: refinance-to-pay-off-credit-cards
-description: "Trading a 24% card rate for a 7% mortgage rate looks obvious. The arithmetic that decides it is the blended rate and the schedule, and there is a tax rule most borrowers get backwards."
+description: "Trading a 24% card rate for a 7% mortgage rate looks obvious. What decides it is the blended rate and the schedule, plus a tax rule borrowers get backwards."
 calculator: refinance-to-pay-off-debt
 category: Home
 published: 2026-08-25

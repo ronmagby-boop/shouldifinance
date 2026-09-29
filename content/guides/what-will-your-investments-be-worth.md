@@ -1,7 +1,7 @@
 ---
 title: "What will your investments actually be worth?"
 slug: what-will-your-investments-be-worth
-description: "A projection is an assumption with a calculator attached. Here is what the assumptions do, why a single percentage point of fees costs so much more than it sounds, and the risk that averages hide."
+description: "A projection is an assumption with a calculator attached. Here is what the assumptions do, why one point of fees costs so much, and the risk averages hide."
 calculator: investment-growth
 category: Money
 published: 2026-06-09

@@ -5,7 +5,7 @@ import { CalculatorSchema } from "../../components/JsonLd";
 
 export const metadata: Metadata = calcMetadata(
   "heloc-debt-payoff",
-  "Compare paying off high-interest debt with a HELOC against keeping it as is — the interest-only draw period, the payment jump when repayment starts, your combined loan-to-value, and what each way of paying it costs.",
+  "Compare clearing high-interest debt with a HELOC against keeping it. See the interest-only draw, the payment jump when repayment starts, and what each costs.",
 );
 
 export default function Page() {

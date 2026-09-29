@@ -1,7 +1,7 @@
 ---
 title: "Is it cheaper to rent or buy right now?"
 slug: cheaper-to-rent-or-buy
-description: "Comparing rent to a mortgage payment is the wrong comparison. Here are the costs that never appear in a payment, why the answer is a break-even year rather than a yes or no, and the tax rule that decides what you keep on the way out."
+description: "Comparing rent to a mortgage payment is the wrong comparison. Here are the costs a payment hides, why the answer is a break-even year, and the tax rule on exit."
 calculator: rent-vs-buy
 category: Home
 published: 2026-07-21

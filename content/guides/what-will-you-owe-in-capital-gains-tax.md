@@ -1,7 +1,7 @@
 ---
 title: "What will you owe in capital gains tax?"
 slug: what-will-you-owe-in-capital-gains-tax
-description: "Long-term capital gains rates are bracketed, not flat — and the gain itself decides which bracket it lands in. Here are the bands, the surtax that sits on top, and the holding period that changes everything."
+description: "Long-term capital gains rates are bracketed, not flat — and the gain itself decides the bracket. Here are the bands, the surtax on top, and the holding period."
 calculator: capital-gains
 category: Money
 published: 2026-06-19

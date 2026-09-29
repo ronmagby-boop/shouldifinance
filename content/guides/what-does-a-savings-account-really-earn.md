@@ -1,7 +1,7 @@
 ---
 title: "What does a savings account really earn?"
 slug: what-does-a-savings-account-really-earn
-description: "The rate is only part of it. Here is why APY is the number to compare, what inflation does to the answer, and the difference between the account being safe and the money keeping its value."
+description: "The rate is only part of it. Here is why APY is the number to compare, what inflation does to the answer, and why safe is not the same as keeping its value."
 calculator: savings-apy
 category: Money
 published: 2026-06-05

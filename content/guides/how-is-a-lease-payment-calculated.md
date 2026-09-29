@@ -1,7 +1,7 @@
 ---
 title: "How is a lease payment calculated?"
 slug: how-is-a-lease-payment-calculated
-description: "Three numbers produce a lease payment, and the dealer controls all three. Here is the formula, how to convert a money factor into a rate, and why rolling negative equity into a lease costs more than the amount you rolled in."
+description: "Three numbers produce a lease payment, and the dealer controls all three. Here is the formula, the money factor conversion, and what negative equity costs."
 calculator: lease-payment
 category: Auto
 published: 2026-05-18

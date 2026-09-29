@@ -1,7 +1,7 @@
 ---
 title: "What interest rate are you really paying?"
 slug: what-rate-are-you-really-paying
-description: "The rate on the offer sheet is not what the loan costs. Fees paid up front raise the real rate, the shorter you hold the loan the worse it gets — and the lender's own APR legally leaves several of your costs out."
+description: "The rate on the offer sheet is not what the loan costs. Up-front fees raise the real rate, and the lender's own APR legally leaves several of your costs out."
 calculator: effective-interest-rate
 category: Debt
 published: 2026-09-18

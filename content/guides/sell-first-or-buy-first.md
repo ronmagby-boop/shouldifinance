@@ -1,7 +1,7 @@
 ---
 title: "Should you sell your house before buying the next one?"
 slug: sell-first-or-buy-first
-description: "One order leaves you homeless for a while, the other leaves you carrying two payments. Here is what each path actually costs, and the tax rule that punishes moving twice in quick succession."
+description: "One order leaves you between homes, the other leaves you carrying two payments. Here is what each costs, and the tax rule that punishes moving twice."
 calculator: sell-first-or-buy-first
 category: Home
 published: 2026-07-23

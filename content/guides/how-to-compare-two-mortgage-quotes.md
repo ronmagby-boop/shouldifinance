@@ -1,7 +1,7 @@
 ---
 title: "How do you compare two mortgage quotes?"
 slug: how-to-compare-two-mortgage-quotes
-description: "The Loan Estimate is a standardized form for exactly this, and most people compare the wrong box on it. Here is which numbers to line up, and the tolerance rules that tell you which quoted costs are promises and which are guesses."
+description: "The Loan Estimate exists for exactly this, and most people compare the wrong box. Here is which numbers to line up, and which quoted costs are binding."
 calculator: loan-estimate-comparison
 category: Home
 published: 2026-08-07

@@ -1,7 +1,7 @@
 ---
 title: "Roth or traditional: which is right for you?"
 slug: roth-or-traditional
-description: "The usual framing is a bet on future tax rates, which nobody can win. The stronger argument is about the contribution limit, and it is the one most comparisons never make."
+description: "The usual framing is a bet on future tax rates, which nobody can win. The stronger argument is about the contribution limit, and most comparisons miss it."
 calculator: roth-vs-traditional
 category: Money
 published: 2026-06-30

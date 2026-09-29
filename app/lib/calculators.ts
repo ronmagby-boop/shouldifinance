@@ -768,13 +768,37 @@ export const OG_IMAGE = {
  * Shared metadata builder. Title and keywords come from the registry, so a
  * rename in CALCULATORS updates the page <title> without touching 29 files.
  */
+/**
+ * Google clips a title link around 60 characters, and the site-name suffix the
+ * root layout appends is both the least useful part and the first thing cut.
+ *
+ * So the suffix is conditional rather than global: kept where the whole title
+ * fits, dropped where it would not. Dropping it is enough on its own — every
+ * over-length title on the site came inside 60 without it, the longest landing
+ * exactly on the limit — which is why none of the titles themselves were
+ * rewritten. They are question-shaped because that is what someone types into
+ * a search box, and compressing them to make room for a suffix would trade the
+ * valuable half for the disposable one.
+ *
+ * Returning `{ absolute }` is how a page opts out of a parent template; see
+ * node_modules/next/dist/docs/01-app/03-api-reference/04-functions/generate-metadata.md.
+ * The openGraph and twitter titles keep the suffix unconditionally: a social
+ * card is not clipped at the same place, and the brand earns its room there.
+ */
+const TITLE_LIMIT = 60;
+const TITLE_SUFFIX = " | ShouldIFinance";
+
+export function pageTitle(raw: string): string | { absolute: string } {
+  return raw.length + TITLE_SUFFIX.length > TITLE_LIMIT ? { absolute: raw } : raw;
+}
+
 export function calcMetadata(slug: string, description: string) {
   const calc = bySlug(slug);
   const title = calc?.title ?? slug;
   const keywords = calc?.keywords ?? [];
   const url = `${SITE}/calculators/${slug}`;
   return {
-    title,
+    title: pageTitle(title),
     description,
     keywords,
     alternates: { canonical: url },

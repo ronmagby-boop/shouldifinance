@@ -5,7 +5,7 @@ import { CalculatorSchema } from "../../components/JsonLd";
 
 export const metadata: Metadata = calcMetadata(
   "401k-vs-debt-payoff",
-  "Compare capturing your full employer 401(k) match against putting the same money on your debt, including the tax saving on a pre-tax contribution and what each path is worth after the debt clears.",
+  "Compare taking your full employer 401(k) match against putting the same money on your debt, including the pre-tax saving and what each is worth after.",
 );
 
 export default function Page() {

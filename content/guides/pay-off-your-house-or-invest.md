@@ -1,7 +1,7 @@
 ---
 title: "Is it better to pay off your house or invest the difference?"
 slug: pay-off-your-house-or-invest
-description: "A mortgage is the cheapest money most people will ever borrow, which argues for keeping it. It is also a guaranteed return, which argues for killing it. Here is how the comparison actually resolves."
+description: "A mortgage is the cheapest money most people ever borrow, which argues for keeping it. Paying it off is a guaranteed return, which argues for killing it."
 calculator: payoff-house-vs-invest
 category: Home
 published: 2026-08-14

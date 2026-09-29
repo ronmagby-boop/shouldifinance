@@ -1,7 +1,7 @@
 ---
 title: "Is a VA loan better than a conventional loan?"
 slug: va-loan-vs-conventional
-description: "The real comparison is a one-time funding fee against monthly mortgage insurance that eventually stops. Here are the actual fee tiers, who pays nothing at all, and the point where the conventional loan catches up."
+description: "The real comparison is a one-time funding fee against monthly insurance that stops. Here are the fee tiers, who pays nothing, and where the lines cross."
 calculator: va-vs-conventional
 category: Home
 published: 2026-08-18

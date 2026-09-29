@@ -1,7 +1,7 @@
 ---
 title: "Should you finance a car or pay cash?"
 slug: finance-a-car-or-pay-cash
-description: "Paying cash saves the interest. Financing keeps the money invested. The answer usually turns on a detail nobody mentions: the rebate and the promotional rate are normally alternatives, not additions."
+description: "Paying cash saves the interest. Financing keeps the money invested. The answer turns on one detail: the rebate and the promotional rate are alternatives."
 calculator: loan-vs-cash
 category: Auto
 published: 2026-05-26

@@ -8,7 +8,7 @@ import { LEGAL_CONTACT_EMAIL } from "../lib/legal";
 export const metadata: Metadata = {
   title: "Disclaimer",
   description:
-    "ShouldIFinance is an independent educational project. It is not a lender, broker or financial advisor, and nothing on it is personalized advice or a commitment to lend.",
+    "ShouldIFinance is an independent educational project — not a lender, broker or advisor. Nothing here is personalized advice or a commitment to lend.",
   alternates: { canonical: `${SITE}/disclaimer` },
   openGraph: {
     images: [OG_IMAGE],

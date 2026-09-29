@@ -6,7 +6,7 @@ import Markdown from "../../components/Markdown";
 import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
 import { GuideSchema } from "../../components/JsonLd";
 import AdUnit from "../../components/AdUnit";
-import { SITE, OG_IMAGE } from "../../lib/calculators";
+import { SITE, OG_IMAGE, pageTitle } from "../../lib/calculators";
 import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
 
 /** Every guide is known at build time; anything else is a 404, not a render. */
@@ -28,7 +28,7 @@ export async function generateMetadata({
   const url = `${SITE}/guides/${guide.slug}`;
   const calc = calculatorForGuide(guide);
   return {
-    title: guide.title,
+    title: pageTitle(guide.title),
     description: guide.description,
     keywords: calc?.keywords,
     alternates: { canonical: url },

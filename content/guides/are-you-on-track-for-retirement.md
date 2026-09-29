@@ -1,7 +1,7 @@
 ---
 title: "Are you on track for retirement?"
 slug: are-you-on-track-for-retirement
-description: "The honest answer needs four numbers, and most people can only name two of them. Here is what a retirement target is actually built from, and the assumptions that move it most."
+description: "The honest answer needs four numbers, and most people can name two. Here is what a retirement target is built from, and the assumptions that move it most."
 calculator: retirement-savings
 category: Money
 published: 2026-06-26

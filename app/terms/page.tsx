@@ -7,7 +7,7 @@ import { GOVERNING_STATE, LEGAL_CONTACT_EMAIL } from "../lib/legal";
 export const metadata: Metadata = {
   title: "Terms of Use",
   description:
-    "The terms governing use of ShouldIFinance — an educational site offering free financial calculators. No warranty of accuracy, no advice, no professional relationship.",
+    "The terms governing use of ShouldIFinance, a free educational calculator site. No warranty of accuracy, no advice, no professional relationship.",
   alternates: { canonical: `${SITE}/terms` },
   openGraph: {
     images: [OG_IMAGE],

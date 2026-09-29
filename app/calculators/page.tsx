@@ -8,7 +8,7 @@ import MobileBottomNav, { MobileBottomNavSpacer } from "../components/MobileBott
 export const metadata: Metadata = {
   title: `All ${CALCULATORS.length} Free Financial Calculators`,
   description:
-    "Every ShouldIFinance calculator in one place — mortgages, refinancing, investing, retirement, auto loans and debt payoff. Free, no sign-up, runs in your browser.",
+    "Every ShouldIFinance calculator in one place: mortgages, refinancing, investing, retirement, auto loans and debt payoff. Free, no sign-up.",
   keywords: [
     "financial calculators",
     "free mortgage calculator",

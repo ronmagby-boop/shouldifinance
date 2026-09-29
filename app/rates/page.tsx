@@ -12,7 +12,7 @@ import {
 } from "../lib/rates";
 
 const DESCRIPTION =
-  "Current mortgage, Treasury, credit card, personal loan, CD and auto loan rates, each from its official source, with the date it was published and the calculator it belongs in.";
+  "Current mortgage, Treasury, credit card, personal loan, CD and auto rates — each from its official source, with the date it was published.";
 
 export const metadata: Metadata = {
   title: "Current rates",

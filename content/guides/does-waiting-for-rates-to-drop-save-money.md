@@ -1,7 +1,7 @@
 ---
 title: "Does waiting for rates to drop actually save you money?"
 slug: does-waiting-for-rates-to-drop-save-money
-description: "A lower rate is worth a lot, but prices do not stand still while you wait. Here is exactly how much a house can appreciate before a rate cut stops helping — and the asymmetry that decides the question."
+description: "A lower rate is worth a lot, but prices do not stand still while you wait. Here is how much a house can appreciate before a rate cut stops helping."
 calculator: buy-now-or-wait
 category: Home
 published: 2026-07-07

@@ -1,7 +1,7 @@
 ---
 title: "Is it worth saving longer for a bigger down payment?"
 slug: bigger-down-payment-or-buy-sooner
-description: "Twenty percent avoids mortgage insurance, and that is worth real money. Whether it is worth waiting three years for depends on what the insurance actually costs, when it stops, and one FHA rule that changes the answer entirely."
+description: "Twenty percent avoids mortgage insurance. Whether that is worth waiting three years for depends on what it costs, when it stops, and one FHA rule."
 calculator: buy-now-or-save
 category: Home
 published: 2026-07-16

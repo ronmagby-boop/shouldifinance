@@ -1,7 +1,7 @@
 ---
 title: "Are discount points worth paying for?"
 slug: are-discount-points-worth-it
-description: "A point costs 1% of the loan and buys a lower rate for as long as you keep it. Here is how to work out the break-even, why the answer changes if you refinance, and the tax rule that treats purchase points and refinance points completely differently."
+description: "A point costs 1% of the loan and buys a lower rate for as long as you keep it. Here is the break-even, why refinancing changes it, and the tax rule people miss."
 calculator: rate-buydown
 category: Home
 published: 2026-08-11

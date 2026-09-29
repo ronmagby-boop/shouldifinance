@@ -1,7 +1,7 @@
 ---
 title: "Which student loan repayment plan should you choose?"
 slug: which-student-loan-repayment-plan
-description: "The plans available to you now depend on when your loans were first disbursed. Here is what RAP actually does, how it differs from IBR, and why the lowest payment and the lowest cost are almost never the same plan."
+description: "Which plans you can pick now depends on when your loans were disbursed. Here is what RAP does, how it differs from IBR, and why the lowest payment rarely wins."
 calculator: student-loan-repayment
 category: Debt
 published: 2026-09-04

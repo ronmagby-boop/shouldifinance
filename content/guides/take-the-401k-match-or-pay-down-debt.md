@@ -1,7 +1,7 @@
 ---
 title: "Should you take the 401(k) match or pay down debt?"
 slug: take-the-401k-match-or-pay-down-debt
-description: "This is the rare question in personal finance with a genuinely settled answer. Here is the arithmetic behind it, and where the real decision starts once the match is captured."
+description: "The rare personal finance question with a settled answer. Here is the arithmetic behind it, and where the real decision starts once the match is captured."
 calculator: 401k-vs-debt-payoff
 category: Money
 published: 2026-07-02

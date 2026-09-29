@@ -1,7 +1,7 @@
 ---
 title: "Should you reinvest dividends or take the cash?"
 slug: reinvest-dividends-or-take-the-cash
-description: "Reinvesting compounds the income, which is usually right while you are building. The part that catches people is the tax bill that arrives whether you took the cash or not — and the cost basis nobody tracks."
+description: "Reinvesting compounds the income, which is right while you are building. What catches people is the tax bill that arrives whether you took the cash or not."
 calculator: dividend-reinvestment
 category: Money
 published: 2026-06-16
