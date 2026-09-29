@@ -75,11 +75,6 @@ export default function FeedbackForm() {
           <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-green-700" aria-hidden="true" />
           Sent. Thank you.
         </p>
-        <p className="text-xs text-green-900/80 leading-relaxed mt-1.5 pl-7">
-          If you left an address, a reply will come from{" "}
-          <span className="font-semibold">one person</span>, and not quickly. Anything about
-          privacy or a factual error gets looked at first.
-        </p>
         <button
           onClick={() => setState("idle")}
           className="inline-flex items-center min-h-11 mt-1 pl-7 text-xs font-semibold text-green-800 hover:underline"
