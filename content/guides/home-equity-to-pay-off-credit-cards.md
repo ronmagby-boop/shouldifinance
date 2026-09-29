@@ -3,7 +3,7 @@ title: "Should you use home equity to pay off credit cards?"
 slug: home-equity-to-pay-off-credit-cards
 description: "A HELOC can cut a 25% rate to single digits. What it costs depends more on how you repay it than on the rate — and the draw period is where money goes missing."
 calculator: heloc-debt-payoff
-category: Debt
+category: Home
 published: 2026-09-11
 reviewed: 2026-09-11
 ---
@@ -99,6 +99,26 @@ effective way to reprice expensive debt. Used the way it is structured to be
 used — minimum payments during a ten-year draw — it can leave you a decade older
 owing the same money, having paid a great deal for the privilege. The rate is
 the small decision. The payment is the big one.
+
+## The alternatives, briefly
+
+A HELOC is one of four ways to make card debt cheaper, and it is the one that
+puts your house behind the balance. Before choosing it, the other three are
+worth pricing:
+
+- [A 0% balance transfer](/guides/is-a-balance-transfer-worth-the-fee) costs a
+  fee up front and buys a fixed window with no interest. Cheapest of the four
+  when you can clear the balance inside it, and no collateral is involved.
+- [A consolidation loan](/guides/does-debt-consolidation-save-money) is
+  unsecured and fixed-term, so it forces an end date the way a HELOC's draw
+  period does not — but the origination fee comes out of what you receive.
+- [Paying them off in order](/guides/snowball-or-avalanche), with no new
+  borrowing at all, costs nothing to start and is the only one of the four that
+  cannot make the position worse.
+
+The ranking is not fixed: it depends on your rate spread, the fee, and whether
+you would actually hold the higher payment. What does not change is that a
+HELOC is the only option on the list secured against where you live.
 
 Sources: [IRS Publication 936, Home Mortgage Interest
 Deduction](https://www.irs.gov/publications/p936), for the buy-build-improve

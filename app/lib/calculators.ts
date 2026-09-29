@@ -46,18 +46,6 @@ export type Calc = {
 export const CALCULATORS: Calc[] = [
   // ---------- Home ----------
   {
-    slug: "mortgage-payment",
-    title: "What's my mortgage payment?",
-    nav: "What's my mortgage payment?",
-    desc: "Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.",
-    icon: Landmark, bg: "bg-blue-50", category: "Home", kind: "what-how",
-    keywords: ["mortgage calculator", "monthly payment", "PITI", "PMI"],
-    guide: {
-      slug: "whats-in-a-mortgage-payment",
-      teaser: "Where each part of the payment goes",
-    },
-  },
-  {
     slug: "should-i-refinance",
     title: "Should I refinance?",
     nav: "Should I refinance?",
@@ -82,27 +70,27 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
-    slug: "rent-vs-buy",
-    title: "Should I rent or buy?",
-    nav: "Should I rent or buy?",
-    desc: "Compare the true cost of renting and buying over 5, 10, and 30 years.",
-    icon: Home, bg: "bg-green-50", category: "Home", kind: "should-i",
-    keywords: ["rent vs buy", "should I buy a house", "break even year"],
+    slug: "heloc-debt-payoff",
+    title: "Should I use a HELOC to pay off high-interest debt?",
+    nav: "Should I use a HELOC to pay off debt?",
+    desc: "Trade a high rate for a lower one — and see the payment jump when the draw period ends.",
+    icon: ShieldAlert, bg: "bg-red-50", category: "Home", kind: "should-i",
+    keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "HELOC draw period", "HELOC payment shock"],
     guide: {
-      slug: "cheaper-to-rent-or-buy",
-      teaser: "Why the rent-versus-buy answer is a year, not a verdict",
+      slug: "home-equity-to-pay-off-credit-cards",
+      teaser: "What an interest-only draw period really does",
     },
   },
   {
-    slug: "home-affordability",
-    title: "How much house can I afford?",
-    nav: "How much house can I afford?",
-    desc: "Turn your income, debts, and down payment into a realistic price range.",
-    icon: Wallet, bg: "bg-amber-50", category: "Home", kind: "what-how",
-    keywords: ["home affordability", "how much house can I afford", "debt to income ratio"],
+    slug: "rate-buydown",
+    title: "Should I pay points to buy down my rate?",
+    nav: "Should I pay points?",
+    desc: "Find the month your discount points start paying for themselves.",
+    icon: Percent, bg: "bg-purple-50", category: "Home", kind: "should-i",
+    keywords: ["mortgage points calculator", "discount points break even", "buy down interest rate"],
     guide: {
-      slug: "how-much-house-can-you-afford",
-      teaser: "Why the 43% rule is no longer the test",
+      slug: "are-discount-points-worth-it",
+      teaser: "How points are priced, and when they pay back",
     },
   },
   {
@@ -118,15 +106,27 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
-    slug: "payoff-house-vs-invest",
-    title: "Should I pay off my house early or invest the difference?",
-    nav: "Should I pay off the house or invest?",
-    desc: "A guaranteed return from prepaying against a riskier one from the market.",
-    icon: HandCoins, bg: "bg-emerald-50", category: "Home", kind: "should-i",
-    keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
+    slug: "va-vs-conventional",
+    title: "Should I use a VA loan or conventional loan?",
+    nav: "Should I use a VA or conventional loan?",
+    desc: "Weigh no money down and no PMI against the VA funding fee.",
+    icon: ShieldCheck, bg: "bg-blue-50", category: "Home", kind: "should-i",
+    keywords: ["VA loan vs conventional", "VA funding fee", "PMI vs funding fee", "no down payment mortgage"],
     guide: {
-      slug: "pay-off-your-house-or-invest",
-      teaser: "Why the interest deduction usually saves nothing",
+      slug: "va-loan-vs-conventional",
+      teaser: "How the VA funding fee compares with PMI",
+    },
+  },
+  {
+    slug: "mortgage-payment",
+    title: "What's my mortgage payment?",
+    nav: "What's my mortgage payment?",
+    desc: "Estimate your monthly payment including principal, interest, taxes, insurance, and PMI.",
+    icon: Landmark, bg: "bg-blue-50", category: "Home", kind: "what-how",
+    keywords: ["mortgage calculator", "monthly payment", "PITI", "PMI"],
+    guide: {
+      slug: "whats-in-a-mortgage-payment",
+      teaser: "Where each part of the payment goes",
     },
   },
   {
@@ -142,6 +142,30 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "rent-vs-buy",
+    title: "Should I rent or buy?",
+    nav: "Should I rent or buy?",
+    desc: "Compare the true cost of renting and buying over 5, 10, and 30 years.",
+    icon: Home, bg: "bg-green-50", category: "Home", kind: "should-i",
+    keywords: ["rent vs buy", "should I buy a house", "break even year"],
+    guide: {
+      slug: "cheaper-to-rent-or-buy",
+      teaser: "Why the rent-versus-buy answer is a year, not a verdict",
+    },
+  },
+  {
+    slug: "payoff-house-vs-invest",
+    title: "Should I pay off my house early or invest the difference?",
+    nav: "Should I pay off the house or invest?",
+    desc: "A guaranteed return from prepaying against a riskier one from the market.",
+    icon: HandCoins, bg: "bg-emerald-50", category: "Home", kind: "should-i",
+    keywords: ["pay off mortgage early or invest", "mortgage payoff vs investing", "guaranteed return"],
+    guide: {
+      slug: "pay-off-your-house-or-invest",
+      teaser: "Why the interest deduction usually saves nothing",
+    },
+  },
+  {
     slug: "pay-off-debt",
     // "a debt" is deliberate: this tool compares one debt at a time.
     title: "Should I pay off a debt or invest?",
@@ -152,55 +176,6 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "pay-off-debt-or-invest",
       teaser: "Why one side of this comparison is a promise and the other a hope",
-    },
-  },
-  {
-    slug: "loan-estimate-comparison",
-    title: "Which loan estimate is actually cheapest?",
-    nav: "Which lender quote is cheapest?",
-    desc: "Put three lender quotes side by side and find the real cost of each.",
-    icon: ClipboardList, bg: "bg-teal-50", category: "Home", kind: "what-how",
-    keywords: ["loan estimate comparison", "compare lenders", "closing costs"],
-    guide: {
-      slug: "how-to-compare-two-mortgage-quotes",
-      teaser: "Which quoted costs are promises and which are guesses",
-    },
-  },
-  {
-    slug: "effective-interest-rate",
-    title: "What interest rate am I really paying?",
-    nav: "What rate am I really paying?",
-    desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
-    icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
-    keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
-    guide: {
-      slug: "what-rate-are-you-really-paying",
-      teaser: "What a lender's APR legally leaves out",
-    },
-  },
-
-  {
-    slug: "va-vs-conventional",
-    title: "Should I use a VA loan or conventional loan?",
-    nav: "Should I use a VA or conventional loan?",
-    desc: "Weigh no money down and no PMI against the VA funding fee.",
-    icon: ShieldCheck, bg: "bg-blue-50", category: "Home", kind: "should-i",
-    keywords: ["VA loan vs conventional", "VA funding fee", "PMI vs funding fee", "no down payment mortgage"],
-    guide: {
-      slug: "va-loan-vs-conventional",
-      teaser: "How the VA funding fee compares with PMI",
-    },
-  },
-  {
-    slug: "rate-buydown",
-    title: "Should I pay points to buy down my rate?",
-    nav: "Should I pay points?",
-    desc: "Find the month your discount points start paying for themselves.",
-    icon: Percent, bg: "bg-purple-50", category: "Home", kind: "should-i",
-    keywords: ["mortgage points calculator", "discount points break even", "buy down interest rate"],
-    guide: {
-      slug: "are-discount-points-worth-it",
-      teaser: "How points are priced, and when they pay back",
     },
   },
   {
@@ -239,8 +214,152 @@ export const CALCULATORS: Calc[] = [
       teaser: "What each order actually exposes you to",
     },
   },
-
+  {
+    slug: "home-affordability",
+    title: "How much house can I afford?",
+    nav: "How much house can I afford?",
+    desc: "Turn your income, debts, and down payment into a realistic price range.",
+    icon: Wallet, bg: "bg-amber-50", category: "Home", kind: "what-how",
+    keywords: ["home affordability", "how much house can I afford", "debt to income ratio"],
+    guide: {
+      slug: "how-much-house-can-you-afford",
+      teaser: "Why the 43% rule is no longer the test",
+    },
+  },
+  {
+    slug: "loan-estimate-comparison",
+    title: "Which loan estimate is actually cheapest?",
+    nav: "Which lender quote is cheapest?",
+    desc: "Put three lender quotes side by side and find the real cost of each.",
+    icon: ClipboardList, bg: "bg-teal-50", category: "Home", kind: "what-how",
+    keywords: ["loan estimate comparison", "compare lenders", "closing costs"],
+    guide: {
+      slug: "how-to-compare-two-mortgage-quotes",
+      teaser: "Which quoted costs are promises and which are guesses",
+    },
+  },
+  // ---------- Debt ----------
+  {
+    slug: "debt-payoff",
+    title: "Should I use the snowball or avalanche method?",
+    nav: "Should I snowball or avalanche?",
+    desc: "Compare the snowball and avalanche methods across all your balances.",
+    icon: Snowflake, bg: "bg-blue-50", category: "Debt", kind: "should-i",
+    keywords: ["debt snowball", "debt avalanche", "debt payoff plan"],
+    guide: {
+      slug: "snowball-or-avalanche",
+      teaser: "Why avalanche always wins on paper, and snowball wins in practice",
+    },
+  },
+  {
+    slug: "student-loan-repayment",
+    title: "Which student loan repayment plan should I choose?",
+    nav: "Which student loan plan?",
+    desc: "Compare the standard, extended, IBR and RAP plans on your balance.",
+    icon: GraduationCap, bg: "bg-purple-50", category: "Debt", kind: "should-i",
+    keywords: ["student loan repayment", "income driven repayment", "repayment assistance plan", "RAP", "loan forgiveness"],
+    guide: {
+      slug: "which-student-loan-repayment-plan",
+      teaser: "What RAP changed, and which plans you can still pick",
+    },
+  },
+  {
+    slug: "debt-consolidation",
+    title: "Should I consolidate my debt?",
+    nav: "Should I consolidate my debt?",
+    desc: "Pick which balances to roll into one loan, and see what each move costs.",
+    icon: Combine, bg: "bg-amber-50", category: "Debt", kind: "should-i",
+    keywords: ["debt consolidation calculator", "consolidation loan", "combine debts"],
+    guide: {
+      slug: "does-debt-consolidation-save-money",
+      teaser: "Where the savings go when the term gets longer",
+    },
+  },
+  {
+    slug: "balance-transfer",
+    title: "Should I do a balance transfer?",
+    nav: "Should I do a balance transfer?",
+    desc: "See what a 0% window saves once the transfer fee is counted.",
+    icon: Shuffle, bg: "bg-purple-50", category: "Debt", kind: "should-i",
+    keywords: ["balance transfer calculator", "0% APR transfer", "credit card transfer fee"],
+    guide: {
+      slug: "is-a-balance-transfer-worth-the-fee",
+      teaser: "The fee, the deadline, and two rules on your side",
+    },
+  },
+  {
+    slug: "effective-interest-rate",
+    title: "What interest rate am I really paying?",
+    nav: "What rate am I really paying?",
+    desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
+    icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
+    keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
+    guide: {
+      slug: "what-rate-are-you-really-paying",
+      teaser: "What a lender's APR legally leaves out",
+    },
+  },
   // ---------- Money ----------
+  {
+    slug: "dividend-reinvestment",
+    title: "Should I reinvest my dividends?",
+    nav: "Should I reinvest dividends?",
+    desc: "Compare taking dividends as cash against reinvesting every one.",
+    icon: Banknote, bg: "bg-teal-50", category: "Money", kind: "should-i",
+    keywords: ["DRIP calculator", "dividend reinvestment", "dividend growth"],
+    guide: {
+      slug: "reinvest-dividends-or-take-the-cash",
+      teaser: "The tax bill that arrives whether you took the cash or not",
+    },
+  },
+  {
+    slug: "dollar-cost-averaging",
+    title: "Should I invest all at once or dollar-cost average?",
+    nav: "Should I invest all at once?",
+    desc: "Invest all at once or spread it out — see how each plays out.",
+    icon: CalendarDays, bg: "bg-blue-50", category: "Money", kind: "should-i",
+    keywords: ["dollar cost averaging", "DCA vs lump sum", "average share cost"],
+    guide: {
+      slug: "lump-sum-or-dollar-cost-averaging",
+      teaser: "Why lump sum usually wins, and when it does not",
+    },
+  },
+  {
+    slug: "early-withdrawal",
+    title: "Should I withdraw from my retirement early?",
+    nav: "Should I withdraw early?",
+    desc: "Count the taxes, the 10% penalty, and the growth you would give up.",
+    icon: AlertTriangle, bg: "bg-red-50", category: "Money", kind: "should-i",
+    keywords: ["401k early withdrawal", "10% penalty", "IRA withdrawal tax"],
+    guide: {
+      slug: "what-early-retirement-withdrawal-costs",
+      teaser: "Why the 10% penalty is the smallest part of the bill",
+    },
+  },
+  {
+    slug: "401k-vs-debt-payoff",
+    title: "Should I capture my full 401(k) match or pay down debt?",
+    nav: "Should I capture my full match?",
+    desc: "Weigh an employer match against the guaranteed return of clearing debt.",
+    icon: Scale3d, bg: "bg-green-50", category: "Money", kind: "should-i",
+    keywords: ["401k match or pay off debt", "employer match vs debt", "capture full 401k match", "invest or pay down debt"],
+    guide: {
+      slug: "take-the-401k-match-or-pay-down-debt",
+      teaser: "Why this one is not a close call",
+    },
+  },
+  {
+    slug: "roth-vs-traditional",
+    title: "Should I do Roth or Traditional?",
+    nav: "Should I do Roth or Traditional?",
+    desc: "Pay tax now or later, decided by the bracket you expect in retirement.",
+    icon: Split, bg: "bg-blue-50", category: "Money", kind: "should-i",
+    keywords: ["Roth vs traditional 401k", "Roth IRA comparison", "pre-tax vs after-tax retirement"],
+    guide: {
+      slug: "roth-or-traditional",
+      teaser: "The contribution-limit argument most comparisons miss",
+    },
+  },
   {
     slug: "compound-interest",
     title: "How will compound interest grow my money?",
@@ -290,30 +409,6 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
-    slug: "dividend-reinvestment",
-    title: "Should I reinvest my dividends?",
-    nav: "Should I reinvest dividends?",
-    desc: "Compare taking dividends as cash against reinvesting every one.",
-    icon: Banknote, bg: "bg-teal-50", category: "Money", kind: "should-i",
-    keywords: ["DRIP calculator", "dividend reinvestment", "dividend growth"],
-    guide: {
-      slug: "reinvest-dividends-or-take-the-cash",
-      teaser: "The tax bill that arrives whether you took the cash or not",
-    },
-  },
-  {
-    slug: "dollar-cost-averaging",
-    title: "Should I invest all at once or dollar-cost average?",
-    nav: "Should I invest all at once?",
-    desc: "Invest all at once or spread it out — see how each plays out.",
-    icon: CalendarDays, bg: "bg-blue-50", category: "Money", kind: "should-i",
-    keywords: ["dollar cost averaging", "DCA vs lump sum", "average share cost"],
-    guide: {
-      slug: "lump-sum-or-dollar-cost-averaging",
-      teaser: "Why lump sum usually wins, and when it does not",
-    },
-  },
-  {
     slug: "capital-gains",
     title: "What will I owe in capital gains tax?",
     nav: "What will I owe in capital gains?",
@@ -338,40 +433,27 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
-    slug: "early-withdrawal",
-    title: "Should I withdraw from my retirement early?",
-    nav: "Should I withdraw early?",
-    desc: "Count the taxes, the 10% penalty, and the growth you would give up.",
-    icon: AlertTriangle, bg: "bg-red-50", category: "Money", kind: "should-i",
-    keywords: ["401k early withdrawal", "10% penalty", "IRA withdrawal tax"],
+    slug: "emergency-fund",
+    title: "How big should my emergency fund be?",
+    nav: "How big should my emergency fund be?",
+    desc: "Size the cushion you need and see how fast you can build it.",
+    icon: LifeBuoy, bg: "bg-teal-50", category: "Money", kind: "what-how",
+    keywords: ["emergency fund", "months of expenses", "savings cushion"],
     guide: {
-      slug: "what-early-retirement-withdrawal-costs",
-      teaser: "Why the 10% penalty is the smallest part of the bill",
-    },
-  },
-
-  {
-    slug: "401k-vs-debt-payoff",
-    title: "Should I capture my full 401(k) match or pay down debt?",
-    nav: "Should I capture my full match?",
-    desc: "Weigh an employer match against the guaranteed return of clearing debt.",
-    icon: Scale3d, bg: "bg-green-50", category: "Money", kind: "should-i",
-    keywords: ["401k match or pay off debt", "employer match vs debt", "capture full 401k match", "invest or pay down debt"],
-    guide: {
-      slug: "take-the-401k-match-or-pay-down-debt",
-      teaser: "Why this one is not a close call",
+      slug: "how-big-should-an-emergency-fund-be",
+      teaser: "Three to six months of what, exactly",
     },
   },
   {
-    slug: "roth-vs-traditional",
-    title: "Should I do Roth or Traditional?",
-    nav: "Should I do Roth or Traditional?",
-    desc: "Pay tax now or later, decided by the bracket you expect in retirement.",
-    icon: Split, bg: "bg-blue-50", category: "Money", kind: "should-i",
-    keywords: ["Roth vs traditional 401k", "Roth IRA comparison", "pre-tax vs after-tax retirement"],
+    slug: "net-worth",
+    title: "What's my net worth?",
+    nav: "What's my net worth?",
+    desc: "Add up what you own and what you owe, then project it forward.",
+    icon: Trophy, bg: "bg-amber-50", category: "Money", kind: "what-how",
+    keywords: ["net worth calculator", "assets minus liabilities", "track net worth"],
     guide: {
-      slug: "roth-or-traditional",
-      teaser: "The contribution-limit argument most comparisons miss",
+      slug: "how-to-calculate-your-net-worth",
+      teaser: "The four judgment calls inside the number",
     },
   },
   // ---------- Auto ----------
@@ -412,6 +494,30 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "ev-savings",
+    title: "Should I switch to an electric car?",
+    nav: "Should I switch to an EV?",
+    desc: "Compare fuel, maintenance, and incentives for electric and gas.",
+    icon: Plug, bg: "bg-emerald-50", category: "Auto", kind: "should-i",
+    keywords: ["EV savings calculator", "electric vs gas cost", "cost per mile"],
+    guide: {
+      slug: "do-electric-cars-save-money",
+      teaser: "What the comparison looks like now the credit has gone",
+    },
+  },
+  {
+    slug: "new-vs-used-car",
+    title: "Should I buy new or used?",
+    nav: "Should I buy new or used?",
+    desc: "Depreciation, interest and repairs over the years you actually keep it.",
+    icon: CarFront, bg: "bg-green-50", category: "Auto", kind: "should-i",
+    keywords: ["new vs used car calculator", "car depreciation comparison", "total cost of ownership"],
+    guide: {
+      slug: "new-or-used-which-is-the-better-buy",
+      teaser: "Why the price gap is not the saving",
+    },
+  },
+  {
     slug: "auto-affordability",
     title: "How much car can I afford?",
     nav: "How much car can I afford?",
@@ -448,18 +554,6 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
-    slug: "ev-savings",
-    title: "Should I switch to an electric car?",
-    nav: "Should I switch to an EV?",
-    desc: "Compare fuel, maintenance, and incentives for electric and gas.",
-    icon: Plug, bg: "bg-emerald-50", category: "Auto", kind: "should-i",
-    keywords: ["EV savings calculator", "electric vs gas cost", "cost per mile"],
-    guide: {
-      slug: "do-electric-cars-save-money",
-      teaser: "What the comparison looks like now the credit has gone",
-    },
-  },
-  {
     slug: "depreciation",
     title: "What will my car be worth later?",
     nav: "What will my car be worth?",
@@ -469,105 +563,6 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "how-fast-does-a-car-lose-value",
       teaser: "Where the loan and the value cross, and how long you are underwater",
-    },
-  },
-
-  {
-    slug: "new-vs-used-car",
-    title: "Should I buy new or used?",
-    nav: "Should I buy new or used?",
-    desc: "Depreciation, interest and repairs over the years you actually keep it.",
-    icon: CarFront, bg: "bg-green-50", category: "Auto", kind: "should-i",
-    keywords: ["new vs used car calculator", "car depreciation comparison", "total cost of ownership"],
-    guide: {
-      slug: "new-or-used-which-is-the-better-buy",
-      teaser: "Why the price gap is not the saving",
-    },
-  },
-  // ---------- Debt / Money ----------
-  {
-    slug: "debt-payoff",
-    title: "Should I use the snowball or avalanche method?",
-    nav: "Should I snowball or avalanche?",
-    desc: "Compare the snowball and avalanche methods across all your balances.",
-    icon: Snowflake, bg: "bg-blue-50", category: "Debt", kind: "should-i",
-    keywords: ["debt snowball", "debt avalanche", "debt payoff plan"],
-    guide: {
-      slug: "snowball-or-avalanche",
-      teaser: "Why avalanche always wins on paper, and snowball wins in practice",
-    },
-  },
-  {
-    slug: "emergency-fund",
-    title: "How big should my emergency fund be?",
-    nav: "How big should my emergency fund be?",
-    desc: "Size the cushion you need and see how fast you can build it.",
-    icon: LifeBuoy, bg: "bg-teal-50", category: "Money", kind: "what-how",
-    keywords: ["emergency fund", "months of expenses", "savings cushion"],
-    guide: {
-      slug: "how-big-should-an-emergency-fund-be",
-      teaser: "Three to six months of what, exactly",
-    },
-  },
-  {
-    slug: "student-loan-repayment",
-    title: "Which student loan repayment plan should I choose?",
-    nav: "Which student loan plan?",
-    desc: "Compare the standard, extended, IBR and RAP plans on your balance.",
-    icon: GraduationCap, bg: "bg-purple-50", category: "Debt", kind: "should-i",
-    keywords: ["student loan repayment", "income driven repayment", "repayment assistance plan", "RAP", "loan forgiveness"],
-    guide: {
-      slug: "which-student-loan-repayment-plan",
-      teaser: "What RAP changed, and which plans you can still pick",
-    },
-  },
-  {
-    slug: "net-worth",
-    title: "What's my net worth?",
-    nav: "What's my net worth?",
-    desc: "Add up what you own and what you owe, then project it forward.",
-    icon: Trophy, bg: "bg-amber-50", category: "Money", kind: "what-how",
-    keywords: ["net worth calculator", "assets minus liabilities", "track net worth"],
-    guide: {
-      slug: "how-to-calculate-your-net-worth",
-      teaser: "The four judgment calls inside the number",
-    },
-  },
-  // ---------- Debt ----------
-  {
-    slug: "debt-consolidation",
-    title: "Should I consolidate my debt?",
-    nav: "Should I consolidate my debt?",
-    desc: "Pick which balances to roll into one loan, and see what each move costs.",
-    icon: Combine, bg: "bg-amber-50", category: "Debt", kind: "should-i",
-    keywords: ["debt consolidation calculator", "consolidation loan", "combine debts"],
-    guide: {
-      slug: "does-debt-consolidation-save-money",
-      teaser: "Where the savings go when the term gets longer",
-    },
-  },
-  {
-    slug: "heloc-debt-payoff",
-    title: "Should I use a HELOC to pay off high-interest debt?",
-    nav: "Should I use a HELOC to pay off debt?",
-    desc: "Trade a high rate for a lower one — and see the payment jump when the draw period ends.",
-    icon: ShieldAlert, bg: "bg-red-50", category: "Debt", kind: "should-i",
-    keywords: ["HELOC to pay off credit cards", "home equity debt consolidation", "HELOC draw period", "HELOC payment shock"],
-    guide: {
-      slug: "home-equity-to-pay-off-credit-cards",
-      teaser: "What an interest-only draw period really does",
-    },
-  },
-  {
-    slug: "balance-transfer",
-    title: "Should I do a balance transfer?",
-    nav: "Should I do a balance transfer?",
-    desc: "See what a 0% window saves once the transfer fee is counted.",
-    icon: Shuffle, bg: "bg-purple-50", category: "Debt", kind: "should-i",
-    keywords: ["balance transfer calculator", "0% APR transfer", "credit card transfer fee"],
-    guide: {
-      slug: "is-a-balance-transfer-worth-the-fee",
-      teaser: "The fee, the deadline, and two rules on your side",
     },
   },
 ];
@@ -624,11 +619,22 @@ export const categoryCrumb = (category: Category): string =>
 export const bySlug = (slug: string): Calc | undefined =>
   CALCULATORS.find((c) => c.slug === slug);
 
-/** Decision tools first, then lookups; registry order is kept within each group. */
+/**
+ * Registry order, exactly as written above.
+ *
+ * This used to sort decision tools ahead of lookups. That rule was fine while
+ * no category wanted anything else, and it stopped being fine when Home was
+ * ordered deliberately: it interleaves the two kinds, putting the mortgage
+ * payment lookup seventh because that is what most people arrive wanting, and
+ * a decisions-first sort moved it to thirteenth. One ordering rule — the order
+ * of the array — is simpler than an array order plus a sort that overrides it.
+ *
+ * Debt, Money and Auto were rewritten above into the order they were already
+ * rendering in under the sort, so removing it changed nothing visible outside
+ * Home.
+ */
 export const byCategory = (category: Category): Calc[] =>
-  CALCULATORS.filter((c) => c.category === category).sort(
-    (a, b) => (a.kind === b.kind ? 0 : a.kind === "should-i" ? -1 : 1),
-  );
+  CALCULATORS.filter((c) => c.category === category);
 
 /** Padded up to this many when a page declares fewer, so no page looks bare. */
 const RELATED_MIN = 3;
