@@ -236,7 +236,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["va-vs-conventional", "mortgage-payment", "buy-now-or-save", "home-affordability"]}
-      disclaimer="For educational purposes only and not a commitment to lend. FHA premiums follow HUD's published schedule; the conventional PMI figures are representative bands, not a quote, and a real premium also depends on your credit score and the insurer. Property tax, homeowners insurance and HOA dues are left out because they are the same on both sides. Assumes a fixed rate, a purchase, and scheduled payments only."
+      disclaimer="For educational purposes only and not a commitment to lend. FHA premiums follow HUD's published schedule. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card and assume a 700 credit score. Property tax, homeowners insurance and HOA dues are left out because they are the same on both sides. Assumes a fixed rate, a purchase, and scheduled payments only."
     >
       <Card title="The house" badge="BOTH LOANS" className="mb-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

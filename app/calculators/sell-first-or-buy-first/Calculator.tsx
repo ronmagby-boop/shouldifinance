@@ -125,7 +125,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["home-affordability", "mortgage-payment", "rent-vs-buy"]}
-      disclaimer="For educational purposes only. PMI bands are typical figures rather than a quote, recasting is not offered on every loan, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
+      disclaimer="For educational purposes only. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card and assume a 700 credit score. Recasting is not offered on every loan, and a sale that falls through changes everything. Talk to an agent and a lender about what is realistic where you are buying."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The home you're selling" badge="CURRENT">

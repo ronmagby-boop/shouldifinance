@@ -9,21 +9,66 @@ export function payment(principal: number, annualRate: number, months: number): 
 }
 
 /**
- * Typical annual PMI as a percent of the loan, by loan-to-value band.
+ * Annual PMI as a percent of the loan, by loan-to-value band AND credit score.
  *
- * Bands rather than one rate because the price of the insurance tracks how
- * little equity is behind it. These are representative figures, not a quote —
- * a real premium also depends on credit score, loan type and the insurer.
+ * REPRESENTATIVE, NOT A QUOTE, and that is not a hedge — there is no current
+ * authoritative table to quote. Mortgage insurers have moved to per-loan
+ * risk-based pricing: MGIC's own rates page now says its "risk-based pricing
+ * model provides rates tailored to unique loan scenarios" and directs you to a
+ * quoting engine instead of publishing a card. The published cards that remain
+ * are archived. So this is calibrated against one rather than copied from a
+ * live source, and every page using it says so.
  *
- * This lived as an identical copy in two calculators before it lived here.
+ * The figures are Enact's national monthly borrower-paid card for a fixed loan
+ * over 20 years, at the coverage level Fannie and Freddie require for each
+ * band — 35% at 97-95.01, 30% at 95-90.01, 25% at 90-85.01, 12% below.
+ * Effective 4 June 2018, updated 27 January 2022.
+ *
+ * WHY BOTH AXES. This replaced two tables that disagreed: an LTV-banded one
+ * here, used by three calculators, and a score-banded one inside
+ * va-vs-conventional that used LTV only as an on/off gate at 80%. Checked
+ * against the card, each turned out to be a single slice of it — the LTV table
+ * was the 700-score column, the score table was roughly the 90-95% LTV row —
+ * and each was badly wrong along the axis it ignored. A 660-score borrower at
+ * 96% LTV pays 1.54% on the card; the LTV table said 1.03% and the score table
+ * 1.15%. Neither was better than the other, so neither survived alone.
+ *
+ * Real premiums also move with coverage level, term, occupancy, number of
+ * borrowers and DTI. Those are left out deliberately: they are adjustments to a
+ * number that is already an approximation, and the calculators do not ask for
+ * them.
  */
-export function pmiRateForLtv(ltv: number): number {
+const PMI_CARD: { maxLtv: number; byScore: Record<number, number> }[] = [
+  { maxLtv: 85, byScore: { 760: 0.19, 740: 0.20, 720: 0.23, 700: 0.25, 680: 0.28, 660: 0.38 } },
+  { maxLtv: 90, byScore: { 760: 0.28, 740: 0.38, 720: 0.46, 700: 0.55, 680: 0.65, 660: 0.90 } },
+  { maxLtv: 95, byScore: { 760: 0.38, 740: 0.53, 720: 0.66, 700: 0.78, 680: 0.96, 660: 1.28 } },
+  { maxLtv: Infinity, byScore: { 760: 0.58, 740: 0.70, 720: 0.87, 700: 0.99, 680: 1.21, 660: 1.54 } },
+];
+
+/** Score tiers the card prices, highest first. Exported so a page can offer them. */
+export const PMI_SCORE_TIERS = [760, 740, 720, 700, 680, 660] as const;
+
+/**
+ * The score assumed where a calculator does not ask for one.
+ *
+ * 700 rather than a flattering number, and chosen because it is what the old
+ * LTV-only table was already pricing — so the three calculators that do not ask
+ * for a score keep the figures they had, to within a few hundredths of a
+ * percent, while gaining a stated assumption instead of a hidden one.
+ */
+export const PMI_DEFAULT_SCORE = 700;
+
+export function pmiRate(ltv: number, score: number = PMI_DEFAULT_SCORE): number {
   if (ltv <= 80) return 0;
-  if (ltv <= 85) return 0.32;
-  if (ltv <= 90) return 0.52;
-  if (ltv <= 95) return 0.78;
-  return 1.03;
+  const row = PMI_CARD.find((b) => ltv <= b.maxLtv) ?? PMI_CARD[PMI_CARD.length - 1];
+  /* Snap to the nearest tier at or below the score, the way a rate card reads:
+     a 735 borrower is priced in the 720-739 bucket, not interpolated. */
+  const tier = PMI_SCORE_TIERS.find((t) => score >= t) ?? PMI_SCORE_TIERS[PMI_SCORE_TIERS.length - 1];
+  return row.byScore[tier];
 }
+
+/** The previous name, kept so the three callers that assume a score read clearly. */
+export const pmiRateForLtv = (ltv: number): number => pmiRate(ltv);
 
 /**
  * PMI comes off automatically once the balance reaches this share of the

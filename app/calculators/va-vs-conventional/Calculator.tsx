@@ -6,7 +6,7 @@ import {
   fmt, fmtK, months as fmtMonths, n, type Num,
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
-import { payment } from "../../lib/finance";
+import { payment, pmiRate } from "../../lib/finance";
 
 /**
  * VA funding fee on a purchase loan, as a percent of the base loan amount.
@@ -28,16 +28,6 @@ function fundingFeeReason(downPct: number, use: string): string {
   if (downPct >= 5) return "5% or more down";
   return use === "first" ? "First use, under 5% down" : "Subsequent use, under 5% down";
 }
-
-/** Typical annual PMI as a percent of the loan, by credit tier. */
-const PMI_BY_TIER: Record<string, number> = {
-  "760": 0.30,
-  "740": 0.42,
-  "720": 0.56,
-  "700": 0.76,
-  "680": 0.95,
-  "660": 1.15,
-};
 
 export default function Calculator() {
   const [price, setPrice] = useState<Num>("");
@@ -100,7 +90,10 @@ export default function Calculator() {
     const convDown = Math.min(Math.max(0, n(down)), P);
     const convLoan = Math.max(0, P - convDown);
     const ltv = P > 0 ? (convLoan / P) * 100 : 0;
-    const pmiAnnualPct = ltv > 80 ? (PMI_BY_TIER[tier] ?? 0.56) : 0;
+    /* Was a local table priced by credit tier alone, which gave a different
+       answer from the three calculators using the shared LTV bands. One model
+       now, taking both. */
+    const pmiAnnualPct = pmiRate(ltv, Number(tier));
     const pmiMonthly = (convLoan * (pmiAnnualPct / 100)) / 12;
     const convPI = payment(convLoan, n(convRate), term_m);
 
@@ -139,7 +132,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["fha-vs-conventional", "mortgage-payment", "va-recoup", "home-affordability"]}
-      disclaimer="For educational purposes only. Funding fee tiers and PMI rates are typical figures, not quotes — your lender's PMI depends on credit, LTV and the insurer, and VA eligibility rules change. Confirm both with a lender before deciding."
+      disclaimer="For educational purposes only. Funding fee tiers are VA's published schedule. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card by credit score and loan-to-value. VA eligibility rules change. Confirm both with a lender before deciding."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The purchase" badge="SHARED">

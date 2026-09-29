@@ -157,7 +157,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["fha-vs-conventional", "home-affordability", "mortgage-payment", "buy-now-or-wait"]}
-      disclaimer="For educational purposes only. PMI rates here are typical bands, not a quote, and price growth is an assumption rather than a forecast. Rent while saving is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
+      disclaimer="For educational purposes only. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card and assume a 700 credit score. Price growth is an assumption rather than a forecast. Rent while saving is counted, but taxes, insurance and maintenance are not — they fall on the owner either way."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="The home and your cash" badge="SHARED">

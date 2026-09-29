@@ -155,7 +155,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["mortgage-payment", "fha-vs-conventional", "rent-vs-buy", "extra-payments"]}
-      disclaimer="For educational purposes only. Qualifying depends on credit score, assets, employment history, loan program, and the lender's own overlays — this is not a pre-approval. What you can borrow and what you should borrow are different questions; leave room for maintenance, repairs, and life."
+      disclaimer="For educational purposes only. Qualifying depends on credit score, assets, employment history, loan program, and the lender's own overlays — this is not a pre-approval. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card and assume a 700 credit score. What you can borrow and what you should borrow are different questions; leave room for maintenance, repairs, and life."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Your finances" badge="INCOME">
