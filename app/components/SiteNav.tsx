@@ -35,15 +35,20 @@ export type SiteNavProps = {
   position?: "fixed" | "sticky";
   /** Wide wordmark where the nav has room, the compact mark where it does not. */
   logo?: "wide" | "compact";
-  /** Same-page anchor on the homepage, a real route anywhere else. */
-  ctaHref?: string;
 };
 
 export default function SiteNav({
   position = "sticky",
   logo = "wide",
-  ctaHref = "/#resources",
 }: SiteNavProps) {
+  /**
+   * The call to action used to read "Get Free Resources" and point at
+   * /#resources — an anchor on a homepage section offering a newsletter that
+   * did not exist, whose Subscribe button had no handler and posted nowhere. It
+   * names the guides and goes to them instead. 96 of the 97 pages carry this
+   * button, so it was the site's most repeated promise and the one with nothing
+   * behind it; the guides are written, free and available now.
+   */
   const pathname = usePathname() ?? "";
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -156,10 +161,10 @@ export default function SiteNav({
               <Search className="w-5 h-5" aria-hidden="true" />
             </button>
             <Link
-              href={ctaHref}
+              href="/guides"
               className="bg-green-700 text-white text-sm font-semibold rounded-full px-5 py-2 hover:bg-green-800 transition-colors whitespace-nowrap"
             >
-              Get Free Resources
+              Read the Guides
             </Link>
           </div>
 
@@ -203,11 +208,11 @@ export default function SiteNav({
               );
             })}
             <Link
-              href={ctaHref}
+              href="/guides"
               onClick={() => setMenuOpen(false)}
               className="w-full text-center bg-green-700 text-white rounded-full py-3 text-sm font-semibold mt-3"
             >
-              Get Free Resources
+              Read the Guides
             </Link>
           </div>
         )}

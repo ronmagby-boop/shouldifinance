@@ -50,16 +50,6 @@ const HERO_MASK_STYLE: React.CSSProperties = {
   WebkitMaskRepeat: "no-repeat",
 };
 
-function EnvelopeIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2.5" y="5" width="19" height="14" rx="2.5" />
-      <path d="m3 7 8.1 5.6a1.6 1.6 0 0 0 1.8 0L21 7" />
-    </svg>
-  );
-}
-
 /** Clipboard-with-checklist — stands in for the guides and checklists on offer. */
 function ChecklistIcon({ className = "" }: { className?: string }) {
   return (
@@ -75,7 +65,6 @@ function ChecklistIcon({ className = "" }: { className?: string }) {
 }
 
 export default function Home() {
-  const [email, setEmail] = useState("");
   const [decideQuery, setDecideQuery] = useState("");
 
   // Same matching rules as the nav search, so "pmi" or "car" both work here.
@@ -93,7 +82,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white font-sans">
 
-      <SiteNav position="fixed" logo="wide" ctaHref="#resources" />
+      <SiteNav position="fixed" logo="wide" />
 
       {/* HERO — light mint band matching the illustration's own background;
           text on the left, phone illustration on the right, stacked on mobile. */}
@@ -414,36 +403,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* EMAIL SIGNUP — target of the nav's "Get Free Resources" button */}
+      {/* FREE GUIDES — was an email signup whose Subscribe button had no
+          handler, inside no form, posting to nothing. Someone who typed an
+          address and clicked it saw no confirmation and no error, because
+          nothing happened: the value was read only to fill the input's own
+          value and went no further. That is worse than an empty space, since
+          the visitor leaves believing they have subscribed.
+
+          It also contradicted the privacy policy in terms — §6 says there is no
+          email collection and no newsletter, while this section promised one,
+          with "No spam" and "Unsubscribe anytime" as claims about a service
+          that did not exist.
+
+          What replaces it delivers the same promise for real: the guides are
+          written, free, and available now. */}
       <section id="resources" className="py-8 md:py-12 bg-white scroll-mt-14 md:scroll-mt-16">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="bg-gray-50 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-10">
             <div className="flex-1 w-full">
               <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-3 text-green-700">
-                <EnvelopeIcon className="w-6 h-6" />
+                <FileText className="w-6 h-6" strokeWidth={1.8} aria-hidden="true" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Get Free Financial Resources</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Free Financial Guides</h2>
               <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-md">
-                Join our newsletter and get our top financial guides, checklists and tips delivered to your inbox.
+                Plain-English explanations of the rules behind the numbers — what the law
+                actually says, where each figure comes from, and the fine print that changes
+                the answer.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 max-w-md">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="flex-1 border border-gray-200 rounded-full px-5 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-400 bg-white"
-                />
-                <button className="bg-green-700 text-white text-sm font-bold rounded-full px-6 py-3 hover:bg-green-800 whitespace-nowrap transition-colors">
-                  Subscribe
-                </button>
+                <Link
+                  href="/guides"
+                  className="inline-flex items-center justify-center bg-green-700 text-white text-sm font-bold rounded-full px-6 py-3 hover:bg-green-800 whitespace-nowrap transition-colors min-h-11"
+                >
+                  Browse the guides
+                </Link>
               </div>
               <div className="flex items-center gap-5 mt-3">
                 <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> No spam
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> {GUIDE_COVERAGE.prose}
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> Unsubscribe anytime
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" aria-hidden="true" /> Free, no sign-up
                 </span>
               </div>
             </div>
