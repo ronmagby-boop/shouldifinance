@@ -191,8 +191,7 @@ export default function Contact() {
             — explaining the rules behind the arithmetic, with sources.
           </p>
           <p className="mt-3">
-            This is a one-person project, so replies are not instant. Anything about privacy or a
-            factual error gets looked at first.
+            Anything about privacy or a factual error gets looked at first.
           </p>
         </section>
       </div>
