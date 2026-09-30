@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -261,6 +261,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "snowball-or-avalanche",
       teaser: "Why avalanche always wins on paper, and snowball wins in practice",
+    },
+  },
+  {
+    slug: "blended-interest-rate",
+    title: "What's my blended interest rate?",
+    nav: "What's my blended rate?",
+    desc: "Weight every rate by its balance, and see which debts the interest really comes from.",
+    icon: Blend, bg: "bg-teal-50", category: "Debt", kind: "what-how",
+    keywords: ["blended interest rate", "weighted average interest rate", "average interest rate on debt", "monthly interest on debt"],
+    guide: {
+      slug: "what-is-your-blended-interest-rate",
+      teaser: "Why a large cheap debt hides a small expensive one",
     },
   },
   {

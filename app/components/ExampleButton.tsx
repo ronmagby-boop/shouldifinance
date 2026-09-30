@@ -7,7 +7,7 @@ import { RESTORED_EVENT } from "../lib/export";
 /**
  * The one control that fills a calculator with example numbers, and empties it
  * again. It is a toggle rather than a pair of buttons: two controls would add
- * permanent weight to all 42 pages for something most people press once, and a
+ * permanent weight to every calculator for something most people press once, and a
  * single label can always say what pressing it will do next.
  *
  * Once the example is loaded the label stays "Clear all numbers" even if the

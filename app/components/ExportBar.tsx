@@ -16,7 +16,7 @@ import {
 import { bySlug } from "../lib/calculators";
 
 /**
- * The four export actions, shared by all 43 calculators.
+ * The four export actions, shared by every calculator.
  *
  * None of the user's figures leave the browser. Copy writes to the clipboard,
  * the share link is assembled from the address bar, print is the browser's own

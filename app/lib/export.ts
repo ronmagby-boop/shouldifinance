@@ -1,5 +1,5 @@
 /**
- * Export plumbing, shared by all 43 calculators.
+ * Export plumbing, shared by every calculator.
  *
  * NOTHING HERE TRANSMITS THE USER'S FIGURES. Every action runs in the browser:
  * the clipboard write is local, the share link is built and read from the URL

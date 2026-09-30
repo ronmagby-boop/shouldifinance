@@ -182,7 +182,7 @@ export default function Calculator() {
       intro="List everything you owe, then add whatever you can put toward it beyond the minimums. We'll run both payoff methods — smallest balance first, or highest rate first — and show what each one costs."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["refinance-to-pay-off-debt", "heloc-debt-payoff", "pay-off-debt", "emergency-fund"]}
+      relatedSlugs={["blended-interest-rate", "refinance-to-pay-off-debt", "heloc-debt-payoff", "pay-off-debt"]}
       disclaimer="For educational purposes only. Assumes fixed rates and that you stop adding new debt. Credit card minimum payments usually shrink as the balance falls, which makes payoff slower than shown here if you only ever pay the minimum. Not credit counselling advice."
     >
       <Card title="What you owe" badge="YOUR DEBTS" className="mb-4">

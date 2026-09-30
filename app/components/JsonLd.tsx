@@ -37,7 +37,7 @@ export function SiteSchema() {
 export function CalculatorSchema({ slug }: { slug: string }) {
   const graph = calculatorSchema(slug);
   /* An unknown slug yields nothing rather than a half-built node. Cannot happen
-     while the 43 pages read their slug from the registry, but a wrong node is
+     while every calculator page reads its slug from the registry, but a wrong node is
      worse than no node. */
   if (!graph.length) return null;
   return <JsonLd graph={graph} />;

@@ -174,7 +174,7 @@ export function NumField({
           disabled={disabled}
           /* Harvested by lib/export for copy, share links, mailto and the print
              sheet. Tagging the shared field once is what keeps the export
-             feature out of all 43 calculators. See app/lib/export.ts. */
+             feature out of every calculator. See app/lib/export.ts. */
           data-x-field={label}
           data-x-kind="num"
           data-x-unit={prefix === "$" ? "$" : suffix || ""}

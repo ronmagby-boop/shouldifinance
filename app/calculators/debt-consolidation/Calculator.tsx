@@ -223,7 +223,7 @@ export default function Calculator() {
       intro="One payment instead of five is easier to live with, but only helps your wallet if the new rate beats what you are paying now — after any fee. Tick the debts you would roll in, leave the cheap ones out, and see both sides."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["refinance-to-pay-off-debt", "debt-payoff", "balance-transfer", "heloc-debt-payoff"]}
+      relatedSlugs={["refinance-to-pay-off-debt", "debt-payoff", "balance-transfer", "blended-interest-rate"]}
       disclaimer="For educational purposes only. Consolidation loan offers depend on credit and income, and a longer term can lower the payment while raising total interest. Closing the old accounts can also move your credit score."
     >
       <Card title="What you owe now" badge="TICK WHAT YOU'D ROLL IN" className="mb-4">

@@ -87,7 +87,7 @@ export default function Calculator() {
       intro="A quoted rate is rarely what a loan actually costs. Points and fees are paid up front but bought with the loan, so they push the real rate above the one on the offer sheet — and the sooner you sell or refinance, the fewer payments they are spread across and the more they cost."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "rate-buydown", "savings-apy"]}
+      relatedSlugs={["loan-estimate-comparison", "mortgage-payment", "rate-buydown", "blended-interest-rate"]}
       disclaimer="For educational purposes only. The APR here is built from every cost you enter and will differ from a lender's disclosed APR, which follows specific rules about which charges count as finance charges. Not a commitment to lend."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

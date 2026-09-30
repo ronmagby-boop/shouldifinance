@@ -204,7 +204,7 @@ export default function Calculator() {
       intro="Every debt you carry has a rate, and together they average out to one number. A new mortgage replaces that blend with a single lower rate — and if you keep paying what you pay today, the difference goes straight onto the principal and the house is gone years early."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["debt-consolidation", "should-i-refinance", "extra-payments", "pay-off-debt"]}
+      relatedSlugs={["debt-consolidation", "should-i-refinance", "blended-interest-rate", "pay-off-debt"]}
       disclaimer="For educational purposes only. Rates, closing costs and what a lender will approve depend on your credit, equity and income — these are estimates for discussion, not a commitment to lend."
     >
       {/* 5/3 rather than even halves: the debts panel puts five controls across

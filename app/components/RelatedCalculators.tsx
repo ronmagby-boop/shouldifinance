@@ -12,7 +12,7 @@ import { trackRelatedOpened } from "../lib/analytics";
  * two pages that predate CalcShell and rebuild its chrome — has now caused six
  * separate bugs, the related-card cap and the missing guide link among them.
  * Analytics would have been the seventh: the shared ExampleButton, ExportBar
- * and GuideLink pick up their events for free on all 43 calculators, and only
+ * and GuideLink pick up their events for free on every calculator, and only
  * this grid would have silently gone untracked on two of them.
  *
  * Takes `cards` already resolved rather than calling related() itself, because
