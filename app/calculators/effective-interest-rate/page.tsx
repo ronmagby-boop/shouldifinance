@@ -5,7 +5,7 @@ import { CalculatorSchema } from "../../components/JsonLd";
 
 export const metadata: Metadata = calcMetadata(
   "effective-interest-rate",
-  "Convert a quoted rate plus points and fees into the effective rate you actually pay, and compare nominal rates against the true annual percentage yield.",
+  "Convert a quoted rate plus points and fees into the rate you actually pay, over the full term and over the years you expect to keep the loan.",
 );
 
 export default function Page() {

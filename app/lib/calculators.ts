@@ -317,7 +317,7 @@ export const CALCULATORS: Calc[] = [
     nav: "What rate am I really paying?",
     desc: "Turn a quoted rate plus points and fees into the rate you actually pay.",
     icon: BarChart3, bg: "bg-amber-50", category: "Debt", kind: "what-how",
-    keywords: ["effective interest rate", "APR vs interest rate", "annual percentage yield"],
+    keywords: ["effective interest rate", "APR vs interest rate", "points and fees"],
     guide: {
       slug: "what-rate-are-you-really-paying",
       teaser: "What a lender's APR legally leaves out",
