@@ -289,7 +289,7 @@ export default function Calculator() {
                 stays liquid, which money in the walls does not.
               </Takeaway>
               <Takeaway tone="blue">
-                If you itemise, part of the mortgage interest comes back as a deduction, so the effective
+                If you itemise, part of the mortgage interest comes back as a deduction, so the after-tax
                 rate you are beating by prepaying is below {n(rate)}% and the case for it weakens. Around
                 nine in ten filers take the standard deduction, so {n(rate)}% is the right figure for most
                 people —{" "}

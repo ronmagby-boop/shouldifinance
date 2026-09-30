@@ -108,17 +108,17 @@ export default function Calculator() {
     if (!Number.isFinite(fast.totalInterest) || !Number.isFinite(base.totalInterest)) return null;
 
     // What the debt really costs after any tax relief its type actually allows.
-    let effectiveDebtRate = n(rate);
+    let afterTaxDebtRate = n(rate);
     if (debtType === "mortgage" && deductible) {
-      effectiveDebtRate = n(rate) * (1 - n(marginalRate) / 100);
+      afterTaxDebtRate = n(rate) * (1 - n(marginalRate) / 100);
     } else if (debtType === "student") {
       // Above the line, so no itemizing needed, but capped per year. Once the
-      // cap binds, relief stops scaling with the balance and the effective rate
+      // cap binds, relief stops scaling with the balance and the after-tax rate
       // climbs back towards the stated one.
       const annualInterest = (bal * n(rate)) / 100;
       const deductiblePart = Math.min(annualInterest, STUDENT_LOAN_INTEREST_CAP);
       const saving = (deductiblePart * n(marginalRate)) / 100;
-      effectiveDebtRate = bal > 0 ? n(rate) - (saving / bal) * 100 : n(rate);
+      afterTaxDebtRate = bal > 0 ? n(rate) - (saving / bal) * 100 : n(rate);
     }
     // Credit card, auto and other: interest is never deductible, so the stated
     // rate stands.
@@ -153,7 +153,7 @@ export default function Calculator() {
     // Tax relief on deductible interest is cash back, so it is invested on
     // whichever path earned it. Path B carries the debt longer and so collects
     // more of it — which is exactly how a deduction tilts the comparison, and
-    // was missing while the effective rate was only ever displayed. The relief
+    // was missing while the after-tax rate was only ever displayed. The relief
     // is invested rather than thrown at the loan so that the payoff date and
     // interest saved stay what the amortization says.
     const payoffNet: number[] = [];
@@ -236,10 +236,10 @@ export default function Calculator() {
       fast,
       interestSaved,
       monthsSaved: base.payoffMonths - fast.payoffMonths,
-      effectiveDebtRate,
+      afterTaxDebtRate,
       firstYearInterest,
       afterTaxInvestReturn,
-      spread: afterTaxInvestReturn - effectiveDebtRate,
+      spread: afterTaxInvestReturn - afterTaxDebtRate,
       payoffNet,
       investNet,
       difference,
@@ -334,7 +334,7 @@ export default function Calculator() {
                 Student loan interest has its own deduction, so you do not have to itemize — but it is
                 capped at {fmt(STUDENT_LOAN_INTEREST_CAP)} of interest a year and phases out at higher
                 incomes. Above the cap, relief stops growing with the balance, so a bigger loan has a
-                higher effective cost, not a lower one.
+                higher after-tax rate, not a lower one.
               </p>
             )}
             {(debtType === "mortgage" ? deductible : debtType === "student") && (
@@ -343,13 +343,13 @@ export default function Calculator() {
             {(debtType === "credit-card" || debtType === "auto" || debtType === "other") && (
               <p className="text-xs text-gray-400 leading-relaxed">
                 Interest on this kind of debt is not deductible, so there is no tax adjustment to make —
-                the effective cost below is simply the rate you are paying.
+                the after-tax cost below is simply the rate you are paying.
               </p>
             )}
             {r && !r.blocked && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
-                <span className="text-xs text-gray-400">Effective cost of this debt</span>
-                <span className="text-sm font-medium text-gray-900">{pct(r.effectiveDebtRate, 2)}</span>
+                <span className="text-xs text-gray-400">After-tax cost of this debt</span>
+                <span className="text-sm font-medium text-gray-900">{pct(r.afterTaxDebtRate, 2)}</span>
               </div>
             )}
           </div>
@@ -419,13 +419,13 @@ export default function Calculator() {
 
           {/* Directly under the verdict rather than buried 600px below it: at card
               rates this is the only line on the page that really matters. */}
-          {r.effectiveDebtRate > 10 && (
+          {r.afterTaxDebtRate > 10 && (
             <div className="border-2 border-amber-300 bg-amber-50 rounded-2xl px-5 py-4 mb-4">
               <p className="text-sm text-amber-900 leading-relaxed">
-                <strong>At {pct(r.effectiveDebtRate, 2)}, this is not a close call.</strong> That is
+                <strong>At {pct(r.afterTaxDebtRate, 2)}, this is not a close call.</strong> That is
                 above the long-run average return of a broad stock index, before any tax on that
                 return — and the cost of the debt is certain while the return is not. Once the
-                effective rate is into double digits the gap is wider than the range long-run return
+                after-tax rate is into double digits the gap is wider than the range long-run return
                 assumptions usually fall in.
               </p>
             </div>
@@ -435,7 +435,7 @@ export default function Calculator() {
             <Headline label="If you prepay, interest saved" value={fmtK(r.interestSaved)} />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <Stat label="Debt-free" value={fmtMonths(r.fast.payoffMonths)} sub={`${fmtMonths(r.monthsSaved)} early`} tone="green" />
-              <Stat label="Guaranteed return" value={pct(r.effectiveDebtRate, 2)} tone="green" />
+              <Stat label="Guaranteed return" value={pct(r.afterTaxDebtRate, 2)} tone="green" />
               <Stat label="Expected after-tax return" value={pct(r.afterTaxInvestReturn, 2)} tone="amber" sub="not guaranteed" />
               <Stat label="Regular payment" value={`${fmt(r.basePayment)}/mo`} />
             </div>
@@ -450,7 +450,7 @@ export default function Calculator() {
                     On these assumptions investing edges ahead by{" "}
                     <strong>{fmtK(Math.abs(r.advantage))}</strong> over{" "}
                     {fmtMonths(Math.round(r.horizonYears * 12))}. But that margin is an expectation, not a promise:
-                    a decade of poor returns flips it, while the {pct(r.effectiveDebtRate, 2)} you save
+                    a decade of poor returns flips it, while the {pct(r.afterTaxDebtRate, 2)} you save
                     by prepaying happens no matter what markets do.
                     {r.spread <= 0 && (
                       <>
@@ -464,7 +464,7 @@ export default function Calculator() {
                 ) : (
                   <>
                     <strong>Paying off wins here.</strong> Your debt costs{" "}
-                    {pct(r.effectiveDebtRate, 2)} after tax, more than the{" "}
+                    {pct(r.afterTaxDebtRate, 2)} after tax, more than the{" "}
                     {pct(r.afterTaxInvestReturn, 2)} you&apos;d expect to net from investing — and the
                     payoff return is guaranteed. Prepaying also clears the debt{" "}
                     {fmtMonths(r.monthsSaved)} early, freeing {fmt(r.basePayment)}/mo afterwards.
