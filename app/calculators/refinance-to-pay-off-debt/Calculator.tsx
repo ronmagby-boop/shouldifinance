@@ -159,9 +159,13 @@ export default function Calculator() {
     const plain = amortizeWithExtra(base.newLoan, n(newRate), base.term_m, 0);
 
     /**
-     * The rate a plain full-term loan would need to charge to cost the same
-     * interest as this accelerated schedule. Bisection, because payment() has
-     * no closed-form inverse in the rate.
+     * The equivalent rate: what a plain full-term loan would need to charge to
+     * cost the same interest as this accelerated schedule. Bisection, because
+     * payment() has no closed-form inverse in the rate.
+     *
+     * Deliberately not called an effective rate. On this site that term
+     * belongs to effective-interest-rate, where it means a quoted rate with
+     * the points and fees priced in — a different calculation.
      */
     const rateCosting = (targetInterest: number) => {
       if (!Number.isFinite(targetInterest)) return n(newRate);
@@ -175,19 +179,19 @@ export default function Calculator() {
       }
       return (lo + hi) / 2;
     };
-    const effectiveRate = extra > 0 ? rateCosting(withExtra.interest) : n(newRate);
+    const equivalentRate = extra > 0 ? rateCosting(withExtra.interest) : n(newRate);
     // Computed even when the field is empty, so the tile can say what applying
     // the saving would achieve instead of showing nothing.
     const suggested = base.monthlySaving > 0 ? Math.round(base.monthlySaving) : 0;
-    const effectiveAtSuggested =
+    const equivalentAtSuggested =
       suggested > 0
         ? rateCosting(amortizeWithExtra(base.newLoan, n(newRate), base.term_m, suggested).interest)
         : n(newRate);
 
     return {
       extra,
-      effectiveRate,
-      effectiveAtSuggested,
+      equivalentRate,
+      equivalentAtSuggested,
       payoffMonths: withExtra.months,
       monthsSaved: base.term_m - withExtra.months,
       interestWithExtra: withExtra.interest,
@@ -356,28 +360,28 @@ export default function Calculator() {
                 <p className="text-lg font-medium text-gray-900">{pct(n(newRate), 2)}</p>
                 <p className="text-xs text-gray-400 mt-0.5">on {fmt(base.newLoan)}</p>
               </div>
-              {/* The rate the accelerated schedule works out to. It only takes
-                  the green fill once an extra payment is actually entered, since
-                  the fill is what marks a figure as earned; with the field empty
-                  it stays neutral and shows the note rate with what applying the
-                  saving would reach. */}
+              {/* The equivalent rate the accelerated schedule works out to. It
+                  only takes the green fill once an extra payment is actually
+                  entered, since the fill is what marks a figure as earned; with
+                  the field empty it stays neutral and shows the note rate with
+                  what applying the saving would reach. */}
               <div className={`p-4 text-center ${r.extra > 0 ? "bg-green-800" : "bg-white"}`}>
                 <p className={`text-xs mb-0.5 ${r.extra > 0 ? "text-white/70" : "text-gray-400"}`}>
-                  Effective rate
+                  Equivalent rate
                 </p>
                 <p
                   className={`font-medium ${
                     r.extra > 0 ? "text-2xl text-white" : "text-lg text-gray-400"
                   }`}
                 >
-                  {pct(r.extra > 0 ? r.effectiveRate : n(newRate), 2)}
+                  {pct(r.extra > 0 ? r.equivalentRate : n(newRate), 2)}
                 </p>
                 <p className={`text-xs ${r.extra > 0 ? "text-white/70" : "text-gray-400 mt-0.5"}`}>
                   {r.extra > 0 ? (
                     <>with {fmt(r.extra)}/mo extra on the principal</>
-                  ) : suggestedExtra > 0 && r.effectiveAtSuggested < n(newRate) ? (
+                  ) : suggestedExtra > 0 && r.equivalentAtSuggested < n(newRate) ? (
                     <>
-                      {pct(r.effectiveAtSuggested, 2)} if you apply the {fmt(suggestedExtra)} saving
+                      {pct(r.equivalentAtSuggested, 2)} if you apply the {fmt(suggestedExtra)} saving
                     </>
                   ) : (
                     <>no extra principal entered</>
@@ -446,7 +450,7 @@ export default function Calculator() {
 
           {r.extra > 0 && Number.isFinite(r.payoffMonths) ? (
             <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
-              <Headline label="Your effective rate" value={pct(r.effectiveRate, 2)} tone="green" />
+              <Headline label="Your equivalent rate" value={pct(r.equivalentRate, 2)} tone="green" />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 <Stat label="Rate on the note" value={pct(n(newRate), 2)} sub="what you actually sign" />
                 <Stat label="Paid off in" value={fmtMonths(r.payoffMonths)} tone="green" sub={`${fmtMonths(r.monthsSaved)} early`} />
@@ -458,7 +462,7 @@ export default function Calculator() {
                   You are carrying <strong>{pct(base.blendedAll, 2)}</strong> today. Refinancing at{" "}
                   <strong>{pct(n(newRate), 2)}</strong> and putting the{" "}
                   <strong>{fmt(r.extra)}</strong> saving straight back onto the principal costs the same
-                  total interest as a full-term loan at <strong>{pct(r.effectiveRate, 2)}</strong> — and
+                  total interest as a full-term loan at <strong>{pct(r.equivalentRate, 2)}</strong> — and
                   the house is paid off in <strong>{fmtMonths(r.payoffMonths)}</strong> instead of{" "}
                   {fmtMonths(base.term_m)}. Both figures compare the same loan on two schedules, so the{" "}
                   <strong>{fmtK(r.interestSaved)}</strong> saved is money you genuinely do not pay.
