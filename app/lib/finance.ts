@@ -155,7 +155,9 @@ export function fhaAnnualMipBps(baseLoan: number, ltv: number, termYears: number
  * or the end of the term, whichever comes first; above 90% it runs for the term
  * (capped at 30 years by the same letter). There is no balance-based
  * cancellation — the 78% automatic termination is a conventional rule under the
- * Homeowners Protection Act and has never applied to FHA.
+ * Homeowners Protection Act. FHA had its own 78% cancellation until the same
+ * letter withdrew it for case numbers assigned on or after 3 June 2013, so this
+ * models a loan taken out today, not one endorsed before then.
  */
 export function fhaMipDurationMonths(ltv: number, termMonths: number): number {
   return ltv <= FHA_MIP_DURATION_CLIFF_LTV

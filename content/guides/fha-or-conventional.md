@@ -5,7 +5,7 @@ description: "FHA usually wins on the rate and loses on the insurance. One thres
 calculator: fha-vs-conventional
 category: Home
 published: 2026-09-29
-reviewed: 2026-09-29
+reviewed: 2026-09-30
 ---
 
 FHA loans are easier to qualify for and usually carry a lower rate. They are
@@ -29,8 +29,9 @@ sentences:
 There is no third option and no escape clause. Paying the balance down does not
 end it. Reaching 78% does not end it, because that rule — automatic termination
 at 78% of the original value — belongs to the Homeowners Protection Act and
-applies to conventional private mortgage insurance only. It has never applied to
-FHA.
+applies to conventional private mortgage insurance only. FHA had its own 78%
+cancellation until 2013, when HUD withdrew it for new loans in Mortgagee Letter
+2013-04.
 
 > So at FHA's 3.5% minimum down payment, the mortgage insurance never comes off.
 > Not at 78%, not at 50%, not ever. The only exits are refinancing into a
@@ -101,13 +102,20 @@ comparison is a close one decided by the rate. If you cannot, you are choosing a
 loan whose insurance has no end date, and that is worth knowing before you sign
 rather than in year twelve.
 
-Sources: annual premium durations and the LTV definition from [HUD Mortgagee
-Letter 2013-04](https://www.hud.gov/sites/documents/13-04ml.pdf); current annual
+Sources: annual premium durations, the LTV definition, and the withdrawal of
+FHA's own 78% cancellation for case numbers assigned on or after 3 June 2013,
+from [HUD Mortgagee Letter
+2013-04](https://www.hud.gov/sites/documents/13-04ml.pdf); current annual
 premium rates from [HUD Mortgagee Letter
 2023-05](https://www.hud.gov/sites/dfiles/OCHCO/documents/2023-05hsgml.pdf),
 effective for case numbers endorsed on or after 20 March 2023; the 1.75% upfront
-premium from HUD Handbook 4000.1, Appendix 1.0. Conventional PMI termination at
-78% of original value from [CFPB on removing
+premium from HUD Handbook 4000.1, Appendix 1.0. Credit score rules from
+[Handbook 4000.1](https://www.hud.gov/hud-partners/single-family-handbook-4000-1):
+the 500 floor in II.A.1.b.ii, the 580 and 500–579 tiers in II.A.2.b.i, and the
+96.5% maximum purchase LTV in II.A.2.b.ii. The 3.5% minimum cash investment is
+statutory, from National Housing Act § 203(b)(9), [12 U.S.C.
+§ 1709(b)(9)](https://www.law.cornell.edu/uscode/text/12/1709). Conventional PMI
+termination at 78% of original value from [CFPB on removing
 PMI](https://www.consumerfinance.gov/ask-cfpb/when-can-i-remove-private-mortgage-insurance-pmi-from-my-loan-en-202/),
 implementing the Homeowners Protection Act of 1998. Payment, premium and
 amortization figures computed with this site's own code, on a $400,000 purchase
