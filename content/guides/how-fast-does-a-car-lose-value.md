@@ -42,7 +42,8 @@ For a while, the loan is bigger than the car.
 Take that $40,000 car with nothing down, financed at 6.9% over 72 months:
 
 - The payment is about **$680**
-- The gap opens immediately — you are about **$7,550** underwater in month one
+- The gap opens immediately and widens for a year, peaking at about **$2,400**
+  underwater around month 12
 - You do not come out from under it until **month 29**, nearly two and a half
   years in
 
@@ -88,7 +89,8 @@ to know before signing a 72- or 84-month loan.
 4. **Do not roll negative equity forward** if you can avoid it. It is the
    fastest way to turn one underwater car into two.
 5. **Treat depreciation as a cost**, not an afterthought. Over a typical
-   ownership period it exceeds fuel, insurance and repairs combined — see
+   ownership period it is usually larger than fuel, insurance or repairs on
+   their own — see
    [what a car really costs to own](/guides/what-a-car-really-costs-to-own).
 
 The car is not free between the day you buy it and the day you sell it. It is
