@@ -40,6 +40,8 @@ let accountMedia = [];
 let seen = [];
 let statusSequence = [];
 let pageCap = 100;
+// What the image host serves; a test can swap it to simulate a redeployed card.
+let imageBytes = Buffer.alloc(2048, 7);
 let server;
 let base;
 
@@ -51,7 +53,7 @@ before(async () => {
       const url = new URL(req.url, "http://x");
       seen.push({ method: req.method, path: url.pathname, body, auth: req.headers.authorization, rawUrl: req.url });
       const send = (code, obj, headers = { "content-type": "application/json" }) => { res.writeHead(code, headers); res.end(obj === null ? "" : JSON.stringify(obj)); };
-      if (url.pathname.startsWith("/ig/")) return send(200, null, { "content-type": "image/jpeg", "content-length": "123456" });
+      if (url.pathname.startsWith("/ig/")) { res.writeHead(200, { "content-type": "image/jpeg" }); return res.end(imageBytes); }
       if (req.headers.authorization !== `Bearer ${TOKEN}`) return send(400, { error: { message: "bad auth", code: 190 } });
       const p = url.pathname.replace("/v26.0", "");
       if (req.method === "GET" && p === `/${IG}/media`) {
@@ -93,7 +95,7 @@ function run(args, env = {}) {
   });
 }
 const writes = () => seen.filter((s) => s.method === "POST");
-const reset = (media = [], cap = 100) => { accountMedia = media; seen = []; statusSequence = []; pageCap = cap; };
+const reset = (media = [], cap = 100) => { accountMedia = media; seen = []; statusSequence = []; pageCap = cap; imageBytes = Buffer.alloc(2048, 7); };
 const mediaReads = () => seen.filter((s) => s.method === "GET" && s.path === `/v26.0/${IG}/media`);
 
 /**
@@ -152,7 +154,7 @@ test("dry run job Summary: media read with request count, image check, full capt
   assert.match(summary, /^- Media read: 3, the whole history, in 2 requests \(page size 100\)$/m);
   assert.match(summary, /^- Matched to facts: 3 \(3 by alt-text\)$/m);
   assert.ok(summary.includes(`- Image: ${base}/ig/${fact.id}.jpg`), summary);
-  assert.match(summary, /^- Image check: 200 image\/jpeg, 123456 bytes$/m);
+  assert.match(summary, /^- Image check: 200 image\/jpeg, 2048 bytes$/m);
   assert.ok(summary.includes(`- Caption (${caption.length} of 2200 characters):\n\n\`\`\`text\n${caption}\n\`\`\`\n`), summary);
   assert.ok(summary.includes(`- Alt text (${alt.length} of 1000 characters):\n\n\`\`\`text\n${alt}\n\`\`\`\n`), summary);
   assert.match(summary, /^- Quota: 3 of 100 used in the current 86400s window$/m);
@@ -345,6 +347,96 @@ test("a reviewed, unchanged fact passes the gate and the date and hash are repor
   assert.equal(r.code, 0, r.out);
   const fact = byId.get(schedule[0].id);
   assert.ok(r.out.includes(`reviewed: 2026-09-30, content unchanged since (hash ${contentHash(fact)})`), r.out);
+});
+
+const previewFile = () => path.join(fs.mkdtempSync(path.join(TMP, "preview-")), "preview.json");
+
+test("--preview writes what would post, with its hash, and posts nothing", async () => {
+  reset();
+  const out = previewFile();
+  const r = await run(["--preview", "--preview-out", out]);
+  assert.equal(r.code, 0, r.out);
+  const p = JSON.parse(fs.readFileSync(out, "utf8"));
+  const fact = byId.get(schedule[0].id);
+  assert.equal(p.post.id, fact.id);
+  assert.equal(p.post.n, 1);
+  assert.equal(p.post.caption, buildCaption(fact));
+  assert.equal(p.post.alt, buildAltText(fact));
+  assert.match(p.post.hash, /^[0-9a-f]{16}$/);
+  assert.deepEqual(p.blockers, []);
+  assert.equal(writes().length, 0);
+  assert.ok(!fs.readFileSync(out, "utf8").includes(TOKEN));
+});
+
+test("--preview collects every blocker instead of stopping at the first", async () => {
+  const [a, b] = [byId.get(schedule[1].id), byId.get(schedule[2].id)];
+  reset([{ id: "mixed", caption: `${captionBody(a)} ${captionBody(b)}`, alt_text: "", timestamp: "2026-10-01T00:00:00Z" }]);
+  const out = previewFile();
+  const r = await run(["--preview", "--preview-out", out], { IG_FACTS_FILE: factsFileWith(null) });
+  assert.equal(r.code, 0, r.out);
+  const p = JSON.parse(fs.readFileSync(out, "utf8"));
+  assert.equal(p.post.id, schedule[0].id);
+  assert.equal(p.post.reviewed, null);
+  assert.equal(p.blockers.length, 2, p.blockers.join("\n"));
+  assert.match(p.blockers[0], /has not been reviewed/);
+  assert.match(p.blockers[1], /match two facts equally/);
+  assert.equal(writes().length, 0);
+});
+
+test("--preview refuses --live", async () => {
+  reset();
+  const r = await run(["--preview", "--preview-out", previewFile(), "--live"]);
+  assert.equal(r.code, 1);
+  assert.match(r.out, /--preview never posts/);
+  assert.equal(seen.length, 0);
+});
+
+test("a live run with the previewed fact and hash posts, and reports the permalink to the workflow", async () => {
+  reset();
+  const out = previewFile();
+  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
+  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
+  const outputs = path.join(path.dirname(out), "github-output");
+  reset();
+  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash], { GITHUB_OUTPUT: outputs });
+  assert.equal(r.code, 0, r.out);
+  assert.equal(writes().length, 2);
+  assert.equal(fs.readFileSync(outputs, "utf8"), `media_id=published-1\npermalink=https://instagram.example/p/new\nfact_id=${post.id}\n`);
+});
+
+test("a live run refuses when the next fact is no longer the previewed one", async () => {
+  reset([asPosted(schedule[0].id, 0)]);
+  const r = await run(["--live", "--expect-fact", schedule[0].id, "--expect-hash", "0123456789abcdef"]);
+  assert.equal(r.code, 1, r.out);
+  assert.ok(r.out.includes(`the preview was for ${schedule[0].id}, but the fact to post now is ${schedule[1].id}`), r.out);
+  assert.equal(writes().length, 0);
+});
+
+test("a live run refuses when the card image changed after the preview", async () => {
+  reset();
+  const out = previewFile();
+  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
+  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
+  reset();
+  imageBytes = Buffer.alloc(2048, 8); // redeployed card
+  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash]);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /no longer matches its preview/);
+  assert.equal(writes().length, 0);
+});
+
+test("a live run refuses when the caption changed after the preview, even with a fresh sign-off", async () => {
+  reset();
+  const out = previewFile();
+  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
+  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
+  reset();
+  // Edited and signed off again after the preview: the review gate passes, the preview check does not.
+  const edited = factsFileWith(ok, (f) => (f.id === post.id ? { ...f, caption: f.caption.replace(/^(\S+)/, "$1 really"), reviewed: signOff({ ...f, caption: f.caption.replace(/^(\S+)/, "$1 really") }, "2026-09-30") } : f));
+  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash], { IG_FACTS_FILE: edited });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /no longer matches its preview/);
+  assert.equal(writes().length, 0);
 });
 
 test("no token: fails without calling anything", async () => {
