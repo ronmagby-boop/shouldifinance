@@ -10,7 +10,11 @@
     "card_source": "Required to render a fact; present on every evergreen fact, and kept when a fact becomes time-sensitive. The one line printed on the card: reader-facing, no internal references, and labelled by the kind of support it is — Source (statute, regulation, agency or published data), Site model, Arithmetic, Illustration, and for review Practice, Rule of thumb, Definition or Reasoning. The full citation stays in source.",
     "category": "Home | Debt | Money | Auto",
     "shelfLife": "null when the fact is a fixed rule or a structural relationship. Otherwise an object naming what goes stale and when to recheck.",
-    "depends_on": "Present on facts resting on an agency-set or statutory figure that has a constant in app/lib. Names those constants, which the fact states or relies on. Constants only, never functions. Not used by any code yet."
+    "depends_on": "Present on facts resting on an agency-set or statutory figure that has a constant in app/lib. Names those constants, which the fact states or relies on. Constants only, never functions. Not used by any code yet.",
+    "layout": "Evergreen facts only. How the card is laid out: statement, big-number or myth-fact.",
+    "hero": "big-number only. The figure shown large; must appear exactly once, verbatim, in card.",
+    "hero_context": "big-number only, required. One short line saying what the hero figure measures.",
+    "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact."
   },
   "facts": [
     {
@@ -20,6 +24,8 @@
       "guide": "whats-in-a-mortgage-payment",
       "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998",
       "card_source": "Source: Homeowners Protection Act; CFPB",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a rising home value ends PMI sooner.",
       "category": "Home",
       "shelfLife": null
     },
@@ -30,6 +36,7 @@
       "guide": "whats-in-a-mortgage-payment",
       "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998",
       "card_source": "Source: Homeowners Protection Act; CFPB",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -43,6 +50,7 @@
       "guide": "whats-in-a-mortgage-payment",
       "source": "CFPB, when PMI can be removed; payment figures computed with the site's own amortization",
       "card_source": "Source: Homeowners Protection Act; CFPB",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -56,6 +64,8 @@
       "guide": "how-much-house-can-you-afford",
       "source": "CFPB, General QM Final Rule",
       "card_source": "Source: CFPB General QM Final Rule",
+      "layout": "myth-fact",
+      "myth": "You might think 43% debt-to-income is still the legal limit for a mortgage.",
       "category": "Home",
       "shelfLife": null
     },
@@ -66,6 +76,7 @@
       "guide": "how-much-house-can-you-afford",
       "source": "CFPB, General QM Final Rule; debt-to-income mechanics as described in the guide",
       "card_source": "Arithmetic: debt-to-income ratio",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -76,6 +87,9 @@
       "guide": "do-extra-mortgage-payments-save-money",
       "source": "Computed with the site's own amortization, the same code the calculator runs",
       "card_source": "Site model: $400,000 at 6.5%, 30 years",
+      "layout": "big-number",
+      "hero": "$111,892",
+      "hero_context": "interest saved by $200 a month extra from year one",
       "category": "Home",
       "shelfLife": null
     },
@@ -86,6 +100,9 @@
       "guide": "do-extra-mortgage-payments-save-money",
       "source": "Computed with the site's own amortization, the same code the calculator runs",
       "card_source": "Site model: $400,000 at 6.5%, 30 years",
+      "layout": "big-number",
+      "hero": "month 233",
+      "hero_context": "before principal outpaces interest on a 30-year mortgage",
       "category": "Home",
       "shelfLife": null
     },
@@ -96,6 +113,8 @@
       "guide": "do-extra-mortgage-payments-save-money",
       "source": "CFPB, how paying down a mortgage works",
       "card_source": "Source: CFPB on paying down a mortgage",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume extra payments lower your monthly bill.",
       "category": "Home",
       "shelfLife": null
     },
@@ -106,6 +125,8 @@
       "guide": "do-extra-mortgage-payments-save-money",
       "source": "CFPB, how paying down a mortgage works",
       "card_source": "Source: CFPB on paying down a mortgage",
+      "layout": "myth-fact",
+      "myth": "You might think any extra money you send goes straight to principal.",
       "category": "Home",
       "shelfLife": null
     },
@@ -116,6 +137,8 @@
       "guide": "refinance-to-pay-off-credit-cards",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume card debt becomes deductible once it is in your mortgage.",
       "category": "Home",
       "shelfLife": null
     },
@@ -126,6 +149,7 @@
       "guide": "refinance-to-pay-off-credit-cards",
       "source": "Computed in the guide from the stated balances and rates; deduction treatment from IRS Publication 936",
       "card_source": "Illustration: $280,000 at 4.5%, $20,000 at 7%",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -136,6 +160,7 @@
       "guide": "refinance-to-pay-off-credit-cards",
       "source": "Computed in the guide from the stated balance, rate and term",
       "card_source": "Illustration: $20,000 at 24% moved to 30 years at 7%",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -146,6 +171,9 @@
       "guide": "cheaper-to-rent-or-buy",
       "source": "IRS Topic No. 701, Sale of your home",
       "card_source": "Source: IRS Topic No. 701",
+      "layout": "big-number",
+      "hero": "$250,000",
+      "hero_context": "of home-sale gain excluded, single filer",
       "category": "Home",
       "shelfLife": null
     },
@@ -156,6 +184,7 @@
       "guide": "cheaper-to-rent-or-buy",
       "source": "IRS Topic No. 701, Sale of your home",
       "card_source": "Source: IRS Topic No. 701",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -166,6 +195,7 @@
       "guide": "cheaper-to-rent-or-buy",
       "source": "Structural argument set out in the guide; Section 121 treatment from IRS Topic No. 701",
       "card_source": "Reasoning: costs up front, equity over time",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -176,6 +206,9 @@
       "guide": "when-refinancing-pays-for-itself",
       "source": "Computed with the site's own amortization",
       "card_source": "Site model: $300,000 at 7%, 30 years",
+      "layout": "big-number",
+      "hero": "87%",
+      "hero_context": "of year-one mortgage payments going to interest",
       "category": "Home",
       "shelfLife": null
     },
@@ -186,6 +219,7 @@
       "guide": "when-refinancing-pays-for-itself",
       "source": "CFPB TILA-RESPA Integrated Disclosure FAQs",
       "card_source": "Source: CFPB TILA-RESPA disclosure rules",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -196,6 +230,7 @@
       "guide": "when-refinancing-pays-for-itself",
       "source": "Structural argument set out in the guide, alongside the CFPB TILA-RESPA disclosure rules it cites",
       "card_source": "Practice: lenders pay costs for a higher rate",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -206,6 +241,9 @@
       "guide": "does-waiting-for-rates-to-drop-save-money",
       "source": "Break-even appreciation computed with the site's own code at $400,000 with 10% down over 30 years",
       "card_source": "Site model: $400,000, 10% down, 30 years",
+      "layout": "big-number",
+      "hero": "5.3%",
+      "hero_context": "price rise that cancels a half-point rate cut",
       "category": "Home",
       "shelfLife": null
     },
@@ -216,6 +254,7 @@
       "guide": "does-waiting-for-rates-to-drop-save-money",
       "source": "Structural argument set out in the guide; break-even figures computed with the site's own code",
       "card_source": "Reasoning: a rate can be refinanced, a price cannot",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -226,6 +265,7 @@
       "guide": "does-waiting-for-rates-to-drop-save-money",
       "source": "Market behaviour described in the guide; break-even figures computed with the site's own code",
       "card_source": "Practice: housing market behaviour",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -236,6 +276,7 @@
       "guide": "how-to-compare-two-mortgage-quotes",
       "source": "CFPB, can my final mortgage costs increase from what was on my Loan Estimate?; Regulation Z § 1026.19(e)(3), including (e)(3)(iv) on revised estimates",
       "card_source": "Source: CFPB TILA-RESPA tolerance rules",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -246,6 +287,7 @@
       "guide": "how-to-compare-two-mortgage-quotes",
       "source": "CFPB, can my final mortgage costs increase from what was on my Loan Estimate?, and the CFPB TILA-RESPA Integrated Disclosure FAQs",
       "card_source": "Source: CFPB TILA-RESPA tolerance rules",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -256,6 +298,7 @@
       "guide": "how-to-compare-two-mortgage-quotes",
       "source": "CFPB TILA-RESPA Integrated Disclosure FAQs; Loan Estimate contents under Regulation Z",
       "card_source": "Source: CFPB; Regulation Z Loan Estimate rules",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -266,6 +309,7 @@
       "guide": "va-loan-vs-conventional",
       "source": "VA funding fee and closing costs; CFPB on PMI removal",
       "card_source": "Source: VA funding fee and closing costs",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -279,6 +323,8 @@
       "guide": "va-loan-vs-conventional",
       "source": "VA funding fee and closing costs, for the fee tiers and exemptions",
       "card_source": "Source: VA funding fee and closing costs",
+      "layout": "myth-fact",
+      "myth": "You might think any VA disability rating waives the funding fee.",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -292,6 +338,7 @@
       "guide": "va-loan-vs-conventional",
       "source": "VA loan limits",
       "card_source": "Source: VA loan limits",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -371,6 +418,7 @@
       "guide": "sell-first-or-buy-first",
       "source": "IRS Topic No. 701, Sale of your home",
       "card_source": "Source: IRS Topic No. 701",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -381,6 +429,7 @@
       "guide": "sell-first-or-buy-first",
       "source": "Transaction practice described in the guide; Section 121 timing from IRS Topic No. 701",
       "card_source": "Practice: home sale contracts",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -391,6 +440,7 @@
       "guide": "pay-off-your-house-or-invest",
       "source": "IRS Publication 936 for the deduction limits; interest and payoff figures computed with the site's own amortization",
       "card_source": "Arithmetic; IRS Publication 936",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -401,6 +451,9 @@
       "guide": "pay-off-your-house-or-invest",
       "source": "Computed with the site's own amortization",
       "card_source": "Site model: $300,000 at 6.5%, 30 years",
+      "layout": "big-number",
+      "hero": "$241,162",
+      "hero_context": "interest saved by $1,000 a month extra on $300,000",
       "category": "Home",
       "shelfLife": null
     },
@@ -411,6 +464,7 @@
       "guide": "pay-off-your-house-or-invest",
       "source": "Argument set out in the guide; interest and payoff figures computed with the site's own amortization",
       "card_source": "Reasoning: no payment, lower monthly floor",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -421,6 +475,8 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
       "card_source": "Source: HUD Mortgagee Letter 2013-04",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume FHA insurance ends at 78%, like PMI.",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -437,6 +493,9 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
       "card_source": "Source: HUD Mortgagee Letter 2013-04",
+      "layout": "big-number",
+      "hero": "19 extra years",
+      "hero_context": "of FHA insurance on a 30-year loan, 9% down versus 10%",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -451,6 +510,8 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "CFPB on removing PMI for the thresholds; payment and PMI figures computed with the site's own code at representative PMI rates",
       "card_source": "Site model: $400,000, 5% down, 6.5%, est. PMI",
+      "layout": "myth-fact",
+      "myth": "You might think PMI is a monthly cost with no end date.",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -464,6 +525,7 @@
       "guide": "are-discount-points-worth-it",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -474,6 +536,7 @@
       "guide": "are-discount-points-worth-it",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -484,6 +547,8 @@
       "guide": "are-discount-points-worth-it",
       "source": "Pricing practice described in the guide; deduction treatment from IRS Publication 936",
       "card_source": "Practice: lender pricing changes daily",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume one point always buys a quarter-point off the rate.",
       "category": "Home",
       "shelfLife": null
     },
@@ -494,6 +559,7 @@
       "guide": "are-discount-points-worth-it",
       "source": "Structural argument set out in the guide; payment figures computed with the site's own amortization",
       "card_source": "Reasoning: a refinance ends the payback",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -520,6 +586,7 @@
       "guide": "pay-off-debt-or-invest",
       "source": "Argument set out in the guide; tax figures from IRS Revenue Procedure 2025-32 and IRS, net investment income tax",
       "card_source": "Reasoning: certain return vs. expected return",
+      "layout": "statement",
       "category": "Home",
       "shelfLife": null
     },
@@ -543,6 +610,9 @@
       "guide": "va-36-month-recoupment-rule",
       "source": "38 U.S.C. § 3709(c), for both seasoning conditions",
       "card_source": "Source: 38 U.S.C. § 3709(c)",
+      "layout": "big-number",
+      "hero": "210 days",
+      "hero_context": "after the first payment is due, before a VA streamline",
       "category": "Home",
       "shelfLife": null
     },
@@ -566,6 +636,9 @@
       "guide": "va-36-month-recoupment-rule",
       "source": "38 U.S.C. § 3709(a) for the test; funding fee figures from VA funding fee and closing costs",
       "card_source": "Illustration: $3,000 fee, $140 monthly saving",
+      "layout": "big-number",
+      "hero": "51 months",
+      "hero_context": "to recoup costs once the funding fee is counted, in one example",
       "category": "Home",
       "shelfLife": null,
       "depends_on": [
@@ -579,6 +652,7 @@
       "guide": "what-rate-are-you-really-paying",
       "source": "Regulation Z § 1026.4, finance charge definition and the real-property exclusions in § 1026.4(c)(7)",
       "card_source": "Source: Regulation Z § 1026.4(c)(7)",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -589,6 +663,7 @@
       "guide": "what-rate-are-you-really-paying",
       "source": "Computed with the site's own model; APR definition from Regulation Z § 1026.4",
       "card_source": "Site model: fees over 360 vs. 48 payments",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -599,6 +674,7 @@
       "guide": "what-rate-are-you-really-paying",
       "source": "Regulation Z § 1026.4 for the finance charge definition; yield arithmetic computed with the site's own code",
       "card_source": "Source: Regulation Z § 1026.4",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -609,6 +685,9 @@
       "guide": "what-is-your-blended-interest-rate",
       "source": "Arithmetic: the blended rate is the balance-weighted mean, computed in the guide from the stated balances and rates",
       "card_source": "Arithmetic: balance-weighted average",
+      "layout": "big-number",
+      "hero": "6.12%",
+      "hero_context": "blend of $2,000 at 24% and $300,000 at 6%",
       "category": "Debt",
       "shelfLife": null
     },
@@ -619,6 +698,9 @@
       "guide": "what-is-your-blended-interest-rate",
       "source": "Arithmetic: balance-weighted mean, and monthly interest as balance × rate ÷ 12, computed in the guide from the stated balances and rates",
       "card_source": "Illustration: five debts totalling $342,750",
+      "layout": "big-number",
+      "hero": "10.2%",
+      "hero_context": "of the interest, from two cards that are 2.8% of the debt",
       "category": "Debt",
       "shelfLife": null
     },
@@ -629,6 +711,8 @@
       "guide": "what-is-your-blended-interest-rate",
       "source": "Arithmetic: monthly interest estimated as balance × rate ÷ 12, as the guide's Sources line states",
       "card_source": "Arithmetic: balance × rate ÷ 12",
+      "layout": "myth-fact",
+      "myth": "You might think a bigger payment cuts this month's interest.",
       "category": "Debt",
       "shelfLife": null
     },
@@ -639,6 +723,7 @@
       "guide": "snowball-or-avalanche",
       "source": "Property of the payoff arithmetic, as set out in the guide; minimum payment rules from Regulation Z § 1026.7",
       "card_source": "Arithmetic: highest rate first minimizes interest",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -649,6 +734,7 @@
       "guide": "snowball-or-avalanche",
       "source": "Property of the payoff arithmetic, as set out in the guide",
       "card_source": "Arithmetic: payoff order and rate spread",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -659,6 +745,7 @@
       "guide": "snowball-or-avalanche",
       "source": "Regulation Z § 1026.7, periodic statement content for credit card accounts",
       "card_source": "Source: Regulation Z § 1026.7",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -669,6 +756,7 @@
       "guide": "snowball-or-avalanche",
       "source": "Regulation Z § 1026.7, periodic statement content for credit card accounts",
       "card_source": "Source: Regulation Z § 1026.7",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -679,6 +767,7 @@
       "guide": "home-equity-to-pay-off-credit-cards",
       "source": "Computed with the site's own amortization at $30,000 and 9%",
       "card_source": "Site model: $30,000 HELOC at 9%",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -689,6 +778,7 @@
       "guide": "home-equity-to-pay-off-credit-cards",
       "source": "Computed with the site's own amortization at $30,000 and 9%",
       "card_source": "Site model: $30,000 HELOC at 9%",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -699,6 +789,7 @@
       "guide": "home-equity-to-pay-off-credit-cards",
       "source": "Computed with the site's own amortization at $30,000 and 9%",
       "card_source": "Site model: $30,000 HELOC at 9%",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -709,6 +800,8 @@
       "guide": "home-equity-to-pay-off-credit-cards",
       "source": "IRS Publication 936, for the buy-build-improve requirement",
       "card_source": "Source: IRS Publication 936",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume HELOC interest is always tax-deductible.",
       "category": "Debt",
       "shelfLife": null
     },
@@ -719,6 +812,9 @@
       "guide": "does-debt-consolidation-save-money",
       "source": "Regulation Z § 1026.4, definition of the finance charge",
       "card_source": "Arithmetic: $20,000 less a 5% fee",
+      "layout": "big-number",
+      "hero": "$19,000",
+      "hero_context": "arrives from a $20,000 loan with a 5% fee",
       "category": "Debt",
       "shelfLife": null
     },
@@ -729,6 +825,8 @@
       "guide": "does-debt-consolidation-save-money",
       "source": "Regulation Z § 1026.4 for the APR treatment; selection argument set out in the guide",
       "card_source": "Reasoning: a cheap debt costs more inside",
+      "layout": "myth-fact",
+      "myth": "You might think a consolidation loan has to take every debt you have.",
       "category": "Debt",
       "shelfLife": null
     },
@@ -739,6 +837,8 @@
       "guide": "does-debt-consolidation-save-money",
       "source": "Lending practice described in the guide; APR treatment from Regulation Z § 1026.4",
       "card_source": "Practice: rate tiers depend on credit",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume the advertised rate is the rate you will get.",
       "category": "Debt",
       "shelfLife": null
     },
@@ -749,6 +849,8 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Regulation Z § 1026.55, limitations on increasing annual percentage rates",
       "card_source": "Source: Regulation Z § 1026.55",
+      "layout": "myth-fact",
+      "myth": "You might think one late payment ends a 0% promotion.",
       "category": "Debt",
       "shelfLife": null
     },
@@ -759,6 +861,7 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Regulation Z § 1026.53, allocation of payments",
       "card_source": "Source: Regulation Z § 1026.53",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -769,6 +872,7 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Grace period treatment described in the guide, alongside the Regulation Z rules it cites at §§ 1026.53 and 1026.55",
       "card_source": "Practice: card issuers' grace-period terms",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -779,6 +883,7 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Regulation Z § 1026.55, including the temporary-rate provisions",
       "card_source": "Source: Regulation Z § 1026.55",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -789,6 +894,7 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Computed in the guide from the stated balance, fee and rate",
       "card_source": "Arithmetic: 3% of $8,000 vs. 24% interest",
+      "layout": "statement",
       "category": "Debt",
       "shelfLife": null
     },
@@ -799,6 +905,9 @@
       "guide": "is-a-balance-transfer-worth-the-fee",
       "source": "Computed in the guide from the stated balance, fee and promotional window",
       "card_source": "Arithmetic: $8,240 over 18 months",
+      "layout": "big-number",
+      "hero": "$458 a month",
+      "hero_context": "to clear $8,240 inside an 18-month promotion",
       "category": "Debt",
       "shelfLife": null
     },
@@ -866,6 +975,7 @@
       "guide": "what-a-car-really-costs-to-own",
       "source": "Computed with the site's own model on a $36,000 car held seven years — the calculator's own example",
       "card_source": "Site model: $36,000 car, 7 years",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -876,6 +986,7 @@
       "guide": "what-a-car-really-costs-to-own",
       "source": "Computed with the site's own model on a $36,000 car held seven years; five-year depreciation benchmarks from iSeeCars, March 2026",
       "card_source": "Site model: $36,000 car, 7 years; iSeeCars",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -886,6 +997,7 @@
       "guide": "what-a-car-really-costs-to-own",
       "source": "Computed with the site's own model on a $36,000 car held seven years",
       "card_source": "Site model: $36,000 car, 7 years",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -896,6 +1008,9 @@
       "guide": "how-fast-does-a-car-lose-value",
       "source": "Computed with the site's own amortization on a $40,000 car at 6.9% over 72 months with nothing down",
       "card_source": "Site model: $40,000 at 6.9%, 72 months",
+      "layout": "big-number",
+      "hero": "month 29",
+      "hero_context": "until a $40,000 car, nothing down over 72 months, is above water",
       "category": "Auto",
       "shelfLife": null
     },
@@ -906,6 +1021,7 @@
       "guide": "how-fast-does-a-car-lose-value",
       "source": "Computed with the site's own amortization on a $40,000 car at 6.9% over 72 months",
       "card_source": "Site model: $40,000 at 6.9%, 72 months",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -916,6 +1032,7 @@
       "guide": "how-fast-does-a-car-lose-value",
       "source": "Computed with the site's own model at 20% first-year and 14% subsequent depreciation",
       "card_source": "Site model: 20%, then 14% a year depreciation",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -926,6 +1043,7 @@
       "guide": "how-fast-does-a-car-lose-value",
       "source": "Computed with the site's own amortization; mechanism set out in the guide",
       "card_source": "Arithmetic: the loan exceeds the car's price",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -936,6 +1054,8 @@
       "guide": "new-or-used-which-is-the-better-buy",
       "source": "Computed with the site's own model at 20% then 12% for the new car and 6% then 12% for the three-year-old car — the calculator's own example",
       "card_source": "Site model: $42,000 new vs. $27,000 used",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a used car's saving is just the lower price.",
       "category": "Auto",
       "shelfLife": null
     },
@@ -946,6 +1066,7 @@
       "guide": "finance-a-car-or-pay-cash",
       "source": "The guide states these terms are set by each manufacturer and are not a published national rule",
       "card_source": "Practice: terms set by each manufacturer",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -956,6 +1077,7 @@
       "guide": "finance-a-car-or-pay-cash",
       "source": "The guide states these terms are set by each manufacturer and are not a published national rule",
       "card_source": "Practice: terms set by each manufacturer",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -966,6 +1088,9 @@
       "guide": "how-is-a-lease-payment-calculated",
       "source": "Computed with the site's own model, the same arithmetic the calculator runs",
       "card_source": "Arithmetic: 0.00275 × 2,400 ≈ 6.6%",
+      "layout": "big-number",
+      "hero": "2,400",
+      "hero_context": "turns a lease money factor into an APR",
       "category": "Auto",
       "shelfLife": null
     },
@@ -976,6 +1101,7 @@
       "guide": "how-is-a-lease-payment-calculated",
       "source": "Computed with the site's own model on a $40,000 car with a $22,000 residual over 36 months at a money factor of 0.00275",
       "card_source": "Site model: $40,000 car, $22,000 residual",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -986,6 +1112,9 @@
       "guide": "how-is-a-lease-payment-calculated",
       "source": "Computed with the site's own model on a $40,000 car with a $22,000 residual over 36 months at a money factor of 0.00275",
       "card_source": "Site model: $40,000 lease, 36 months",
+      "layout": "big-number",
+      "hero": "$5,495",
+      "hero_context": "cost of rolling $5,000 of negative equity into a lease",
       "category": "Auto",
       "shelfLife": null
     },
@@ -996,6 +1125,7 @@
       "guide": "how-is-a-lease-payment-calculated",
       "source": "Lease structure set out in the guide; payment figures computed with the site's own model",
       "card_source": "Practice: how lease payoffs work",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1006,6 +1136,7 @@
       "guide": "how-is-a-lease-payment-calculated",
       "source": "Lease structure set out in the guide; payment figures computed with the site's own model",
       "card_source": "Practice: residuals set by the lessor",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1016,6 +1147,8 @@
       "guide": "is-leasing-or-buying-cheaper",
       "source": "Lease terms are set by each lessor and vary, which is why the guide asks for them in writing rather than quoting figures",
       "card_source": "Practice: lease terms vary by lessor",
+      "layout": "myth-fact",
+      "myth": "You might think a leased car costs nothing to maintain.",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1026,6 +1159,8 @@
       "guide": "is-leasing-or-buying-cheaper",
       "source": "Structural argument set out in the guide; money factor conversion from the lease payment guide",
       "card_source": "Arithmetic: a lease finances depreciation",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a lower lease payment means you are saving money.",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1036,6 +1171,7 @@
       "guide": "is-refinancing-a-car-loan-worth-it",
       "source": "Computed with the site's own amortization; the guide states the loan-to-value threshold is general market practice rather than a published rule",
       "card_source": "Reasoning: the car loses value every month",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1046,6 +1182,7 @@
       "guide": "is-refinancing-a-car-loan-worth-it",
       "source": "Refinancing mechanics set out in the guide; break-even figures computed with the site's own amortization",
       "card_source": "Practice: gap cover is tied to the loan",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1056,6 +1193,7 @@
       "guide": "is-refinancing-a-car-loan-worth-it",
       "source": "Lending practice described in the guide; total-interest figures computed with the site's own amortization",
       "card_source": "Practice: dealer rate markup",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1066,6 +1204,8 @@
       "guide": "how-much-car-can-you-afford",
       "source": "The guide states 20/4/10 is a widely used planning rule of thumb rather than a lending standard",
       "card_source": "Rule of thumb: 20/4/10, not a lending rule",
+      "layout": "myth-fact",
+      "myth": "You might think the 10% in 20/4/10 is just the car payment.",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1076,6 +1216,7 @@
       "guide": "how-much-car-can-you-afford",
       "source": "The guide states 20/4/10 is a planning rule of thumb rather than a lending standard; depreciation behaviour computed with the site's own model",
       "card_source": "Site model: depreciation vs. loan balance",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1086,6 +1227,7 @@
       "guide": "do-electric-cars-save-money",
       "source": "Charging cost behaviour described in the guide; the calculator lets you set your own electricity price and charging mix",
       "card_source": "Practice: public fast-charging prices",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1096,6 +1238,7 @@
       "guide": "do-electric-cars-save-money",
       "source": "Maintenance differences described in the guide",
       "card_source": "Practice: EV maintenance needs",
+      "layout": "statement",
       "category": "Auto",
       "shelfLife": null
     },
@@ -1145,6 +1288,9 @@
       "guide": "how-compound-interest-works",
       "source": "Computed with the site's own code",
       "card_source": "Arithmetic: $10,000 at 7%, 30 years",
+      "layout": "big-number",
+      "hero": "$76,000",
+      "hero_context": "$10,000 at 7% for 30 years, compounded",
       "category": "Money",
       "shelfLife": null
     },
@@ -1155,6 +1301,7 @@
       "guide": "how-compound-interest-works",
       "source": "Computed with the site's own code",
       "card_source": "Arithmetic: $10,000 at 7%, compounded",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1165,6 +1312,9 @@
       "guide": "how-compound-interest-works",
       "source": "Standard approximation, set out in the guide; growth figures computed with the site's own code",
       "card_source": "Arithmetic: standard approximation",
+      "layout": "big-number",
+      "hero": "72",
+      "hero_context": "divided by your rate gives the years to double",
       "category": "Money",
       "shelfLife": null
     },
@@ -1175,6 +1325,7 @@
       "guide": "what-does-a-savings-account-really-earn",
       "source": "Yield and inflation figures computed with the site's own code",
       "card_source": "Illustration: 2% yield, 3% inflation",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1185,6 +1336,9 @@
       "guide": "what-does-a-savings-account-really-earn",
       "source": "Computed with the site's own code from the stated balance and rates",
       "card_source": "Arithmetic: $20,000 at 0.40% vs. 4.50%",
+      "layout": "big-number",
+      "hero": "$820",
+      "hero_context": "about that much more a year on $20,000 at 4.50% than at 0.40%",
       "category": "Money",
       "shelfLife": null
     },
@@ -1195,6 +1349,7 @@
       "guide": "what-does-a-savings-account-really-earn",
       "source": "FDIC, deposit insurance",
       "card_source": "Source: FDIC deposit insurance",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1205,6 +1360,9 @@
       "guide": "take-the-401k-match-or-pay-down-debt",
       "source": "IRS, retirement topics — vesting; match arithmetic set out in the guide",
       "card_source": "Arithmetic: 50 cents per dollar contributed",
+      "layout": "big-number",
+      "hero": "50% return",
+      "hero_context": "from a 50% match, before any investing",
       "category": "Money",
       "shelfLife": null
     },
@@ -1215,6 +1373,7 @@
       "guide": "take-the-401k-match-or-pay-down-debt",
       "source": "IRS, retirement topics — vesting",
       "card_source": "Source: IRS retirement topics: vesting",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1225,6 +1384,7 @@
       "guide": "take-the-401k-match-or-pay-down-debt",
       "source": "Plan mechanics described in the guide; vesting rules from IRS, retirement topics — vesting",
       "card_source": "Practice: employer plan rules vary",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1235,6 +1395,7 @@
       "guide": "take-the-401k-match-or-pay-down-debt",
       "source": "Plan mechanics described in the guide; vesting rules from IRS, retirement topics — vesting",
       "card_source": "Arithmetic: two common match formulas",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1245,6 +1406,7 @@
       "guide": "reinvest-dividends-or-take-the-cash",
       "source": "IRS Publication 550, Investment Income and Expenses",
       "card_source": "Source: IRS Publication 550",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1255,6 +1417,7 @@
       "guide": "reinvest-dividends-or-take-the-cash",
       "source": "IRS Publication 550, Investment Income and Expenses",
       "card_source": "Source: IRS Publication 550",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1265,6 +1428,7 @@
       "guide": "reinvest-dividends-or-take-the-cash",
       "source": "Portfolio behaviour described in the guide; dividend taxation from IRS Publication 550",
       "card_source": "Reasoning: reinvesting buys what paid out",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1275,6 +1439,7 @@
       "guide": "roth-or-traditional",
       "source": "IRS Notice 2025-67, contribution and catch-up limits",
       "card_source": "Source: IRS Notice 2025-67",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1285,6 +1450,7 @@
       "guide": "roth-or-traditional",
       "source": "SECURE 2.0 Act § 604, as described by the IRS, for Roth matching contributions; plan treatment described in the guide; contribution limits from IRS Notice 2025-67",
       "card_source": "Source: SECURE 2.0 Act § 604; plan rules",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1295,6 +1461,7 @@
       "guide": "roth-or-traditional",
       "source": "IRS Revenue Procedure 2025-32 for the standard deduction; bracket mechanics set out in the guide",
       "card_source": "Source: IRS Revenue Procedure 2025-32",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1305,6 +1472,7 @@
       "guide": "roth-or-traditional",
       "source": "IRS Publication 590-B, Roth IRA distributions and qualified distributions; contribution limits from IRS Notice 2025-67",
       "card_source": "Source: IRS Publication 590-B",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1315,6 +1483,9 @@
       "guide": "what-will-your-investments-be-worth",
       "source": "Computed with the site's own code; fund expense ratios from ICI Research Perspective 32, no. 1 (March 2026), Figure 6",
       "card_source": "Site model: $25,000 + $500/mo at 7%",
+      "layout": "big-number",
+      "hero": "$86,000",
+      "hero_context": "what a 1.00% fund can cost versus 0.05% over 25 years",
       "category": "Money",
       "shelfLife": null
     },
@@ -1325,6 +1496,7 @@
       "guide": "what-will-your-investments-be-worth",
       "source": "Sequence-of-returns argument set out in the guide; long-run returns from Aswath Damodaran's dataset, NYU Stern",
       "card_source": "Reasoning: order matters once you withdraw",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1335,6 +1507,7 @@
       "guide": "what-will-your-investments-be-worth",
       "source": "Computed with the site's own code",
       "card_source": "Site model: $25,000 + $500/mo, 25 years",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1345,6 +1518,9 @@
       "guide": "what-will-your-investments-be-worth",
       "source": "Computed with the site's own code",
       "card_source": "Site model: 7% return, 2.5% inflation",
+      "layout": "big-number",
+      "hero": "$297,000",
+      "hero_context": "roughly today's value of $551,000 in 25 years",
       "category": "Money",
       "shelfLife": null
     },
@@ -1355,6 +1531,9 @@
       "guide": "what-return-do-you-need",
       "source": "Long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern; adjustments set out in the guide",
       "card_source": "Arithmetic: inflation, fees and tax added",
+      "layout": "big-number",
+      "hero": "10%",
+      "hero_context": "gross return a 7% target needs after inflation, fees and tax",
       "category": "Money",
       "shelfLife": null
     },
@@ -1365,6 +1544,7 @@
       "guide": "what-return-do-you-need",
       "source": "Long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern",
       "card_source": "Source: Damodaran returns data, NYU Stern",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1375,6 +1555,7 @@
       "guide": "what-return-do-you-need",
       "source": "Long-run returns from Aswath Damodaran's dataset, NYU Stern; solved with the site's own code",
       "card_source": "Site model; Damodaran returns data",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1385,6 +1566,7 @@
       "guide": "lump-sum-or-dollar-cost-averaging",
       "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
       "card_source": "Arithmetic: $5,000 a month for 12 months",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1395,6 +1577,8 @@
       "guide": "lump-sum-or-dollar-cost-averaging",
       "source": "Distinction set out in the guide; long-run returns from Aswath Damodaran's dataset, NYU Stern",
       "card_source": "Definition: averaging spreads a sum you hold",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume investing every paycheck is dollar-cost averaging.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1405,6 +1589,7 @@
       "guide": "lump-sum-or-dollar-cost-averaging",
       "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
       "card_source": "Source: Damodaran returns data, NYU Stern",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1415,6 +1600,7 @@
       "guide": "lump-sum-or-dollar-cost-averaging",
       "source": "Long-run US annual returns dataset compiled by Aswath Damodaran, NYU Stern",
       "card_source": "Reasoning: a falling market is when cash buys most",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1425,6 +1611,7 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS, net investment income tax, for the rate, formula and thresholds",
       "card_source": "Source: IRS net investment income tax",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null,
       "depends_on": [
@@ -1438,6 +1625,9 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
       "card_source": "Source: IRS Revenue Procedure 2025-32",
+      "layout": "big-number",
+      "hero": "day 366",
+      "hero_context": "held more than a year: long-term rates apply",
       "category": "Money",
       "shelfLife": null
     },
@@ -1448,6 +1638,7 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
       "card_source": "Source: IRS Revenue Procedure 2025-32",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1458,6 +1649,8 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS, net investment income tax, for the rate, formula and thresholds",
       "card_source": "Source: IRS net investment income tax",
+      "layout": "myth-fact",
+      "myth": "You might think the investment surtax applies to all your investment income.",
       "category": "Money",
       "shelfLife": null,
       "depends_on": [
@@ -1471,6 +1664,9 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
       "card_source": "Source: IRS Revenue Procedure 2025-32",
+      "layout": "big-number",
+      "hero": "0%",
+      "hero_context": "long-term capital gains rate on the first band",
       "category": "Money",
       "shelfLife": null,
       "depends_on": [
@@ -1484,6 +1680,7 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "State treatment described in the guide; federal brackets from IRS Revenue Procedure 2025-32",
       "card_source": "Practice: state tax rules vary",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1494,6 +1691,8 @@
       "guide": "are-you-on-track-for-retirement",
       "source": "William Bengen, \"Determining Withdrawal Rates Using Historical Data\", Journal of Financial Planning (1994), and the subsequent Trinity study",
       "card_source": "Source: Bengen (1994); the Trinity study",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume the 4% rule means taking 4% of your balance every year.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1504,6 +1703,8 @@
       "guide": "are-you-on-track-for-retirement",
       "source": "Planning treatment set out in the guide; Section 121 exclusion from IRS Topic No. 701 via the rent-versus-buy guide",
       "card_source": "Reasoning: a house pays no income",
+      "layout": "myth-fact",
+      "myth": "You might think your house counts as retirement income.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1514,6 +1715,7 @@
       "guide": "are-you-on-track-for-retirement",
       "source": "Social Security cost-of-living adjustment from 42 U.S.C. § 415(i) and the Social Security Administration; inflation arithmetic computed in the guide",
       "card_source": "Source: 42 U.S.C. § 415(i); SSA",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1524,6 +1726,8 @@
       "guide": "how-big-should-an-emergency-fund-be",
       "source": "The guide states the three-to-six-month rule is conventional planning guidance implemented by the site's calculator",
       "card_source": "Rule of thumb: 3 to 6 months of essentials",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume an emergency fund is measured in months of income.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1534,6 +1738,7 @@
       "guide": "how-big-should-an-emergency-fund-be",
       "source": "FDIC, deposit insurance; planning guidance as implemented by the site's calculator",
       "card_source": "Rule of thumb: safety before return",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1544,6 +1749,7 @@
       "guide": "how-big-should-an-emergency-fund-be",
       "source": "Planning guidance as implemented by the site's calculator, documented in the calculator's own source",
       "card_source": "Rule of thumb: unexpected, necessary, urgent",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1554,6 +1760,7 @@
       "guide": "what-early-retirement-withdrawal-costs",
       "source": "IRS, rollovers of retirement plan and IRA distributions, for the withholding and 60-day rules",
       "card_source": "Source: IRS rollover rules",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1564,6 +1771,7 @@
       "guide": "what-early-retirement-withdrawal-costs",
       "source": "IRS, rollovers of retirement plan and IRA distributions",
       "card_source": "Source: IRS rollover rules",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1574,6 +1782,8 @@
       "guide": "what-early-retirement-withdrawal-costs",
       "source": "IRS Topic No. 558, for the 10% additional tax, the 59½ threshold and the exception list",
       "card_source": "Source: IRS Topic No. 558",
+      "layout": "myth-fact",
+      "myth": "You might think a penalty exception makes an early withdrawal free.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1584,6 +1794,9 @@
       "guide": "what-early-retirement-withdrawal-costs",
       "source": "Computed with the site's own code; penalty and threshold from IRS Topic No. 558",
       "card_source": "Site model: 7% a year from 40 to 65",
+      "layout": "big-number",
+      "hero": "$163,000",
+      "hero_context": "about what $30,000 withdrawn at 40 costs by 65",
       "category": "Money",
       "shelfLife": null
     },
@@ -1594,6 +1807,7 @@
       "guide": "what-early-retirement-withdrawal-costs",
       "source": "IRS Topic No. 558 for the penalty and threshold; the differential calculation is what the site's calculator implements",
       "card_source": "Arithmetic: tax with minus tax without",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1604,6 +1818,8 @@
       "guide": "how-to-calculate-your-net-worth",
       "source": "Distribution treatment described in IRS Topic No. 558",
       "card_source": "Source: IRS Topic No. 558",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a $400,000 traditional 401(k) is $400,000 to spend.",
       "category": "Money",
       "shelfLife": null
     },
@@ -1614,6 +1830,7 @@
       "guide": "how-to-calculate-your-net-worth",
       "source": "Net worth is definitional — assets minus liabilities — so the guide cites no external rule for the formula",
       "card_source": "Definition: net worth without the house",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     },
@@ -1624,6 +1841,7 @@
       "guide": "how-to-calculate-your-net-worth",
       "source": "Net worth is definitional — assets minus liabilities — so the guide cites no external rule for the formula",
       "card_source": "Definition: assets minus liabilities",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null
     }
