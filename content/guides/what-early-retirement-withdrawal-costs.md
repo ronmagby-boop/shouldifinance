@@ -38,13 +38,15 @@ marginal rate. It is the **difference between your total tax with the withdrawal
 and your total tax without it**.
 
 Those are different numbers whenever the withdrawal is large enough to cross a
-bracket — which most meaningful withdrawals are. A $30,000 distribution on top of
-a $95,000 income does not sit neatly in one band. Part of it fills the rest of
-your current bracket and the remainder pushes into the next one.
+bracket — which most meaningful withdrawals are. For a single filer, a $30,000
+distribution on top of a $95,000 income does not sit neatly in one band. Part of
+it fills the rest of the current bracket and the remainder pushes into the next
+one.
 
-> Multiplying by a single marginal rate **understates** the bill when the
-> withdrawal crosses upward into a higher bracket, and **overstates** it when
-> most of the withdrawal still fits inside your current one.
+> Multiplying by your current marginal rate **understates** the bill whenever
+> the withdrawal crosses into a higher bracket. Multiplying by the top rate it
+> reaches **overstates** it, because most of the withdrawal is still taxed below
+> that rate.
 >
 > The differential calculation is the correct one, and it is what this site does.
 > It is also why the answer sometimes differs from a quick estimate you did in
