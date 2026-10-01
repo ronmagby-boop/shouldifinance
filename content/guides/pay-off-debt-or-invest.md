@@ -5,7 +5,7 @@ description: "Paying down a loan returns exactly its rate, guaranteed. Investing
 calculator: pay-off-debt
 category: Home
 published: 2026-09-21
-reviewed: 2026-09-21
+reviewed: 2026-10-01
 ---
 
 You have a spare $500 a month. It can go against a loan or into the market.
@@ -54,7 +54,9 @@ interest you have to itemize, and the standard deduction for {{TAX_YEAR}} is
 filing jointly. Most households do not clear that with mortgage interest alone,
 so for most people a 6.5% mortgage really does cost 6.5%.
 
-Credit card and auto loan interest is not deductible at all.
+Credit card interest is not deductible. Car loan interest usually is not either:
+for tax years 2025 through 2028 there is a narrow exception for new,
+US-assembled vehicles.
 
 The [pay off debt or invest calculator](/calculators/pay-off-debt) runs both
 paths after tax, which is the only version of the comparison worth looking at.
@@ -122,4 +124,8 @@ Procedure
 and [IRS, net investment income
 tax](https://www.irs.gov/individuals/net-investment-income-tax). Home mortgage
 interest and the standard deduction from [IRS Publication
-936](https://www.irs.gov/publications/p936).
+936](https://www.irs.gov/publications/p936). The disallowance of personal
+interest, which is what makes credit card and most car loan interest
+nondeductible, and the 2025–2028 exception for qualified passenger vehicle
+loan interest in paragraph (4), are in [26 U.S.C. §
+163(h)](https://www.law.cornell.edu/uscode/text/26/163).
