@@ -5,7 +5,7 @@ description: "A blended rate weights every debt by its balance, so a large cheap
 calculator: blended-interest-rate
 category: Debt
 published: 2026-09-29
-reviewed: 2026-09-29
+reviewed: 2026-09-30
 ---
 
 If you owe money in several places, it is natural to want one rate for all of
@@ -76,8 +76,8 @@ so the gap between them is visible.
 
 If you know your monthly payments, there is one more split worth making. Each
 month, the interest for that month is charged first, and only what is left of
-the payment reduces the balance. On the list above, $164 of a $240 card payment
-is interest. That is about 69%, so the balance falls by about $76.
+the payment reduces the balance. On the list above, $165 of a $240 card payment
+is interest. That is about 69%, so the balance falls by about $75.
 
 That split depends on the balance and the rate, not on the payment. A higher
 payment does not lower this month's interest; it only raises the part that is
