@@ -531,7 +531,10 @@
       "source": "38 U.S.C. § 3709(a); VA Circular 26-19-22 and its Exhibit B",
       "card_source": "Source: 38 U.S.C. § 3709(a)",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": {
+        "risk": "IRRRL lender-credit citation pending",
+        "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
+      }
     },
     {
       "id": "va-210-days",
@@ -551,7 +554,10 @@
       "source": "VA Circular 26-19-22, Exhibit B, on the treatment of lender credits",
       "card_source": "Source: VA Circular 26-19-22, Exhibit B",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": {
+        "risk": "IRRRL lender-credit citation pending",
+        "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
+      }
     },
     {
       "id": "va-passes-but-costs",
