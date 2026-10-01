@@ -5,7 +5,7 @@ description: "The Loan Estimate exists for exactly this, and most people compare
 calculator: loan-estimate-comparison
 category: Home
 published: 2026-08-07
-reviewed: 2026-08-07
+reviewed: 2026-10-01
 ---
 
 Lenders have to give you the same form, with the same boxes, in the same order.
@@ -53,7 +53,7 @@ This is the part that turns the form from a marketing document into a
 commitment, and it is not widely known. Charges fall into three tolerance
 categories between the Loan Estimate and the Closing Disclosure.
 
-**Cannot increase at all:**
+**Cannot increase unless a valid revised Loan Estimate is issued:**
 
 - Fees paid to the lender, the mortgage broker, or an affiliate of either, for a
   required service
@@ -118,4 +118,6 @@ for the three tolerance categories and the refund remedy, and the [CFPB
 TILA-RESPA Integrated Disclosure
 FAQs](https://www.consumerfinance.gov/compliance/compliance-resources/mortgage-resources/tila-respa-integrated-disclosures/tila-respa-integrated-disclosure-faqs/)
 for the three-business-day requirement and the six items that constitute an
-application.
+application. Revised Loan Estimates, for a changed circumstance or a change the
+borrower asks for, under [Regulation Z §
+1026.19(e)(3)(iv)](https://www.consumerfinance.gov/rules-policy/regulations/1026/19/).
