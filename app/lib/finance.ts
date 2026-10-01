@@ -90,9 +90,12 @@ export const PMI_TERMINATION_LTV = 0.78;
  * The annual MIP schedule in force, and the date it took effect.
  *
  * Mortgagee Letter 2023-05 cut the rates and applies to case numbers endorsed
- * on or after this date. Nothing since has superseded it — HUD's mortgagee
- * letter index carries no later MIP rate letter, and a February 2026 draft is
- * still out for comment rather than in force.
+ * on or after this date. Nothing since has superseded it: HUD's mortgagee
+ * letter index carries no later single-family MIP letter (checked through
+ * ML 2026-10), and no 2026 FHA INFO message announces one. The February 2026
+ * Drafting Table copy ("Multifamily Improvements for MAP Efficiency", 26
+ * February 2026) is addressed to multifamily mortgagees and only restates the
+ * September 2025 multifamily MIP notice; it does not touch these rates.
  */
 export const FHA_MIP_AS_OF = "20 March 2023";
 export const FHA_MIP_SOURCE = "HUD Mortgagee Letter 2023-05";
