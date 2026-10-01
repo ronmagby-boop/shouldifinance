@@ -279,7 +279,8 @@
         "recheck": "Annually, against va.gov"
       },
       "depends_on": [
-        "VA_FUNDING_FEE_PURCHASE"
+        "VA_FUNDING_FEE_PURCHASE",
+        "VA_FUNDING_FEE_IRRRL"
       ]
     },
     {
@@ -511,7 +512,10 @@
       "guide": "va-36-month-recoupment-rule",
       "source": "38 U.S.C. § 3709(a) for the test; funding fee figures from VA funding fee and closing costs",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "VA_FUNDING_FEE_IRRRL"
+      ]
     },
     {
       "id": "apr-excludes-real-costs",
