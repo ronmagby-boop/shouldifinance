@@ -108,8 +108,8 @@ Sources: five-year market depreciation from iSeeCars, March 2026, read from the
 same constants the calculators use. Curve figures computed with this site's own
 model, at 20% first-year and 12% subsequent for the new car and 6% then 12% for
 the three-year-old car — the calculator's own example. Certified pre-owned
-subsidized rates from 2026 dealer listings of manufacturer programs: [Toyota
-GOLD Certified through Toyota Financial
-Services](https://www.toyotapaloalto.com/low-apr-financing-toyota-certified-vehicles.htm)
-and [HondaTrue Certified through Honda Financial
-Services](https://www.autoparkhonda.com/cpo-specials.htm).
+subsidized rates from dealer listings of manufacturer programs: [Toyota GOLD
+Certified through Toyota Financial
+Services](https://www.toyotapaloalto.com/low-apr-financing-toyota-certified-vehicles.htm),
+as of October 2026, and [HondaTrue Certified through Honda Financial
+Services](https://www.autoparkhonda.com/cpo-specials.htm), as of October 2026.
