@@ -50,16 +50,29 @@ export function createGraph({ token, appSecret = null, base = "https://graph.fac
     scrub,
     get: (p, params) => call("GET", p, params),
     post: (p, params) => call("POST", p, params),
-    /** Every item of a paged edge, newest first, stopping at `max`. */
-    async all(p, params, max) {
-      const out = [];
+    /**
+     * Every item of a paged edge, following paging.next until there is none.
+     *
+     * There is deliberately no item cap. An edge like /media returns newest
+     * first, so a cap would drop the OLDEST items, and for the publisher those
+     * are the earliest posted facts, which would then look unposted and be
+     * posted again. maxPages is only a runaway guard: reaching it with a next
+     * page still on offer is an error, never a silent partial read.
+     */
+    async all(p, params, { maxPages }) {
+      const items = [];
+      let requests = 1;
       let page = await call("GET", p, params);
       for (;;) {
-        out.push(...(page.data || []));
-        if (out.length >= max || !page.paging?.next) break;
+        items.push(...(page.data || []));
+        if (!page.paging?.next) break;
+        if (requests >= maxPages) {
+          throw new Error(`GET ${p} still had more pages after ${maxPages} requests (${items.length} items read); refusing a partial read`);
+        }
         page = await call("GET", page.paging.next);
+        requests += 1;
       }
-      return out.slice(0, max);
+      return { items, requests };
     },
   };
 }

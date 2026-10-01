@@ -38,7 +38,16 @@ import { matchMedia, nextScheduled } from "./match.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS || 60_000);
 const POLL_CHECKS = 6; // at once, then once a minute for five minutes
-const MAX_MEDIA = 1000;
+/**
+ * Media are read in pages of MEDIA_PAGE_SIZE, following every next link: the
+ * whole history, not a recent window, because the oldest posts are the
+ * earliest scheduled facts. Meta's IG User Media reference: "Returns a maximum
+ * of 10K of the most recently created media." MAX_MEDIA_PAGES (20,000 items at
+ * full pages) sits above that, so it only ever trips on a runaway, and then
+ * the run fails instead of posting from a partial history.
+ */
+const MEDIA_PAGE_SIZE = 100;
+const MAX_MEDIA_PAGES = 200;
 
 function parseArgs(argv) {
   const args = { live: false, factId: null };
@@ -94,10 +103,14 @@ async function main() {
 
   // ------------------------------------------------ what is already posted
   say("\n1. Reading the account's media");
-  const media = await graph.all(`/${igUserId}/media`, { fields: "id,caption,alt_text,timestamp,permalink", limit: "100" }, MAX_MEDIA);
+  const { items: media, requests } = await graph.all(
+    `/${igUserId}/media`,
+    { fields: "id,caption,alt_text,timestamp,permalink", limit: String(MEDIA_PAGE_SIZE) },
+    { maxPages: MAX_MEDIA_PAGES },
+  );
   const { posted, unmatched, ambiguous } = matchMedia(media, evergreen);
   const methods = [...posted.values()].reduce((a, v) => ((a[v.method] = (a[v.method] || 0) + 1), a), {});
-  say(`  media read: ${media.length}`);
+  say(`  media read: ${media.length}, the whole history, in ${requests} request${requests === 1 ? "" : "s"} (page size ${MEDIA_PAGE_SIZE})`);
   say(`  matched to facts: ${posted.size}${posted.size ? ` (${Object.entries(methods).map(([k, v]) => `${v} by ${k}`).join(", ")})` : ""}`);
   note(`- Media read: ${media.length}; matched to facts: ${posted.size}`);
   for (const [id, v] of posted) {

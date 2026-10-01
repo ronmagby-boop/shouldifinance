@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildAltText, buildCaption, captionBody } from "./caption.mjs";
+import { createGraph } from "./graph.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..", "..");
@@ -23,6 +24,7 @@ const asPosted = (id, i) => ({ id: `m-${id}`, caption: buildCaption(byId.get(id)
 let accountMedia = [];
 let seen = [];
 let statusSequence = [];
+let pageCap = 100;
 let server;
 let base;
 
@@ -38,11 +40,14 @@ before(async () => {
       if (req.headers.authorization !== `Bearer ${TOKEN}`) return send(400, { error: { message: "bad auth", code: 190 } });
       const p = url.pathname.replace("/v26.0", "");
       if (req.method === "GET" && p === `/${IG}/media`) {
-        // Two pages, the second reached through a next link that carries a token.
-        const page = url.searchParams.get("after") === "p2" ? 2 : 1;
-        const half = Math.ceil(accountMedia.length / 2);
-        const data = page === 1 ? accountMedia.slice(0, half) : accountMedia.slice(half);
-        const paging = page === 1 && accountMedia.length > half ? { next: `${base}/v26.0/${IG}/media?after=p2&access_token=${TOKEN}` } : {};
+        // Cursor paging like Meta's: the requested limit, capped by pageCap
+        // (Meta may return fewer than asked), and a next link that carries a
+        // token, on every page but the last.
+        const offset = Number(url.searchParams.get("after") || 0);
+        const size = Math.min(Number(url.searchParams.get("limit") || 25), pageCap);
+        const data = accountMedia.slice(offset, offset + size);
+        const more = offset + size < accountMedia.length;
+        const paging = more ? { cursors: { after: String(offset + size) }, next: `${base}/v26.0/${IG}/media?limit=${size}&after=${offset + size}&access_token=${TOKEN}` } : {};
         return send(200, { data, paging });
       }
       if (p === `/${IG}/content_publishing_limit`) return send(200, { data: [{ config: { quota_total: 100, quota_duration: 86400 }, quota_usage: 3 }] });
@@ -70,7 +75,30 @@ function run(args, env = {}) {
   });
 }
 const writes = () => seen.filter((s) => s.method === "POST");
-const reset = (media = []) => { accountMedia = media; seen = []; statusSequence = []; };
+const reset = (media = [], cap = 100) => { accountMedia = media; seen = []; statusSequence = []; pageCap = cap; };
+const mediaReads = () => seen.filter((s) => s.method === "GET" && s.path === `/v26.0/${IG}/media`);
+
+/**
+ * An account history, newest first as the API returns it: the given
+ * scheduled facts posted in schedule order, with manual posts mixed in.
+ * The oldest posts, the earliest scheduled facts, land on the LAST page.
+ */
+function history(postedCount, manualCount) {
+  const items = [];
+  let t = Date.UTC(2026, 9, 1);
+  const tick = () => new Date((t += 7 * 864e5)).toISOString();
+  let manual = 0;
+  for (let i = 0; i < postedCount; i++) {
+    const f = byId.get(schedule[i].id);
+    items.push({ id: `m-${f.id}`, caption: buildCaption(f), alt_text: buildAltText(f), timestamp: tick(), permalink: `https://instagram.example/p/${i}` });
+    if (manual < manualCount && i % Math.max(1, Math.floor(postedCount / manualCount)) === 0) {
+      items.push({ id: `manual-${manual}`, caption: `Behind the scenes, week ${manual}.`, alt_text: "", timestamp: tick() });
+      manual += 1;
+    }
+  }
+  while (manual < manualCount) items.push({ id: `manual-${manual++}`, caption: "An update.", alt_text: "", timestamp: tick() });
+  return items.reverse();
+}
 
 test("dry run, nothing posted: picks the first scheduled fact and writes nothing", async () => {
   reset();
@@ -83,14 +111,76 @@ test("dry run, nothing posted: picks the first scheduled fact and writes nothing
 });
 
 test("dry run, three posted across two pages: picks the fourth and never prints the paging token", async () => {
-  reset(schedule.slice(0, 3).map((p, i) => asPosted(p.id, i)).reverse());
+  reset(schedule.slice(0, 3).map((p, i) => asPosted(p.id, i)).reverse(), 2);
   const r = await run(["--dry-run"]);
   assert.equal(r.code, 0, r.out);
   assert.match(r.out, /matched to facts: 3 \(3 by alt-text\)/);
   assert.match(r.out, new RegExp(`${schedule[3].id} \\(schedule #4`));
-  assert.ok(seen.some((s) => s.rawUrl.includes("after=p2")), "followed the next page");
+  assert.equal(mediaReads().length, 2, "followed the next page");
   assert.ok(!r.out.includes(TOKEN));
   assert.equal(writes().length, 0);
+});
+
+test("160 posts over 7 pages: reads the whole history, so the oldest posts still count", async () => {
+  // Every scheduled fact posted, plus 23 manual posts: 160 in all. The mock
+  // serves 25 a page although 100 are asked for, so this takes 7 requests,
+  // and the earliest scheduled facts are only on the last page.
+  const media = history(schedule.length, 160 - schedule.length);
+  assert.equal(media.length, 160);
+  reset(media, 25);
+  const r = await run([]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(mediaReads().length, 7);
+  assert.match(r.out, /media read: 160, the whole history, in 7 requests \(page size 100\)/);
+  assert.match(r.out, new RegExp(`matched to facts: ${schedule.length} `));
+  assert.match(r.out, /not matched to any fact: 23/);
+  assert.match(r.out, /every scheduled fact is posted; nothing to do/);
+  assert.ok(!r.out.includes(TOKEN));
+  assert.equal(writes().length, 0);
+});
+
+test("150 posts at full pages: two requests, and the next fact is the first unposted one", async () => {
+  // The first 130 scheduled facts posted, plus 20 manual posts. If the read
+  // stopped at the first page, the oldest 50 would look unposted and schedule
+  // #1 would be picked again.
+  reset(history(130, 20), 100);
+  const r = await run([]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(mediaReads().length, 2);
+  assert.match(r.out, /media read: 150, the whole history, in 2 requests/);
+  assert.match(r.out, new RegExp(`${schedule[130].id} \\(schedule #131 of ${schedule.length}\\)`));
+});
+
+test("1,050 posts: nothing past an item cap is dropped, so the oldest facts are not reposted", async () => {
+  // The first 60 scheduled facts are the OLDEST posts, followed by 990 newer
+  // manual posts: 1,050 in all, 11 requests at 100 a page. The earliest
+  // facts sit in the last 50 items, which a 1,000-item cap would have cut,
+  // making schedule #1 look unposted and post it again.
+  const facts60 = history(60, 0);
+  const manual = Array.from({ length: 990 }, (_, i) => ({ id: `manual-${i}`, caption: `Update ${i}.`, alt_text: "", timestamp: `2030-01-01T00:${String(i % 60).padStart(2, "0")}:00Z` }));
+  reset([...manual, ...facts60], 100);
+  const r = await run([]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(mediaReads().length, 11);
+  assert.match(r.out, /media read: 1050, the whole history, in 11 requests/);
+  assert.match(r.out, /matched to facts: 60 /);
+  assert.match(r.out, new RegExp(`${schedule[60].id} \\(schedule #61 of`));
+});
+
+test("the page guard fails loudly instead of returning a partial history", async () => {
+  // A next link on every page, forever: the guard must throw, not truncate.
+  const looping = http.createServer((req, res) => {
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(JSON.stringify({ data: [{ id: "x" }], paging: { next: `http://127.0.0.1:${looping.address().port}/v26.0/loop?access_token=${TOKEN}` } }));
+  });
+  await new Promise((r) => looping.listen(0, "127.0.0.1", r));
+  const graph = createGraph({ token: TOKEN, base: `http://127.0.0.1:${looping.address().port}` });
+  await assert.rejects(graph.all("/loop", {}, { maxPages: 5 }), (e) => {
+    assert.match(e.message, /still had more pages after 5 requests \(5 items read\); refusing a partial read/);
+    assert.ok(!e.message.includes(TOKEN));
+    return true;
+  });
+  looping.close();
 });
 
 test("live run: creates the container with the built caption and alt text, polls, publishes", async () => {
