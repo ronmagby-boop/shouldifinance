@@ -63,8 +63,10 @@ An average return says nothing about the order the returns arrive in, and the
 order matters enormously once you are withdrawing.
 
 Two retirees each average 7% over 20 years. One gets the bad years early and the
-good years late; the other gets the reverse. While they are only contributing,
-they end up in the same place. Once they are drawing an income, the first one can
+good years late; the other gets the reverse. Before withdrawals start, the order
+matters far less: a single sum invested once ends in the same place either way,
+and steady contributions shift the result rather than break it. Once they are
+drawing an income, the first one can
 run out and the second one does not — because selling assets into a falling
 market locks in the loss permanently.
 
