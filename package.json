@@ -10,6 +10,7 @@
     "lint": "eslint",
     "check:guides": "node scripts/check-guides.mjs",
     "cards": "node scripts/instagram/render-cards.mjs",
+    "test:instagram": "node --test \"scripts/instagram/*.test.mjs\"",
     "cards:public": "node scripts/instagram/sync-public.mjs"
   },
   "dependencies": {

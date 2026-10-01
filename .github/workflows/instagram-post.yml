@@ -1,0 +1,64 @@
+# Publishes the next scheduled Instagram card, or with dry_run (the default)
+# shows what it would publish. Manual only for now: there is no schedule.
+#
+# What is already posted is read from the account's own media and matched to
+# content/instagram-schedule.json; there is no state file and this workflow
+# commits nothing.
+name: Instagram post
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: read, match and check everything, but post nothing"
+        type: boolean
+        required: false
+        default: true
+      fact_id:
+        description: "Optional: post this fact id instead of the next scheduled one"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# Never two publishing runs at once, so the next fact cannot be posted twice.
+concurrency:
+  group: instagram-post
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      IG_USER_ID: "17841452798031447"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # GitHub already masks secrets; this registers them explicitly too. The
+      # values come from env and are never interpolated into the command.
+      - name: Mask credentials
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+        run: |
+          if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
+          if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
+
+      - name: Publish (or dry run)
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          FACT_ID: ${{ inputs.fact_id }}
+        run: |
+          set --
+          if [ "$DRY_RUN" = "false" ]; then set -- --live; else set -- --dry-run; fi
+          if [ -n "$FACT_ID" ]; then set -- "$@" --fact-id "$FACT_ID"; fi
+          node scripts/instagram/publish.mjs "$@"
