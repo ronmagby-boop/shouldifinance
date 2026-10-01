@@ -42,3 +42,5 @@ next-env.d.ts
 
 # rendered Instagram cards (npm run cards)
 /.instagram-cards/
+# review sheets (npm run review:next)
+/.instagram-review/
