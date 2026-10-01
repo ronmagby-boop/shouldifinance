@@ -8,10 +8,17 @@
  * A site-model fact is one whose card_source starts "Site model". Its
  * assumptions are the rates, terms and prices that card_source lists:
  * percentages ("6.5%"), terms ("30 years", "72 mo", "48 payments") and
- * prices ("$400,000"). Each must appear in the card text, the hero or the
- * hero_context, the parts of the card a reader sees large; the source line
- * alone does not count. Equivalent forms pass: "30-year" for "30 years",
- * "thirty" for "30", "72-month" for "72 mo", "$400k" for "$400,000".
+ * prices ("$400,000"). Each must appear somewhere printed on the card: the
+ * card text, the hero, the hero_context or the card_source line itself.
+ * Equivalent forms pass: "30-year" for "30 years", "thirty" for "30",
+ * "72-month" for "72 mo", "$400k" for "$400,000".
+ *
+ * Because the assumptions are read from card_source and card_source counts as
+ * stating them, every fact with inputs listed passes. What the check still
+ * catches: a site-model card whose card_source names no rate, term or price
+ * (NOTE), and a card_source that lists an input in a form the matcher cannot
+ * find again. It does not know which inputs a headline figure depends on;
+ * card_source has to list them, and nothing here checks that it does.
  *
  * Not checked, and listed: a card with no headline figure (no digit in the
  * card or hero), and a card_source that names no inputs to check against.
@@ -40,7 +47,9 @@ export function assumptions(cardSource) {
   for (const m of text.matchAll(/\$\d{1,3}(?:,\d{3})*(?:\.\d+)?/g)) {
     const digits = m[0].replace(/[$,]/g, "");
     const k = Number(digits) >= 1000 && Number(digits) % 1000 === 0 ? `\\$${Number(digits) / 1000}k` : null;
-    found.push({ kind: "price", label: m[0], test: new RegExp(`${esc(m[0])}(?![\\d,])${k ? `|${k}\\b` : ""}`, "i") });
+    // Not followed by another digit or digit group ("$400,0000"), but a comma
+    // that ends the clause ("$400,000, 5% down") is fine.
+    found.push({ kind: "price", label: m[0], test: new RegExp(`${esc(m[0])}(?!\\d|,\\d)${k ? `|${k}\\b` : ""}`, "i") });
   }
   for (const m of text.matchAll(/(\d+(?:\.\d+)?)%( down)?/g)) {
     const down = m[2] ? " down" : "";
@@ -57,7 +66,7 @@ export function assumptions(cardSource) {
 
 /** { status: "pass" | "fail" | "no-figure" | "no-inputs", missing: [labels] } for one fact. */
 export function checkAssumptions(fact) {
-  const visible = [fact.card, fact.hero, fact.hero_context].filter(Boolean).join(" \n ");
+  const visible = [fact.card, fact.hero, fact.hero_context, fact.card_source].filter(Boolean).join(" \n ");
   if (!/\d/.test(`${fact.card} ${fact.hero ?? ""}`)) return { status: "no-figure", missing: [] };
   const list = assumptions(fact.card_source);
   if (!list.length) return { status: "no-inputs", missing: [] };

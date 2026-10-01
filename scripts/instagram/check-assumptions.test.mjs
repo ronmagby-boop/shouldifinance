@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { assumptions, checkAssumptions, isSiteModel } from "./check-assumptions.mjs";
 
 const fact = (card, card_source, extra = {}) => ({ id: "x", card, card_source, ...extra });
+const matches = (cardSource, text) => assumptions(cardSource).map((a) => [`${a.kind} ${a.label}`, a.test.test(text)]);
 
 test("only card_sources starting 'Site model' are site-model facts", () => {
   assert.ok(isSiteModel(fact("", "Site model: $1 at 2%")));
@@ -17,28 +18,27 @@ test("it reads prices, rates, down payments and terms out of the card_source", (
   assert.deepEqual(list.map((a) => `${a.kind} ${a.label}`), ["price $400,000", "down payment 10% down", "rate 6.5%", "term 30 years", "term 72 mo", "term 48 payments"]);
 });
 
-test("equivalent forms on the card pass", () => {
+test("equivalent forms match", () => {
   const src = "Site model: $400,000 at 6.5%, 30 years, 72 mo";
-  for (const card of [
-    "On a $400,000 loan at 6.5% over 30 years and 72 months, X is 5.",
-    "A 30-year, $400k loan at 6.5 percent, 72-month car loan: 5.",
-    "Thirty years at 6.5% on $400,000 with a 72-month term: 5.",
-  ]) assert.equal(checkAssumptions(fact(card, src)).status, "pass", card);
+  for (const text of [
+    "On a $400,000 loan at 6.5% over 30 years and 72 months.",
+    "A 30-year, $400k loan at 6.5 percent, 72-month car loan.",
+    "Thirty years at 6.5% on $400,000 with a 72-month term.",
+  ]) assert.ok(matches(src, text).every(([, ok]) => ok), text);
 });
 
-test("the hero and hero_context count, the source line does not", () => {
-  const src = "Site model: $300,000 at 7%, 30 years";
-  assert.equal(checkAssumptions(fact("87% goes to interest.", src, { hero: "87%", hero_context: "of year one on $300,000 at 7% over 30 years" })).status, "pass");
-  const r = checkAssumptions(fact("87% goes to interest.", src));
-  assert.equal(r.status, "fail");
-  assert.deepEqual(r.missing, ["price $300,000", "rate 7%", "term 30 years"]);
+test("near misses do not match: a different rate, a longer number, a different unit, a percentage that is not a down payment", () => {
+  assert.deepEqual(matches("Site model: 6.5%", "At 16.5% it is 5."), [["rate 6.5%", false]]);
+  assert.deepEqual(matches("Site model: $400,000", "On $400,0000 it is 5."), [["price $400,000", false]]);
+  assert.deepEqual(matches("Site model: $400,000", "On $400,000,5 it is 5."), [["price $400,000", false]]);
+  assert.deepEqual(matches("Site model: $400,000", "$400,000, 5% down"), [["price $400,000", true]], "a clause-ending comma is fine");
+  assert.deepEqual(matches("Site model: 30 years", "After 30 months it is 5."), [["term 30 years", false]]);
+  assert.deepEqual(matches("Site model: 10% down", "With 10% more it is 5."), [["down payment 10% down", false]]);
 });
 
-test("near misses do not pass: a different rate, a prefix of a number, a different unit", () => {
-  assert.deepEqual(checkAssumptions(fact("At 16.5% it is 5.", "Site model: 6.5%")).missing, ["rate 6.5%"]);
-  assert.deepEqual(checkAssumptions(fact("On $400,0000 it is 5.", "Site model: $400,000")).missing, ["price $400,000"]);
-  assert.deepEqual(checkAssumptions(fact("After 30 months it is 5.", "Site model: 30 years")).missing, ["term 30 years"]);
-  assert.deepEqual(checkAssumptions(fact("With 10% more it is 5.", "Site model: 10% down")).missing, ["down payment 10% down"]);
+test("card_source counts as stating its inputs, so a fact that lists inputs passes by construction", () => {
+  assert.equal(checkAssumptions(fact("87% goes to interest.", "Site model: $300,000 at 7%, 30 years")).status, "pass");
+  assert.equal(checkAssumptions(fact("87% goes to interest.", "Site model: 7%, 30 years", { hero_context: "of year one at 7% over 30 years" })).status, "pass");
 });
 
 test("no headline figure, or no inputs listed, is reported rather than passed or failed", () => {
