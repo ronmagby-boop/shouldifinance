@@ -259,29 +259,39 @@ async function verify(file) {
   };
 }
 
-async function contactSheet(rows, outDir) {
-  const COLS = 12, THUMB = 200, LABEL = 34, GAP = 12, PAD = 24;
-  const rowsCount = Math.ceil(rows.length / COLS);
-  const width = PAD * 2 + COLS * THUMB + (COLS - 1) * GAP;
-  const height = PAD * 2 + rowsCount * (THUMB + LABEL) + (rowsCount - 1) * GAP;
+/**
+ * A grid of cards with a label under each. The overview sheet is small and
+ * numbered; the per-category sheets are large enough to proofread at 400px a
+ * card and are labelled with the full fact id. Labels turn red on overflow.
+ */
+async function contactSheet(rows, file, { cols, thumb, numbered }) {
+  const LABEL = Math.round(thumb * 0.17), GAP = 12, PAD = 24;
+  const idSize = Math.max(12, Math.round(thumb * 0.06));
+  const metaSize = Math.max(11, Math.round(thumb * 0.05));
+  const rowsCount = Math.ceil(rows.length / cols);
+  const width = PAD * 2 + cols * thumb + (cols - 1) * GAP;
+  const height = PAD * 2 + rowsCount * (thumb + LABEL) + (rowsCount - 1) * GAP;
   const layers = [];
   for (const [i, r] of rows.entries()) {
-    const x = PAD + (i % COLS) * (THUMB + GAP);
-    const y = PAD + Math.floor(i / COLS) * (THUMB + LABEL + GAP);
-    layers.push({ input: await sharp(r.path).resize(THUMB, THUMB).toBuffer(), left: x, top: y });
-    const flag = r.cardOverflow || r.sourceOverflow ? "#dc2626" : "#375950";
-    const label = `<svg xmlns="http://www.w3.org/2000/svg" width="${THUMB}" height="${LABEL}">
-      <text x="2" y="15" font-family="Arial" font-size="12" fill="${flag}">${escape(String(i + 1).padStart(3, "0"))} ${escape(r.id.slice(0, 26))}</text>
-      <text x="2" y="30" font-family="Arial" font-size="11" fill="#6b7280">${r.cardSize}px · ${r.lines} lines${r.cardOverflow ? " · OVERFLOW" : ""}${r.sourceOverflow ? " · SOURCE TOO LONG" : ""}</text>
+    const x = PAD + (i % cols) * (thumb + GAP);
+    const y = PAD + Math.floor(i / cols) * (thumb + LABEL + GAP);
+    layers.push({ input: await sharp(r.path).resize(thumb, thumb).toBuffer(), left: x, top: y });
+    const flag = r.cardOverflow || r.sourceOverflow ? "#dc2626" : "#1f3d35";
+    // Fit the id to the label width rather than cutting it: an id is a lookup
+    // key, and a truncated one cannot be searched for.
+    const idText = numbered ? `${String(i + 1).padStart(3, "0")} ${r.id}` : r.id;
+    const fitted = Math.min(idSize, Math.floor((thumb - 4) / (idText.length * 0.56)));
+    const label = `<svg xmlns="http://www.w3.org/2000/svg" width="${thumb}" height="${LABEL}">
+      <text x="2" y="${Math.round(LABEL * 0.42)}" font-family="Arial" font-size="${fitted}" fill="${flag}">${escape(idText)}</text>
+      <text x="2" y="${Math.round(LABEL * 0.85)}" font-family="Arial" font-size="${metaSize}" fill="#6b7280">${r.cardSize}px · ${r.lines} lines${r.cardOverflow ? " · OVERFLOW" : ""}${r.sourceOverflow ? " · SOURCE TOO LONG" : ""}</text>
     </svg>`;
-    layers.push({ input: Buffer.from(label), left: x, top: y + THUMB });
+    layers.push({ input: Buffer.from(label), left: x, top: y + thumb });
   }
-  const file = path.join(outDir, "contact-sheet.jpg");
   await sharp({ create: { width, height, channels: 3, background: "#ffffff" } })
     .composite(layers)
     .jpeg({ quality: 85, progressive: false })
     .toFile(file);
-  return { file, width, height };
+  return { file, width, height, count: rows.length };
 }
 
 async function main() {
@@ -336,7 +346,22 @@ async function main() {
     (r) => r.format !== "jpeg" || !r.baseline || r.progressive || r.width !== SIZE || r.height !== SIZE ||
       r.space !== "srgb" || r.bytes > 8 * 1024 * 1024,
   );
-  const sheet = rows.length > 1 ? await contactSheet(rows, args.out) : null;
+  const sheet = rows.length > 1
+    ? await contactSheet(rows, path.join(args.out, "contact-sheet.jpg"), { cols: 12, thumb: 200, numbered: true })
+    : null;
+  // One sheet per category, at 400px a card, for proofreading.
+  const categorySheets = [];
+  if (rows.length > 1) {
+    for (const category of Object.keys(colours)) {
+      const inCategory = rows.filter((r) => r.category === category);
+      if (!inCategory.length) continue;
+      categorySheets.push(await contactSheet(
+        inCategory,
+        path.join(args.out, `contact-sheet-${category.toLowerCase()}.jpg`),
+        { cols: 6, thumb: 400, numbered: false },
+      ));
+    }
+  }
   fs.writeFileSync(
     path.join(args.out, "manifest.json"),
     JSON.stringify({ rendered: new Date().toISOString(), size: SIZE, cards: rows.map(({ path: p, ...r }) => ({ ...r, file: path.basename(p) })) }, null, 2) + "\n",
@@ -351,6 +376,9 @@ async function main() {
   const sizes = rows.map((r) => r.cardSize);
   console.log(`  card text size: ${Math.min(...sizes)}px to ${Math.max(...sizes)}px`);
   if (sheet) console.log(`  contact sheet: ${path.relative(ROOT, sheet.file)} (${sheet.width}x${sheet.height}, ${kb(fs.statSync(sheet.file).size)})`);
+  for (const c of categorySheets) {
+    console.log(`  ${path.relative(ROOT, c.file)}: ${c.count} cards, ${c.width}x${c.height}, ${kb(fs.statSync(c.file).size)}`);
+  }
 
   console.log(`  source line: ${SOURCE_FONT}px ${BRAND.source} on ${BRAND.background}, contrast ${contrast(BRAND.source, BRAND.background).toFixed(2)}:1 (WCAG AA needs 4.5:1)`);
   const widest = rows.reduce((a, r) => (r.sourceWidth > a.sourceWidth ? r : a));
