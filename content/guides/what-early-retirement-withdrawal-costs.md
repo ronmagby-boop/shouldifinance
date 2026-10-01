@@ -5,7 +5,7 @@ description: "The 10% penalty is the part everyone knows and the smallest part o
 calculator: early-withdrawal
 category: Money
 published: 2026-07-09
-reviewed: 2026-07-09
+reviewed: 2026-10-01
 ---
 
 Taking money out of a retirement account before 59½ has three separate costs,
@@ -61,8 +61,9 @@ When the money arrives, some has already been taken. That is withholding, and it
 is a **prepayment**, not the bill.
 
 - A distribution from an employer plan that is an eligible rollover distribution
-  carries **mandatory 20% federal withholding** and it **cannot be waived** —
-  even if you intend to roll it over later.
+  **paid to you** carries **mandatory 20% federal withholding** and it **cannot
+  be waived** — even if you intend to roll it over later. A direct rollover has
+  none.
 - An IRA distribution has **10% default withholding**, and the owner may elect
   out of it.
 
