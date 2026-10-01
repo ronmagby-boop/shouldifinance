@@ -133,7 +133,7 @@
     {
       "id": "cashout-not-deductible",
       "card": "Rolling credit card debt into your mortgage does not make the interest deductible.",
-      "caption": "The mortgage interest deduction is limited to acquisition debt — money used to buy, build or substantially improve the home. Publication 936 is explicit that it does not matter when the debt was incurred. Paying off a card is none of those three, so that portion produces no deduction and has to be tracked separately for as long as you hold the loan. https://shouldifinance.com/guides/refinance-to-pay-off-credit-cards",
+      "caption": "The mortgage interest deduction is limited to acquisition debt — money used to buy, build or substantially improve the home. Publication 936 is explicit that it does not matter when the debt was incurred. Paying off a card is none of those three, so that portion produces no deduction and has to be tracked separately for as long as you hold the loan. And even the interest that does qualify only saves tax if you itemize; with the standard deduction, none of the mortgage interest does. https://shouldifinance.com/guides/refinance-to-pay-off-credit-cards",
       "guide": "refinance-to-pay-off-credit-cards",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
@@ -520,8 +520,8 @@
     },
     {
       "id": "points-purchase-vs-refi",
-      "card": "Points on a purchase are deductible that year. Points on a refinance are spread over thirty.",
-      "caption": "Same dollar, two completely different treatments. The IRS is direct: points paid to refinance are not deductible in full in the year you pay them, but are spread over the life of the loan. Which makes a point on a refinance worth less than the same point on a purchase. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "card": "If you itemize, points on a main-home purchase are deductible that year. On a 30-year refinance, they are spread over 30 years.",
+      "caption": "Same dollar, two different treatments, and both only matter if you itemize. Take the standard deduction and points save no tax at all. Points on a loan to buy your main home can generally be deducted in full in the year you pay them. Points paid to refinance generally cannot be; they are deducted over the life of the loan, so on a 30-year refinance they come off at 1/360 per monthly payment, a thirtieth a year. The exception in Publication 936 is a refinance used partly to substantially improve your main home: the share of the points tied to the improvement can be deducted in the year paid, if you paid it with your own funds, and the rest is spread over the loan. Which makes a point on a refinance worth less than the same point on a purchase. https://shouldifinance.com/guides/are-discount-points-worth-it",
       "guide": "are-discount-points-worth-it",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
@@ -531,8 +531,8 @@
     },
     {
       "id": "unamortized-points",
-      "card": "Refinance again and the unamortized points from last time generally become deductible.",
-      "caption": "Points on a refinance are spread across the loan's life, so retiring that loan early usually releases the remainder in that year. It is one of the few places where refinancing again actually helps. https://shouldifinance.com/guides/are-discount-points-worth-it",
+      "card": "If you itemize and refinance with a new lender, the old loan's unamortized points become deductible that year.",
+      "caption": "Points on a refinance are spread across the loan's life, so retiring that loan early releases the remainder in that year. One catch in Publication 936: refinance with the same lender and the remainder is not released but spread over the new loan instead. And like every mortgage deduction, it only saves tax if you itemize. It is one of the few places where refinancing again actually helps. https://shouldifinance.com/guides/are-discount-points-worth-it",
       "guide": "are-discount-points-worth-it",
       "source": "IRS Publication 936, Home Mortgage Interest Deduction",
       "card_source": "Source: IRS Publication 936",
@@ -796,7 +796,7 @@
     {
       "id": "heloc-not-deductible",
       "card": "A HELOC used to clear a credit card produces no deductible interest.",
-      "caption": "Publication 936 limits the deduction to proceeds used to buy, build or substantially improve the home the loan relates to. Paying off a card is none of the three. The suspension for home equity borrowing outside those purposes was made permanent by P.L. 119-21. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
+      "caption": "Publication 936 limits the deduction to proceeds used to buy, build or substantially improve the home the loan relates to. Paying off a card is none of the three. The suspension for home equity borrowing outside those purposes was made permanent by P.L. 119-21. And even HELOC interest that does qualify only saves tax if you itemize. https://shouldifinance.com/guides/home-equity-to-pay-off-credit-cards",
       "guide": "home-equity-to-pay-off-credit-cards",
       "source": "IRS Publication 936, for the buy-build-improve requirement",
       "card_source": "Source: IRS Publication 936",
