@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildAltText, buildCaption, captionBody } from "./caption.mjs";
 import { createGraph } from "./graph.mjs";
+import { contentHash, signOff } from "./review.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..", "..");
@@ -23,14 +24,15 @@ const byId = new Map(facts.map((f) => [f.id, f]));
 // tests exercise everything after the review gate. The gate's own tests
 // write their own copies.
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "ig-publish-"));
-const factsFileWith = (reviewed) => {
+const factsFileWith = (reviewed, edit = (f) => f) => {
   const all = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-facts.json"), "utf8"));
-  all.facts = all.facts.map((f) => ({ ...f, reviewed: typeof reviewed === "function" ? reviewed(f) : reviewed }));
+  all.facts = all.facts.map((f) => edit({ ...f, reviewed: typeof reviewed === "function" ? reviewed(f) : reviewed }));
   const file = path.join(TMP, `facts-${Math.random().toString(36).slice(2)}.json`);
   fs.writeFileSync(file, JSON.stringify(all));
   return file;
 };
-const REVIEWED_FACTS = factsFileWith("2026-09-30");
+const ok = (f) => signOff(f, "2026-09-30");
+const REVIEWED_FACTS = factsFileWith(ok);
 const asPosted =(id, i) => ({ id: `m-${id}`, caption: buildCaption(byId.get(id)), alt_text: buildAltText(byId.get(id)), timestamp: `2026-10-0${i + 1}T12:00:00Z`, permalink: `https://instagram.example/p/${i}` });
 
 // Mutable per test: the media on the account, and what the mock saw.
@@ -266,17 +268,17 @@ test("a live run refuses when a post is ambiguous between two facts", async () =
 test("an unreviewed next fact is refused in a dry run, with the reason in the log and the Summary", async () => {
   reset();
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "ig-summary-")), "summary.md");
-  const r = await run([], { IG_FACTS_FILE: factsFileWith(""), GITHUB_STEP_SUMMARY: file });
+  const r = await run([], { IG_FACTS_FILE: factsFileWith(null), GITHUB_STEP_SUMMARY: file });
   assert.equal(r.code, 1, r.out);
   assert.ok(r.out.includes(`${schedule[0].id} has not been reviewed: its "reviewed" field is empty.`), r.out);
-  assert.match(r.out, /set "reviewed" to that date \(YYYY-MM-DD\)/);
+  assert.ok(r.out.includes(`then run: npm run review:mark -- ${schedule[0].id}`), r.out);
   assert.match(fs.readFileSync(file, "utf8"), /\*\*Failed:\*\* .* has not been reviewed/);
   assert.equal(writes().length, 0);
 });
 
 test("an unreviewed fact is refused in a live run, before anything is created", async () => {
   reset();
-  const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith((f) => (f.id === schedule[0].id ? undefined : "2026-09-30")) });
+  const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith((f) => (f.id === schedule[0].id ? undefined : ok(f))) });
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /has not been reviewed/);
   assert.equal(writes().length, 0);
@@ -284,7 +286,7 @@ test("an unreviewed fact is refused in a live run, before anything is created", 
 
 test("the review gate holds the schedule order instead of skipping to a reviewed fact", async () => {
   reset();
-  const r = await run([], { IG_FACTS_FILE: factsFileWith((f) => (f.id === schedule[0].id ? "" : "2026-09-30")) });
+  const r = await run([], { IG_FACTS_FILE: factsFileWith((f) => (f.id === schedule[0].id ? null : ok(f))) });
   assert.equal(r.code, 1, r.out);
   assert.ok(r.out.includes(`${schedule[0].id} has not been reviewed`), r.out);
   assert.ok(!r.out.includes(`${schedule[1].id} (schedule #2`), "did not move on to the next fact");
@@ -292,7 +294,7 @@ test("the review gate holds the schedule order instead of skipping to a reviewed
 
 test("a fact_id override gets no exemption from review", async () => {
   reset();
-  const r = await run(["--fact-id", schedule[7].id, "--live"], { IG_FACTS_FILE: factsFileWith("") });
+  const r = await run(["--fact-id", schedule[7].id, "--live"], { IG_FACTS_FILE: factsFileWith(null) });
   assert.equal(r.code, 1, r.out);
   assert.ok(r.out.includes(`${schedule[7].id} has not been reviewed`), r.out);
   assert.equal(writes().length, 0);
@@ -301,18 +303,48 @@ test("a fact_id override gets no exemption from review", async () => {
 test("a malformed or future review date is refused, not guessed at", async () => {
   for (const [value, reason] of [["2026-13-01", /not a YYYY-MM-DD date/], ["30/09/2026", /not a YYYY-MM-DD date/], ["2026-02-30", /not a YYYY-MM-DD date/], ["2999-01-01", /after today/]]) {
     reset();
-    const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith(value) });
+    const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith((f) => ({ date: value, hash: contentHash(f) })) });
     assert.equal(r.code, 1, `${value}: ${r.out}`);
     assert.match(r.out, reason, value);
     assert.equal(writes().length, 0, value);
   }
 });
 
-test("a reviewed fact passes the gate and the date is reported", async () => {
+test("a bare date, the old form, is refused: it does not say what was reviewed", async () => {
+  reset();
+  const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith("2026-09-30") });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /is not of the form \{"date", "hash"\}/);
+  assert.equal(writes().length, 0);
+});
+
+test("any edit after sign-off is refused, field by field, until it is reviewed again", async () => {
+  const first = schedule[0].id;
+  const edits = {
+    card: (f) => ({ ...f, card: `${f.card} Really.` }),
+    caption: (f) => ({ ...f, caption: f.caption.replace(/^(\S+)/, "$1 really") }),
+    source: (f) => ({ ...f, source: `${f.source}; and another` }),
+    card_source: (f) => ({ ...f, card_source: `${f.card_source} (rev.)` }),
+    hero: (f) => ({ ...f, hero: "1", hero_context: "x" }),
+    myth: (f) => ({ ...f, myth: "It is easy to assume otherwise." }),
+  };
+  for (const [field, edit] of Object.entries(edits)) {
+    reset();
+    // Signed off as it was, then edited: the stored hash is the old one.
+    const r = await run(["--live"], { IG_FACTS_FILE: factsFileWith(ok, (f) => (f.id === first ? edit(f) : f)) });
+    assert.equal(r.code, 1, `${field}: ${r.out}`);
+    assert.ok(r.out.includes(`${first} has changed since it was reviewed on 2026-09-30`), `${field}: ${r.out}`);
+    assert.match(r.out, new RegExp(`Review it again\. .*npm run review:mark -- ${first}`), field);
+    assert.equal(writes().length, 0, field);
+  }
+});
+
+test("a reviewed, unchanged fact passes the gate and the date and hash are reported", async () => {
   reset();
   const r = await run([]);
   assert.equal(r.code, 0, r.out);
-  assert.match(r.out, /reviewed: 2026-09-30/);
+  const fact = byId.get(schedule[0].id);
+  assert.ok(r.out.includes(`reviewed: 2026-09-30, content unchanged since (hash ${contentHash(fact)})`), r.out);
 });
 
 test("no token: fails without calling anything", async () => {

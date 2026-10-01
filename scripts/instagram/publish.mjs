@@ -16,8 +16,10 @@
  * the first fact in content/instagram-schedule.json that is not matched.
  *
  * REVIEW: a fact is posted only if its "reviewed" field holds the date a
- * person signed it off. Without one, a dry run and a live run both stop with
- * the reason. The next fact is not skipped to: the schedule order holds.
+ * person signed it off and a hash of what they signed off (review.mjs). With
+ * no sign-off, or if the card, caption, alt text, hero, hero_context, myth or
+ * card_source has changed since, a dry run and a live run both stop with the
+ * reason. The next fact is not skipped to: the schedule order holds.
  *
  * A DRY RUN does everything that only reads: reads and matches the media,
  * picks the fact, builds the caption and alt text, checks they are within
@@ -38,6 +40,7 @@ import { fileURLToPath } from "node:url";
 import { createGraph, VERSION } from "./graph.mjs";
 import { buildAltText, buildCaption, captionProblems, imageUrl } from "./caption.mjs";
 import { matchMedia, nextScheduled } from "./match.mjs";
+import { reviewProblem } from "./review.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS || 60_000);
@@ -54,23 +57,6 @@ const MEDIA_PAGE_SIZE = 100;
 const MAX_MEDIA_PAGES = 200;
 // IG_FACTS_FILE is a test override only; the workflow never sets it.
 const FACTS_FILE = process.env.IG_FACTS_FILE || path.join(ROOT, "content", "instagram-facts.json");
-
-/**
- * Why a fact may not be posted for want of review, or null if it may. A fact
- * needs "reviewed": a real YYYY-MM-DD date, not after today (UTC). Empty or
- * missing means nobody has signed it off; a malformed or future date is a
- * typo, and is refused rather than guessed at.
- */
-function reviewProblem(fact, today = new Date().toISOString().slice(0, 10)) {
-  const r = fact.reviewed;
-  const how = `Check its card, caption and alt text against the guide and source, then set "reviewed" to that date (YYYY-MM-DD) in content/instagram-facts.json.`;
-  if (r === undefined || r === null || String(r).trim() === "") return `${fact.id} has not been reviewed: its "reviewed" field is empty. ${how}`;
-  const s = String(r).trim();
-  const d = new Date(`${s}T00:00:00Z`);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s) || Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s) return `${fact.id} has "reviewed": "${s}", which is not a YYYY-MM-DD date. ${how}`;
-  if (s > today) return `${fact.id} has "reviewed": "${s}", which is after today (${today}). ${how}`;
-  return null;
-}
 
 function parseArgs(argv) {
   const args = { live: false, factId: null };
@@ -176,8 +162,8 @@ async function main() {
   // so a dry run that passes means the live run would post.
   const unreviewed = reviewProblem(fact);
   if (unreviewed) fail(`${unreviewed} Nothing was posted.`);
-  say(`  reviewed: ${fact.reviewed}`);
-  note(`- Reviewed: ${fact.reviewed}`);
+  say(`  reviewed: ${fact.reviewed.date}, content unchanged since (hash ${fact.reviewed.hash})`);
+  note(`- Reviewed: ${fact.reviewed.date}, content unchanged since (hash \`${fact.reviewed.hash}\`)`);
 
   // ------------------------------------------------- caption, alt, image
   const caption = buildCaption(fact);
