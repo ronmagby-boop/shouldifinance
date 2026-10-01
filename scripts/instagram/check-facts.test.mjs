@@ -50,7 +50,7 @@ test("a changed constant holds only the facts that depend on it, showing old and
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /HELD {2}a\n +RATE: was 0\.52, now 0\.55/);
   assert.doesNotMatch(r.out, /HELD {2}b/);
-  assert.match(r.out, /FAILED: 1 held, 0 errors/);
+  assert.match(r.out, /FAILED: 1 fact held/);
 });
 
 test("--accept re-snapshots only the named fact", () => {
@@ -62,19 +62,35 @@ test("--accept re-snapshots only the named fact", () => {
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, "lock.json"), "utf8")).facts.a, { RATE: 0.55 });
 });
 
-test("a missing name, a function, a missing snapshot, a stale snapshot name and an orphaned lock entry are errors", () => {
+test("a fact that cannot be checked is held: missing name, function, missing snapshot, stale snapshot, module that will not load", () => {
   const dir = setup({
-    lib: LIB,
-    facts: [fact("gone", ["NO_SUCH"]), fact("fn", ["rateFor"]), fact("new", ["RATE"]), fact("stale", ["RATE"])],
-    lock: { facts: { gone: {}, fn: {}, stale: { RATE: 0.55, BANDS: [] }, orphan: { RATE: 0.55 } } },
+    lib: { ...LIB, "broken.ts": "export const BROKEN = 1;\nthrow new Error('boom');\n" },
+    facts: [fact("gone", ["NO_SUCH"]), fact("fn", ["rateFor"]), fact("new", ["RATE"]), fact("stale", ["RATE"]), fact("unloadable", ["BROKEN"])],
+    lock: { facts: { gone: {}, fn: {}, stale: { RATE: 0.55, BANDS: [] }, unloadable: { BROKEN: 1 } } },
   });
   const r = run(dir);
   assert.equal(r.code, 1, r.out);
-  assert.match(r.out, /gone: depends_on names NO_SUCH, which is not an exported constant/);
-  assert.match(r.out, /fn: depends_on names rateFor, which is not an exported constant/);
-  assert.match(r.out, /new: no snapshot/);
-  assert.match(r.out, /stale: snapshot lists BANDS, which depends_on no longer names/);
-  assert.match(r.out, /lock names orphan, which is no longer a fact with depends_on/);
+  assert.match(r.out, /HELD {2}gone\n +depends_on names NO_SUCH, which is not an exported constant/);
+  assert.match(r.out, /HELD {2}fn\n +depends_on names rateFor, which is not an exported constant/);
+  assert.match(r.out, /HELD {2}new\n +no snapshot/);
+  assert.match(r.out, /HELD {2}stale\n +snapshot lists BANDS, which depends_on no longer names/);
+  assert.match(r.out, /HELD {2}unloadable\n +BROKEN: could not load app\/lib\/broken\.ts: boom/);
+  assert.match(r.out, /FAILED: 5 facts held/);
+});
+
+test("an orphaned lock entry is a warning, not a hold", () => {
+  const dir = setup({ lib: LIB, facts: [fact("a", ["RATE"])], lock: { facts: { a: { RATE: 0.55 }, orphan: { RATE: 0.55 } } } });
+  const r = run(dir);
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /WARN {2}lock names orphan, which is no longer a fact with depends_on/);
+});
+
+test("checkFacts() reports holds per fact, for the publisher to refuse only the one it posts", async () => {
+  const dir = setup({ lib: LIB, facts: [], lock: { facts: { a: { RATE: 0.52 }, b: { RATE: 0.55 } } } });
+  const { checkFacts } = await import(new URL("../check-facts.mjs", import.meta.url));
+  const r = await checkFacts([fact("a", ["RATE"]), fact("b", ["RATE"])], { lock: JSON.parse(fs.readFileSync(path.join(dir, "lock.json"), "utf8")), libDir: path.join(dir, "lib") });
+  assert.deepEqual([...r.held.keys()], ["a"]);
+  assert.deepEqual(r.held.get("a"), ["RATE: was 0.52, now 0.55"]);
 });
 
 test("a fact citing HUD, the VA or a revenue procedure with no depends_on is a warning, not a failure", () => {

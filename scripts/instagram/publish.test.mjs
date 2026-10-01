@@ -439,6 +439,50 @@ test("a live run refuses when the caption changed after the preview, even with a
   assert.equal(writes().length, 0);
 });
 
+/** The committed lock, with one fact's snapshot of one constant set to a stale value. */
+function lockWithStale(id, name, stale) {
+  const lock = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-facts.lock.json"), "utf8"));
+  assert.ok(lock.facts[id] && name in lock.facts[id], `${id} depends on ${name}`);
+  lock.facts[id][name] = stale;
+  const file = path.join(fs.mkdtempSync(path.join(TMP, "lock-")), "lock.json");
+  fs.writeFileSync(file, JSON.stringify(lock));
+  return file;
+}
+
+test("a live run refuses the fact it is about to post when check:facts holds it", async () => {
+  reset();
+  const r = await run(["--live", "--fact-id", "pmi-midpoint"], { CHECK_FACTS_LOCK: lockWithStale("pmi-midpoint", "PMI_TERMINATION_LTV", 0.8) });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /pmi-midpoint is HELD by check:facts: PMI_TERMINATION_LTV: was 0\.8, now 0\.78/);
+  assert.match(r.out, /npm run check:facts -- --accept pmi-midpoint/);
+  assert.equal(writes().length, 0);
+});
+
+test("another fact being held does not stop this post: it is a warning in the log and the Summary", async () => {
+  reset();
+  const file = path.join(fs.mkdtempSync(path.join(TMP, "summary-")), "summary.md");
+  const r = await run(["--live"], { CHECK_FACTS_LOCK: lockWithStale("fha-nine-vs-ten", "FHA_MIP_DURATION_CLIFF_LTV", 95), GITHUB_STEP_SUMMARY: file });
+  assert.equal(r.code, 0, r.out);
+  assert.equal(writes().length, 2, "posted");
+  assert.match(r.out, /WARNING: fha-nine-vs-ten is HELD by check:facts \(not this post\): FHA_MIP_DURATION_CLIFF_LTV: was 95, now 90/);
+  assert.match(fs.readFileSync(file, "utf8"), /- \*\*Warning:\*\* fha-nine-vs-ten is HELD/);
+});
+
+test("--preview blocks on its own fact being held and lists other held facts as warnings", async () => {
+  reset();
+  const out = previewFile();
+  const lock = lockWithStale("pmi-midpoint", "PMI_TERMINATION_LTV", 0.8);
+  const lockData = JSON.parse(fs.readFileSync(lock, "utf8"));
+  lockData.facts["fha-nine-vs-ten"].FHA_MIP_DURATION_CLIFF_LTV = 95;
+  fs.writeFileSync(lock, JSON.stringify(lockData));
+  const r = await run(["--preview", "--preview-out", out, "--fact-id", "pmi-midpoint"], { CHECK_FACTS_LOCK: lock });
+  assert.equal(r.code, 0, r.out);
+  const p = JSON.parse(fs.readFileSync(out, "utf8"));
+  assert.ok(p.blockers.some((b) => /pmi-midpoint is HELD by check:facts/.test(b)), p.blockers.join("\n"));
+  assert.equal(p.warnings.length, 1);
+  assert.match(p.warnings[0], /fha-nine-vs-ten is HELD by check:facts \(not this post\)/);
+});
+
 test("no token: fails without calling anything", async () => {
   reset();
   const r = await run([], { IG_ACCESS_TOKEN: "" });

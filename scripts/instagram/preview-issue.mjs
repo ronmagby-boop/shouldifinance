@@ -4,9 +4,11 @@
  * stopped, before it goes out. Used by .github/workflows/instagram-preview.yml
  * and instagram-post.yml.
  *
- *   open --preview <file> [--post-date YYYY-MM-DD] [--check-facts <file> --check-facts-status pass|fail]
+ *   open --preview <file> [--post-date YYYY-MM-DD]
  *       open the issue for that post date, or refresh it if it is still open.
  *       A closed issue is left closed: closing it is how a post is skipped.
+ *       Blockers (this post would be refused) and warnings (other facts that
+ *       check:facts holds) both come from publish.mjs --preview.
  *   gate --post-date YYYY-MM-DD
  *       decide whether that date's post goes out, and with what. Writes
  *       decision=post|skip, reason, issue, expect_fact, expect_hash to
@@ -105,9 +107,8 @@ async function issuesFor(postDate) {
   return found;
 }
 
-function body({ post, blockers }, postDate, checkFacts) {
+function body({ post, blockers, warnings = [] }, postDate) {
   const blocked = [...blockers];
-  if (checkFacts.status === "fail") blocked.push("check:facts failed: a constant this or another fact depends on has changed. See the check output below.");
   const lines = [
     `<!-- ig-preview post=${postDate} fact=${post.id} hash=${post.hash ?? "none"} blocked=${blocked.length} -->`,
     blocked.length
@@ -121,7 +122,7 @@ function body({ post, blockers }, postDate, checkFacts) {
     `| Fact | \`${post.id}\`${post.n ? ` · schedule #${post.n}` : ""} · ${post.category} · ${post.layout} |`,
     `| Guide | https://shouldifinance.com/guides/${post.guide} |`,
     `| Reviewed | ${post.reviewed ? `${post.reviewed.date} (content hash \`${post.reviewed.hash}\`)` : "**not reviewed**"} |`,
-    `| check:facts | ${checkFacts.status ?? "not run"} |`,
+    `| check:facts | ${blocked.some((b) => b.includes("HELD by check:facts")) ? "**held**" : "not held"}${warnings.length ? `; ${warnings.length} other fact${warnings.length === 1 ? "" : "s"} held (warnings below)` : ""} |`,
     `| Image | ${post.image} (${post.imageCheck}) |`,
     `| Preview hash | \`${post.hash ?? "none"}\` |`,
     `| Quota | ${post.quota} |`,
@@ -135,7 +136,7 @@ function body({ post, blockers }, postDate, checkFacts) {
     fenced(post.alt),
   ];
   if (blocked.length) lines.push("", "### Blocked", "", ...blocked.map((b) => `- ${b}`));
-  if (checkFacts.output) lines.push("", "<details><summary>check:facts output</summary>", "", fenced(checkFacts.output.trim()), "", "</details>");
+  if (warnings.length) lines.push("", "### Warnings", "", "These do not stop this post. Each needs re-checking before it can post itself.", "", ...warnings.map((w) => `- ${w}`));
   lines.push(
     "",
     "---",
@@ -146,7 +147,7 @@ function body({ post, blockers }, postDate, checkFacts) {
 }
 
 async function open(argv) {
-  const opt = parse(argv, ["--preview", "--post-date", "--check-facts", "--check-facts-status"]);
+  const opt = parse(argv, ["--preview", "--post-date"]);
   if (!opt["--preview"]) fail("open needs --preview <file>");
   const preview = JSON.parse(fs.readFileSync(opt["--preview"], "utf8"));
   const postDate = opt["--post-date"] || nextPostDate();
@@ -154,10 +155,9 @@ async function open(argv) {
     console.log("Every scheduled fact is posted; no preview issue.");
     return;
   }
-  const checkFacts = { status: opt["--check-facts-status"] ?? null, output: opt["--check-facts"] ? fs.readFileSync(opt["--check-facts"], "utf8") : "" };
   await ensureLabel(PREVIEW_LABEL, "1d76db", "Weekly Instagram post preview");
   await ensureLabel(SKIP_LABEL, "e4e669", "Skip this Instagram post");
-  const { text, blocked } = body(preview, postDate, checkFacts);
+  const { text, blocked } = body(preview, postDate);
   const title = `Instagram post ${postDate}: ${preview.post.id}${blocked ? " (BLOCKED)" : ""}`;
   const existing = (await issuesFor(postDate)).filter((i) => i.fromBot);
   const closed = existing.find((i) => i.state === "closed");
@@ -182,6 +182,7 @@ async function open(argv) {
     }
   }
   summary(`Preview for ${postDate}: [#${issue.number}](${issue.html_url}) \`${preview.post.id}\`${blocked ? `, **blocked** (${blocked})` : ", will post unless closed or labelled skip"}.`);
+  for (const w of preview.warnings ?? []) summary(`- **Warning:** ${w}`);
 }
 
 async function gate(argv) {

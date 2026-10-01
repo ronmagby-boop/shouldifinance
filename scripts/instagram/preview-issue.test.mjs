@@ -81,7 +81,7 @@ function run(args, env = {}) {
     });
   });
 }
-function previewFile(overrides = {}, blockers = []) {
+function previewFile(overrides = {}, blockers = [], warnings = []) {
   const post = {
     id: "rule-of-72", n: 12, category: "Money", layout: "big-number", guide: "how-compound-interest-works",
     card: "Divide 72 by your rate…", caption: "At 3%, about 24 years.\n\nSource: x\n\nFull guide: link in bio\nhttps://shouldifinance.com/guides/how-compound-interest-works",
@@ -90,7 +90,7 @@ function previewFile(overrides = {}, blockers = []) {
     ...overrides,
   };
   const file = path.join(TMP, `preview-${Math.random().toString(36).slice(2)}.json`);
-  fs.writeFileSync(file, JSON.stringify({ post, blockers }));
+  fs.writeFileSync(file, JSON.stringify({ post, blockers, warnings }));
   return file;
 }
 const DATE = "2026-10-06";
@@ -103,7 +103,7 @@ test("the post date is the next Tuesday after the preview", () => {
 
 test("open creates the labels and one issue, with the caption, alt text, image and marker, assigned", async () => {
   reset();
-  const r = await run(["open", "--preview", previewFile(), "--post-date", DATE, "--check-facts-status", "pass"], { PREVIEW_ASSIGNEE: "owner" });
+  const r = await run(["open", "--preview", previewFile(), "--post-date", DATE], { PREVIEW_ASSIGNEE: "owner" });
   assert.equal(r.code, 0, r.out);
   assert.deepEqual(labels.map((l) => l.name).sort(), ["instagram-preview", "skip"]);
   assert.equal(issues.length, 1);
@@ -136,15 +136,26 @@ test("open leaves a closed issue closed: closing is how a post is skipped", asyn
   assert.match(issues[0].body, /hash=0123456789abcdef/);
 });
 
-test("a blocked preview, or a failed check:facts, says so in the title and body", async () => {
+test("a blocked preview says so in the title and body", async () => {
   reset();
-  const r = await run(["open", "--preview", previewFile({ reviewed: null }, ["rule-of-72 has not been reviewed."]), "--post-date", DATE, "--check-facts-status", "fail"]);
+  const r = await run(["open", "--preview", previewFile({ reviewed: null }, ["rule-of-72 has not been reviewed.", "rule-of-72 is HELD by check:facts: X: was 1, now 2."]), "--post-date", DATE]);
   assert.equal(r.code, 0, r.out);
   assert.equal(issues[0].title, `Instagram post ${DATE}: rule-of-72 (BLOCKED)`);
   assert.match(issues[0].body, /blocked=2 -->/);
   assert.match(issues[0].body, /\*\*Blocked: this will not post/);
   assert.match(issues[0].body, /- rule-of-72 has not been reviewed\./);
-  assert.match(issues[0].body, /- check:facts failed/);
+  assert.match(issues[0].body, /\| check:facts \| \*\*held\*\* \|/);
+});
+
+test("other held facts are warnings in the issue: listed, but the post is not blocked", async () => {
+  reset();
+  const r = await run(["open", "--preview", previewFile({}, [], ["fha-nine-vs-ten is HELD by check:facts (not this post): X: was 1, now 2"]), "--post-date", DATE]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(issues[0].title, `Instagram post ${DATE}: rule-of-72`);
+  assert.match(issues[0].body, /blocked=0 -->/);
+  assert.match(issues[0].body, /\| check:facts \| not held; 1 other fact held \(warnings below\) \|/);
+  assert.match(issues[0].body, /### Warnings\n\nThese do not stop this post\..*\n\n- fha-nine-vs-ten is HELD/);
+  assert.equal((await run(["gate", "--post-date", DATE])).outputs.decision, "post");
 });
 
 test("gate posts an open, unlabelled preview, pinned to its fact and hash", async () => {

@@ -27,6 +27,10 @@
  * card_source has changed since, a dry run and a live run both stop with the
  * reason. The next fact is not skipped to: the schedule order holds.
  *
+ * CHECK:FACTS: the fact to post is refused if check:facts holds it (one of
+ * its depends_on constants changed since it was checked). Other held facts
+ * do not stop this post; they are listed as warnings.
+ *
  * A DRY RUN does everything that only reads: reads and matches the media,
  * picks the fact, builds the caption and alt text, checks they are within
  * Meta's limits, checks the image URL is live, checks the publishing quota.
@@ -48,6 +52,7 @@ import { createGraph, VERSION } from "./graph.mjs";
 import { buildAltText, buildCaption, captionProblems, imageUrl } from "./caption.mjs";
 import { matchMedia, nextScheduled } from "./match.mjs";
 import { reviewProblem } from "./review.mjs";
+import { checkFacts } from "../check-facts.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS || 60_000);
@@ -126,13 +131,14 @@ const fenced = (text) => {
 // In a preview, every reason the post would be refused is collected and
 // reported together; anywhere else the first one stops the run.
 const blockers = [];
+const warnings = [];
 function block(message) {
   if (!args.preview) fail(message);
   blockers.push(message);
   say(`  BLOCKED: ${message}`);
 }
 function writePreview(post) {
-  const out = { generated: new Date().toISOString(), post, blockers: blockers.map((b) => graph.scrub(b)) };
+  const out = { generated: new Date().toISOString(), post, blockers: blockers.map((b) => graph.scrub(b)), warnings: warnings.map((w) => graph.scrub(w)) };
   fs.writeFileSync(args.previewOut, graph.scrub(JSON.stringify(out, null, 2)) + "\n");
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -208,6 +214,23 @@ async function main() {
   else {
     say(`  reviewed: ${fact.reviewed.date}, content unchanged since (hash ${fact.reviewed.hash})`);
     note(`- Reviewed: ${fact.reviewed.date}, content unchanged since (hash \`${fact.reviewed.hash}\`)`);
+  }
+
+  // Only this fact being held stops this post; others are warnings.
+  const factCheck = await checkFacts(facts);
+  const heldHere = factCheck.held.get(fact.id);
+  if (heldHere) {
+    block(`${fact.id} is HELD by check:facts: ${heldHere.join("; ")}. Re-check it against the new values, fix its text if needed, then: npm run check:facts -- --accept ${fact.id}. Nothing was posted.`);
+  } else {
+    say(`  check:facts: ${fact.depends_on?.length ? `not held (${fact.depends_on.join(", ")} unchanged)` : "no depends_on"}`);
+    note(`- check:facts: ${fact.depends_on?.length ? "not held" : "no depends_on"}`);
+  }
+  for (const [id, why] of factCheck.held) {
+    if (id === fact.id) continue;
+    const w = `${id} is HELD by check:facts (not this post): ${why.join("; ")}`;
+    warnings.push(w);
+    say(`  WARNING: ${w}`);
+    note(`- **Warning:** ${w}`);
   }
 
   // ------------------------------------------------- caption, alt, image

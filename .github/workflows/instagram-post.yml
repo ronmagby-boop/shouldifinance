@@ -3,8 +3,9 @@
 #
 # What is already posted is read from the account's own media and matched to
 # content/instagram-schedule.json; there is no state file and this workflow
-# commits nothing. Every run requires check:facts to pass, and the publisher
-# refuses any fact without a current review sign-off.
+# commits nothing. The publisher refuses the fact it is about to post if it
+# has no current review sign-off, or if check:facts holds it (a constant it
+# depends on changed); other held facts are listed as warnings.
 #
 # A scheduled run (and a manual run with as_scheduled) posts only what this
 # week's preview issue showed (instagram-preview.yml): it skips if there is no
@@ -56,10 +57,13 @@ jobs:
     timeout-minutes: 15
     env:
       IG_USER_ID: "17841452798031447"
+      # The publisher imports app/lib/*.ts for check:facts; this quiets Node's
+      # note that those files have no package type.
+      NODE_OPTIONS: --disable-warning=MODULE_TYPELESS_PACKAGE_JSON
     steps:
       - uses: actions/checkout@v7
 
-      # Node 24 for check:facts, which imports app/lib/*.ts directly.
+      # Node 24: the publisher's check:facts imports app/lib/*.ts directly.
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
@@ -73,11 +77,6 @@ jobs:
         run: |
           if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
           if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
-
-      # Required: a fact whose constants changed under it is held, and so is
-      # every post until it is re-checked.
-      - name: Check facts against app/lib
-        run: npm run check:facts
 
       - name: Preview issue gate
         id: gate

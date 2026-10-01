@@ -35,10 +35,13 @@ jobs:
     timeout-minutes: 10
     env:
       IG_USER_ID: "17841452798031447"
+      # The publisher imports app/lib/*.ts for check:facts; this quiets Node's
+      # note that those files have no package type.
+      NODE_OPTIONS: --disable-warning=MODULE_TYPELESS_PACKAGE_JSON
     steps:
       - uses: actions/checkout@v7
 
-      # Node 24 for check:facts, which imports app/lib/*.ts directly.
+      # Node 24: the publisher's check:facts imports app/lib/*.ts directly.
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
@@ -51,17 +54,8 @@ jobs:
           if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
           if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
 
-      # A failure here does not stop the preview: it is shown on the issue as a
-      # blocker, days before the post job would refuse for the same reason.
-      - name: Check facts against app/lib
-        id: facts
-        run: |
-          set +e
-          npm run --silent check:facts > check-facts.txt 2>&1
-          code=$?
-          cat check-facts.txt
-          if [ "$code" -eq 0 ]; then echo "status=pass" >> "$GITHUB_OUTPUT"; else echo "status=fail" >> "$GITHUB_OUTPUT"; fi
-
+      # Blockers (unreviewed, this fact held by check:facts, limits, image,
+      # quota) and warnings (other held facts) all come out of this step.
       - name: Build the preview (reads the account, posts nothing)
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
@@ -72,10 +66,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           POST_DATE: ${{ inputs.post_date }}
-          CHECK_FACTS_STATUS: ${{ steps.facts.outputs.status }}
           PREVIEW_ASSIGNEE: ${{ github.repository_owner }}
         run: |
           set --
           if [ -n "$POST_DATE" ]; then set -- --post-date "$POST_DATE"; fi
-          node scripts/instagram/preview-issue.mjs open --preview preview.json \
-            --check-facts check-facts.txt --check-facts-status "$CHECK_FACTS_STATUS" "$@"
+          node scripts/instagram/preview-issue.mjs open --preview preview.json "$@"
