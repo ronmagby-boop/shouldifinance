@@ -44,7 +44,10 @@
       "depends_on": [
         "PMI_TERMINATION_LTV"
       ],
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "bf8da083bfd59c54"
+      }
     },
     {
       "id": "pmi-80-78-gap",
@@ -98,7 +101,10 @@
       "hero_context": "interest saved by $200 a month extra from year one",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "7157b6394a55d11f"
+      }
     },
     {
       "id": "principal-beats-interest-233",
@@ -568,7 +574,10 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "f78a1def6b55d89a"
+      }
     },
     {
       "id": "unamortized-points",
@@ -867,7 +876,10 @@
       "myth": "It is easy to assume HELOC interest is always tax-deductible.",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "ec7d21ecdad91128"
+      }
     },
     {
       "id": "origination-fee-from-proceeds",
@@ -932,7 +944,10 @@
       "layout": "statement",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "b0cb81aff8647e32"
+      }
     },
     {
       "id": "grace-period-gone",
@@ -944,7 +959,10 @@
       "layout": "statement",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "71aa88e0f4d5dd54"
+      }
     },
     {
       "id": "promo-rate-six-months",
@@ -1105,7 +1123,10 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "e55aa975b1aab74f"
+      }
     },
     {
       "id": "year-one-beats-four-and-five",
@@ -1192,7 +1213,10 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "85dd7f3dc7d07805"
+      }
     },
     {
       "id": "lease-negative-equity",
@@ -1761,7 +1785,10 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "b2884e99f10e713c"
+      }
     },
     {
       "id": "gain-stacks",
@@ -1905,7 +1932,10 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-01",
+        "hash": "87dcb797506a0901"
+      }
     },
     {
       "id": "mandatory-twenty-percent",
