@@ -46,7 +46,7 @@ Same loan, same $200 a month — but started at month 181 instead of month 1:
 - You save roughly **$21,475**
 - The loan clears **21 months early**
 
-The identical habit, begun at year 15 instead of year 1, is worth about a fifth
+The identical habit, begun at year 16 instead of year 1, is worth about a fifth
 as much. The difference between the two is **$90,417**, and the only variable is
 when you started.
 
