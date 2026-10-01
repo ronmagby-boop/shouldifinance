@@ -76,10 +76,12 @@ only the portion allocable to that improvement qualifies for the full-year
 deduction.
 
 > The practical consequence: a point on a refinance is worth less than the same
-> point on a purchase, because the deduction arrives in thirtieths instead of
-> all at once. And if you refinance again before the term is up, the unamortized
-> remainder generally becomes deductible in that year — which is one of the few
-> places where refinancing again actually helps.
+> point on a purchase, because on a 30-year loan the deduction arrives in
+> thirtieths instead of all at once. And if you refinance again with a different
+> lender before the term is up, the unamortized remainder generally becomes
+> deductible in that year — which is one of the few places where refinancing
+> again actually helps. Refinance with the same lender and it is spread over the
+> new loan instead.
 
 Worth remembering too that none of this is worth anything unless you itemize,
 and most households take the standard deduction. For {{TAX_YEAR}} that is
