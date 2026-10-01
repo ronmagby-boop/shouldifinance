@@ -25,7 +25,7 @@ Add $1,000 a month to principal:
 
 - Interest drops to about **$141,471**
 - You save roughly **$241,162**
-- The loan clears in **153 months** instead of 360 — twelve and a half years
+- The loan clears in **153 months** instead of 360 — about seventeen years
   early
 
 The return on that $1,000 is exactly 6.5%, guaranteed, with no variance. Not
