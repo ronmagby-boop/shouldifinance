@@ -21,7 +21,7 @@ insurance rates:
 | Down payment | Loan | LTV | PMI rate | PMI/month | P&I |
 |---|---|---|---|---|---|
 | 5% | $380,000 | 95% | 0.78% | $247 | $2,402 |
-| 10% | $360,000 | 90% | 0.52% | $156 | $2,275 |
+| 10% | $360,000 | 90% | 0.55% | $165 | $2,275 |
 | 20% | $320,000 | 80% | none | $0 | $2,023 |
 
 So 5% down costs $247 a month in insurance that buys you nothing. But note the
