@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "check:guides": "node scripts/check-guides.mjs",
-    "cards": "node scripts/instagram/render-cards.mjs"
+    "cards": "node scripts/instagram/render-cards.mjs",
+    "cards:public": "node scripts/instagram/sync-public.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
