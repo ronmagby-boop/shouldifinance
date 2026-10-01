@@ -1,12 +1,23 @@
 # Publishes the next scheduled Instagram card, or with dry_run (the default)
-# shows what it would publish. Manual only for now: there is no schedule.
+# shows what it would publish.
 #
 # What is already posted is read from the account's own media and matched to
 # content/instagram-schedule.json; there is no state file and this workflow
-# commits nothing.
+# commits nothing. Every run requires check:facts to pass, and the publisher
+# refuses any fact without a current review sign-off.
+#
+# A scheduled run (and a manual run with as_scheduled) posts only what this
+# week's preview issue showed (instagram-preview.yml): it skips if there is no
+# issue for today, or it is closed or labelled "skip", and refuses if the post
+# no longer matches the preview.
+#
+# Manual only for now. To turn weekly posting on, uncomment the schedule:
+# Tuesday 15:00 UTC.
 name: Instagram post
 
 on:
+  # schedule:
+  #   - cron: "0 15 * * 2"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -19,9 +30,20 @@ on:
         type: string
         required: false
         default: ""
+      as_scheduled:
+        description: "Behave like the scheduled run: post only what the preview issue for post_date shows"
+        type: boolean
+        required: false
+        default: false
+      post_date:
+        description: "With as_scheduled: the preview issue's post date (YYYY-MM-DD). Default: today (UTC)."
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
+  issues: write
 
 # Never two publishing runs at once, so the next fact cannot be posted twice.
 concurrency:
@@ -37,9 +59,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Node 24 for check:facts, which imports app/lib/*.ts directly.
       - uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: "24"
 
       # GitHub already masks secrets; this registers them explicitly too. The
       # values come from env and are never interpolated into the command.
@@ -51,14 +74,49 @@ jobs:
           if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
           if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
 
+      # Required: a fact whose constants changed under it is held, and so is
+      # every post until it is re-checked.
+      - name: Check facts against app/lib
+        run: npm run check:facts
+
+      - name: Preview issue gate
+        id: gate
+        if: github.event_name == 'schedule' || inputs.as_scheduled
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_DATE: ${{ inputs.post_date }}
+        run: node scripts/instagram/preview-issue.mjs gate --post-date "${POST_DATE:-$(date -u +%F)}"
+
       - name: Publish (or dry run)
+        id: publish
+        if: steps.gate.outcome == 'skipped' || steps.gate.outputs.decision == 'post'
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || inputs.dry_run }}
           FACT_ID: ${{ inputs.fact_id }}
+          EXPECT_FACT: ${{ steps.gate.outputs.expect_fact }}
+          EXPECT_HASH: ${{ steps.gate.outputs.expect_hash }}
         run: |
           set --
           if [ "$DRY_RUN" = "false" ]; then set -- --live; else set -- --dry-run; fi
           if [ -n "$FACT_ID" ]; then set -- "$@" --fact-id "$FACT_ID"; fi
+          if [ -n "$EXPECT_FACT" ]; then set -- "$@" --expect-fact "$EXPECT_FACT" --expect-hash "$EXPECT_HASH"; fi
           node scripts/instagram/publish.mjs "$@"
+
+      - name: Close the preview issue
+        if: steps.gate.outputs.issue != '' && steps.publish.outputs.media_id != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          PERMALINK: ${{ steps.publish.outputs.permalink }}
+          MEDIA_ID: ${{ steps.publish.outputs.media_id }}
+        run: node scripts/instagram/preview-issue.mjs done --issue "$ISSUE" --permalink "$PERMALINK" --media-id "$MEDIA_ID"
+
+      - name: Say on the preview issue that the post was refused
+        if: failure() && steps.gate.outputs.issue != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/instagram/preview-issue.mjs refused --issue "$ISSUE" --run-url "$RUN_URL"

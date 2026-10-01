@@ -1,0 +1,81 @@
+# Opens (or refreshes) the GitHub issue that previews next Tuesday's
+# Instagram post: the card, caption, alt text, review status and check:facts.
+# The post goes out unless that issue is closed or labelled "skip"
+# (instagram-post.yml). Reads the account to know what is already posted;
+# never posts.
+#
+# Manual only for now. To turn the weekly preview on, uncomment the schedule:
+# Friday 15:00 UTC, previewing the post four days later, Tuesday 15:00 UTC.
+name: Instagram preview
+
+on:
+  # schedule:
+  #   - cron: "0 15 * * 5"
+  workflow_dispatch:
+    inputs:
+      post_date:
+        description: "Post date this preview is for (YYYY-MM-DD). Default: the next Tuesday."
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+# Shares the post workflow's group, so a preview never reads the account while
+# a post is going out.
+concurrency:
+  group: instagram-post
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      IG_USER_ID: "17841452798031447"
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node 24 for check:facts, which imports app/lib/*.ts directly.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Mask credentials
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+        run: |
+          if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
+          if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
+
+      # A failure here does not stop the preview: it is shown on the issue as a
+      # blocker, days before the post job would refuse for the same reason.
+      - name: Check facts against app/lib
+        id: facts
+        run: |
+          set +e
+          npm run --silent check:facts > check-facts.txt 2>&1
+          code=$?
+          cat check-facts.txt
+          if [ "$code" -eq 0 ]; then echo "status=pass" >> "$GITHUB_OUTPUT"; else echo "status=fail" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Build the preview (reads the account, posts nothing)
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+        run: node scripts/instagram/publish.mjs --preview --preview-out preview.json
+
+      - name: Open or refresh the preview issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_DATE: ${{ inputs.post_date }}
+          CHECK_FACTS_STATUS: ${{ steps.facts.outputs.status }}
+          PREVIEW_ASSIGNEE: ${{ github.repository_owner }}
+        run: |
+          set --
+          if [ -n "$POST_DATE" ]; then set -- --post-date "$POST_DATE"; fi
+          node scripts/instagram/preview-issue.mjs open --preview preview.json \
+            --check-facts check-facts.txt --check-facts-status "$CHECK_FACTS_STATUS" "$@"
