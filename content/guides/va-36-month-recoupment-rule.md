@@ -5,7 +5,7 @@ description: "The VA requires a streamline refinance to repay its own closing co
 calculator: va-recoup
 category: Home
 published: 2026-09-23
-reviewed: 2026-09-23
+reviewed: 2026-10-01
 ---
 
 If a lender has offered you a VA streamline refinance — an IRRRL — there is a
@@ -104,8 +104,9 @@ always.
 
 > Two numbers, two jobs. The recoupment figure says whether the loan may close.
 > It does not say what the refinance cost you. Add the funding fee back in and
-> divide again for that — a $3,000 fee against a $140 saving is 21 extra months.
-> The VA test says 30 and passes; your own money says 51.
+> divide again for that. On a $600,000 loan the 0.5% IRRRL funding fee is
+> $3,000, and $3,000 against a $140 saving is 21 extra months. The VA test says
+> 30 and passes; your own money says 51.
 
 Both figures sit side by side on the
 [VA recoupment calculator](/calculators/va-recoup).
@@ -149,6 +150,8 @@ subsection (c) for both seasoning conditions. The included and excluded fee
 lists, and the treatment of lender credits, from VA Circular 26-19-22 and its
 Exhibit B. Loan Estimate box lettering from [Regulation Z §
 1026.37](https://www.consumerfinance.gov/rules-policy/regulations/1026/37/),
-paragraphs (f) and (g). Funding fee figures from [VA
-funding fee and closing
-costs](https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/).
+paragraphs (f) and (g). The 0.5% IRRRL funding fee from [38 U.S.C.
+§ 3729](https://www.law.cornell.edu/uscode/text/38/3729), subsection (b)(2),
+row (E), which [VA's funding fee and closing
+costs](https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/)
+chart also states.
