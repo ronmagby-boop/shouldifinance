@@ -48,6 +48,7 @@
  * controlled rather than whatever a screenshot produces. Chrome is found from
  * CHROME_PATH, or the installed Chrome channel.
  */
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -86,6 +87,7 @@ if (MYTH_FONT >= CARD_FONT_MIN) throw new Error("MYTH_FONT must be smaller than 
 /** Fixed. At least 32px, so it reads at phone width (about 12px on a 390px screen). */
 const SOURCE_FONT = 32;
 const JPEG_QUALITY = 90;
+const JPEG_OPTIONS = { quality: JPEG_QUALITY, progressive: false, chromaSubsampling: "4:4:4", mozjpeg: false };
 
 /** From public/og-image.png, sampled rather than guessed. */
 const BRAND = {
@@ -171,7 +173,7 @@ const read = (p) => fs.readFileSync(p, "utf8").replace(/\r\n/g, "\n");
  * background, the CARD_TINT_SHADE of the same colour family, as a hex so its
  * contrast can be measured.
  */
-function categoryColours() {
+export function categoryColours() {
   const src = read(path.join(ROOT, "app", "lib", "calculators.ts"));
   const theme = read(path.join(ROOT, "node_modules", "tailwindcss", "theme.css"));
   const colour = (name) => {
@@ -324,7 +326,7 @@ function fitInPage({ fact, colours, sizes }) {
     return el;
   };
 
-  let heroSize = null, heroOverflow = false, context = null;
+  let heroSize = null, heroOverflow = false;
   if (fact.layout === "big-number") {
     fit.classList.add("big");
     const hero = make("hero", fact.hero);
@@ -334,7 +336,7 @@ function fitInPage({ fact, colours, sizes }) {
     }
     heroOverflow = paintedWidth(hero) > contentWidth;
     if (heroOverflow) heroSize = sizes.heroMin;
-    context = make("context", fact.hero_context);
+    make("context", fact.hero_context);
   }
   if (fact.layout === "myth-fact") {
     make("label", "Assumption");
@@ -357,9 +359,26 @@ function fitInPage({ fact, colours, sizes }) {
 
   const lines = Math.round(text.scrollHeight / parseFloat(getComputedStyle(text).lineHeight));
 
-  // How a short line wraps, from where each word is painted: the number of
-  // lines, and how many words sit on the last one. One word alone on the last
-  // line of a context or source line is a widow, and fails the run.
+  const pageOverflow =
+    document.documentElement.scrollHeight > window.innerHeight ||
+    document.documentElement.scrollWidth > window.innerWidth;
+
+  return {
+    cardSize, heroSize, heroOverflow, cardOverflow, lines, sourceWidth, contentWidth, sourceOverflow, pageOverflow,
+    boxHeight: fit.clientHeight, textHeight: fit.scrollHeight,
+  };
+}
+
+
+/**
+ * Runs in the page after fitInPage. How each block of text wraps, from where
+ * each word is painted: the number of lines, and how many words sit on the
+ * last one. One word alone on the last line of the card text, the context
+ * line or the source line fails the run. Kept apart from fitInPage, which
+ * decides how the card looks, so changing a check here is not a design change
+ * (designHash).
+ */
+function wrapsInPage() {
   const wrap = (el) => {
     const node = el?.firstChild;
     if (!node) return null;
@@ -372,18 +391,48 @@ function fitInPage({ fact, colours, sizes }) {
     const last = Math.max(...tops);
     return { lines: new Set(tops).size, lastLineWords: tops.filter((t) => Math.abs(t - last) <= 2).length };
   };
-  const contextWrap = wrap(context);
-  const sourceWrap = wrap(source);
-  const pageOverflow =
-    document.documentElement.scrollHeight > window.innerHeight ||
-    document.documentElement.scrollWidth > window.innerWidth;
-
   return {
-    cardSize, heroSize, heroOverflow, cardOverflow, lines, sourceWidth, contentWidth, sourceOverflow, pageOverflow, contextWrap, sourceWrap,
-    boxHeight: fit.clientHeight, textHeight: fit.scrollHeight,
+    text: wrap(document.querySelector("#fit .text")),
+    context: wrap(document.querySelector("#fit .context")),
+    source: wrap(document.getElementById("source")),
   };
 }
 
+// --------------------------------------------------------------- input hash
+
+/**
+ * Every value the look of a card depends on beyond the fact itself. page()
+ * and fitInPage() are hashed as source, and the constants they read as
+ * values; the font and wordmark files as bytes. A test checks that every
+ * constant page() interpolates is listed here.
+ */
+export const DESIGN_CONSTANTS = {
+  WIDTH, HEIGHT, CARD_FONT_MAX, CARD_FONT_MIN, HERO_FONT_MAX, HERO_FONT_MIN, BIG_TEXT_FONT_MAX, BIG_TEXT_FONT_MIN,
+  HERO_CONTEXT_FONT, MYTH_FONT, LABEL_FONT, SOURCE_FONT, PAD, BRAND, JPEG_OPTIONS,
+};
+const DESIGN_FILES = [path.join(FONTS, "Geist-Medium.woff2"), path.join(FONTS, "Geist-Bold.woff2"), path.join(ROOT, "public", "logo-wide.png")];
+const sha = (x) => crypto.createHash("sha256").update(x).digest("hex");
+
+/** One hash for everything every card shares: template, fitting, constants, fonts, wordmark. */
+export function designHash() {
+  return sha(JSON.stringify([page.toString(), fitInPage.toString(), DESIGN_CONSTANTS, DESIGN_FILES.map((f) => sha(fs.readFileSync(f)))]));
+}
+
+/** The fields of a fact that reach the image. */
+export const IMAGE_FIELDS = ["layout", "category", "card", "hero", "hero_context", "myth", "card_source"];
+
+/**
+ * What one card's image is rendered from: its visible fields, its category's
+ * resolved colours, and the design. Two renders with the same input hash are
+ * the same card, whatever their bytes; cards:public copies on a change of
+ * this, not of the bytes.
+ */
+export function inputHash(fact, colours = categoryColours(), design = designHash()) {
+  const fields = Object.fromEntries(IMAGE_FIELDS.map((k) => [k, fact[k] ?? null]));
+  return sha(JSON.stringify([design, fields, colours[fact.category] ?? null])).slice(0, 16);
+}
+
+export const RENDERED_HASHES = path.join(ROOT, ".instagram-cards", "input-hashes.json");
 
 // ------------------------------------------------------------------- render
 
@@ -568,6 +617,7 @@ async function main() {
   const chosen = selected;
 
   const colours = categoryColours();
+  const design = designHash();
   const fonts = {
     medium: dataUrl(path.join(FONTS, "Geist-Medium.woff2"), "font/woff2"),
     bold: dataUrl(path.join(FONTS, "Geist-Bold.woff2"), "font/woff2"),
@@ -591,16 +641,18 @@ async function main() {
           bigMax: BIG_TEXT_FONT_MAX, bigMin: BIG_TEXT_FONT_MIN,
         },
       });
+      const wraps = await tab.evaluate(wrapsInPage);
       const png = await tab.screenshot({ type: "png", clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT } });
       const file = path.join(args.out, `${fact.id}.jpg`);
       await sharp(png)
         .toColorspace("srgb")
-        .jpeg({ quality: JPEG_QUALITY, progressive: false, chromaSubsampling: "4:4:4", mozjpeg: false })
+        .jpeg(JPEG_OPTIONS)
         .withIccProfile("srgb")
         .toFile(file);
       const safe = await measureSafeArea(file, colours[fact.category].card);
       rows.push({
-        id: fact.id, category: fact.category, layout: fact.layout, card_source: fact.card_source, hero_context: fact.hero_context, path: file,
+        id: fact.id, category: fact.category, layout: fact.layout, card: fact.card, card_source: fact.card_source, hero_context: fact.hero_context, path: file,
+        inputHash: inputHash(fact, colours, design), textWrap: wraps.text, contextWrap: wraps.context, sourceWrap: wraps.source,
         words: fact.card.split(/\s+/).filter(Boolean).length,
         ...fitted, ...(await verify(file)), ...safe,
         safeFail: Math.min(safe.marginLeft, safe.marginRight, safe.marginTop, safe.marginBottom) < SAFE_MARGIN,
@@ -608,6 +660,13 @@ async function main() {
     }
   } finally {
     await browser.close();
+  }
+  // What each card on disk in the default output was rendered from, for
+  // cards:public. Merged, so rendering one card keeps the others' entries.
+  if (path.resolve(args.out) === path.dirname(RENDERED_HASHES)) {
+    const known = fs.existsSync(RENDERED_HASHES) ? JSON.parse(fs.readFileSync(RENDERED_HASHES, "utf8")) : {};
+    for (const r of rows) known[r.id] = r.inputHash;
+    fs.writeFileSync(RENDERED_HASHES, JSON.stringify(Object.fromEntries(Object.keys(known).sort().map((k) => [k, known[k]])), null, 2) + "\n");
   }
 
   const failures = rows.filter(
@@ -696,10 +755,11 @@ async function main() {
   for (const r of sourceOver) console.log(`  ${r.id} — ${r.sourceWidth}px of ${r.contentWidth}px — "${r.card_source}"`);
   const widow = (w) => w && w.lines > 1 && w.lastLineWords === 1;
   const widows = rows.flatMap((r) => [
+    ...(widow(r.textWrap) ? [`${r.id} — card text wraps to ${r.textWrap.lines} lines with one word on the last: "${r.card}"`] : []),
     ...(widow(r.contextWrap) ? [`${r.id} — hero_context wraps to ${r.contextWrap.lines} lines with one word on the last: "${r.hero_context}"`] : []),
     ...(widow(r.sourceWrap) ? [`${r.id} — card_source wraps to ${r.sourceWrap.lines} lines with one word on the last: "${r.card_source}"`] : []),
   ]);
-  console.log(`hero_context or card_source lines ending on a single word: ${widows.length}`);
+  console.log(`card text, hero_context or card_source ending on a single word: ${widows.length}`);
   for (const w of widows) console.log(`  ${w}`);
   if (failures.length || safeFails.length || widows.length) {
     if (failures.length) {
@@ -710,7 +770,9 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
