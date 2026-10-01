@@ -47,6 +47,20 @@ export const VA_FUNDING_FEE_PURCHASE: readonly {
 ];
 
 /**
+ * Interest rate reduction refinancing loan (IRRRL, the VA streamline), as a
+ * percent of the loan amount. 0.50, from § 3729(b)(2) row (E), and VA's chart
+ * prices it at "0.5%" too.
+ *
+ * NOT DATED LIKE THE PURCHASE TABLE. Row (E) is a single row with no "closed on
+ * or after" range, so the April 2023 to June 2034 window above does not apply
+ * to it and VA_FUNDING_FEE_UNTIL is not its expiry. It changes only when the
+ * statute is amended. First and subsequent use do not matter either:
+ * § 3729(b)(4)(E) defines a "subsequent loan" as one "other than an interest
+ * rate reduction refinancing loan".
+ */
+export const VA_FUNDING_FEE_IRRRL = 0.5;
+
+/**
  * The tier a down payment lands in. The fallback to the lowest tier only
  * matters for a percentage that is not a number or is negative; the old
  * if-chain landed there too.

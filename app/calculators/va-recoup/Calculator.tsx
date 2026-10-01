@@ -7,6 +7,7 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, LineChart, BarChart, COLORS } from "../../components/Charts";
 import { payment } from "../../lib/finance";
+import { VA_FUNDING_FEE_IRRRL } from "../../lib/va";
 
 const VA_LIMIT = 36; // months — the statutory recoupment ceiling for an IRRRL
 
@@ -69,7 +70,7 @@ export default function Calculator() {
     setLoanCosts(4200);
     setRecordingFees(250);
     setLenderCredits(950);
-    setFundingFeePct(0.5);
+    setFundingFeePct(VA_FUNDING_FEE_IRRRL);
     setFfExempt(false);
     setEscrow(0);
     setFinanceCosts(true);
@@ -249,11 +250,11 @@ export default function Calculator() {
               label="VA funding fee"
               value={fundingFeePct}
               onChange={setFundingFeePct}
-              placeholder="0.5"
+              placeholder={String(VA_FUNDING_FEE_IRRRL)}
               suffix="%"
               step={0.05}
               disabled={ffExempt}
-              hint={ffExempt ? "Exempt — no fee on this loan." : "0.5% for most IRRRLs. Never recouped."}
+              hint={ffExempt ? "Exempt — no fee on this loan." : `${VA_FUNDING_FEE_IRRRL}% for most IRRRLs. Never recouped.`}
             />
             <Toggle checked={ffExempt} onChange={setFfExempt}>
               Exempt from the funding fee — receiving or eligible for VA disability compensation,
