@@ -5,7 +5,7 @@ description: "The price gap is not the saving. The saving is the depreciation so
 calculator: new-vs-used-car
 category: Auto
 published: 2026-05-11
-reviewed: 2026-05-11
+reviewed: 2026-10-01
 ---
 
 The case for used is usually made as a price comparison: $42,000 against
@@ -40,9 +40,10 @@ three points, because the collateral is worth less, harder to value and more
 variable. On a $27,000 loan at 9.4% against a $42,000 loan at 6.9%, some of the
 depreciation saving goes straight back out as interest.
 
-**Manufacturer promotional financing is new-car only.** A 0.9% or 2.9%
-promotional rate never appears on a used car. When those are available the rate
-gap widens considerably.
+**Manufacturer promotional rates like 0.9% are a new-car incentive.** Certified
+pre-owned programs can carry their own subsidized rates; ordinary used-car loans
+do not. When a new-car promotion is available, the gap against an ordinary used
+loan widens considerably.
 
 **Repairs are higher and warranty is shorter.** A three-year-old car is out of, or
 nearly out of, its factory warranty. Budget a real annual figure for this — not
@@ -77,7 +78,9 @@ survives the rate and the repairs.
 
 **New has a real case when:**
 
-- Promotional financing is available at a rate no used loan will match
+- Promotional financing is available at a rate no ordinary used-car loan will
+  match — though check certified pre-owned offers, which can carry subsidized
+  rates of their own
 - You keep cars for a decade or more, where the first-year hit is spread thin
 - The specific model holds value unusually well
 - Warranty coverage genuinely matters to your situation — a long commute, no
@@ -104,4 +107,9 @@ flip it.
 Sources: five-year market depreciation from iSeeCars, March 2026, read from the
 same constants the calculators use. Curve figures computed with this site's own
 model, at 20% first-year and 12% subsequent for the new car and 6% then 12% for
-the three-year-old car — the calculator's own example.
+the three-year-old car — the calculator's own example. Certified pre-owned
+subsidized rates from 2026 dealer listings of manufacturer programs: [Toyota
+GOLD Certified through Toyota Financial
+Services](https://www.toyotapaloalto.com/low-apr-financing-toyota-certified-vehicles.htm)
+and [HondaTrue Certified through Honda Financial
+Services](https://www.autoparkhonda.com/cpo-specials.htm).
