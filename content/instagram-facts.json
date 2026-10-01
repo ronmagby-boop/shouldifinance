@@ -14,7 +14,8 @@
     "layout": "Evergreen facts only. How the card is laid out: statement, big-number or myth-fact.",
     "hero": "big-number only. The figure shown large; must appear exactly once, verbatim, in card.",
     "hero_context": "big-number only, required. One short line saying what the hero figure measures.",
-    "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact."
+    "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact.",
+    "reviewed": "Required to publish. The date (YYYY-MM-DD) a person last checked this fact's card, caption and alt text against the guide and its source, or empty if not yet. publish.mjs refuses a fact without a valid date, in a dry run as in a live one. Clear it when the card or caption changes."
   },
   "facts": [
     {
@@ -27,7 +28,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume a rising home value ends PMI sooner.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "pmi-midpoint",
@@ -41,7 +43,8 @@
       "shelfLife": null,
       "depends_on": [
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "pmi-80-78-gap",
@@ -55,7 +58,8 @@
       "shelfLife": null,
       "depends_on": [
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "dti-43-not-the-rule",
@@ -67,7 +71,8 @@
       "layout": "myth-fact",
       "myth": "You might think 43% debt-to-income is still the legal limit for a mortgage.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "car-loan-vs-down-payment",
@@ -78,7 +83,8 @@
       "card_source": "Arithmetic: debt-to-income ratio",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "extra-payments-timing",
@@ -91,7 +97,8 @@
       "hero": "$111,892",
       "hero_context": "interest saved by $200 a month extra from year one",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "principal-beats-interest-233",
@@ -104,7 +111,8 @@
       "hero": "month 233",
       "hero_context": "before principal outpaces interest on a 30-year mortgage",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "extra-payments-dont-lower-payment",
@@ -116,7 +124,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume extra payments lower your monthly bill.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "extra-payment-misapplied",
@@ -128,7 +137,8 @@
       "layout": "myth-fact",
       "myth": "You might think any extra money you send goes straight to principal.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cashout-not-deductible",
@@ -140,7 +150,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume card debt becomes deductible once it is in your mortgage.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cashout-reprices-everything",
@@ -151,7 +162,8 @@
       "card_source": "Illustration: $280,000 at 4.5%, $20,000 at 7%",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lower-rate-longer-term",
@@ -162,7 +174,8 @@
       "card_source": "Illustration: $20,000 at 24% moved to 30 years at 7%",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "section-121-exclusion",
@@ -175,7 +188,8 @@
       "hero": "$250,000",
       "hero_context": "of home-sale gain excluded, single filer",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "section-121-not-same-24-months",
@@ -186,7 +200,8 @@
       "card_source": "Source: IRS Topic No. 701",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "rent-vs-buy-is-a-year",
@@ -197,7 +212,8 @@
       "card_source": "Reasoning: costs up front, equity over time",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "year-one-87-percent",
@@ -210,7 +226,8 @@
       "hero": "87%",
       "hero_context": "of year-one mortgage payments going to interest",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "loan-estimate-three-days",
@@ -221,7 +238,8 @@
       "card_source": "Source: CFPB TILA-RESPA disclosure rules",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "no-cost-refinance-tell",
@@ -232,7 +250,8 @@
       "card_source": "Practice: lenders pay costs for a higher rate",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "half-point-cancelled",
@@ -245,7 +264,8 @@
       "hero": "5.3%",
       "hero_context": "price rise that cancels a half-point rate cut",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "refinance-rate-not-price",
@@ -256,7 +276,8 @@
       "card_source": "Reasoning: a rate can be refinanced, a price cannot",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "waiting-lower-rate-more-bidders",
@@ -267,7 +288,8 @@
       "card_source": "Practice: housing market behaviour",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "loan-estimate-tolerances",
@@ -278,7 +300,8 @@
       "card_source": "Source: CFPB TILA-RESPA tolerance rules",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "compare-section-a",
@@ -289,7 +312,8 @@
       "card_source": "Source: CFPB TILA-RESPA tolerance rules",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "tip-page-three",
@@ -300,7 +324,8 @@
       "card_source": "Source: CFPB; Regulation Z Loan Estimate rules",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "va-no-monthly-mi",
@@ -314,7 +339,8 @@
       "shelfLife": null,
       "depends_on": [
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "va-zero-rating-not-exempt",
@@ -329,7 +355,8 @@
       "shelfLife": null,
       "depends_on": [
         "VA_FUNDING_FEE_PURCHASE"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "va-no-loan-limit",
@@ -340,7 +367,8 @@
       "card_source": "Source: VA loan limits",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "va-first-vs-subsequent",
@@ -356,7 +384,8 @@
       "depends_on": [
         "VA_FUNDING_FEE_PURCHASE",
         "VA_FUNDING_FEE_IRRRL"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "fha-78-cancellation-rescinded",
@@ -373,7 +402,8 @@
         "FHA_MIP_DURATION_CLIFF_LTV",
         "FHA_MIP_DURATION_MONTHS",
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "fha-last-point-of-down",
@@ -393,7 +423,8 @@
         "FHA_MIP_LOAN_THRESHOLD",
         "FHA_MIP_SHORT_TERM_MAX_YEARS",
         "FHA_UFMIP_RATE"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "fha-ltv-excludes-upfront",
@@ -409,7 +440,8 @@
       "depends_on": [
         "FHA_MIP_DURATION_CLIFF_LTV",
         "FHA_UFMIP_RATE"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "section-121-two-year-bar",
@@ -420,7 +452,8 @@
       "card_source": "Source: IRS Topic No. 701",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "rent-back",
@@ -431,7 +464,8 @@
       "card_source": "Practice: home sale contracts",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "prepay-returns-exactly",
@@ -442,7 +476,8 @@
       "card_source": "Arithmetic; IRS Publication 936",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "thousand-a-month",
@@ -455,7 +490,8 @@
       "hero": "$241,162",
       "hero_context": "interest saved by $1,000 a month extra on $300,000",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "paid-off-house-lowers-floor",
@@ -466,7 +502,8 @@
       "card_source": "Reasoning: no payment, lower monthly floor",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "fha-mip-never-comes-off",
@@ -484,7 +521,8 @@
         "FHA_MIP_DURATION_CLIFF_LTV",
         "FHA_MIP_DURATION_MONTHS",
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "fha-nine-vs-ten",
@@ -501,7 +539,8 @@
       "depends_on": [
         "FHA_MIP_DURATION_CLIFF_LTV",
         "FHA_MIP_DURATION_MONTHS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "pmi-is-not-forever",
@@ -516,7 +555,8 @@
       "shelfLife": null,
       "depends_on": [
         "PMI_TERMINATION_LTV"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "points-purchase-vs-refi",
@@ -527,7 +567,8 @@
       "card_source": "Source: IRS Publication 936",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "unamortized-points",
@@ -538,7 +579,8 @@
       "card_source": "Source: IRS Publication 936",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "points-no-fixed-rate",
@@ -550,7 +592,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume one point always buys a quarter-point off the rate.",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "points-bet-on-not-refinancing",
@@ -561,7 +604,8 @@
       "card_source": "Reasoning: a refinance ends the payback",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "card-and-car-interest-deductibility",
@@ -577,7 +621,8 @@
       },
       "depends_on": [
         "STUDENT_LOAN_INTEREST_CAP"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "guaranteed-vs-expected",
@@ -588,7 +633,8 @@
       "card_source": "Reasoning: certain return vs. expected return",
       "layout": "statement",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "va-funding-fee-excluded",
@@ -601,7 +647,8 @@
       "shelfLife": {
         "risk": "IRRRL lender-credit citation pending",
         "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
-      }
+      },
+      "reviewed": ""
     },
     {
       "id": "va-210-days",
@@ -614,7 +661,8 @@
       "hero": "210 days",
       "hero_context": "after the first payment is due, before a VA streamline",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "va-lender-credit-instant",
@@ -627,7 +675,8 @@
       "shelfLife": {
         "risk": "IRRRL lender-credit citation pending",
         "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
-      }
+      },
+      "reviewed": ""
     },
     {
       "id": "va-passes-but-costs",
@@ -643,7 +692,8 @@
       "shelfLife": null,
       "depends_on": [
         "VA_FUNDING_FEE_IRRRL"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "apr-excludes-real-costs",
@@ -654,7 +704,8 @@
       "card_source": "Source: Regulation Z § 1026.4(c)(7)",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "fees-are-a-bet-on-time",
@@ -665,7 +716,8 @@
       "card_source": "Site model: fees over 360 vs. 48 payments",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "apr-vs-apy",
@@ -676,7 +728,8 @@
       "card_source": "Source: Regulation Z § 1026.4",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "blended-big-cheap-hides-small",
@@ -689,7 +742,8 @@
       "hero": "6.12%",
       "hero_context": "blend of $2,000 at 24% and $300,000 at 6%",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "blended-cards-share-of-interest",
@@ -702,7 +756,8 @@
       "hero": "10.2%",
       "hero_context": "of the interest, from two cards that are 2.8% of the debt",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "blended-interest-comes-out-first",
@@ -714,7 +769,8 @@
       "layout": "myth-fact",
       "myth": "You might think a bigger payment cuts this month's interest.",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "avalanche-never-costs-more",
@@ -725,7 +781,8 @@
       "card_source": "Arithmetic: highest rate first minimizes interest",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "snowball-cost-is-rate-spread",
@@ -736,7 +793,8 @@
       "card_source": "Arithmetic: payoff order and rate spread",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "minimums-shrink",
@@ -747,7 +805,8 @@
       "card_source": "Source: Regulation Z § 1026.7",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "minimum-payment-box",
@@ -758,7 +817,8 @@
       "card_source": "Source: Regulation Z § 1026.7",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "heloc-interest-only-decade",
@@ -769,7 +829,8 @@
       "card_source": "Site model: $30,000 HELOC at 9%",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "heloc-payment-steps",
@@ -780,7 +841,8 @@
       "card_source": "Site model: $30,000 HELOC at 9%",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "heloc-payment-beats-rate",
@@ -791,7 +853,8 @@
       "card_source": "Site model: $30,000 HELOC at 9%",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "heloc-not-deductible",
@@ -803,7 +866,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume HELOC interest is always tax-deductible.",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "origination-fee-from-proceeds",
@@ -816,7 +880,8 @@
       "hero": "$19,000",
       "hero_context": "arrives from a $20,000 loan with a 5% fee",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "dont-consolidate-cheap-debt",
@@ -828,7 +893,8 @@
       "layout": "myth-fact",
       "myth": "You might think a consolidation loan has to take every debt you have.",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "consolidation-advertised-rate",
@@ -840,7 +906,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume the advertised rate is the rate you will get.",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "one-late-payment",
@@ -852,7 +919,8 @@
       "layout": "myth-fact",
       "myth": "You might think one late payment ends a 0% promotion.",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "payment-allocation-highest-rate",
@@ -863,7 +931,8 @@
       "card_source": "Source: Regulation Z § 1026.53",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "grace-period-gone",
@@ -874,7 +943,8 @@
       "card_source": "Practice: card issuers' grace-period terms",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "promo-rate-six-months",
@@ -885,7 +955,8 @@
       "card_source": "Source: Regulation Z § 1026.55",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "transfer-fee-six-weeks",
@@ -896,7 +967,8 @@
       "card_source": "Arithmetic: 3% of $8,000 vs. 24% interest",
       "layout": "statement",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "transfer-real-number",
@@ -909,7 +981,8 @@
       "hero": "$458 a month",
       "hero_context": "to clear $8,240 inside an 18-month promotion",
       "category": "Debt",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "rap-balance-cannot-grow",
@@ -924,7 +997,8 @@
       },
       "depends_on": [
         "RAP_PRINCIPAL_MATCH"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "rap-hard-boundaries",
@@ -939,7 +1013,8 @@
       },
       "depends_on": [
         "RAP_BRACKETS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "rap-disbursement-date",
@@ -954,7 +1029,8 @@
       },
       "depends_on": [
         "NEW_LOAN_CUTOFF"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "lowest-payment-trap",
@@ -966,7 +1042,8 @@
       "shelfLife": {
         "risk": "The underlying plan set changed with P.L. 119-21 and remains in transition.",
         "recheck": "Before each post, against studentaid.gov"
-      }
+      },
+      "reviewed": ""
     },
     {
       "id": "depreciation-no-bill",
@@ -977,7 +1054,8 @@
       "card_source": "Site model: $36,000 car, 7 years",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "buy-the-depreciation-not-the-rate",
@@ -988,7 +1066,8 @@
       "card_source": "Site model: $36,000 car, 7 years; iSeeCars",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cost-per-mile-counterintuitive",
@@ -999,7 +1078,8 @@
       "card_source": "Site model: $36,000 car, 7 years",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "underwater-month-29",
@@ -1012,7 +1092,8 @@
       "hero": "month 29",
       "hero_context": "until a $40,000 car, nothing down over 72 months, is above water",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "gap-insurance-window",
@@ -1023,7 +1104,8 @@
       "card_source": "Site model: $40,000 at 6.9%, 72 months",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "year-one-beats-four-and-five",
@@ -1034,7 +1116,8 @@
       "card_source": "Site model: 20%, then 14% a year depreciation",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "negative-equity-rollforward",
@@ -1045,7 +1128,8 @@
       "card_source": "Arithmetic: the loan exceeds the car's price",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "used-saving-is-depreciation",
@@ -1057,7 +1141,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume a used car's saving is just the lower price.",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "rebate-or-rate-not-both",
@@ -1068,7 +1153,8 @@
       "card_source": "Practice: terms set by each manufacturer",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cash-loses-the-incentive",
@@ -1079,7 +1165,8 @@
       "card_source": "Practice: terms set by each manufacturer",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "money-factor-2400",
@@ -1092,7 +1179,8 @@
       "hero": "2,400",
       "hero_context": "turns a lease money factor into an APR",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lease-rent-on-the-sum",
@@ -1103,7 +1191,8 @@
       "card_source": "Site model: $40,000 car, $22,000 residual",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lease-negative-equity",
@@ -1116,7 +1205,8 @@
       "hero": "$5,495",
       "hero_context": "cost of rolling $5,000 of negative equity into a lease",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lease-money-down-gone",
@@ -1127,7 +1217,8 @@
       "card_source": "Practice: how lease payoffs work",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "residual-not-negotiable",
@@ -1138,7 +1229,8 @@
       "card_source": "Practice: residuals set by the lessor",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lease-not-maintenance-free",
@@ -1150,7 +1242,8 @@
       "layout": "myth-fact",
       "myth": "You might think a leased car costs nothing to maintain.",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "lease-lower-payment-not-saving",
@@ -1162,7 +1255,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume a lower lease payment means you are saving money.",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "auto-refi-fees-worse",
@@ -1173,7 +1267,8 @@
       "card_source": "Reasoning: the car loses value every month",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "auto-refi-cancels-gap",
@@ -1184,7 +1279,8 @@
       "card_source": "Practice: gap cover is tied to the loan",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "auto-refi-dealer-markup",
@@ -1195,7 +1291,8 @@
       "card_source": "Practice: dealer rate markup",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "twenty-four-ten",
@@ -1207,7 +1304,8 @@
       "layout": "myth-fact",
       "myth": "You might think the 10% in 20/4/10 is just the car payment.",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "long-terms-exist-for-a-reason",
@@ -1218,7 +1316,8 @@
       "card_source": "Site model: depreciation vs. loan balance",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "ev-home-charging",
@@ -1229,7 +1328,8 @@
       "card_source": "Practice: public fast-charging prices",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "ev-maintenance",
@@ -1240,7 +1340,8 @@
       "card_source": "Practice: EV maintenance needs",
       "layout": "statement",
       "category": "Auto",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "ev-depreciation-gap",
@@ -1252,7 +1353,8 @@
       "shelfLife": {
         "risk": "The iSeeCars depreciation study is republished annually and the EV gap has been narrowing as the used market matures.",
         "recheck": "Annually, when the constants in app/lib/markets.ts are updated"
-      }
+      },
+      "reviewed": ""
     },
     {
       "id": "ev-credits-ended",
@@ -1267,7 +1369,8 @@
       },
       "depends_on": [
         "CLEAN_VEHICLE_CREDITS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "hundred-dollars-1928",
@@ -1279,7 +1382,8 @@
       "shelfLife": {
         "risk": "The end date and the dollar figures move every year as the dataset is updated.",
         "recheck": "Annually, when the constants in app/lib/markets.ts are updated"
-      }
+      },
+      "reviewed": ""
     },
     {
       "id": "simple-vs-compound",
@@ -1292,7 +1396,8 @@
       "hero": "$76,000",
       "hero_context": "$10,000 at 7% for 30 years, compounded",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "third-decade",
@@ -1303,7 +1408,8 @@
       "card_source": "Arithmetic: $10,000 at 7%, compounded",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "rule-of-72",
@@ -1316,7 +1422,8 @@
       "hero": "72",
       "hero_context": "divided by your rate gives the years to double",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "balance-up-money-down",
@@ -1327,7 +1434,8 @@
       "card_source": "Illustration: 2% yield, 3% inflation",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "same-deposit-820-difference",
@@ -1340,7 +1448,8 @@
       "hero": "$820",
       "hero_context": "about that much more a year on $20,000 at 4.50% than at 0.40%",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "fdic-guarantees-dollars",
@@ -1351,7 +1460,8 @@
       "card_source": "Source: FDIC deposit insurance",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "match-is-fifty-percent",
@@ -1364,7 +1474,8 @@
       "hero": "50% return",
       "hero_context": "from a 50% match, before any investing",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "your-contributions-always-vested",
@@ -1375,7 +1486,8 @@
       "card_source": "Source: IRS retirement topics: vesting",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "true-up",
@@ -1386,7 +1498,8 @@
       "card_source": "Practice: employer plan rules vary",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "match-formula-confusion",
@@ -1397,7 +1510,8 @@
       "card_source": "Arithmetic: two common match formulas",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "reinvested-dividends-taxed",
@@ -1408,7 +1522,8 @@
       "card_source": "Source: IRS Publication 550",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cost-basis-twice",
@@ -1419,7 +1534,8 @@
       "card_source": "Source: IRS Publication 550",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "reinvestment-concentrates",
@@ -1430,7 +1546,8 @@
       "card_source": "Reasoning: reinvesting buys what paid out",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "roth-limit-counts-dollars",
@@ -1441,7 +1558,8 @@
       "card_source": "Source: IRS Notice 2025-67",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "match-usually-traditional",
@@ -1452,7 +1570,8 @@
       "card_source": "Source: SECURE 2.0 Act § 604; plan rules",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "deduct-top-withdraw-bottom",
@@ -1463,7 +1582,8 @@
       "card_source": "Source: IRS Revenue Procedure 2025-32",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "roth-five-year",
@@ -1474,7 +1594,8 @@
       "card_source": "Source: IRS Publication 590-B",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "fee-drag-86000",
@@ -1487,7 +1608,8 @@
       "hero": "$86,000",
       "hero_context": "what a 1.00% fund can cost versus 0.05% over 25 years",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "sequence-risk",
@@ -1498,7 +1620,8 @@
       "card_source": "Reasoning: order matters once you withdraw",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "projection-is-sensitivity",
@@ -1509,7 +1632,8 @@
       "card_source": "Site model: $25,000 + $500/mo, 25 years",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "nominal-vs-real",
@@ -1522,7 +1646,8 @@
       "hero": "$297,000",
       "hero_context": "roughly today's value of $551,000 in 25 years",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "seven-becomes-ten",
@@ -1535,7 +1660,8 @@
       "hero": "10%",
       "hero_context": "gross return a 7% target needs after inflation, fees and tax",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "cannot-choose-a-return",
@@ -1546,7 +1672,8 @@
       "card_source": "Source: Damodaran returns data, NYU Stern",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "two-more-years",
@@ -1557,7 +1684,8 @@
       "card_source": "Site model; Damodaran returns data",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "dca-half-in-cash",
@@ -1568,7 +1696,8 @@
       "card_source": "Arithmetic: $5,000 a month for 12 months",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "paycheck-is-not-dca",
@@ -1580,7 +1709,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume investing every paycheck is dollar-cost averaging.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "dca-is-insurance",
@@ -1591,7 +1721,8 @@
       "card_source": "Source: Damodaran returns data, NYU Stern",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "dca-failure-mode",
@@ -1602,7 +1733,8 @@
       "card_source": "Reasoning: a falling market is when cash buys most",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "niit-never-indexed",
@@ -1616,7 +1748,8 @@
       "shelfLife": null,
       "depends_on": [
         "NIIT_THRESHOLDS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "day-364-vs-366",
@@ -1629,7 +1762,8 @@
       "hero": "day 366",
       "hero_context": "held more than a year: long-term rates apply",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "gain-stacks",
@@ -1640,7 +1774,8 @@
       "card_source": "Source: IRS Revenue Procedure 2025-32",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "niit-lesser-of",
@@ -1655,7 +1790,8 @@
       "shelfLife": null,
       "depends_on": [
         "NIIT_THRESHOLDS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "zero-percent-band",
@@ -1671,7 +1807,8 @@
       "shelfLife": null,
       "depends_on": [
         "LT_GAINS_BRACKETS"
-      ]
+      ],
+      "reviewed": ""
     },
     {
       "id": "state-can-exceed-federal",
@@ -1682,7 +1819,8 @@
       "card_source": "Practice: state tax rules vary",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "four-percent-rule-misread",
@@ -1694,7 +1832,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume the 4% rule means taking 4% of your balance every year.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "house-is-not-retirement-income",
@@ -1706,7 +1845,8 @@
       "layout": "myth-fact",
       "myth": "You might think your house counts as retirement income.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "unindexed-pension",
@@ -1717,7 +1857,8 @@
       "card_source": "Source: 42 U.S.C. § 415(i); SSA",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "emergency-fund-unit",
@@ -1729,7 +1870,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume an emergency fund is measured in months of income.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "emergency-fund-negative-real",
@@ -1740,7 +1882,8 @@
       "card_source": "Rule of thumb: safety before return",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "emergency-test",
@@ -1751,7 +1894,8 @@
       "card_source": "Rule of thumb: unexpected, necessary, urgent",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "sixty-day-trap",
@@ -1762,7 +1906,8 @@
       "card_source": "Source: IRS rollover rules",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "mandatory-twenty-percent",
@@ -1773,7 +1918,8 @@
       "card_source": "Source: IRS rollover rules",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "exception-removes-ten-percent-only",
@@ -1785,7 +1931,8 @@
       "layout": "myth-fact",
       "myth": "You might think a penalty exception makes an early withdrawal free.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "thirty-k-at-forty",
@@ -1798,7 +1945,8 @@
       "hero": "$163,000",
       "hero_context": "about what $30,000 withdrawn at 40 costs by 65",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "differential-tax",
@@ -1809,7 +1957,8 @@
       "card_source": "Arithmetic: tax with minus tax without",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "traditional-balance-is-not-yours",
@@ -1821,7 +1970,8 @@
       "layout": "myth-fact",
       "myth": "It is easy to assume a $400,000 traditional 401(k) is $400,000 to spend.",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "liquid-net-worth",
@@ -1832,7 +1982,8 @@
       "card_source": "Definition: net worth without the house",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     },
     {
       "id": "net-worth-catches-what-budget-misses",
@@ -1843,7 +1994,8 @@
       "card_source": "Definition: assets minus liabilities",
       "layout": "statement",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "reviewed": ""
     }
   ]
 }

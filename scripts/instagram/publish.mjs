@@ -15,6 +15,10 @@
  * match.mjs. There is no state file and nothing is committed. The next post is
  * the first fact in content/instagram-schedule.json that is not matched.
  *
+ * REVIEW: a fact is posted only if its "reviewed" field holds the date a
+ * person signed it off. Without one, a dry run and a live run both stop with
+ * the reason. The next fact is not skipped to: the schedule order holds.
+ *
  * A DRY RUN does everything that only reads: reads and matches the media,
  * picks the fact, builds the caption and alt text, checks they are within
  * Meta's limits, checks the image URL is live, checks the publishing quota.
@@ -48,6 +52,25 @@ const POLL_CHECKS = 6; // at once, then once a minute for five minutes
  */
 const MEDIA_PAGE_SIZE = 100;
 const MAX_MEDIA_PAGES = 200;
+// IG_FACTS_FILE is a test override only; the workflow never sets it.
+const FACTS_FILE = process.env.IG_FACTS_FILE || path.join(ROOT, "content", "instagram-facts.json");
+
+/**
+ * Why a fact may not be posted for want of review, or null if it may. A fact
+ * needs "reviewed": a real YYYY-MM-DD date, not after today (UTC). Empty or
+ * missing means nobody has signed it off; a malformed or future date is a
+ * typo, and is refused rather than guessed at.
+ */
+function reviewProblem(fact, today = new Date().toISOString().slice(0, 10)) {
+  const r = fact.reviewed;
+  const how = `Check its card, caption and alt text against the guide and source, then set "reviewed" to that date (YYYY-MM-DD) in content/instagram-facts.json.`;
+  if (r === undefined || r === null || String(r).trim() === "") return `${fact.id} has not been reviewed: its "reviewed" field is empty. ${how}`;
+  const s = String(r).trim();
+  const d = new Date(`${s}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s) || Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s) return `${fact.id} has "reviewed": "${s}", which is not a YYYY-MM-DD date. ${how}`;
+  if (s > today) return `${fact.id} has "reviewed": "${s}", which is after today (${today}). ${how}`;
+  return null;
+}
 
 function parseArgs(argv) {
   const args = { live: false, factId: null };
@@ -102,7 +125,7 @@ async function main() {
   if (!igUserId) fail("IG_USER_ID is not set.");
   say(`Graph API ${VERSION} · ${args.live ? "LIVE: this run will post" : "dry run: nothing will be posted"}`);
 
-  const facts = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-facts.json"), "utf8")).facts;
+  const facts = JSON.parse(fs.readFileSync(FACTS_FILE, "utf8")).facts;
   const evergreen = facts.filter((f) => !f.shelfLife);
   const schedule = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-schedule.json"), "utf8")).posts;
   const byId = new Map(facts.map((f) => [f.id, f]));
@@ -148,6 +171,13 @@ async function main() {
     say(`  ${fact.id} (schedule #${next.n} of ${schedule.length})`);
   }
   note(`- Fact: \`${fact.id}\` (${fact.category}, ${fact.layout})`);
+
+  // A fact nobody has signed off is never posted, and a dry run says so too,
+  // so a dry run that passes means the live run would post.
+  const unreviewed = reviewProblem(fact);
+  if (unreviewed) fail(`${unreviewed} Nothing was posted.`);
+  say(`  reviewed: ${fact.reviewed}`);
+  note(`- Reviewed: ${fact.reviewed}`);
 
   // ------------------------------------------------- caption, alt, image
   const caption = buildCaption(fact);
