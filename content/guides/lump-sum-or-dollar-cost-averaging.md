@@ -25,14 +25,15 @@ twelve months. If the market rises — which it does more often than not — tha
 cash missed the rise.
 
 That is the whole mechanism. It has nothing to do with forecasting and
-everything to do with time in the market. Dollar-cost averaging beats a lump sum
-in exactly the scenarios where the market falls over the averaging period, and
-loses in every other one.
+everything to do with time in the market. Dollar-cost averaging tends to win
+when prices fall during the averaging period, and usually loses when they rise.
+Strictly, it wins when the average price it pays ends up below the price on day
+one, which a falling market usually delivers and a rising one usually does not.
 
 Run both paths against a price path on the
 [dollar-cost averaging calculator](/calculators/dollar-cost-averaging) — the
-thing to watch is that the answer flips precisely when the market declines over
-the window, and not otherwise.
+thing to watch is that the answer tends to flip when prices fall during the
+window.
 
 ## What dollar-cost averaging actually buys you
 
