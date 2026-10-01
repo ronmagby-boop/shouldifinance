@@ -107,6 +107,12 @@ export const FHA_UFMIP_RATE = 1.75;
  * The base loan amount that splits the two annual MIP rate tables. Written as
  * the figure ML 2023-05 states rather than tracked against the conforming
  * limit, because the letter states a number and that number is the rule.
+ *
+ * The letter's summary does say it "amends the Base Loan amount threshold ...
+ * to the national conforming loan limit", which reads as if the figure should
+ * move every year. It has not: Handbook 4000.1 Appendix 1.0 in Update 18
+ * (12 August 2026) still prints $726,200 in both tables. Check that appendix,
+ * not this year's conforming limit, before changing it.
  */
 export const FHA_MIP_LOAN_THRESHOLD = 726_200;
 
@@ -127,42 +133,82 @@ export const FHA_LOW_SCORE_MIN_DOWN_PCT = 10;
 export const FHA_MIP_DURATION_CLIFF_LTV = 90;
 
 /**
- * Annual MIP in basis points, from the ML 2023-05 tables.
+ * How long the annual MIP runs, either side of FHA_MIP_DURATION_CLIFF_LTV.
+ *
+ * Mortgagee Letter 2013-04, for case numbers assigned on or after 3 June 2013:
+ * at or below 90% LTV "for the first 11 years of the mortgage term", above it
+ * "for the first 30 years of the term", in each case or the end of the term if
+ * that comes first. ML 2023-05 and Handbook 4000.1 Appendix 1.0 repeat both
+ * durations in their rate tables.
+ */
+export const FHA_MIP_DURATION_MONTHS = {
+  atOrBelowCliff: 132,
+  aboveCliff: 360,
+} as const;
+
+/**
+ * Terms of this many years or fewer use the short-term annual MIP table; longer
+ * terms use the long-term one. ML 2023-05 headings: "Mortgage Term of More Than
+ * 15 Years" and "... Less than or Equal to 15 Years".
+ */
+export const FHA_MIP_SHORT_TERM_MAX_YEARS = 15;
+
+type MipBand = { maxLtv: number; bps: number };
+
+/**
+ * Annual MIP in basis points, from the ML 2023-05 tables, effective for case
+ * numbers endorsed on or after 20 March 2023 (FHA_MIP_AS_OF) and carried
+ * unchanged into Handbook 4000.1 Appendix 1.0 through Update 18.
+ *
+ * Each list is in ascending LTV and ends at Infinity, so the first band whose
+ * maxLtv the loan does not exceed is the answer. The letter's own rows include
+ * a "> 90.00% but <= 95.00%" band on long terms that prices the same as the band
+ * below it; it is folded in here because the rate is all this table carries —
+ * the duration split at 90% lives in FHA_MIP_DURATION_MONTHS.
+ */
+export const FHA_ANNUAL_MIP_BPS: Record<
+  "longTerm" | "shortTerm",
+  Record<"atOrBelowThreshold" | "aboveThreshold", readonly MipBand[]>
+> = {
+  longTerm: {
+    atOrBelowThreshold: [{ maxLtv: 95, bps: 50 }, { maxLtv: Infinity, bps: 55 }],
+    aboveThreshold: [{ maxLtv: 95, bps: 70 }, { maxLtv: Infinity, bps: 75 }],
+  },
+  shortTerm: {
+    atOrBelowThreshold: [{ maxLtv: 90, bps: 15 }, { maxLtv: Infinity, bps: 40 }],
+    aboveThreshold: [{ maxLtv: 78, bps: 15 }, { maxLtv: 90, bps: 40 }, { maxLtv: Infinity, bps: 65 }],
+  },
+};
+
+/**
+ * Annual MIP in basis points for one loan, read off FHA_ANNUAL_MIP_BPS.
  *
  * `ltv` is the base loan over the lesser of price or appraised value, EXCLUDING
  * any financed upfront MIP — ML 2013-04 says so explicitly, and it matters:
  * financing the UFMIP cannot push a borrower over the 90% cliff.
+ *
+ * The fallback to the last band only matters for an LTV that is not a number,
+ * which compares false against every bound; the old if-chain landed there too.
  */
 export function fhaAnnualMipBps(baseLoan: number, ltv: number, termYears: number): number {
-  const big = baseLoan > FHA_MIP_LOAN_THRESHOLD;
-  if (termYears > 15) {
-    if (ltv <= 90) return big ? 70 : 50;
-    if (ltv <= 95) return big ? 70 : 50;
-    return big ? 75 : 55;
-  }
-  if (big) {
-    if (ltv <= 78) return 15;
-    if (ltv <= 90) return 40;
-    return 65;
-  }
-  return ltv <= 90 ? 15 : 40;
+  const table = termYears > FHA_MIP_SHORT_TERM_MAX_YEARS ? FHA_ANNUAL_MIP_BPS.longTerm : FHA_ANNUAL_MIP_BPS.shortTerm;
+  const bands = baseLoan > FHA_MIP_LOAN_THRESHOLD ? table.aboveThreshold : table.atOrBelowThreshold;
+  return (bands.find((b) => ltv <= b.maxLtv) ?? bands[bands.length - 1]).bps;
 }
 
 /**
- * How many months the annual MIP is charged for.
+ * How many months the annual MIP is charged for, from FHA_MIP_DURATION_MONTHS.
  *
- * Mortgagee Letter 2013-04: at or below 90% LTV it runs for the first 11 years
- * or the end of the term, whichever comes first; above 90% it runs for the term
- * (capped at 30 years by the same letter). There is no balance-based
- * cancellation — the 78% automatic termination is a conventional rule under the
- * Homeowners Protection Act. FHA had its own 78% cancellation until the same
- * letter withdrew it for case numbers assigned on or after 3 June 2013, so this
- * models a loan taken out today, not one endorsed before then.
+ * There is no balance-based cancellation — the 78% automatic termination is a
+ * conventional rule under the Homeowners Protection Act. FHA had its own 78%
+ * cancellation until ML 2013-04 withdrew it for case numbers assigned on or
+ * after 3 June 2013, so this models a loan taken out today, not one endorsed
+ * before then.
  */
 export function fhaMipDurationMonths(ltv: number, termMonths: number): number {
   return ltv <= FHA_MIP_DURATION_CLIFF_LTV
-    ? Math.min(132, termMonths)
-    : Math.min(360, termMonths);
+    ? Math.min(FHA_MIP_DURATION_MONTHS.atOrBelowCliff, termMonths)
+    : Math.min(FHA_MIP_DURATION_MONTHS.aboveCliff, termMonths);
 }
 
 export type AmortResult = {

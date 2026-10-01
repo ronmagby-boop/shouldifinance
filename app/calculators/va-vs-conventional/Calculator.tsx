@@ -7,27 +7,7 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import { payment, pmiRate } from "../../lib/finance";
-
-/**
- * VA funding fee on a purchase loan, as a percent of the base loan amount.
- * Checked against VA's published schedule, effective 7 April 2023: first use is
- * 2.15 / 1.5 / 1.25 and subsequent use 3.3 / 1.5 / 1.25 across the under-5%,
- * 5%-and-over and 10%-and-over down payment tiers.
- */
-function fundingFeeRate(downPct: number, use: string): number {
-  if (use === "exempt") return 0;
-  if (downPct >= 10) return 1.25;
-  if (downPct >= 5) return 1.5;
-  return use === "first" ? 2.15 : 3.3;
-}
-
-/** Why the rate above was picked, for the user to check against their own plan. */
-function fundingFeeReason(downPct: number, use: string): string {
-  if (use === "exempt") return "Exempt — no funding fee at any down payment";
-  if (downPct >= 10) return "10% or more down";
-  if (downPct >= 5) return "5% or more down";
-  return use === "first" ? "First use, under 5% down" : "Subsequent use, under 5% down";
-}
+import { vaFundingFeeRate, vaFundingFeeReason } from "../../lib/va";
 
 export default function Calculator() {
   const [price, setPrice] = useState<Num>("");
@@ -73,8 +53,8 @@ export default function Calculator() {
     // and rolled into the balance. No PMI, ever.
     const vaDownAmt = Math.min(Math.max(0, n(vaDown)), P);
     const vaDownPct = P > 0 ? (vaDownAmt / P) * 100 : 0;
-    const feePct = fundingFeeRate(vaDownPct, use);
-    const feeReason = fundingFeeReason(vaDownPct, use);
+    const feePct = vaFundingFeeRate(vaDownPct, use);
+    const feeReason = vaFundingFeeReason(vaDownPct, use);
     const vaBase = Math.max(0, P - vaDownAmt);
     const fee = vaBase * (feePct / 100);
     const vaLoan = vaBase + fee;
