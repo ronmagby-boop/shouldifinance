@@ -21,7 +21,7 @@ Take a $400,000 home with 10% down. At 7% over 30 years, principal and interest
 come to about **$2,395 a month**.
 
 Now wait a year and suppose you get the rate cut you were waiting for. Here is
-the price rise that would leave you exactly where you started:
+the price rise that would leave you with the same monthly principal and interest:
 
 | If the rate falls to | Break-even price rise | Price at that point |
 |---|---|---|
@@ -30,16 +30,18 @@ the price rise that would leave you exactly where you started:
 | 6.00% (a full point) | 11.0% | $443,868 |
 
 Read that middle row carefully. A **half-point** rate cut is wiped out by
-**5.3%** appreciation — which is an unremarkable year in a lot of markets. And
-the full point, the kind of move people are actually waiting for, needs an 11%
-price rise to cancel, which is a strong year but not a rare one.
+**5.3%** appreciation. And the full point, the kind of move people are actually
+waiting for, needs an 11% price rise to cancel, which is a strong year but not a rare one.
 
 So the bet is not "will rates fall". It is "will rates fall *faster than prices
 rise*". Those are different questions and the second is much harder.
 
 Run your own price, rate and expected appreciation through the
 [buy now or wait calculator](/calculators/buy-now-or-wait) — the break-even
-appreciation is the number to look at, not the payment difference.
+appreciation is the number to look at, not the payment difference. The
+calculator solves on total cost, rent and down payment included, so its
+break-even will differ from the 5.3% above, which compares monthly principal
+and interest alone.
 
 ## The asymmetry that settles most cases
 
@@ -67,7 +69,7 @@ Three things happen during the wait that the rate comparison ignores:
 - **Your down payment target moves.** If prices rise 5%, 20% of the price rose
   5% too. Saving toward a moving target is slower than it looks.
 - **Competition changes with rates.** Lower rates bring buyers back. The high
-  rate you dislike is also what is keeping other bidders out of the room, which
+  rate you dislike is also helping keep other bidders out of the room, which
   is why the low-rate market is frequently the one with the waived contingencies
   and the offers over asking.
 
