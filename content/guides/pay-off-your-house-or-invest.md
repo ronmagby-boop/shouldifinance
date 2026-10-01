@@ -5,7 +5,7 @@ description: "A mortgage is the cheapest money most people ever borrow, which ar
 calculator: payoff-house-vs-invest
 category: Home
 published: 2026-08-14
-reviewed: 2026-08-14
+reviewed: 2026-10-01
 ---
 
 You have $1,000 a month spare and a mortgage. Send it to the lender and you are
@@ -31,8 +31,8 @@ Add $1,000 a month to principal:
 The return on that $1,000 is exactly 6.5%, guaranteed, with no variance. Not
 expected. Not on average. Exactly.
 
-It is also effectively tax-free, and that is the adjustment that most often gets
-missed. There is no tax on interest you did not pay.
+It is also tax-free unless you itemize the mortgage interest, and that is the
+adjustment that most often gets missed. There is no tax on interest you did not pay.
 
 ## Why the mortgage interest deduction usually does not save it
 
@@ -104,8 +104,8 @@ After those, the comparison is real.
 
 - **Below about 4%**, keeping the mortgage and investing is the stronger case
   over long horizons.
-- **Above about 7%**, prepaying is hard to argue against — a guaranteed,
-  tax-free 7% is an excellent asset.
+- **Above about 7%**, prepaying is hard to argue against — a guaranteed 7%,
+  tax-free unless you itemize the mortgage interest, is an excellent asset.
 - **In between**, run it at two different return assumptions. If the answer
   flips between them, you have learned that you do not know, and the certain
   option has a genuine claim.
