@@ -1,6 +1,6 @@
 {
-  "_about": "A library of one-fact-per-post Instagram cards extracted from the 43 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
-  "_extracted": "2026-09-25",
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 45 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_extracted": "2026-09-30",
   "_fields": {
     "id": "Stable handle for scheduling. Not used by any code.",
     "card": "The fact as it appears on the image. Target under 15 words.",
@@ -8,7 +8,8 @@
     "guide": "Slug in content/guides. The fact is checkable against that file.",
     "source": "The citation the guide itself used. Where a guide states something as market practice rather than a sourced rule, that is said here in those words rather than dressed up as a citation.",
     "category": "Home | Debt | Money | Auto",
-    "shelfLife": "null when the fact is a fixed rule or a structural relationship. Otherwise an object naming what goes stale and when to recheck."
+    "shelfLife": "null when the fact is a fixed rule or a structural relationship. Otherwise an object naming what goes stale and when to recheck.",
+    "depends_on": "Present on facts resting on an agency-set or statutory figure that has a constant in app/lib. Names those constants, which the fact states or relies on. Constants only, never functions. Not used by any code yet."
   },
   "facts": [
     {
@@ -27,7 +28,10 @@
       "guide": "whats-in-a-mortgage-payment",
       "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "PMI_TERMINATION_LTV"
+      ]
     },
     {
       "id": "pmi-80-78-gap",
@@ -36,7 +40,10 @@
       "guide": "whats-in-a-mortgage-payment",
       "source": "CFPB, when PMI can be removed; payment figures computed with the site's own amortization",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "PMI_TERMINATION_LTV"
+      ]
     },
     {
       "id": "dti-43-not-the-rule",
@@ -234,7 +241,10 @@
       "guide": "va-loan-vs-conventional",
       "source": "VA funding fee and closing costs; CFPB on PMI removal",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "PMI_TERMINATION_LTV"
+      ]
     },
     {
       "id": "va-zero-rating-not-exempt",
@@ -243,7 +253,10 @@
       "guide": "va-loan-vs-conventional",
       "source": "VA funding fee and closing costs, for the fee tiers and exemptions",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "VA_FUNDING_FEE_PURCHASE"
+      ]
     },
     {
       "id": "va-no-loan-limit",
@@ -264,7 +277,63 @@
       "shelfLife": {
         "risk": "Funding fee percentages are set by the VA and have been changed by legislation before.",
         "recheck": "Annually, against va.gov"
-      }
+      },
+      "depends_on": [
+        "VA_FUNDING_FEE_PURCHASE"
+      ]
+    },
+    {
+      "id": "fha-78-cancellation-rescinded",
+      "card": "On FHA loans since June 2013, reaching 78% no longer ends the insurance.",
+      "caption": "Conventional PMI ends automatically at 78% of original value under the Homeowners Protection Act. FHA once had its own 78% cancellation, but HUD rescinded it for case numbers assigned on or after 3 June 2013. Since then the annual premium runs 11 years at or below 90% loan-to-value and the full term above it, however far the balance falls. https://shouldifinance.com/guides/fha-or-conventional",
+      "guide": "fha-or-conventional",
+      "source": "CFPB, when PMI can be removed, implementing the Homeowners Protection Act of 1998; HUD Mortgagee Letter 2013-04, which rescinded FHA’s 78% cancellation (MLs 2000-38 and 2000-46) and set the current durations",
+      "category": "Home",
+      "shelfLife": {
+        "risk": "FHA premium rates and durations are set by HUD mortgagee letter, not statute. ML 2023-05 cut the annual rates in 2023 and a February 2026 draft is out for comment.",
+        "recheck": "Before each post, against HUD's mortgagee letters"
+      },
+      "depends_on": [
+        "FHA_MIP_DURATION_CLIFF_LTV",
+        "FHA_MIP_DURATION_MONTHS",
+        "PMI_TERMINATION_LTV"
+      ]
+    },
+    {
+      "id": "fha-last-point-of-down",
+      "card": "$400,000 house, 30-year hold: 10% down saves $17,363 in FHA premium over 9%.",
+      "caption": "At 9% down the loan-to-value is 91% and the 50-basis-point annual premium runs all 30 years, about $35,893; at 10% down it stops after 11 years, about $18,530. Over a 10-year hold the difference is only $189, because both loans pay the premium every month of it. Figures assume a 30-year loan at 6.25%. https://shouldifinance.com/guides/fha-or-conventional",
+      "guide": "fha-or-conventional",
+      "source": "HUD Mortgagee Letter 2013-04 for the durations and 2023-05 for the 50 bps rate; dollar figures computed with the site’s own amortization on a $400,000 purchase, 30-year term at 6.25%, upfront premium financed",
+      "category": "Home",
+      "shelfLife": {
+        "risk": "FHA premium rates and durations are set by HUD mortgagee letter, not statute. ML 2023-05 cut the annual rates in 2023 and a February 2026 draft is out for comment.",
+        "recheck": "Before each post, against HUD's mortgagee letters"
+      },
+      "depends_on": [
+        "FHA_ANNUAL_MIP_BPS",
+        "FHA_MIP_DURATION_CLIFF_LTV",
+        "FHA_MIP_DURATION_MONTHS",
+        "FHA_MIP_LOAN_THRESHOLD",
+        "FHA_MIP_SHORT_TERM_MAX_YEARS",
+        "FHA_UFMIP_RATE"
+      ]
+    },
+    {
+      "id": "fha-ltv-excludes-upfront",
+      "card": "Financing FHA's upfront premium cannot push you over the 90% line.",
+      "caption": "FHA measures loan-to-value on the base loan before the 1.75% upfront premium is added. Rolling that premium into the balance makes the loan bigger but leaves the loan-to-value — and so how long the annual premium lasts — exactly where it was. https://shouldifinance.com/guides/fha-or-conventional",
+      "guide": "fha-or-conventional",
+      "source": "HUD Mortgagee Letter 2013-04 for the loan-to-value definition; HUD Handbook 4000.1, Appendix 1.0 for the 1.75% upfront premium",
+      "category": "Home",
+      "shelfLife": {
+        "risk": "FHA premium rates and durations are set by HUD mortgagee letter, not statute. ML 2023-05 cut the annual rates in 2023 and a February 2026 draft is out for comment.",
+        "recheck": "Before each post, against HUD's mortgagee letters"
+      },
+      "depends_on": [
+        "FHA_MIP_DURATION_CLIFF_LTV",
+        "FHA_UFMIP_RATE"
+      ]
     },
     {
       "id": "section-121-two-year-bar",
@@ -318,7 +387,13 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "FHA_MIN_DOWN_PCT",
+        "FHA_MIP_DURATION_CLIFF_LTV",
+        "FHA_MIP_DURATION_MONTHS",
+        "PMI_TERMINATION_LTV"
+      ]
     },
     {
       "id": "fha-nine-vs-ten",
@@ -327,7 +402,11 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "HUD Mortgagee Letter 2013-04, FHA annual MIP durations",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "FHA_MIP_DURATION_CLIFF_LTV",
+        "FHA_MIP_DURATION_MONTHS"
+      ]
     },
     {
       "id": "pmi-is-not-forever",
@@ -336,7 +415,10 @@
       "guide": "bigger-down-payment-or-buy-sooner",
       "source": "CFPB on removing PMI for the thresholds; payment and PMI figures computed with the site's own code at representative PMI rates",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "PMI_TERMINATION_LTV"
+      ]
     },
     {
       "id": "points-purchase-vs-refi",
@@ -381,7 +463,10 @@
       "guide": "pay-off-debt-or-invest",
       "source": "IRS Publication 936 for home mortgage interest; deductibility treatment as set out in the guide",
       "category": "Home",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "STUDENT_LOAN_INTEREST_CAP"
+      ]
     },
     {
       "id": "guaranteed-vs-expected",
@@ -452,6 +537,33 @@
       "caption": "APY includes the effect of compounding and APR does not. A 5% rate compounded monthly is an APY of about 5.12%. Ignoring compounding understates the cost when you borrow and understates the benefit when you save. https://shouldifinance.com/guides/what-rate-are-you-really-paying",
       "guide": "what-rate-are-you-really-paying",
       "source": "Regulation Z § 1026.4 for the finance charge definition; yield arithmetic computed with the site's own code",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "blended-big-cheap-hides-small",
+      "card": "A $2,000 card at 24% and a $300,000 mortgage at 6% blend to 6.12%.",
+      "caption": "That figure is correct — 6.12% on $302,000 is exactly the interest being paid — and it describes neither debt. The mortgage is more than 99% of the balance, so it gets more than 99% of the say in the average. Charge 36% on the card instead and the blend only moves to about 6.2%. https://shouldifinance.com/guides/what-is-your-blended-interest-rate",
+      "guide": "what-is-your-blended-interest-rate",
+      "source": "Arithmetic: the blended rate is the balance-weighted mean, computed in the guide from the stated balances and rates",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "blended-cards-share-of-interest",
+      "card": "Two credit cards: 2.8% of what you owe, 10.2% of the interest.",
+      "caption": "Take $342,750 of debt — a mortgage, a student loan, a car loan and two cards. It blends to 7.04% and costs about $2,011 a month in interest. The two cards are 2.8% of the balance and 10.2% of that interest, and the blend moves by less than a point to account for them. https://shouldifinance.com/guides/what-is-your-blended-interest-rate",
+      "guide": "what-is-your-blended-interest-rate",
+      "source": "Arithmetic: balance-weighted mean, and monthly interest as balance × rate ÷ 12, computed in the guide from the stated balances and rates",
+      "category": "Debt",
+      "shelfLife": null
+    },
+    {
+      "id": "blended-interest-comes-out-first",
+      "card": "A bigger payment does not lower this month's interest. It only adds principal.",
+      "caption": "Each month's interest is set by the balance and the rate, and it is charged before anything reduces what you owe. On $7,900 at 24.99%, $165 of a $240 payment is interest — about 69% — and the balance falls by about $75. Pay $300 and the interest is still $165; only the principal grows. https://shouldifinance.com/guides/what-is-your-blended-interest-rate",
+      "guide": "what-is-your-blended-interest-rate",
+      "source": "Arithmetic: monthly interest estimated as balance × rate ÷ 12, as the guide's Sources line states",
       "category": "Debt",
       "shelfLife": null
     },
@@ -618,7 +730,10 @@
       "shelfLife": {
         "risk": "RAP was created by P.L. 119-21 and its parameters are recent statute. Amounts and availability can change with legislation.",
         "recheck": "Before each post, against studentaid.gov"
-      }
+      },
+      "depends_on": [
+        "RAP_PRINCIPAL_MATCH"
+      ]
     },
     {
       "id": "rap-hard-boundaries",
@@ -630,7 +745,10 @@
       "shelfLife": {
         "risk": "RAP band structure is recent statute and can change with legislation.",
         "recheck": "Before each post, against studentaid.gov"
-      }
+      },
+      "depends_on": [
+        "RAP_BRACKETS"
+      ]
     },
     {
       "id": "rap-disbursement-date",
@@ -642,7 +760,10 @@
       "shelfLife": {
         "risk": "Plan availability and the cutoff date come from P.L. 119-21 and the wind-down of the older income-driven plans.",
         "recheck": "Before each post, against studentaid.gov"
-      }
+      },
+      "depends_on": [
+        "NEW_LOAN_CUTOFF"
+      ]
     },
     {
       "id": "lowest-payment-trap",
@@ -903,7 +1024,10 @@
       "shelfLife": {
         "risk": "This is framed as recent news. By 2028 \"have ended\" reads as stale even though it stays true, and a future Congress could restore something similar.",
         "recheck": "Before posting, and retire this card once the termination is no longer news"
-      }
+      },
+      "depends_on": [
+        "CLEAN_VEHICLE_CREDITS"
+      ]
     },
     {
       "id": "hundred-dollars-1928",
@@ -1176,7 +1300,10 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS, net investment income tax, for the rate, formula and thresholds",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "NIIT_THRESHOLDS"
+      ]
     },
     {
       "id": "day-364-vs-366",
@@ -1203,7 +1330,10 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS, net investment income tax, for the rate, formula and thresholds",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "NIIT_THRESHOLDS"
+      ]
     },
     {
       "id": "zero-percent-band",
@@ -1212,7 +1342,10 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
       "category": "Money",
-      "shelfLife": null
+      "shelfLife": null,
+      "depends_on": [
+        "LT_GAINS_BRACKETS"
+      ]
     },
     {
       "id": "state-can-exceed-federal",
