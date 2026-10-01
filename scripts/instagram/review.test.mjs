@@ -67,7 +67,7 @@ test("review:next picks the next N unreviewed facts in schedule order, skipping 
   assert.equal(r.code, 0, r.out);
   const expected = [schedule[0].id, schedule[2].id, schedule[3].id];
   assert.ok(r.out.includes(`The next 3 unreviewed scheduled facts, plus principal-beats-interest-233.`), r.out);
-  const html = fs.readFileSync(path.join(dir, `review-${today}.html`), "utf8");
+  const html = fs.readFileSync(path.join(dir, `review-${today}-4-facts.html`), "utf8");
   const order = [...html.matchAll(/<section id="([^"]+)">/g)].map((m) => m[1]);
   assert.deepEqual(order, [...expected, "principal-beats-interest-233"]);
   const f = byId.get(schedule[0].id);
@@ -87,7 +87,7 @@ test("review:next escapes text, so a caption cannot break the sheet", () => {
   fs.writeFileSync(file, JSON.stringify(data));
   const dir = path.join(TMP, "sheets-escape");
   assert.equal(helper(["next", "--count", "1"], file, dir).code, 0);
-  const html = fs.readFileSync(path.join(dir, `review-${today}.html`), "utf8");
+  const html = fs.readFileSync(path.join(dir, `review-${today}-${schedule[0].id}.html`), "utf8");
   assert.ok(!html.includes("<script>alert(1)</script>"));
   assert.ok(html.includes("&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;quoted&quot;"));
 });

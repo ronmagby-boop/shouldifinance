@@ -151,7 +151,8 @@ function next(argv) {
     picked.length > fromSchedule ? `plus ${picked.slice(fromSchedule).map((f) => f.id).join(", ")}` : "",
   ].filter(Boolean).join(", ") + ".";
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  const file = path.join(OUT_DIR, `review-${today()}.html`);
+  // Named by what it holds, so a sheet for one fact does not overwrite a batch.
+  const file = path.join(OUT_DIR, `review-${today()}-${picked.length === 1 ? picked[0].id : `${picked.length}-facts`}.html`);
   fs.writeFileSync(file, sheet(picked, scheduleById, note));
   console.log(`Wrote ${path.relative(ROOT, file)}: ${picked.length} fact${picked.length === 1 ? "" : "s"}. ${note}`);
   for (const f of picked) console.log(`  ${scheduleById.has(f.id) ? `#${scheduleById.get(f.id).n}`.padEnd(5) : "  -  "} ${f.id}`);
