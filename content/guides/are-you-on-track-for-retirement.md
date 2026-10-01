@@ -51,11 +51,11 @@ sit on the same page.
 
 ## The assumptions that move the answer most
 
-**Inflation.** Over a 30-year retirement, 3% inflation roughly halves what a
+**Inflation.** Over a 30-year retirement, 3% inflation more than halves what a
 fixed dollar buys. Any projection that does not inflate the spending target is
 producing a number that looks sufficient and is not. Social Security is indexed;
-most pensions are not, and an unindexed pension is worth much less at 85 than at
-65.
+check whether your pension is, because an unindexed pension is worth much less
+at 85 than at 65.
 
 **The return assumption.** Covered in [what your investments will be
 worth](/guides/what-will-your-investments-be-worth) — the spread between a 5%
