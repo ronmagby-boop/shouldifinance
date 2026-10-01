@@ -56,9 +56,9 @@ principal residence with a loan that closed on or after 29 July 1999:
 
 The gap between 80% and 78% is worth knowing about, because it is yours to
 close. Take a $400,000 purchase with 10% down: a $360,000 loan at 90% LTV, which
-in the bands this site uses runs about 0.52% a year, or roughly $156 a month. On
+in the bands this site uses runs about 0.55% a year, or roughly $165 a month. On
 a 30-year loan at 6.5%, scheduled payments alone reach 80% of original value at
-month 95 and 78% at month 109. That is 14 months of PMI — about $2,184 — sitting
+month 95 and 78% at month 109. That is 14 months of PMI — about $2,310 — sitting
 between the date you could have asked and the date the servicer had to act.
 
 You can see all five parts separately, and watch the PMI line stop, on the
