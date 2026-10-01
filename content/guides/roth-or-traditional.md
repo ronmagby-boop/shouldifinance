@@ -5,7 +5,7 @@ description: "The usual framing is a bet on future tax rates, which nobody can w
 calculator: roth-vs-traditional
 category: Money
 published: 2026-06-30
-reviewed: 2026-06-30
+reviewed: 2026-10-01
 ---
 
 The standard version of this question is: will your tax rate be higher now or in
@@ -80,17 +80,19 @@ because it compares one marginal rate to another.
 
 ## Three practical points
 
-**Employer match is always traditional**, regardless of which you choose for
-your own contributions. So a Roth contributor already has a traditional balance
-building, which is tax diversification arriving whether you planned it or not.
+**Employer match is usually traditional**, regardless of which you choose for
+your own contributions. Since SECURE 2.0 a plan may let you take it as Roth, so
+check yours. Where it does not, a Roth contributor already has a traditional
+balance building, which is tax diversification arriving whether you planned it
+or not.
 
 **You do not have to choose once.** Splitting contributions between the two is
 allowed, ordinary, and a reasonable response to genuine uncertainty. It is not
 indecision — it is hedging a forecast you have no business making.
 
-**Roth withdrawals have rules.** Contributions can generally be withdrawn at any
-time, but earnings need the account to be open five years and you to be 59½.
-Treating a Roth as a flexible savings account tends to end badly on the
+**Roth withdrawals have rules.** Roth IRA contributions can generally be
+withdrawn at any time, but earnings need the account to be open five years and
+you to be 59½. A Roth 401(k) has different rules. Treating a Roth as a flexible savings account tends to end badly on the
 earnings side.
 
 ## What to do with this
@@ -111,4 +113,8 @@ Sources: contribution and catch-up limits from [IRS Notice
 2025-67](https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500);
 standard deduction figures from [IRS Revenue Procedure
 2025-32](https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026).
-Both read from the same constants the calculator uses.
+Both read from the same constants the calculator uses. Roth IRA withdrawal
+rules, including what makes a distribution qualified, from [IRS Publication
+590-B](https://www.irs.gov/publications/p590b). Roth matching contributions
+under section 604 of the SECURE 2.0 Act, as described by the
+[IRS](https://www.irs.gov/newsroom/secure-2-point-0-act-impacts-how-businesses-complete-forms-w-2).
