@@ -28,8 +28,8 @@ function copy(signed = {}) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
   return file;
 }
-function helper(args, factsFile, reviewDir = path.join(TMP, "sheets")) {
-  const r = spawnSync(process.execPath, [HELPER, ...args], { env: { ...process.env, IG_FACTS_FILE: factsFile, IG_REVIEW_DIR: reviewDir }, encoding: "utf8" });
+function helper(args, factsFile, reviewDir = path.join(TMP, "sheets"), env = {}) {
+  const r = spawnSync(process.execPath, [HELPER, ...args], { env: { ...process.env, IG_FACTS_FILE: factsFile, IG_REVIEW_DIR: reviewDir, IG_RENDER_WARNINGS: path.join(TMP, "no-warnings.json"), ...env }, encoding: "utf8" });
   return { code: r.status, out: r.stdout + r.stderr };
 }
 const read = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
@@ -76,6 +76,24 @@ test("review:next picks the next N unreviewed facts in schedule order, skipping 
   assert.ok(html.includes("npm run review:mark -- " + [...expected, "principal-beats-interest-233"].join(" ")));
   assert.ok(!html.includes(`id="${schedule[1].id}"`), "a signed-off fact is skipped");
   assert.equal(read(file).facts.find((x) => x.id === f.id).reviewed, null, "next writes nothing to the facts file");
+});
+
+test("the sheet shows each fact's render warnings, or says its last render is out of date", async () => {
+  const { inputHash } = await import("./render-cards.mjs");
+  const [warned, clean, stale] = [schedule[0].id, schedule[1].id, schedule[2].id].map((id) => byId.get(id));
+  const warnings = path.join(TMP, "warnings.json");
+  fs.writeFileSync(warnings, JSON.stringify({
+    [warned.id]: { inputHash: inputHash(warned), warnings: ["card text wraps to 5 lines with one word on the last"] },
+    [clean.id]: { inputHash: inputHash(clean), warnings: [] },
+    [stale.id]: { inputHash: "0000000000000000", warnings: [] },
+  }));
+  const dir = path.join(TMP, "sheets-warnings");
+  assert.equal(helper(["next", "--count", "3"], copy(), dir, { IG_RENDER_WARNINGS: warnings }).code, 0);
+  const html = fs.readFileSync(path.join(dir, `review-${today}-3-facts.html`), "utf8");
+  const cell = (id) => html.match(new RegExp(`<section id="${id}">[\\s\\S]*?<th>Render warnings</th><td>([\\s\\S]*?)</td>`))[1].replace(/<[^>]+>/g, "");
+  assert.equal(cell(warned.id), "Warning: card text wraps to 5 lines with one word on the last");
+  assert.equal(cell(clean.id), "None");
+  assert.match(cell(stale.id), /Not rendered since the card last changed/);
 });
 
 test("review:next escapes text, so a caption cannot break the sheet", () => {

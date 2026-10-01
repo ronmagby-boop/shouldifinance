@@ -22,6 +22,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ALT_LIMIT, CAPTION_LIMIT, buildAltText, buildCaption, guideUrl, imageUrl } from "./caption.mjs";
 import { contentHash, reviewProblem, signOff, today } from "./review.mjs";
+import { RENDER_WARNINGS, categoryColours, designHash, inputHash } from "./render-cards.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 // IG_FACTS_FILE and IG_REVIEW_DIR are test overrides only.
@@ -47,7 +48,32 @@ const loadFacts = () => JSON.parse(fs.readFileSync(FACTS_FILE, "utf8"));
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+/**
+ * The renderer's warnings for a fact (a lone last word in the card text),
+ * if its last render was from the fact as it stands; otherwise a note to
+ * render it first.
+ */
+let renderState = null;
+function renderWarnings(fact) {
+  renderState ??= {
+    record: fs.existsSync(RENDER_WARNINGS) ? JSON.parse(fs.readFileSync(RENDER_WARNINGS, "utf8")) : {},
+    colours: categoryColours(),
+    design: designHash(),
+  };
+  const entry = renderState.record[fact.id];
+  if (!entry || entry.inputHash !== inputHash(fact, renderState.colours, renderState.design)) {
+    return { stale: true, warnings: [] };
+  }
+  return { stale: false, warnings: entry.warnings };
+}
+
 function factBlock(fact, scheduled) {
+  const rendered = renderWarnings(fact);
+  const warningCell = rendered.stale
+    ? `<span class="warn">Not rendered since the card last changed: run npm run cards, then this sheet again.</span>`
+    : rendered.warnings.length
+      ? rendered.warnings.map((w) => `<span class="caution">Warning: ${esc(w)}</span>`).join("<br>")
+      : "None";
   const caption = buildCaption(fact);
   const alt = buildAltText(fact);
   const problem = reviewProblem(fact);
@@ -64,6 +90,7 @@ function factBlock(fact, scheduled) {
     <div class="card">${image}</div>
     <table>
       ${row("Card", esc(fact.card))}
+      ${row("Render warnings", warningCell)}
       ${row("Myth", esc(fact.myth))}
       ${row("Hero", fact.hero ? `<strong>${esc(fact.hero)}</strong> — ${esc(fact.hero_context)}` : "")}
       ${row("Card source", esc(fact.card_source))}
@@ -89,8 +116,8 @@ function sheet(facts, scheduleById, note) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Instagram review sheet</title>
 <style>
-  :root { --bg: #ffffff; --fg: #1f2937; --muted: #6b7280; --line: #e5e7eb; --warn: #b91c1c; --code: #f3f4f6; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #374151; --warn: #f87171; --code: #1f2937; } }
+  :root { --bg: #ffffff; --fg: #1f2937; --muted: #6b7280; --line: #e5e7eb; --warn: #b91c1c; --caution: #92400e; --code: #f3f4f6; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #374151; --warn: #f87171; --caution: #fbbf24; --code: #1f2937; } }
   body { background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 1100px; padding: 16px; }
   section { border-top: 1px solid var(--line); padding: 16px 0; }
   .grid { display: grid; grid-template-columns: minmax(0, 432px) minmax(0, 1fr); gap: 20px; align-items: start; }
@@ -103,6 +130,7 @@ function sheet(facts, scheduleById, note) {
   code { background: var(--code); padding: 1px 4px; }
   .meta, small { color: var(--muted); }
   .warn { color: var(--warn); }
+  .caution { color: var(--caution); }
 </style>
 </head>
 <body>

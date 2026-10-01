@@ -433,6 +433,10 @@ export function inputHash(fact, colours = categoryColours(), design = designHash
 }
 
 export const RENDERED_HASHES = path.join(ROOT, ".instagram-cards", "input-hashes.json");
+// IG_RENDER_WARNINGS is a test override for the review sheet only.
+export const RENDER_WARNINGS = process.env.IG_RENDER_WARNINGS || path.join(ROOT, ".instagram-cards", "warnings.json");
+/** One word alone on the last of several lines. */
+const widow = (w) => Boolean(w && w.lines > 1 && w.lastLineWords === 1);
 
 // ------------------------------------------------------------------- render
 
@@ -661,12 +665,20 @@ async function main() {
   } finally {
     await browser.close();
   }
+  for (const r of rows) {
+    r.warnings = widow(r.textWrap) ? [`card text wraps to ${r.textWrap.lines} lines with one word on the last`] : [];
+  }
   // What each card on disk in the default output was rendered from, for
-  // cards:public. Merged, so rendering one card keeps the others' entries.
+  // cards:public, and its warnings, for the review sheet, keyed to the input
+  // hash they were measured at. Merged, so rendering one card keeps the others.
   if (path.resolve(args.out) === path.dirname(RENDERED_HASHES)) {
-    const known = fs.existsSync(RENDERED_HASHES) ? JSON.parse(fs.readFileSync(RENDERED_HASHES, "utf8")) : {};
-    for (const r of rows) known[r.id] = r.inputHash;
-    fs.writeFileSync(RENDERED_HASHES, JSON.stringify(Object.fromEntries(Object.keys(known).sort().map((k) => [k, known[k]])), null, 2) + "\n");
+    const merge = (file, entries) => {
+      const known = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+      for (const [k, v] of entries) known[k] = v;
+      fs.writeFileSync(file, JSON.stringify(Object.fromEntries(Object.keys(known).sort().map((k) => [k, known[k]])), null, 2) + "\n");
+    };
+    merge(RENDERED_HASHES, rows.map((r) => [r.id, r.inputHash]));
+    merge(RENDER_WARNINGS, rows.map((r) => [r.id, { inputHash: r.inputHash, warnings: r.warnings }]));
   }
 
   const failures = rows.filter(
@@ -753,14 +765,18 @@ async function main() {
   const sourceOver = rows.filter((r) => r.sourceOverflow);
   console.log(`card_source lines too long for one line at ${SOURCE_FONT}px: ${sourceOver.length}`);
   for (const r of sourceOver) console.log(`  ${r.id} — ${r.sourceWidth}px of ${r.contentWidth}px — "${r.card_source}"`);
-  const widow = (w) => w && w.lines > 1 && w.lastLineWords === 1;
+  // A lone last word fails the run on the short lines (context, source), where
+  // it is avoidable by rewording; on the card text, whose size is fitted, it
+  // is a warning, shown on the fact's review sheet.
   const widows = rows.flatMap((r) => [
-    ...(widow(r.textWrap) ? [`${r.id} — card text wraps to ${r.textWrap.lines} lines with one word on the last: "${r.card}"`] : []),
     ...(widow(r.contextWrap) ? [`${r.id} — hero_context wraps to ${r.contextWrap.lines} lines with one word on the last: "${r.hero_context}"`] : []),
     ...(widow(r.sourceWrap) ? [`${r.id} — card_source wraps to ${r.sourceWrap.lines} lines with one word on the last: "${r.card_source}"`] : []),
   ]);
-  console.log(`card text, hero_context or card_source ending on a single word: ${widows.length}`);
+  const textWidows = rows.filter((r) => r.warnings.length);
+  console.log(`hero_context or card_source ending on a single word (fails): ${widows.length}`);
   for (const w of widows) console.log(`  ${w}`);
+  console.log(`card text ending on a single word (warning): ${textWidows.length}`);
+  for (const r of textWidows) console.log(`  ${r.id}: ${r.warnings.join("; ")}`);
   if (failures.length || safeFails.length || widows.length) {
     if (failures.length) {
       console.error(`\n${failures.length} file(s) fail Instagram's requirements:`);
