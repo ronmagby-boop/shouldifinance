@@ -86,6 +86,12 @@ function fail(message) {
   console.error(graph.scrub(`\nFAILED: ${message}`));
   finish(1, `**Failed:** ${message}`);
 }
+// A fence longer than any backtick run inside the text, so the job Summary
+// shows it verbatim, line breaks included.
+const fenced = (text) => {
+  const fence = "`".repeat(Math.max(3, ...[...text.matchAll(/`+/g)].map((m) => m[0].length + 1)));
+  return `${fence}text\n${text}\n${fence}`;
+};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const short = (s, n = 70) => {
   const t = String(s ?? "").replace(/\s+/g, " ").trim();
@@ -110,9 +116,12 @@ async function main() {
   );
   const { posted, unmatched, ambiguous } = matchMedia(media, evergreen);
   const methods = [...posted.values()].reduce((a, v) => ((a[v.method] = (a[v.method] || 0) + 1), a), {});
-  say(`  media read: ${media.length}, the whole history, in ${requests} request${requests === 1 ? "" : "s"} (page size ${MEDIA_PAGE_SIZE})`);
-  say(`  matched to facts: ${posted.size}${posted.size ? ` (${Object.entries(methods).map(([k, v]) => `${v} by ${k}`).join(", ")})` : ""}`);
-  note(`- Media read: ${media.length}; matched to facts: ${posted.size}`);
+  const mediaRead = `media read: ${media.length}, the whole history, in ${requests} request${requests === 1 ? "" : "s"} (page size ${MEDIA_PAGE_SIZE})`;
+  const matched = `matched to facts: ${posted.size}${posted.size ? ` (${Object.entries(methods).map(([k, v]) => `${v} by ${k}`).join(", ")})` : ""}`;
+  say(`  ${mediaRead}`);
+  say(`  ${matched}`);
+  note(`- M${mediaRead.slice(1)}`);
+  note(`- ${matched[0].toUpperCase()}${matched.slice(1)}`);
   for (const [id, v] of posted) {
     if (v.method === "fuzzy") say(`    ${id}: matched by fuzzy overlap ${(v.score * 100).toFixed(0)}%, caption edited? (${v.media.permalink ?? v.media.id})`);
     if (v.duplicates?.length) say(`    ${id}: posted ${v.duplicates.length + 1} times`);
@@ -158,16 +167,29 @@ async function main() {
   if (!image.ok || !type.startsWith("image/jpeg")) {
     fail(`${url} returned ${image.status} ${type || "(no content type)"}; Meta needs a public JPEG. Is the card deployed under public/ig/?`);
   }
-  say(`  image check: ${image.status} ${type}, ${image.headers.get("content-length") ?? "?"} bytes`);
+  const imageCheck = `${image.status} ${type}, ${image.headers.get("content-length") ?? "?"} bytes`;
+  say(`  image check: ${imageCheck}`);
   say(`  caption (${caption.length} of 2200 characters):`);
   for (const line of caption.split("\n")) say(`    | ${line}`);
   say(`  alt text (${alt.length} of 1000 characters): ${alt}`);
+  note(`- Image: ${url}`);
+  note(`- Image check: ${imageCheck}`);
+  note(`- Caption (${caption.length} of 2200 characters):`);
+  note("");
+  note(fenced(caption));
+  note("");
+  note(`- Alt text (${alt.length} of 1000 characters):`);
+  note("");
+  note(fenced(alt));
+  note("");
 
   // ----------------------------------------------------------------- quota
   const limit = await graph.get(`/${igUserId}/content_publishing_limit`, { fields: "config,quota_usage" });
   const row = limit.data?.[0] ?? {};
   const total = row.config?.quota_total;
-  say(`\n4. Quota: ${row.quota_usage ?? "?"} of ${total ?? "?"} used in the current ${row.config?.quota_duration ?? "?"}s window`);
+  const quota = `${row.quota_usage ?? "?"} of ${total ?? "?"} used in the current ${row.config?.quota_duration ?? "?"}s window`;
+  say(`\n4. Quota: ${quota}`);
+  note(`- Quota: ${quota}`);
   if (total !== undefined && row.quota_usage >= total) fail("the publishing quota is used up for this window.");
 
   if (!args.live) {

@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import http from "node:http";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildAltText, buildCaption, captionBody } from "./caption.mjs";
@@ -118,6 +119,28 @@ test("dry run, three posted across two pages: picks the fourth and never prints 
   assert.match(r.out, new RegExp(`${schedule[3].id} \\(schedule #4`));
   assert.equal(mediaReads().length, 2, "followed the next page");
   assert.ok(!r.out.includes(TOKEN));
+  assert.equal(writes().length, 0);
+});
+
+test("dry run job Summary: media read with request count, image check, full caption, alt text, quota, no token", async () => {
+  reset(schedule.slice(0, 3).map((p, i) => asPosted(p.id, i)).reverse(), 2);
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "ig-summary-")), "summary.md");
+  const r = await run([], { GITHUB_STEP_SUMMARY: file });
+  assert.equal(r.code, 0, r.out);
+  const summary = fs.readFileSync(file, "utf8");
+  const fact = byId.get(schedule[3].id);
+  const caption = buildCaption(fact);
+  const alt = buildAltText(fact);
+  assert.match(summary, /^## Instagram dry run$/m);
+  assert.match(summary, /^- Media read: 3, the whole history, in 2 requests \(page size 100\)$/m);
+  assert.match(summary, /^- Matched to facts: 3 \(3 by alt-text\)$/m);
+  assert.ok(summary.includes(`- Image: ${base}/ig/${fact.id}.jpg`), summary);
+  assert.match(summary, /^- Image check: 200 image\/jpeg, 123456 bytes$/m);
+  assert.ok(summary.includes(`- Caption (${caption.length} of 2200 characters):\n\n\`\`\`text\n${caption}\n\`\`\`\n`), summary);
+  assert.ok(summary.includes(`- Alt text (${alt.length} of 1000 characters):\n\n\`\`\`text\n${alt}\n\`\`\`\n`), summary);
+  assert.match(summary, /^- Quota: 3 of 100 used in the current 86400s window$/m);
+  assert.match(summary, /\*\*Dry run\.\*\* Would post/);
+  assert.ok(!summary.includes(TOKEN));
   assert.equal(writes().length, 0);
 });
 
