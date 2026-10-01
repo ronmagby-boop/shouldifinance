@@ -1,0 +1,252 @@
+{
+  "_about": "Per fact, the value of each app/lib constant in its depends_on when the fact was last checked. Written by scripts/check-facts.mjs (--init, --accept); do not edit by hand. A difference from the current value holds the fact.",
+  "facts": {
+    "card-and-car-interest-deductibility": {
+      "STUDENT_LOAN_INTEREST_CAP": 2500
+    },
+    "ev-credits-ended": {
+      "CLEAN_VEHICLE_CREDITS": {
+        "chargerCutoff": "1 July 2026",
+        "formerNewVehicleMax": 7500,
+        "newVehicleCutoff": "30 September 2025",
+        "usedVehicleCutoff": "30 September 2025"
+      }
+    },
+    "fha-78-cancellation-rescinded": {
+      "FHA_MIP_DURATION_CLIFF_LTV": 90,
+      "FHA_MIP_DURATION_MONTHS": {
+        "aboveCliff": 360,
+        "atOrBelowCliff": 132
+      },
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "fha-last-point-of-down": {
+      "FHA_ANNUAL_MIP_BPS": {
+        "longTerm": {
+          "aboveThreshold": [
+            {
+              "bps": 70,
+              "maxLtv": 95
+            },
+            {
+              "bps": 75,
+              "maxLtv": {
+                "$number": "Infinity"
+              }
+            }
+          ],
+          "atOrBelowThreshold": [
+            {
+              "bps": 50,
+              "maxLtv": 95
+            },
+            {
+              "bps": 55,
+              "maxLtv": {
+                "$number": "Infinity"
+              }
+            }
+          ]
+        },
+        "shortTerm": {
+          "aboveThreshold": [
+            {
+              "bps": 15,
+              "maxLtv": 78
+            },
+            {
+              "bps": 40,
+              "maxLtv": 90
+            },
+            {
+              "bps": 65,
+              "maxLtv": {
+                "$number": "Infinity"
+              }
+            }
+          ],
+          "atOrBelowThreshold": [
+            {
+              "bps": 15,
+              "maxLtv": 90
+            },
+            {
+              "bps": 40,
+              "maxLtv": {
+                "$number": "Infinity"
+              }
+            }
+          ]
+        }
+      },
+      "FHA_MIP_DURATION_CLIFF_LTV": 90,
+      "FHA_MIP_DURATION_MONTHS": {
+        "aboveCliff": 360,
+        "atOrBelowCliff": 132
+      },
+      "FHA_MIP_LOAN_THRESHOLD": 726200,
+      "FHA_MIP_SHORT_TERM_MAX_YEARS": 15,
+      "FHA_UFMIP_RATE": 1.75
+    },
+    "fha-ltv-excludes-upfront": {
+      "FHA_MIP_DURATION_CLIFF_LTV": 90,
+      "FHA_UFMIP_RATE": 1.75
+    },
+    "fha-mip-never-comes-off": {
+      "FHA_MIN_DOWN_PCT": 3.5,
+      "FHA_MIP_DURATION_CLIFF_LTV": 90,
+      "FHA_MIP_DURATION_MONTHS": {
+        "aboveCliff": 360,
+        "atOrBelowCliff": 132
+      },
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "fha-nine-vs-ten": {
+      "FHA_MIP_DURATION_CLIFF_LTV": 90,
+      "FHA_MIP_DURATION_MONTHS": {
+        "aboveCliff": 360,
+        "atOrBelowCliff": 132
+      }
+    },
+    "niit-lesser-of": {
+      "NIIT_THRESHOLDS": {
+        "head": 200000,
+        "married": 250000,
+        "single": 200000
+      }
+    },
+    "niit-never-indexed": {
+      "NIIT_THRESHOLDS": {
+        "head": 200000,
+        "married": 250000,
+        "single": 200000
+      }
+    },
+    "pmi-80-78-gap": {
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "pmi-is-not-forever": {
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "pmi-midpoint": {
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "rap-balance-cannot-grow": {
+      "RAP_PRINCIPAL_MATCH": 50
+    },
+    "rap-disbursement-date": {
+      "NEW_LOAN_CUTOFF": "1 July 2026"
+    },
+    "rap-hard-boundaries": {
+      "RAP_BRACKETS": [
+        {
+          "flat": 120,
+          "upTo": 10000
+        },
+        {
+          "pct": 1,
+          "upTo": 20000
+        },
+        {
+          "pct": 2,
+          "upTo": 30000
+        },
+        {
+          "pct": 3,
+          "upTo": 40000
+        },
+        {
+          "pct": 4,
+          "upTo": 50000
+        },
+        {
+          "pct": 5,
+          "upTo": 60000
+        },
+        {
+          "pct": 6,
+          "upTo": 70000
+        },
+        {
+          "pct": 7,
+          "upTo": 80000
+        },
+        {
+          "pct": 8,
+          "upTo": 90000
+        },
+        {
+          "pct": 9,
+          "upTo": 100000
+        },
+        {
+          "pct": 10,
+          "upTo": {
+            "$number": "Infinity"
+          }
+        }
+      ]
+    },
+    "va-first-vs-subsequent": {
+      "VA_FUNDING_FEE_IRRRL": 0.5,
+      "VA_FUNDING_FEE_PURCHASE": [
+        {
+          "firstUse": 1.25,
+          "minDownPct": 10,
+          "subsequentUse": 1.25
+        },
+        {
+          "firstUse": 1.5,
+          "minDownPct": 5,
+          "subsequentUse": 1.5
+        },
+        {
+          "firstUse": 2.15,
+          "minDownPct": 0,
+          "subsequentUse": 3.3
+        }
+      ]
+    },
+    "va-no-monthly-mi": {
+      "PMI_TERMINATION_LTV": 0.78
+    },
+    "va-passes-but-costs": {
+      "VA_FUNDING_FEE_IRRRL": 0.5
+    },
+    "va-zero-rating-not-exempt": {
+      "VA_FUNDING_FEE_PURCHASE": [
+        {
+          "firstUse": 1.25,
+          "minDownPct": 10,
+          "subsequentUse": 1.25
+        },
+        {
+          "firstUse": 1.5,
+          "minDownPct": 5,
+          "subsequentUse": 1.5
+        },
+        {
+          "firstUse": 2.15,
+          "minDownPct": 0,
+          "subsequentUse": 3.3
+        }
+      ]
+    },
+    "zero-percent-band": {
+      "LT_GAINS_BRACKETS": {
+        "head": {
+          "fifteenUpTo": 579600,
+          "zeroUpTo": 66200
+        },
+        "married": {
+          "fifteenUpTo": 613700,
+          "zeroUpTo": 98900
+        },
+        "single": {
+          "fifteenUpTo": 545500,
+          "zeroUpTo": 49450
+        }
+      }
+    }
+  }
+}
