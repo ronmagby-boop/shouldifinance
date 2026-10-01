@@ -1,0 +1,52 @@
+# Read-only check of the Instagram publishing setup: the token, the Page and
+# Instagram account it reaches, and the account's publishing quota. Posts
+# nothing. Run manually from the Actions tab.
+name: Instagram setup check
+
+on:
+  workflow_dispatch:
+    inputs:
+      page_name:
+        description: "Facebook Page to use if the token reaches more than one"
+        required: false
+        default: "ShouldiFinance"
+      ig_username:
+        description: "Instagram username the Page should be linked to"
+        required: false
+        default: "shouldifinance"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # GitHub already masks secrets in logs; this registers the token (and
+      # the derived app token, if the app secrets are set) explicitly as well.
+      # The values are read from env, never interpolated into the command.
+      - name: Mask credentials
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_ID: ${{ secrets.IG_APP_ID }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+        run: |
+          if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
+          if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
+          if [ -n "$IG_APP_ID" ] && [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_ID|$IG_APP_SECRET"; fi
+
+      - name: Check token, Page, Instagram account and quota
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_ID: ${{ secrets.IG_APP_ID }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+          EXPECT_PAGE_NAME: ${{ inputs.page_name }}
+          EXPECT_IG_USERNAME: ${{ inputs.ig_username }}
+        run: node scripts/instagram/check-account.mjs
