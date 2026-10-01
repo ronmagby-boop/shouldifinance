@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:guides": "node scripts/check-guides.mjs",
+    "check:assumptions": "node scripts/instagram/check-assumptions.mjs",
     "check:facts": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-facts.mjs",
     "cards": "node scripts/instagram/render-cards.mjs",
     "test:instagram": "node --test \"scripts/instagram/*.test.mjs\"",
