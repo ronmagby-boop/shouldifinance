@@ -25,10 +25,10 @@
     },
     {
       "n": 3,
-      "id": "day-364-vs-366",
+      "id": "niit-lesser-of",
       "category": "Money",
       "guide": "what-will-you-owe-in-capital-gains-tax",
-      "layout": "big-number"
+      "layout": "myth-fact"
     },
     {
       "n": 4,
@@ -221,7 +221,7 @@
     },
     {
       "n": 31,
-      "id": "gain-stacks",
+      "id": "day-364-vs-366",
       "category": "Money",
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "layout": "statement"
@@ -501,7 +501,7 @@
     },
     {
       "n": 71,
-      "id": "state-can-exceed-federal",
+      "id": "gain-stacks",
       "category": "Money",
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "layout": "statement"
@@ -739,10 +739,10 @@
     },
     {
       "n": 105,
-      "id": "niit-lesser-of",
+      "id": "zero-percent-band",
       "category": "Money",
       "guide": "what-will-you-owe-in-capital-gains-tax",
-      "layout": "myth-fact"
+      "layout": "big-number"
     },
     {
       "n": 106,
@@ -928,9 +928,9 @@
     },
     {
       "n": 132,
-      "id": "unindexed-pension",
+      "id": "state-can-exceed-federal",
       "category": "Money",
-      "guide": "are-you-on-track-for-retirement",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
       "layout": "statement"
     },
     {
@@ -942,10 +942,10 @@
     },
     {
       "n": 134,
-      "id": "zero-percent-band",
+      "id": "unindexed-pension",
       "category": "Money",
-      "guide": "what-will-you-owe-in-capital-gains-tax",
-      "layout": "big-number"
+      "guide": "are-you-on-track-for-retirement",
+      "layout": "statement"
     },
     {
       "n": 135,

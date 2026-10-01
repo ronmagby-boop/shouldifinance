@@ -529,7 +529,9 @@ function validateFacts(facts) {
     if (!["statement", "big-number", "myth-fact"].includes(f.layout)) problems.push(`${f.id}: layout "${f.layout}" is not statement, big-number or myth-fact`);
     if (f.layout === "big-number") {
       if (!f.hero) problems.push(`${f.id}: big-number with no hero`);
-      else if (f.card.split(f.hero).length - 1 !== 1) problems.push(`${f.id}: hero "${f.hero}" does not appear exactly once in the card`);
+      // Letter case aside, so a hero can open with a capital ("Year 20") that
+      // sits mid-sentence in the card ("…until year 20.").
+      else if (f.card.toLowerCase().split(f.hero.toLowerCase()).length - 1 !== 1) problems.push(`${f.id}: hero "${f.hero}" does not appear exactly once in the card`);
       if (!f.hero_context || !f.hero_context.trim()) problems.push(`${f.id}: big-number with no hero_context`);
     }
     if (f.layout === "myth-fact" && (!f.myth || !f.myth.trim())) problems.push(`${f.id}: myth-fact with no myth`);

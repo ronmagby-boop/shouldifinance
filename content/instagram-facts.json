@@ -12,7 +12,7 @@
     "shelfLife": "null when the fact is a fixed rule or a structural relationship. Otherwise an object naming what goes stale and when to recheck.",
     "depends_on": "Present on facts resting on an agency-set or statutory figure that has a constant in app/lib. Names those constants, which the fact states or relies on. Constants only, never functions. Not used by any code yet.",
     "layout": "Evergreen facts only. How the card is laid out: statement, big-number or myth-fact.",
-    "hero": "big-number only. The figure shown large; must appear exactly once, verbatim, in card.",
+    "hero": "big-number only. The figure shown large; must appear exactly once in card, verbatim apart from letter case.",
     "hero_context": "big-number only, required. One short line saying what the hero figure measures.",
     "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact.",
     "reviewed": "Required to publish. null until a person signs the fact off; then {date, hash}: the review date (YYYY-MM-DD) and a hash of exactly what was reviewed (card, caption as posted, alt text, hero, hero_context, myth, card_source; scripts/instagram/review.mjs). Set it with npm run review:mark. publish.mjs refuses a fact with no sign-off, a malformed one, or one whose hash no longer matches, in a dry run as in a live one."
@@ -102,14 +102,14 @@
     },
     {
       "id": "principal-beats-interest-233",
-      "card": "On a 30-year mortgage at 6.5%, principal does not beat interest until month 233.",
+      "card": "On a 30-year mortgage at 6.5%, principal does not overtake interest until year 20.",
       "caption": "A mortgage is front-loaded. On a $400,000 loan at 6.5% the first payment of $2,528 splits into $2,167 of interest and $362 of principal, and it takes more than 19 years before the principal half is the bigger one. For the first two decades you are mostly renting money. https://shouldifinance.com/guides/do-extra-mortgage-payments-save-money",
       "guide": "do-extra-mortgage-payments-save-money",
       "source": "Computed with the site's own amortization, the same code the calculator runs",
       "card_source": "Site model: $400,000 at 6.5%, 30 years",
       "layout": "big-number",
-      "hero": "month 233",
-      "hero_context": "before principal outpaces interest on a 30-year mortgage at 6.5%",
+      "hero": "Year 20",
+      "hero_context": "before principal outpaces interest, 30 years at 6.5%",
       "category": "Home",
       "shelfLife": null,
       "reviewed": null
@@ -1758,9 +1758,7 @@
       "guide": "what-will-you-owe-in-capital-gains-tax",
       "source": "IRS Revenue Procedure 2025-32, section 3.03, for the long-term capital gains brackets",
       "card_source": "Source: IRS Revenue Procedure 2025-32",
-      "layout": "big-number",
-      "hero": "1 day",
-      "hero_context": "held more than a year: long-term rates apply",
+      "layout": "statement",
       "category": "Money",
       "shelfLife": null,
       "reviewed": null
