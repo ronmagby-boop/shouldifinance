@@ -5,7 +5,7 @@ description: "The honest answer needs four numbers, and most people can name two
 calculator: retirement-savings
 category: Money
 published: 2026-06-26
-reviewed: 2026-06-26
+reviewed: 2026-10-01
 ---
 
 "On track" is a comparison, so it needs something to compare against. Building
@@ -107,3 +107,6 @@ and the subsequent Trinity study; it is a planning anchor derived from
 historical US returns, not a guarantee. Return assumptions used in the
 calculator are read from the same constants documented in the guide on [what
 your investments will be worth](/guides/what-will-your-investments-be-worth).
+Social Security's annual cost-of-living adjustment is set by [42 U.S.C. §
+415(i)](https://www.law.cornell.edu/uscode/text/42/415) and announced each
+year by the [Social Security Administration](https://www.ssa.gov/cola/).
