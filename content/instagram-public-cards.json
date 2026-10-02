@@ -1,142 +1,659 @@
 {
-  "_about": "The input hash each card in public/ig was rendered from (scripts/instagram/render-cards.mjs inputHash). Written by npm run cards:public; a card is republished only when this changes.",
+  "_about": "Per card in public/ig: the input hash it was rendered from (scripts/instagram/render-cards.mjs inputHash) and the render warnings measured then. Written by npm run cards:public; a card is republished only when its hash changes.",
   "cards": {
-    "apr-excludes-real-costs": "aa93102b95967dbf",
-    "apr-vs-apy": "1f64690c1bbd8797",
-    "auto-refi-cancels-gap": "cce6f568973631a1",
-    "auto-refi-dealer-markup": "7c8c3587465f2cfc",
-    "auto-refi-fees-worse": "f51733d1f6b503a6",
-    "avalanche-never-costs-more": "01f31609a26ca5ce",
-    "balance-up-money-down": "43acff2572488502",
-    "blended-big-cheap-hides-small": "0b1e33fffbc5928c",
-    "blended-cards-share-of-interest": "23044b1d9876502d",
-    "blended-interest-comes-out-first": "9d88c938a41ecf7c",
-    "buy-the-depreciation-not-the-rate": "5e1eb16369c59900",
-    "cannot-choose-a-return": "2d6a2cd14efdcfa0",
-    "car-loan-vs-down-payment": "0a76e86386987666",
-    "cash-loses-the-incentive": "4f6424a554a7cecd",
-    "cashout-not-deductible": "145db2ea78047b07",
-    "cashout-reprices-everything": "7ca62bc052cd8475",
-    "compare-section-a": "fb06e70d3b1b96c7",
-    "consolidation-advertised-rate": "e9d64eb458728113",
-    "cost-basis-twice": "e010865a4a336287",
-    "cost-per-mile-counterintuitive": "1629dc6c255101d8",
-    "day-364-vs-366": "00e76d91f8e4a289",
-    "dca-failure-mode": "6b0c2909ab5fa6f4",
-    "dca-half-in-cash": "d6ff7c1e049ff6c3",
-    "dca-is-insurance": "b036f38fe8d2db0a",
-    "deduct-top-withdraw-bottom": "41a4f755f3d2c01d",
-    "depreciation-no-bill": "c3cf20f69d386d09",
-    "differential-tax": "a0da50e0f3cfc615",
-    "dont-consolidate-cheap-debt": "1938f22178c41a3b",
-    "dti-43-not-the-rule": "a75c2c7626444d22",
-    "emergency-fund-negative-real": "5176fe528c6473df",
-    "emergency-fund-unit": "579bf9fac9468b5e",
-    "emergency-test": "2c2b63a59913a57f",
-    "ev-home-charging": "45c370b2612ab37a",
-    "ev-maintenance": "23d29da60ee995c9",
-    "exception-removes-ten-percent-only": "09e6aa2125ae5c19",
-    "extra-payment-misapplied": "25e9b0a96b9e8487",
-    "extra-payments-dont-lower-payment": "fb26f67685b012a0",
-    "extra-payments-timing": "f87996ed3047190a",
-    "fdic-guarantees-dollars": "b080540d1edfc512",
-    "fee-drag-86000": "ee49e5b8dd41242d",
-    "fees-are-a-bet-on-time": "eb7bf4329e5991ac",
-    "fha-mip-never-comes-off": "ca894027e67af208",
-    "fha-nine-vs-ten": "b7236bf7907dcf86",
-    "four-percent-rule-misread": "1b4f66e47131be4b",
-    "gain-stacks": "e3d2033d7aaa55cf",
-    "gap-insurance-window": "6a91cab3e3796bb6",
-    "grace-period-gone": "f341043238fbb61c",
-    "guaranteed-vs-expected": "cfd79092be3fc611",
-    "half-point-cancelled": "848fd23a968d5324",
-    "heloc-interest-only-decade": "2cff858ecb4d5868",
-    "heloc-not-deductible": "758edca8d01ab758",
-    "heloc-payment-beats-rate": "9bf46d4749ed069f",
-    "heloc-payment-steps": "c57630f9dacf9bb3",
-    "house-is-not-retirement-income": "de64671f7697aa26",
-    "lease-lower-payment-not-saving": "ee0ac8b8ac82a350",
-    "lease-money-down-gone": "811060468446edf5",
-    "lease-negative-equity": "436e4f3273e1e682",
-    "lease-not-maintenance-free": "8f7b614e2d1aeccc",
-    "lease-rent-on-the-sum": "e0e38d49d49847e8",
-    "liquid-net-worth": "102ba98af6b80219",
-    "loan-estimate-three-days": "e5aa715e6fec5618",
-    "loan-estimate-tolerances": "c225e8ecb6512d5d",
-    "long-terms-exist-for-a-reason": "3335a51a0d0e0c4b",
-    "lower-rate-longer-term": "3adae76be978f66c",
-    "mandatory-twenty-percent": "0e4bc8e3e047fad7",
-    "match-formula-confusion": "503cf26ce08911f5",
-    "match-is-fifty-percent": "acb56a90c862e79a",
-    "match-usually-traditional": "6ee6a2d6bb20e2ea",
-    "minimum-payment-box": "9ec314583a233ca8",
-    "minimums-shrink": "a8214b70d788f3ff",
-    "money-factor-2400": "0789e0a7224935fa",
-    "negative-equity-rollforward": "e494833d5e5a3500",
-    "net-worth-catches-what-budget-misses": "6cdd400a42ccbd31",
-    "niit-lesser-of": "56468fc302cf07ca",
-    "niit-never-indexed": "71575000e064fd94",
-    "no-cost-refinance-tell": "e0db6ad788bacff2",
-    "nominal-vs-real": "3b8208ad86a257ed",
-    "one-late-payment": "45154d3fd18e6aec",
-    "origination-fee-from-proceeds": "7d53d5d86e6bd0da",
-    "paid-off-house-lowers-floor": "fe13ac74fe352606",
-    "paycheck-is-not-dca": "bd4145f1a59640ca",
-    "payment-allocation-highest-rate": "52832c5b70c03096",
-    "pmi-80-78-gap": "17c248654bda069d",
-    "pmi-is-not-forever": "e1a51bf4eee41215",
-    "pmi-midpoint": "d5e494626f2c7751",
-    "pmi-original-value": "1f9949e073086ba3",
-    "points-bet-on-not-refinancing": "1387789a26380b0d",
-    "points-no-fixed-rate": "cc0a700285ad3587",
-    "points-purchase-vs-refi": "02754d41caec93e4",
-    "prepay-returns-exactly": "4f206aa08b9bfdef",
-    "principal-beats-interest-233": "ee3edc1a1ed29430",
-    "projection-is-sensitivity": "8776befe1d24cf1b",
-    "promo-rate-six-months": "a3a56fe64ee62c0d",
-    "rebate-or-rate-not-both": "488e52cb2c625f56",
-    "refinance-rate-not-price": "c3a25beaab2d20c0",
-    "reinvested-dividends-taxed": "0561739d0a557efd",
-    "reinvestment-concentrates": "8155c41cb787227d",
-    "rent-back": "b6dac3db4da5e7a2",
-    "rent-vs-buy-is-a-year": "682f1666859e2eb7",
-    "residual-not-negotiable": "57dc48fb60628d4c",
-    "roth-five-year": "0ce698ebf023f168",
-    "roth-limit-counts-dollars": "9e4c10741d3119bb",
-    "rule-of-72": "a9cb3f0e64a80238",
-    "same-deposit-820-difference": "0159d3346d5c0bc8",
-    "section-121-exclusion": "33ca7928acd13679",
-    "section-121-not-same-24-months": "dcc9ddbce0328ef8",
-    "section-121-two-year-bar": "f0e2fb4a3ea7e8dd",
-    "sequence-risk": "4997e7c5ce8179e3",
-    "seven-becomes-ten": "480e09a5cc6ad6e1",
-    "simple-vs-compound": "5fa405c6f5d372d0",
-    "sixty-day-trap": "986f1674fd3d7355",
-    "snowball-cost-is-rate-spread": "1af10e040f801fc4",
-    "state-can-exceed-federal": "abdd6b7883889a2f",
-    "third-decade": "70f612457539a4ea",
-    "thirty-k-at-forty": "06af6726ceae5756",
-    "thousand-a-month": "eefbfb8f40139e52",
-    "tip-page-three": "f981d9c7e83a73e2",
-    "traditional-balance-is-not-yours": "97601b21088cece3",
-    "transfer-fee-six-weeks": "326e74b738431dee",
-    "transfer-real-number": "d846d0339ab46ad5",
-    "true-up": "abea6e6c71aaabc7",
-    "twenty-four-ten": "3af6bf2cc93cad4f",
-    "two-more-years": "eba30c38cfb64406",
-    "unamortized-points": "a04babfb7c5a41e7",
-    "underwater-month-29": "5ec75037fbd32734",
-    "unindexed-pension": "cdb1a1c7a83dff92",
-    "used-saving-is-depreciation": "7cb1423fe99dd3bc",
-    "va-210-days": "1ce0f56f2549074b",
-    "va-no-loan-limit": "c6eb0866c2d20bc3",
-    "va-no-monthly-mi": "fd7ad4f31ff4deb7",
-    "va-passes-but-costs": "def7b708ac6b753f",
-    "va-zero-rating-not-exempt": "1c8682b0e34a143c",
-    "waiting-lower-rate-more-bidders": "2fbf62d615a077b4",
-    "year-one-87-percent": "b09c25438793566e",
-    "year-one-beats-four-and-five": "7505a7f16b6d9189",
-    "your-contributions-always-vested": "47b1c531e08b4b65",
-    "zero-percent-band": "166f207033cc2915"
+    "apr-excludes-real-costs": {
+      "hash": "aa93102b95967dbf",
+      "warnings": []
+    },
+    "apr-vs-apy": {
+      "hash": "1f64690c1bbd8797",
+      "warnings": []
+    },
+    "auto-refi-cancels-gap": {
+      "hash": "cce6f568973631a1",
+      "warnings": []
+    },
+    "auto-refi-dealer-markup": {
+      "hash": "7c8c3587465f2cfc",
+      "warnings": []
+    },
+    "auto-refi-fees-worse": {
+      "hash": "f51733d1f6b503a6",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "avalanche-never-costs-more": {
+      "hash": "01f31609a26ca5ce",
+      "warnings": [
+        "card text wraps to 8 lines with one word on the last"
+      ]
+    },
+    "balance-up-money-down": {
+      "hash": "43acff2572488502",
+      "warnings": []
+    },
+    "blended-big-cheap-hides-small": {
+      "hash": "0b1e33fffbc5928c",
+      "warnings": []
+    },
+    "blended-cards-share-of-interest": {
+      "hash": "23044b1d9876502d",
+      "warnings": [
+        "card text wraps to 3 lines with one word on the last"
+      ]
+    },
+    "blended-interest-comes-out-first": {
+      "hash": "9d88c938a41ecf7c",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "buy-the-depreciation-not-the-rate": {
+      "hash": "5e1eb16369c59900",
+      "warnings": []
+    },
+    "cannot-choose-a-return": {
+      "hash": "2d6a2cd14efdcfa0",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "car-loan-vs-down-payment": {
+      "hash": "0a76e86386987666",
+      "warnings": []
+    },
+    "cash-loses-the-incentive": {
+      "hash": "4f6424a554a7cecd",
+      "warnings": []
+    },
+    "cashout-not-deductible": {
+      "hash": "145db2ea78047b07",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "cashout-reprices-everything": {
+      "hash": "7ca62bc052cd8475",
+      "warnings": []
+    },
+    "compare-section-a": {
+      "hash": "fb06e70d3b1b96c7",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "consolidation-advertised-rate": {
+      "hash": "e9d64eb458728113",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "cost-basis-twice": {
+      "hash": "e010865a4a336287",
+      "warnings": []
+    },
+    "cost-per-mile-counterintuitive": {
+      "hash": "1629dc6c255101d8",
+      "warnings": []
+    },
+    "day-364-vs-366": {
+      "hash": "00e76d91f8e4a289",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "dca-failure-mode": {
+      "hash": "6b0c2909ab5fa6f4",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "dca-half-in-cash": {
+      "hash": "d6ff7c1e049ff6c3",
+      "warnings": []
+    },
+    "dca-is-insurance": {
+      "hash": "b036f38fe8d2db0a",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "deduct-top-withdraw-bottom": {
+      "hash": "41a4f755f3d2c01d",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "depreciation-no-bill": {
+      "hash": "c3cf20f69d386d09",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "differential-tax": {
+      "hash": "a0da50e0f3cfc615",
+      "warnings": []
+    },
+    "dont-consolidate-cheap-debt": {
+      "hash": "1938f22178c41a3b",
+      "warnings": []
+    },
+    "dti-43-not-the-rule": {
+      "hash": "a75c2c7626444d22",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "emergency-fund-negative-real": {
+      "hash": "5176fe528c6473df",
+      "warnings": []
+    },
+    "emergency-fund-unit": {
+      "hash": "579bf9fac9468b5e",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "emergency-test": {
+      "hash": "2c2b63a59913a57f",
+      "warnings": []
+    },
+    "ev-home-charging": {
+      "hash": "45c370b2612ab37a",
+      "warnings": []
+    },
+    "ev-maintenance": {
+      "hash": "23d29da60ee995c9",
+      "warnings": []
+    },
+    "exception-removes-ten-percent-only": {
+      "hash": "09e6aa2125ae5c19",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "extra-payment-misapplied": {
+      "hash": "25e9b0a96b9e8487",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "extra-payments-dont-lower-payment": {
+      "hash": "fb26f67685b012a0",
+      "warnings": []
+    },
+    "extra-payments-timing": {
+      "hash": "f87996ed3047190a",
+      "warnings": []
+    },
+    "fdic-guarantees-dollars": {
+      "hash": "b080540d1edfc512",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "fee-drag-86000": {
+      "hash": "ee49e5b8dd41242d",
+      "warnings": []
+    },
+    "fees-are-a-bet-on-time": {
+      "hash": "eb7bf4329e5991ac",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "fha-mip-never-comes-off": {
+      "hash": "ca894027e67af208",
+      "warnings": []
+    },
+    "fha-nine-vs-ten": {
+      "hash": "b7236bf7907dcf86",
+      "warnings": []
+    },
+    "four-percent-rule-misread": {
+      "hash": "1b4f66e47131be4b",
+      "warnings": []
+    },
+    "gain-stacks": {
+      "hash": "e3d2033d7aaa55cf",
+      "warnings": []
+    },
+    "gap-insurance-window": {
+      "hash": "6a91cab3e3796bb6",
+      "warnings": []
+    },
+    "grace-period-gone": {
+      "hash": "f341043238fbb61c",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "guaranteed-vs-expected": {
+      "hash": "cfd79092be3fc611",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "half-point-cancelled": {
+      "hash": "848fd23a968d5324",
+      "warnings": [
+        "card text wraps to 3 lines with one word on the last"
+      ]
+    },
+    "heloc-interest-only-decade": {
+      "hash": "2cff858ecb4d5868",
+      "warnings": []
+    },
+    "heloc-not-deductible": {
+      "hash": "758edca8d01ab758",
+      "warnings": []
+    },
+    "heloc-payment-beats-rate": {
+      "hash": "9bf46d4749ed069f",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "heloc-payment-steps": {
+      "hash": "c57630f9dacf9bb3",
+      "warnings": []
+    },
+    "house-is-not-retirement-income": {
+      "hash": "de64671f7697aa26",
+      "warnings": []
+    },
+    "lease-lower-payment-not-saving": {
+      "hash": "ee0ac8b8ac82a350",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "lease-money-down-gone": {
+      "hash": "811060468446edf5",
+      "warnings": []
+    },
+    "lease-negative-equity": {
+      "hash": "436e4f3273e1e682",
+      "warnings": []
+    },
+    "lease-not-maintenance-free": {
+      "hash": "8f7b614e2d1aeccc",
+      "warnings": []
+    },
+    "lease-rent-on-the-sum": {
+      "hash": "e0e38d49d49847e8",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "liquid-net-worth": {
+      "hash": "102ba98af6b80219",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "loan-estimate-three-days": {
+      "hash": "e5aa715e6fec5618",
+      "warnings": []
+    },
+    "loan-estimate-tolerances": {
+      "hash": "c225e8ecb6512d5d",
+      "warnings": []
+    },
+    "long-terms-exist-for-a-reason": {
+      "hash": "3335a51a0d0e0c4b",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "lower-rate-longer-term": {
+      "hash": "3adae76be978f66c",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "mandatory-twenty-percent": {
+      "hash": "0e4bc8e3e047fad7",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "match-formula-confusion": {
+      "hash": "503cf26ce08911f5",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "match-is-fifty-percent": {
+      "hash": "acb56a90c862e79a",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "match-usually-traditional": {
+      "hash": "6ee6a2d6bb20e2ea",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "minimum-payment-box": {
+      "hash": "9ec314583a233ca8",
+      "warnings": []
+    },
+    "minimums-shrink": {
+      "hash": "a8214b70d788f3ff",
+      "warnings": []
+    },
+    "money-factor-2400": {
+      "hash": "0789e0a7224935fa",
+      "warnings": []
+    },
+    "negative-equity-rollforward": {
+      "hash": "e494833d5e5a3500",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "net-worth-catches-what-budget-misses": {
+      "hash": "6cdd400a42ccbd31",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "niit-lesser-of": {
+      "hash": "56468fc302cf07ca",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "niit-never-indexed": {
+      "hash": "71575000e064fd94",
+      "warnings": []
+    },
+    "no-cost-refinance-tell": {
+      "hash": "e0db6ad788bacff2",
+      "warnings": []
+    },
+    "nominal-vs-real": {
+      "hash": "3b8208ad86a257ed",
+      "warnings": [
+        "card text wraps to 3 lines with one word on the last"
+      ]
+    },
+    "one-late-payment": {
+      "hash": "45154d3fd18e6aec",
+      "warnings": []
+    },
+    "origination-fee-from-proceeds": {
+      "hash": "7d53d5d86e6bd0da",
+      "warnings": []
+    },
+    "paid-off-house-lowers-floor": {
+      "hash": "fe13ac74fe352606",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "paycheck-is-not-dca": {
+      "hash": "bd4145f1a59640ca",
+      "warnings": []
+    },
+    "payment-allocation-highest-rate": {
+      "hash": "52832c5b70c03096",
+      "warnings": [
+        "card text wraps to 7 lines with one word on the last"
+      ]
+    },
+    "pmi-80-78-gap": {
+      "hash": "17c248654bda069d",
+      "warnings": []
+    },
+    "pmi-is-not-forever": {
+      "hash": "e1a51bf4eee41215",
+      "warnings": []
+    },
+    "pmi-midpoint": {
+      "hash": "d5e494626f2c7751",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "pmi-original-value": {
+      "hash": "1f9949e073086ba3",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "points-bet-on-not-refinancing": {
+      "hash": "1387789a26380b0d",
+      "warnings": []
+    },
+    "points-no-fixed-rate": {
+      "hash": "cc0a700285ad3587",
+      "warnings": []
+    },
+    "points-purchase-vs-refi": {
+      "hash": "02754d41caec93e4",
+      "warnings": []
+    },
+    "prepay-returns-exactly": {
+      "hash": "4f206aa08b9bfdef",
+      "warnings": [
+        "card text wraps to 7 lines with one word on the last"
+      ]
+    },
+    "principal-beats-interest-233": {
+      "hash": "ee3edc1a1ed29430",
+      "warnings": []
+    },
+    "projection-is-sensitivity": {
+      "hash": "8776befe1d24cf1b",
+      "warnings": []
+    },
+    "promo-rate-six-months": {
+      "hash": "a3a56fe64ee62c0d",
+      "warnings": []
+    },
+    "rebate-or-rate-not-both": {
+      "hash": "488e52cb2c625f56",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "refinance-rate-not-price": {
+      "hash": "c3a25beaab2d20c0",
+      "warnings": []
+    },
+    "reinvested-dividends-taxed": {
+      "hash": "0561739d0a557efd",
+      "warnings": []
+    },
+    "reinvestment-concentrates": {
+      "hash": "8155c41cb787227d",
+      "warnings": []
+    },
+    "rent-back": {
+      "hash": "b6dac3db4da5e7a2",
+      "warnings": []
+    },
+    "rent-vs-buy-is-a-year": {
+      "hash": "682f1666859e2eb7",
+      "warnings": []
+    },
+    "residual-not-negotiable": {
+      "hash": "57dc48fb60628d4c",
+      "warnings": []
+    },
+    "roth-five-year": {
+      "hash": "0ce698ebf023f168",
+      "warnings": []
+    },
+    "roth-limit-counts-dollars": {
+      "hash": "9e4c10741d3119bb",
+      "warnings": []
+    },
+    "rule-of-72": {
+      "hash": "a9cb3f0e64a80238",
+      "warnings": []
+    },
+    "same-deposit-820-difference": {
+      "hash": "0159d3346d5c0bc8",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "section-121-exclusion": {
+      "hash": "33ca7928acd13679",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "section-121-not-same-24-months": {
+      "hash": "dcc9ddbce0328ef8",
+      "warnings": []
+    },
+    "section-121-two-year-bar": {
+      "hash": "f0e2fb4a3ea7e8dd",
+      "warnings": []
+    },
+    "sequence-risk": {
+      "hash": "4997e7c5ce8179e3",
+      "warnings": []
+    },
+    "seven-becomes-ten": {
+      "hash": "480e09a5cc6ad6e1",
+      "warnings": []
+    },
+    "simple-vs-compound": {
+      "hash": "5fa405c6f5d372d0",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "sixty-day-trap": {
+      "hash": "986f1674fd3d7355",
+      "warnings": []
+    },
+    "snowball-cost-is-rate-spread": {
+      "hash": "1af10e040f801fc4",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "state-can-exceed-federal": {
+      "hash": "abdd6b7883889a2f",
+      "warnings": []
+    },
+    "third-decade": {
+      "hash": "70f612457539a4ea",
+      "warnings": []
+    },
+    "thirty-k-at-forty": {
+      "hash": "06af6726ceae5756",
+      "warnings": []
+    },
+    "thousand-a-month": {
+      "hash": "eefbfb8f40139e52",
+      "warnings": []
+    },
+    "tip-page-three": {
+      "hash": "f981d9c7e83a73e2",
+      "warnings": []
+    },
+    "traditional-balance-is-not-yours": {
+      "hash": "97601b21088cece3",
+      "warnings": []
+    },
+    "transfer-fee-six-weeks": {
+      "hash": "326e74b738431dee",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "transfer-real-number": {
+      "hash": "d846d0339ab46ad5",
+      "warnings": []
+    },
+    "true-up": {
+      "hash": "abea6e6c71aaabc7",
+      "warnings": []
+    },
+    "twenty-four-ten": {
+      "hash": "3af6bf2cc93cad4f",
+      "warnings": []
+    },
+    "two-more-years": {
+      "hash": "eba30c38cfb64406",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "unamortized-points": {
+      "hash": "a04babfb7c5a41e7",
+      "warnings": []
+    },
+    "underwater-month-29": {
+      "hash": "5ec75037fbd32734",
+      "warnings": []
+    },
+    "unindexed-pension": {
+      "hash": "cdb1a1c7a83dff92",
+      "warnings": []
+    },
+    "used-saving-is-depreciation": {
+      "hash": "7cb1423fe99dd3bc",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "va-210-days": {
+      "hash": "1ce0f56f2549074b",
+      "warnings": []
+    },
+    "va-no-loan-limit": {
+      "hash": "c6eb0866c2d20bc3",
+      "warnings": []
+    },
+    "va-no-monthly-mi": {
+      "hash": "fd7ad4f31ff4deb7",
+      "warnings": []
+    },
+    "va-passes-but-costs": {
+      "hash": "def7b708ac6b753f",
+      "warnings": []
+    },
+    "va-zero-rating-not-exempt": {
+      "hash": "1c8682b0e34a143c",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "waiting-lower-rate-more-bidders": {
+      "hash": "2fbf62d615a077b4",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "year-one-87-percent": {
+      "hash": "b09c25438793566e",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "year-one-beats-four-and-five": {
+      "hash": "7505a7f16b6d9189",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "your-contributions-always-vested": {
+      "hash": "47b1c531e08b4b65",
+      "warnings": []
+    },
+    "zero-percent-band": {
+      "hash": "166f207033cc2915",
+      "warnings": []
+    }
   }
 }

@@ -43,6 +43,6 @@ test("fields that never reach the image do not move it, so editing them republis
 
 test("the committed record matches the committed facts: no published card is out of date", () => {
   const record = JSON.parse(fs.readFileSync(path.join(HERE, "..", "..", "content", "instagram-public-cards.json"), "utf8")).cards;
-  const stale = facts.filter((f) => !f.shelfLife && record[f.id] !== inputHash(f, colours, design)).map((f) => f.id);
+  const stale = facts.filter((f) => !f.shelfLife && record[f.id]?.hash !== inputHash(f, colours, design)).map((f) => f.id);
   assert.deepEqual(stale, [], "run npm run cards and npm run cards:public");
 });

@@ -15,7 +15,8 @@
  * card_source), its category's resolved colours, and the design (page
  * template and fitting code, size and brand constants, JPEG settings, font
  * and wordmark files). content/instagram-public-cards.json records the input
- * hash of each card in public/ig. For each evergreen fact this script
+ * hash of each card in public/ig, with the render warnings measured for it
+ * (a lone last word on the card text), which the review issue shows. For each evergreen fact this script
  * computes the input hash now and:
  *
  *   same as recorded, file present   leaves it alone
@@ -36,7 +37,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { RENDERED_HASHES, categoryColours, designHash, inputHash } from "./render-cards.mjs";
+import { RENDERED_HASHES, RENDER_WARNINGS, categoryColours, designHash, inputHash } from "./render-cards.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const FROM = path.join(ROOT, ".instagram-cards");
@@ -48,6 +49,12 @@ const NOISE = 24;
 const adopt = process.argv.includes("--adopt");
 const facts = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-facts.json"), "utf8")).facts.filter((f) => !f.shelfLife);
 const record = fs.existsSync(RECORD) ? JSON.parse(fs.readFileSync(RECORD, "utf8")).cards : {};
+// An entry is { hash, warnings }; a bare string is the older form, hash only.
+const hashOf = (entry) => (typeof entry === "string" ? entry : entry?.hash);
+const renderWarnings = fs.existsSync(RENDER_WARNINGS) ? JSON.parse(fs.readFileSync(RENDER_WARNINGS, "utf8")) : {};
+/** The warnings measured when the card with this input hash was rendered, if known. */
+const warningsFor = (id, hash, kept) =>
+  renderWarnings[id]?.inputHash === hash ? renderWarnings[id].warnings : typeof kept === "object" && kept?.hash === hash ? kept.warnings ?? [] : [];
 const rendered = fs.existsSync(RENDERED_HASHES) ? JSON.parse(fs.readFileSync(RENDERED_HASHES, "utf8")) : {};
 const colours = categoryColours();
 const design = designHash();
@@ -65,7 +72,7 @@ async function main() {
   for (const f of facts) {
     const want = inputHash(f, colours, design);
     const dst = path.join(TO, `${f.id}.jpg`);
-    if (record[f.id] === want && fs.existsSync(dst)) {
+    if (hashOf(record[f.id]) === want && fs.existsSync(dst)) {
       plan.push({ f, want, action: "unchanged" });
       continue;
     }
@@ -93,13 +100,13 @@ async function main() {
   const next = {};
   for (const p of plan) {
     if (p.action === "copied") fs.copyFileSync(p.src, p.dst);
-    next[p.f.id] = p.want;
+    next[p.f.id] = { hash: p.want, warnings: warningsFor(p.f.id, p.want, record[p.f.id]) };
   }
   fs.writeFileSync(
     RECORD,
     JSON.stringify(
       {
-        _about: "The input hash each card in public/ig was rendered from (scripts/instagram/render-cards.mjs inputHash). Written by npm run cards:public; a card is republished only when this changes.",
+        _about: "Per card in public/ig: the input hash it was rendered from (scripts/instagram/render-cards.mjs inputHash) and the render warnings measured then. Written by npm run cards:public; a card is republished only when its hash changes.",
         cards: Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]])),
       },
       null,

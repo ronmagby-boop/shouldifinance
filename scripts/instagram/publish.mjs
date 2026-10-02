@@ -1,31 +1,32 @@
 #!/usr/bin/env node
 /**
- * Publishes the next scheduled Instagram card, or with --dry-run (the
- * default) shows what it would publish.
+ * Publishes one Instagram card, or with --dry-run (the default) shows what it
+ * would publish.
  *
- *   node scripts/instagram/publish.mjs                 dry run
+ *   node scripts/instagram/publish.mjs                 dry run of the next scheduled fact
  *   node scripts/instagram/publish.mjs --live          really post
- *   node scripts/instagram/publish.mjs --fact-id <id>  post this fact instead
- *   node scripts/instagram/publish.mjs --preview --preview-out <file>
- *       what the next post would be, as JSON, with every reason it would be
- *       refused instead of stopping at the first; never posts
+ *   node scripts/instagram/publish.mjs --fact-id <id>  this fact instead
  *   --expect-fact <id> --expect-hash <hash>
  *       refuse unless the post is that fact with that preview hash, so what
- *       posts is exactly what a preview showed (instagram-post.yml uses this)
+ *       posts is exactly what a preview issue showed. instagram-post.yml
+ *       passes the issue's fact as --fact-id and both of these.
+ *
+ * Previews are preview.mjs; this script only posts (or dry-runs a post).
  *
  * Environment: IG_ACCESS_TOKEN (required), IG_USER_ID (required),
  * IG_APP_SECRET (optional; adds appsecret_proof for apps that require it).
  *
  * WHAT IS ALREADY POSTED comes from the account itself: the publisher reads
  * the account's media (caption and alt text) and matches it to facts with
- * match.mjs. There is no state file and nothing is committed. The next post is
- * the first fact in content/instagram-schedule.json that is not matched.
+ * match.mjs. There is no state file and nothing is committed. Without
+ * --fact-id the fact is the first in content/instagram-schedule.json that is
+ * not matched; a fact already on the account is never posted again.
  *
  * REVIEW: a fact is posted only if its "reviewed" field holds the date a
  * person signed it off and a hash of what they signed off (review.mjs). With
  * no sign-off, or if the card, caption, alt text, hero, hero_context, myth or
  * card_source has changed since, a dry run and a live run both stop with the
- * reason. The next fact is not skipped to: the schedule order holds.
+ * reason.
  *
  * CHECK:FACTS: the fact to post is refused if check:facts holds it (one of
  * its depends_on constants changed since it was checked). Other held facts
@@ -44,58 +45,36 @@
  *
  * Graph API v26.0, the newest in Meta's changelog.
  */
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createGraph, VERSION } from "./graph.mjs";
 import { buildAltText, buildCaption, captionProblems, imageUrl } from "./caption.mjs";
-import { matchMedia, nextScheduled } from "./match.mjs";
+import { nextScheduled } from "./match.mjs";
 import { reviewProblem } from "./review.mjs";
 import { checkFacts } from "../check-facts.mjs";
+import { MEDIA_PAGE_SIZE, readAccount } from "./account.mjs";
+import { fetchImage, previewHash } from "./post-content.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS || 60_000);
 const POLL_CHECKS = 6; // at once, then once a minute for five minutes
-/**
- * Media are read in pages of MEDIA_PAGE_SIZE, following every next link: the
- * whole history, not a recent window, because the oldest posts are the
- * earliest scheduled facts. Meta's IG User Media reference: "Returns a maximum
- * of 10K of the most recently created media." MAX_MEDIA_PAGES (20,000 items at
- * full pages) sits above that, so it only ever trips on a runaway, and then
- * the run fails instead of posting from a partial history.
- */
-const MEDIA_PAGE_SIZE = 100;
-const MAX_MEDIA_PAGES = 200;
 // IG_FACTS_FILE is a test override only; the workflow never sets it.
 const FACTS_FILE = process.env.IG_FACTS_FILE || path.join(ROOT, "content", "instagram-facts.json");
 
 function parseArgs(argv) {
-  const args = { live: false, factId: null, preview: false, previewOut: null, expectFact: null, expectHash: null };
+  const args = { live: false, factId: null, expectFact: null, expectHash: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--live") args.live = true;
     else if (a === "--dry-run") args.live = false;
     else if (a === "--fact-id") args.factId = argv[++i]?.trim() || null;
-    else if (a === "--preview") args.preview = true;
-    else if (a === "--preview-out") args.previewOut = argv[++i];
     else if (a === "--expect-fact") args.expectFact = argv[++i]?.trim() || null;
     else if (a === "--expect-hash") args.expectHash = argv[++i]?.trim() || null;
     else throw new Error(`Unknown argument ${a}`);
   }
-  if (args.preview && args.live) throw new Error("--preview never posts; drop --live");
-  if (args.preview && !args.previewOut) throw new Error("--preview needs --preview-out <file>");
   return args;
 }
-
-/**
- * What a preview showed, as one hash: the fact, the caption and alt text as
- * posted, the image URL and the image bytes served there. The post job passes
- * it back as --expect-hash, so a redeployed card or an edited caption between
- * preview and post is refused rather than posted unseen.
- */
-const previewHash = ({ id, caption, alt, url, imageSha }) =>
-  crypto.createHash("sha256").update(JSON.stringify([id, caption, alt, url, imageSha])).digest("hex").slice(0, 16);
 
 const args = parseArgs(process.argv.slice(2));
 const igUserId = process.env.IG_USER_ID?.trim();
@@ -115,7 +94,7 @@ const summary = [];
 const note = (s) => summary.push(graph.scrub(s));
 function finish(code, tail) {
   const file = process.env.GITHUB_STEP_SUMMARY;
-  if (file) fs.appendFileSync(file, graph.scrub([`## Instagram ${args.preview ? "preview" : args.live ? "post" : "dry run"}`, "", ...summary, "", tail].join("\n")) + "\n");
+  if (file) fs.appendFileSync(file, graph.scrub([`## Instagram ${args.live ? "post" : "dry run"}`, "", ...summary, "", tail].join("\n")) + "\n");
   process.exit(code);
 }
 function fail(message) {
@@ -128,19 +107,6 @@ const fenced = (text) => {
   const fence = "`".repeat(Math.max(3, ...[...text.matchAll(/`+/g)].map((m) => m[0].length + 1)));
   return `${fence}text\n${text}\n${fence}`;
 };
-// In a preview, every reason the post would be refused is collected and
-// reported together; anywhere else the first one stops the run.
-const blockers = [];
-const warnings = [];
-function block(message) {
-  if (!args.preview) fail(message);
-  blockers.push(message);
-  say(`  BLOCKED: ${message}`);
-}
-function writePreview(post) {
-  const out = { generated: new Date().toISOString(), post, blockers: blockers.map((b) => graph.scrub(b)), warnings: warnings.map((w) => graph.scrub(w)) };
-  fs.writeFileSync(args.previewOut, graph.scrub(JSON.stringify(out, null, 2)) + "\n");
-}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const short = (s, n = 70) => {
   const t = String(s ?? "").replace(/\s+/g, " ").trim();
@@ -149,7 +115,7 @@ const short = (s, n = 70) => {
 
 async function main() {
   if (!igUserId) fail("IG_USER_ID is not set.");
-  say(`Graph API ${VERSION} · ${args.preview ? "preview: nothing will be posted" : args.live ? "LIVE: this run will post" : "dry run: nothing will be posted"}`);
+  say(`Graph API ${VERSION} · ${args.live ? "LIVE: this run will post" : "dry run: nothing will be posted"}`);
 
   const facts = JSON.parse(fs.readFileSync(FACTS_FILE, "utf8")).facts;
   const evergreen = facts.filter((f) => !f.shelfLife);
@@ -158,12 +124,7 @@ async function main() {
 
   // ------------------------------------------------ what is already posted
   say("\n1. Reading the account's media");
-  const { items: media, requests } = await graph.all(
-    `/${igUserId}/media`,
-    { fields: "id,caption,alt_text,timestamp,permalink", limit: String(MEDIA_PAGE_SIZE) },
-    { maxPages: MAX_MEDIA_PAGES },
-  );
-  const { posted, unmatched, ambiguous } = matchMedia(media, evergreen);
+  const { media, requests, posted, unmatched, ambiguous } = await readAccount(graph, igUserId, evergreen);
   const methods = [...posted.values()].reduce((a, v) => ((a[v.method] = (a[v.method] || 0) + 1), a), {});
   const mediaRead = `media read: ${media.length}, the whole history, in ${requests} request${requests === 1 ? "" : "s"} (page size ${MEDIA_PAGE_SIZE})`;
   const matched = `matched to facts: ${posted.size}${posted.size ? ` (${Object.entries(methods).map(([k, v]) => `${v} by ${k}`).join(", ")})` : ""}`;
@@ -184,7 +145,6 @@ async function main() {
   // ----------------------------------------------------------- which fact
   say("\n2. Choosing the fact");
   let fact;
-  let scheduleN = null;
   if (args.factId) {
     fact = byId.get(args.factId);
     if (!fact) fail(`fact_id "${args.factId}" is not in content/instagram-facts.json.`);
@@ -195,11 +155,9 @@ async function main() {
     const next = nextScheduled(schedule, posted);
     if (!next) {
       say("  every scheduled fact is posted; nothing to do");
-      if (args.preview) writePreview(null);
       finish(0, "Every scheduled fact is already posted.");
     }
     fact = byId.get(next.id);
-    scheduleN = next.n;
     say(`  ${fact.id} (schedule #${next.n} of ${schedule.length})`);
   }
   note(`- Fact: \`${fact.id}\` (${fact.category}, ${fact.layout})`);
@@ -210,25 +168,20 @@ async function main() {
   // A fact nobody has signed off is never posted, and a dry run says so too,
   // so a dry run that passes means the live run would post.
   const unreviewed = reviewProblem(fact);
-  if (unreviewed) block(`${unreviewed} Nothing was posted.`);
-  else {
-    say(`  reviewed: ${fact.reviewed.date}, content unchanged since (hash ${fact.reviewed.hash})`);
-    note(`- Reviewed: ${fact.reviewed.date}, content unchanged since (hash \`${fact.reviewed.hash}\`)`);
-  }
+  if (unreviewed) fail(`${unreviewed} Nothing was posted.`);
+  say(`  reviewed: ${fact.reviewed.date}, content unchanged since (hash ${fact.reviewed.hash})`);
+  note(`- Reviewed: ${fact.reviewed.date}, content unchanged since (hash \`${fact.reviewed.hash}\`)`);
 
   // Only this fact being held stops this post; others are warnings.
   const factCheck = await checkFacts(facts);
   const heldHere = factCheck.held.get(fact.id);
   if (heldHere) {
-    block(`${fact.id} is HELD by check:facts: ${heldHere.join("; ")}. Re-check it against the new values, fix its text if needed, then: npm run check:facts -- --accept ${fact.id}. Nothing was posted.`);
-  } else {
-    say(`  check:facts: ${fact.depends_on?.length ? `not held (${fact.depends_on.join(", ")} unchanged)` : "no depends_on"}`);
-    note(`- check:facts: ${fact.depends_on?.length ? "not held" : "no depends_on"}`);
+    fail(`${fact.id} is HELD by check:facts: ${heldHere.join("; ")}. Re-check it against the new values, fix its text if needed, then: npm run check:facts -- --accept ${fact.id}. Nothing was posted.`);
   }
+  say(`  check:facts: ${fact.depends_on?.length ? `not held (${fact.depends_on.join(", ")} unchanged)` : "no depends_on"}`);
+  note(`- check:facts: ${fact.depends_on?.length ? "not held" : "no depends_on"}`);
   for (const [id, why] of factCheck.held) {
-    if (id === fact.id) continue;
     const w = `${id} is HELD by check:facts (not this post): ${why.join("; ")}`;
-    warnings.push(w);
     say(`  WARNING: ${w}`);
     note(`- **Warning:** ${w}`);
   }
@@ -237,38 +190,24 @@ async function main() {
   const caption = buildCaption(fact);
   const alt = buildAltText(fact);
   const problems = captionProblems(fact);
-  if (problems.length) block(`${fact.id}: ${problems.join("; ")}`);
+  if (problems.length) fail(`${fact.id}: ${problems.join("; ")}`);
   const url = imageUrl(fact);
   say("\n3. Post");
   say(`  image: ${url}`);
-  let image = null;
-  let bytes = null;
-  try {
-    image = await fetch(url);
-    bytes = Buffer.from(await image.arrayBuffer());
-  } catch (e) {
-    block(`could not reach ${url}: ${e.cause?.code || e.message}`);
-  }
-  const type = image?.headers.get("content-type") || "";
-  let imageSha = null;
-  if (image && (!image.ok || !type.startsWith("image/jpeg"))) {
-    block(`${url} returned ${image.status} ${type || "(no content type)"}; Meta needs a public JPEG. Is the card deployed under public/ig/?`);
-  } else if (bytes) {
-    imageSha = crypto.createHash("sha256").update(bytes).digest("hex");
-  }
-  const imageCheck = image ? `${image.status} ${type}, ${bytes?.length ?? "?"} bytes` : "unreachable";
-  const hash = imageSha ? previewHash({ id: fact.id, caption, alt, url, imageSha }) : null;
-  say(`  image check: ${imageCheck}`);
-  if (hash) say(`  preview hash: ${hash}`);
+  const image = await fetchImage(url);
+  if (image.problem) fail(image.problem);
+  const hash = previewHash({ id: fact.id, caption, alt, url, imageSha: image.sha });
+  say(`  image check: ${image.check}`);
+  say(`  preview hash: ${hash}`);
   if (args.expectHash && hash !== args.expectHash) {
-    fail(`the post no longer matches its preview: hash ${hash ?? "(no image)"}, previewed ${args.expectHash}. The caption, alt text or card image changed after the preview issue was opened. Nothing was posted.`);
+    fail(`the post no longer matches its preview: hash ${hash}, previewed ${args.expectHash}. The caption, alt text or card image changed after the preview issue was opened. Nothing was posted.`);
   }
   say(`  caption (${caption.length} of 2200 characters):`);
   for (const line of caption.split("\n")) say(`    | ${line}`);
   say(`  alt text (${alt.length} of 1000 characters): ${alt}`);
   note(`- Image: ${url}`);
-  note(`- Image check: ${imageCheck}`);
-  if (hash) note(`- Preview hash: \`${hash}\``);
+  note(`- Image check: ${image.check}`);
+  note(`- Preview hash: \`${hash}\``);
   note(`- Caption (${caption.length} of 2200 characters):`);
   note("");
   note(fenced(caption));
@@ -285,28 +224,7 @@ async function main() {
   const quota = `${row.quota_usage ?? "?"} of ${total ?? "?"} used in the current ${row.config?.quota_duration ?? "?"}s window`;
   say(`\n4. Quota: ${quota}`);
   note(`- Quota: ${quota}`);
-  if (total !== undefined && row.quota_usage >= total) block("the publishing quota is used up for this window.");
-  if (args.preview && ambiguous.length) block(`${ambiguous.length} media item(s) match two facts equally, so a live run would refuse to post.`);
-
-  if (args.preview) {
-    writePreview({
-      id: fact.id,
-      n: scheduleN,
-      category: fact.category,
-      layout: fact.layout,
-      guide: fact.guide,
-      card: fact.card,
-      caption,
-      alt,
-      image: url,
-      imageCheck,
-      hash,
-      reviewed: unreviewed ? null : fact.reviewed,
-      quota,
-    });
-    say(`\nPreview: written to ${args.previewOut}. ${blockers.length ? `${blockers.length} blocker(s).` : "Nothing blocks it."} Nothing was posted.`);
-    finish(0, blockers.length ? `**Preview: blocked.** ${blockers.join(" ")}` : `**Preview.** Would post \`${fact.id}\`, preview hash \`${hash}\`. Nothing was posted.`);
-  }
+  if (total !== undefined && row.quota_usage >= total) fail("the publishing quota is used up for this window.");
 
   if (!args.live) {
     say("\nDry run: no container created, nothing posted.");

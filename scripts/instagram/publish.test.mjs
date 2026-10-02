@@ -11,10 +11,13 @@ import { fileURLToPath } from "node:url";
 import { buildAltText, buildCaption, captionBody } from "./caption.mjs";
 import { createGraph } from "./graph.mjs";
 import { contentHash, signOff } from "./review.mjs";
+import crypto from "node:crypto";
+import { previewHash } from "./post-content.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..", "..");
 const SCRIPT = path.join(HERE, "publish.mjs");
+const PREVIEW = path.join(HERE, "preview.mjs");
 const TOKEN = "EAAtestTOKENxyz789neverprint";
 const IG = "17841400000000000";
 const facts = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "instagram-facts.json"), "utf8")).facts.filter((f) => !f.shelfLife);
@@ -83,9 +86,9 @@ after(() => {
   fs.rmSync(TMP, { recursive: true, force: true });
 });
 
-function run(args, env = {}) {
+function run(args, env = {}, script = SCRIPT) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, [SCRIPT, ...args], {
+    const child = spawn(process.execPath, ["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", script, ...args], {
       env: { ...process.env, IG_ACCESS_TOKEN: TOKEN, IG_USER_ID: IG, GRAPH_BASE: base, IG_IMAGE_BASE: base, POLL_INTERVAL_MS: "10", GITHUB_STEP_SUMMARY: "", IG_FACTS_FILE: REVIEWED_FACTS, ...env },
     });
     let out = "";
@@ -349,59 +352,28 @@ test("a reviewed, unchanged fact passes the gate and the date and hash are repor
   assert.ok(r.out.includes(`reviewed: 2026-09-30, content unchanged since (hash ${contentHash(fact)})`), r.out);
 });
 
-const previewFile = () => path.join(fs.mkdtempSync(path.join(TMP, "preview-")), "preview.json");
+/** The preview hash the post job is given, as the preview computes it from what the mock serves. */
+const hashFor = (fact, bytes = imageBytes) =>
+  previewHash({ id: fact.id, caption: buildCaption(fact), alt: buildAltText(fact), url: `${base}/ig/${fact.id}.jpg`, imageSha: crypto.createHash("sha256").update(bytes).digest("hex") });
 
-test("--preview writes what would post, with its hash, and posts nothing", async () => {
+test("a live run of the issue's fact with its preview hash posts, and reports the permalink to the workflow", async () => {
   reset();
-  const out = previewFile();
-  const r = await run(["--preview", "--preview-out", out]);
-  assert.equal(r.code, 0, r.out);
-  const p = JSON.parse(fs.readFileSync(out, "utf8"));
-  const fact = byId.get(schedule[0].id);
-  assert.equal(p.post.id, fact.id);
-  assert.equal(p.post.n, 1);
-  assert.equal(p.post.caption, buildCaption(fact));
-  assert.equal(p.post.alt, buildAltText(fact));
-  assert.match(p.post.hash, /^[0-9a-f]{16}$/);
-  assert.deepEqual(p.blockers, []);
-  assert.equal(writes().length, 0);
-  assert.ok(!fs.readFileSync(out, "utf8").includes(TOKEN));
-});
-
-test("--preview collects every blocker instead of stopping at the first", async () => {
-  const [a, b] = [byId.get(schedule[1].id), byId.get(schedule[2].id)];
-  reset([{ id: "mixed", caption: `${captionBody(a)} ${captionBody(b)}`, alt_text: "", timestamp: "2026-10-01T00:00:00Z" }]);
-  const out = previewFile();
-  const r = await run(["--preview", "--preview-out", out], { IG_FACTS_FILE: factsFileWith(null) });
-  assert.equal(r.code, 0, r.out);
-  const p = JSON.parse(fs.readFileSync(out, "utf8"));
-  assert.equal(p.post.id, schedule[0].id);
-  assert.equal(p.post.reviewed, null);
-  assert.equal(p.blockers.length, 2, p.blockers.join("\n"));
-  assert.match(p.blockers[0], /has not been reviewed/);
-  assert.match(p.blockers[1], /match two facts equally/);
-  assert.equal(writes().length, 0);
-});
-
-test("--preview refuses --live", async () => {
-  reset();
-  const r = await run(["--preview", "--preview-out", previewFile(), "--live"]);
-  assert.equal(r.code, 1);
-  assert.match(r.out, /--preview never posts/);
-  assert.equal(seen.length, 0);
-});
-
-test("a live run with the previewed fact and hash posts, and reports the permalink to the workflow", async () => {
-  reset();
-  const out = previewFile();
-  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
-  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
-  const outputs = path.join(path.dirname(out), "github-output");
-  reset();
-  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash], { GITHUB_OUTPUT: outputs });
+  const fact = byId.get(schedule[2].id);
+  const outputs = path.join(fs.mkdtempSync(path.join(TMP, "out-")), "github-output");
+  const r = await run(["--live", "--fact-id", fact.id, "--expect-fact", fact.id, "--expect-hash", hashFor(fact)], { GITHUB_OUTPUT: outputs });
   assert.equal(r.code, 0, r.out);
   assert.equal(writes().length, 2);
-  assert.equal(fs.readFileSync(outputs, "utf8"), `media_id=published-1\npermalink=https://instagram.example/p/new\nfact_id=${post.id}\n`);
+  assert.equal(new URLSearchParams(writes()[0].body).get("caption"), buildCaption(fact));
+  assert.equal(fs.readFileSync(outputs, "utf8"), `media_id=published-1\npermalink=https://instagram.example/p/new\nfact_id=${fact.id}\n`);
+});
+
+test("a skipped Monday does not move its fact: Wednesday posts its own previewed fact", async () => {
+  // Monday's fact (schedule[0]) was skipped and is not on the account; Wednesday's issue showed schedule[1].
+  reset();
+  const wednesday = byId.get(schedule[1].id);
+  const r = await run(["--live", "--fact-id", wednesday.id, "--expect-fact", wednesday.id, "--expect-hash", hashFor(wednesday)]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(new URLSearchParams(writes()[0].body).get("caption"), buildCaption(wednesday), "posted Wednesday's fact, not the skipped Monday one");
 });
 
 test("a live run refuses when the next fact is no longer the previewed one", async () => {
@@ -412,14 +384,21 @@ test("a live run refuses when the next fact is no longer the previewed one", asy
   assert.equal(writes().length, 0);
 });
 
+test("a previewed fact already on the account is never posted again", async () => {
+  const fact = byId.get(schedule[0].id);
+  reset([asPosted(fact.id, 0)]);
+  const r = await run(["--live", "--fact-id", fact.id, "--expect-fact", fact.id, "--expect-hash", hashFor(fact)]);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /is already posted/);
+  assert.equal(writes().length, 0);
+});
+
 test("a live run refuses when the card image changed after the preview", async () => {
   reset();
-  const out = previewFile();
-  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
-  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
-  reset();
+  const fact = byId.get(schedule[0].id);
+  const hash = hashFor(fact);
   imageBytes = Buffer.alloc(2048, 8); // redeployed card
-  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash]);
+  const r = await run(["--live", "--fact-id", fact.id, "--expect-fact", fact.id, "--expect-hash", hash]);
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /no longer matches its preview/);
   assert.equal(writes().length, 0);
@@ -427,13 +406,12 @@ test("a live run refuses when the card image changed after the preview", async (
 
 test("a live run refuses when the caption changed after the preview, even with a fresh sign-off", async () => {
   reset();
-  const out = previewFile();
-  assert.equal((await run(["--preview", "--preview-out", out])).code, 0);
-  const { post } = JSON.parse(fs.readFileSync(out, "utf8"));
-  reset();
+  const fact = byId.get(schedule[0].id);
+  const hash = hashFor(fact);
   // Edited and signed off again after the preview: the review gate passes, the preview check does not.
-  const edited = factsFileWith(ok, (f) => (f.id === post.id ? { ...f, caption: f.caption.replace(/^(\S+)/, "$1 really"), reviewed: signOff({ ...f, caption: f.caption.replace(/^(\S+)/, "$1 really") }, "2026-09-30") } : f));
-  const r = await run(["--live", "--expect-fact", post.id, "--expect-hash", post.hash], { IG_FACTS_FILE: edited });
+  const editedFact = { ...fact, caption: fact.caption.replace(/^(\S+)/, "$1 really") };
+  const edited = factsFileWith(ok, (f) => (f.id === fact.id ? { ...editedFact, reviewed: signOff(editedFact, "2026-09-30") } : f));
+  const r = await run(["--live", "--fact-id", fact.id, "--expect-fact", fact.id, "--expect-hash", hash], { IG_FACTS_FILE: edited });
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /no longer matches its preview/);
   assert.equal(writes().length, 0);
@@ -468,19 +446,83 @@ test("another fact being held does not stop this post: it is a warning in the lo
   assert.match(fs.readFileSync(file, "utf8"), /- \*\*Warning:\*\* fha-nine-vs-ten is HELD/);
 });
 
-test("--preview blocks on its own fact being held and lists other held facts as warnings", async () => {
+// ------------------------------------------------- preview.mjs (Thursday run)
+
+const MON = "2026-10-12", WED = "2026-10-14", FRI = "2026-10-16";
+async function preview(planOver = {}, env = {}) {
+  const dir = fs.mkdtempSync(path.join(TMP, "preview-"));
+  const planFile = path.join(dir, "plan.json");
+  const out = path.join(dir, "preview.json");
+  fs.writeFileSync(planFile, JSON.stringify({ previewDate: "2026-10-08", dates: [MON, WED, FRI], pinned: {}, reserved: [], skipped: [], ...planOver }));
+  const r = await run(["--plan", planFile, "--out", out], env, PREVIEW);
+  return { ...r, p: r.code === 0 ? JSON.parse(fs.readFileSync(out, "utf8")) : null };
+}
+const ids = (p) => p.posts.map((x) => x.post?.id ?? (x.skipped ? "skipped" : null));
+
+test("three previews ahead pick three distinct facts in schedule order, with their hashes, and post nothing", async () => {
   reset();
-  const out = previewFile();
+  const { code, out, p } = await preview();
+  assert.equal(code, 0, out);
+  assert.deepEqual(p.posts.map((x) => x.date), [MON, WED, FRI]);
+  assert.deepEqual(ids(p), [schedule[0].id, schedule[1].id, schedule[2].id]);
+  for (const x of p.posts) {
+    assert.deepEqual(x.blockers, []);
+    assert.equal(x.post.hash, hashFor(byId.get(x.post.id)), "the hash the post job will check");
+  }
+  assert.equal(writes().length, 0);
+  assert.ok(!JSON.stringify(p).includes(TOKEN));
+});
+
+test("facts already posted, or shown in another open issue, are not previewed again; open issues keep their facts", async () => {
+  reset([asPosted(schedule[0].id, 0)]);
+  const { p } = await preview({ reserved: [schedule[1].id], pinned: { [WED]: schedule[5].id } });
+  assert.deepEqual(ids(p), [schedule[2].id, schedule[5].id, schedule[3].id]);
+  assert.equal(p.posts[1].pinned, true);
+  assert.equal(new Set(ids(p)).size, 3);
+});
+
+test("a skipped date previews nothing and does not take a fact", async () => {
+  reset();
+  const { p } = await preview({ skipped: [WED] });
+  assert.deepEqual(ids(p), [schedule[0].id, "skipped", schedule[1].id]);
+});
+
+test("a blocked queue shows clearly: the unreviewed fact and every later post this week, naming the fact to review", async () => {
+  reset();
+  const facts = factsFileWith((f) => (f.id === schedule[1].id ? null : ok(f)));
+  const { p } = await preview({}, { IG_FACTS_FILE: facts });
+  const [mon, wed, fri] = p.posts;
+  assert.deepEqual(mon.blockers, []);
+  assert.match(wed.blockers[0], new RegExp(`^Needs review: ${schedule[1].id} has no current sign-off`));
+  assert.deepEqual(wed.needsReview, [schedule[1].id]);
+  assert.match(fri.blockers[0], new RegExp(`The queue is held behind ${schedule[1].id}`));
+  assert.deepEqual(fri.needsReview, [schedule[1].id]);
+  assert.deepEqual(p.runway, { count: 1, blockedBy: schedule[1].id, blockedAt: 2 });
+  assert.equal(p.reviewQueue[0].id, schedule[1].id);
+});
+
+test("the preview lists the next ten unreviewed facts for the review issue, with content hashes", async () => {
+  reset();
+  const facts = factsFileWith((f) => (schedule.slice(0, 4).some((s) => s.id === f.id) ? ok(f) : null));
+  const { p } = await preview({}, { IG_FACTS_FILE: facts });
+  assert.equal(p.runway.count, 4);
+  assert.deepEqual(p.reviewQueue.map((f) => f.id), schedule.slice(4, 14).map((s) => s.id));
+  const first = p.reviewQueue[0];
+  assert.equal(first.hash, contentHash(byId.get(first.id)));
+  assert.equal(first.caption, buildCaption(byId.get(first.id)));
+  assert.equal(first.image, `${base}/ig/${first.id}.jpg`);
+  assert.ok("renderWarnings" in first && "renderCurrent" in first);
+});
+
+test("a preview post held by check:facts is blocked; other held facts are warnings", async () => {
+  reset();
   const lock = lockWithStale("pmi-midpoint", "PMI_TERMINATION_LTV", 0.8);
-  const lockData = JSON.parse(fs.readFileSync(lock, "utf8"));
-  lockData.facts["fha-nine-vs-ten"].FHA_MIP_DURATION_CLIFF_LTV = 95;
-  fs.writeFileSync(lock, JSON.stringify(lockData));
-  const r = await run(["--preview", "--preview-out", out, "--fact-id", "pmi-midpoint"], { CHECK_FACTS_LOCK: lock });
-  assert.equal(r.code, 0, r.out);
-  const p = JSON.parse(fs.readFileSync(out, "utf8"));
-  assert.ok(p.blockers.some((b) => /pmi-midpoint is HELD by check:facts/.test(b)), p.blockers.join("\n"));
-  assert.equal(p.warnings.length, 1);
-  assert.match(p.warnings[0], /fha-nine-vs-ten is HELD by check:facts \(not this post\)/);
+  const data = JSON.parse(fs.readFileSync(lock, "utf8"));
+  data.facts["fha-nine-vs-ten"].FHA_MIP_DURATION_CLIFF_LTV = 95;
+  fs.writeFileSync(lock, JSON.stringify(data));
+  const { p } = await preview({ pinned: { [MON]: "pmi-midpoint" } }, { CHECK_FACTS_LOCK: lock });
+  assert.ok(p.posts[0].blockers.some((b) => /pmi-midpoint is HELD by check:facts/.test(b)), p.posts[0].blockers.join("\n"));
+  assert.deepEqual(p.heldWarnings.map((w) => w.split(" ")[0]), ["fha-nine-vs-ten"]);
 });
 
 test("no token: fails without calling anything", async () => {
