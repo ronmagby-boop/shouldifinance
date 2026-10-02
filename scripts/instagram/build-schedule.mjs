@@ -5,12 +5,21 @@
  *
  *   --posted <file>   JSON array of fact ids already posted, in posting order.
  *                     Defaults to content/instagram-posted.json if it exists.
+ *   --keep <file>     JSON array of fact ids, not yet posted, whose order is
+ *                     kept as given after the posted ones: signed-off posts
+ *                     already lined up, so adding facts does not reshuffle
+ *                     them. Defaults to content/instagram-schedule-keep.json
+ *                     if it exists.
  *   --facts <file>    facts file (default content/instagram-facts.json)
  *   --out <file>      where to write (default content/instagram-schedule.json)
  *
  * ALREADY-POSTED FACTS ARE A FIXED PREFIX. They keep their exact order and are
  * never moved; only the facts after them are ordered. Adding facts, or
  * changing one, can therefore reorder the future but never the past.
+ *
+ * KEPT FACTS come next, also in their given order. Unlike posted facts they
+ * are checked against every rule, since they have not gone out yet; a kept
+ * order that breaks a rule fails the build rather than being rearranged.
  *
  * RULES, checked again over every post after the prefix, including where the
  * prefix meets the new order:
@@ -20,7 +29,7 @@
  *   2. Two posts from the same guide are at least GUIDE_GAP apart: nothing
  *      from a guide appears again within the next four posts.
  *   3. No more than MAX_LAYOUT_RUN posts of the same layout in a row.
- * The prefix itself is not re-checked: it has already been posted.
+ * The posted prefix itself is not re-checked: it has already been posted.
  *
  * Rule 1 cannot hold strictly for the whole schedule while the categories
  * are uneven; the script says where the full four-way rotation ends.
@@ -46,17 +55,23 @@ function parseArgs(argv) {
     facts: path.join(ROOT, "content", "instagram-facts.json"),
     out: path.join(ROOT, "content", "instagram-schedule.json"),
     posted: null,
+    keep: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--facts") args.facts = path.resolve(argv[++i]);
     else if (a === "--out") args.out = path.resolve(argv[++i]);
     else if (a === "--posted") args.posted = path.resolve(argv[++i]);
+    else if (a === "--keep") args.keep = path.resolve(argv[++i]);
     else throw new Error(`Unknown argument ${a}`);
   }
   if (!args.posted) {
     const dflt = path.join(ROOT, "content", "instagram-posted.json");
     if (fs.existsSync(dflt)) args.posted = dflt;
+  }
+  if (!args.keep) {
+    const dflt = path.join(ROOT, "content", "instagram-schedule-keep.json");
+    if (fs.existsSync(dflt)) args.keep = dflt;
   }
   return args;
 }
@@ -69,9 +84,18 @@ const postedIds = args.posted ? JSON.parse(fs.readFileSync(args.posted, "utf8"))
 if (!Array.isArray(postedIds)) throw new Error(`${args.posted} must be a JSON array of fact ids`);
 if (new Set(postedIds).size !== postedIds.length) throw new Error("posted list repeats a fact id");
 for (const id of postedIds) if (!byId.has(id)) throw new Error(`posted fact ${id} is not in ${args.facts}`);
-const prefix = postedIds.map((id) => byId.get(id));
+const keptIds = args.keep ? JSON.parse(fs.readFileSync(args.keep, "utf8")) : [];
+if (!Array.isArray(keptIds)) throw new Error(`${args.keep} must be a JSON array of fact ids`);
+if (new Set(keptIds).size !== keptIds.length) throw new Error("keep list repeats a fact id");
+for (const id of keptIds) {
+  if (!byId.has(id)) throw new Error(`kept fact ${id} is not in ${args.facts}`);
+  if (byId.get(id).shelfLife) throw new Error(`kept fact ${id} is time-sensitive, so it is not scheduled`);
+  if (postedIds.includes(id)) throw new Error(`kept fact ${id} is already in the posted list`);
+}
+const fixedIds = [...postedIds, ...keptIds];
+const prefix = fixedIds.map((id) => byId.get(id));
 
-const facts = allFacts.filter((f) => !f.shelfLife && !postedIds.includes(f.id));
+const facts = allFacts.filter((f) => !f.shelfLife && !fixedIds.includes(f.id));
 for (const f of [...prefix, ...facts]) if (!f.layout) throw new Error(`${f.id}: no layout`);
 
 const remaining = Object.fromEntries(ORDER.map((c) => [c, facts.filter((f) => f.category === c)]));
@@ -136,7 +160,8 @@ if (!solve()) throw new Error("No order satisfies the rules");
 
 // ------------------------------------------------- independent verification
 const failures = [];
-const start = prefix.length;
+// Rules are checked from the end of the posted prefix: kept posts included.
+const start = postedIds.length;
 for (let i = Math.max(1, start); i < posts.length; i++) {
   const left = ORDER.filter((c) => posts.slice(i).some((p) => p.category === c));
   const prev = ORDER.indexOf(posts[i - 1].category);
@@ -155,7 +180,7 @@ for (let j = start; j < posts.length; j++) {
     failures.push(`layout ${posts[j].layout} ${MAX_LAYOUT_RUN + 1} in a row ending at ${j + 1}`);
   }
 }
-for (let i = 0; i < prefix.length; i++) if (posts[i].id !== postedIds[i]) failures.push(`prefix moved at ${i + 1}`);
+for (let i = 0; i < prefix.length; i++) if (posts[i].id !== fixedIds[i]) failures.push(`prefix moved at ${i + 1}`);
 if (new Set(posts.map((p) => p.id)).size !== total) failures.push("a fact is missing or repeated");
 if (failures.length) { console.error(failures.join("\n")); process.exit(1); }
 
@@ -164,17 +189,18 @@ const fullRotationEnds = (() => {
   return posts.length;
 })();
 const out = {
-  _about: "Fixed posting order for every evergreen fact in content/instagram-facts.json. Generated by scripts/instagram/build-schedule.mjs; edit the rules there, not this file. Posts marked posted are a fixed prefix and never move.",
+  _about: "Fixed posting order for every evergreen fact in content/instagram-facts.json. Generated by scripts/instagram/build-schedule.mjs; edit the rules there, not this file. Posts marked posted or kept are a fixed prefix and never move: posted ones have gone out, kept ones are lined up (content/instagram-schedule-keep.json).",
   _rules: {
     rotation: `${ORDER.join(", ")}, repeating; a category with no facts left drops out`,
     guide_gap: `no guide repeats within the next ${GUIDE_GAP - 1} posts`,
     layout_run: `at most ${MAX_LAYOUT_RUN} of the same layout in a row`,
-    prefix: "already-posted facts keep their order; rules are checked for every post after them",
+    prefix: "already-posted facts keep their order and are not re-checked; kept facts follow in their order and are checked like every post after them",
   },
-  _posted: prefix.length,
+  _posted: postedIds.length,
+  _kept: keptIds.length,
   _full_rotation_through: fullRotationEnds,
-  posts: posts.map((f, i) => ({ n: i + 1, id: f.id, category: f.category, guide: f.guide, layout: f.layout, ...(i < prefix.length ? { posted: true } : {}) })),
+  posts: posts.map((f, i) => ({ n: i + 1, id: f.id, category: f.category, guide: f.guide, layout: f.layout, ...(i < postedIds.length ? { posted: true } : i < prefix.length ? { kept: true } : {}) })),
 };
 fs.writeFileSync(args.out, JSON.stringify(out, null, 2) + "\n");
-console.log(`Scheduled ${total} posts (${prefix.length} already posted, ${facts.length} ordered; search steps: ${steps}). All three rules verified for every post after the prefix.`);
+console.log(`Scheduled ${total} posts (${postedIds.length} already posted, ${keptIds.length} kept in order, ${facts.length} ordered; search steps: ${steps}). All three rules verified for every post after the posted prefix.`);
 console.log(`Strict ${ORDER.join("/")} rotation holds for posts 1-${fullRotationEnds}; after that the rotation continues over the categories still left.`);
