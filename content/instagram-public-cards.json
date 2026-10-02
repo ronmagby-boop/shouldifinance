@@ -126,9 +126,9 @@
       ]
     },
     "depreciation-no-bill": {
-      "hash": "c3cf20f69d386d09",
+      "hash": "32418e40de9e77e0",
       "warnings": [
-        "card text wraps to 5 lines with one word on the last"
+        "card text wraps to 6 lines with one word on the last"
       ]
     },
     "differential-tax": {
