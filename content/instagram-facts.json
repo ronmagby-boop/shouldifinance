@@ -118,7 +118,10 @@
       "hero_context": "before principal outpaces interest at 6.5% over 30 years",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "43ded9e7e5932943"
+      }
     },
     {
       "id": "extra-payments-dont-lower-payment",
