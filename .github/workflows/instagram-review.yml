@@ -1,0 +1,119 @@
+# Sign off Instagram facts from the "Review needed" issue (opened by
+# instagram-preview.yml). Comment on that issue:
+#
+#   approve all               every fact still pending
+#   approve <id>, <id>        those facts
+#   change <id>: <note>       record the note; not signed off
+#
+# Only comments by ronmagby-boop are acted on: the job does not even start for
+# anyone else, and the script checks again. A fact is signed off only if its
+# content hash still matches the hash the issue recorded. Sign-offs are
+# committed to main; Vercel cancels the build for a commit that only touches
+# content/instagram-facts.json (scripts/vercel-ignore-build.sh). The job then
+# replies with what was signed, refused and why, and the new runway, and
+# closes the issue when no fact in it is pending.
+name: Instagram review
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+# One approval at a time, so two comments cannot race to commit.
+concurrency:
+  group: instagram-review
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    if: >-
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'instagram-review') &&
+      github.event.comment.user.login == 'ronmagby-boop'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      REVIEWER: ronmagby-boop
+      IG_USER_ID: "17841452798031447"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Mask credentials
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+        run: |
+          if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
+          if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
+
+      # The comment body reaches the script only through env, never through the
+      # shell command line.
+      - name: Apply the comment
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+        run: node scripts/instagram/review-approve.mjs apply --out result.json
+
+      - name: Commit the sign-offs
+        id: commit
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+        run: |
+          if git diff --quiet -- content/instagram-facts.json; then
+            echo "Nothing to commit."
+            echo "sha=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          ids=$(node -e "console.log(JSON.parse(require('fs').readFileSync('result.json','utf8')).signed.join(', '))")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/instagram-facts.json
+          git commit -q -m "Sign off Instagram facts from review issue #${ISSUE_NUMBER}: ${ids}" -m "Approved in ${COMMENT_URL}. Only content/instagram-facts.json changes, so Vercel skips the build."
+          for attempt in 1 2 3; do
+            if git push -q origin HEAD:main; then break; fi
+            if [ "$attempt" = 3 ]; then echo "FAILED: could not push the sign-off commit."; exit 1; fi
+            git pull -q --rebase origin main
+          done
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Reply on the issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+          SHA: ${{ steps.commit.outputs.sha }}
+        run: node scripts/instagram/review-approve.mjs report --result result.json --commit "$SHA"
+
+      - name: Say on the issue that the job failed
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+          SHA: ${{ steps.commit.outputs.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node -e "
+            const { GITHUB_REPOSITORY: repo, ISSUE: issue, RUN_URL: run, SHA: sha } = process.env;
+            const body = sha
+              ? '**Saved, not reported.** The sign-off was committed (' + sha.slice(0, 7) + ') but the reply failed: ' + run + '.'
+              : '**Not saved.** The review job failed before the sign-off was committed: ' + run + '. Nothing was signed off; comment again once it is fixed.';
+            fetch('https://api.github.com/repos/' + repo + '/issues/' + issue + '/comments', {
+              method: 'POST',
+              headers: { Authorization: 'Bearer ' + process.env.GITHUB_TOKEN, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+              body: JSON.stringify({ body }),
+            }).then((r) => process.exit(r.ok ? 0 : 1));
+          "
