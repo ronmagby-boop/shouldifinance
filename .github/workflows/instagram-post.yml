@@ -15,13 +15,12 @@
 # fact its own issue showed, and the skipped fact is previewed again next
 # Thursday.
 #
-# Manual only for now. To turn posting on, uncomment the schedule: Monday,
-# Wednesday and Friday at 15:00 UTC (8am Phoenix).
+# Runs Monday, Wednesday and Friday at 15:00 UTC (8am Phoenix), and on demand.
 name: Instagram post
 
 on:
-  # schedule:
-  #   - cron: "0 15 * * 1,3,5"
+  schedule:
+    - cron: "0 15 * * 1,3,5"
   workflow_dispatch:
     inputs:
       dry_run:

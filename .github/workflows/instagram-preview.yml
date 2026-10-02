@@ -10,13 +10,12 @@
 #
 # Reads the account to know what is already posted; never posts.
 #
-# Manual only for now. To turn the weekly preview on, uncomment the schedule:
-# Thursday 15:00 UTC (8am Phoenix).
+# Runs every Thursday at 15:00 UTC (8am Phoenix), and on demand.
 name: Instagram preview
 
 on:
-  # schedule:
-  #   - cron: "0 15 * * 4"
+  schedule:
+    - cron: "0 15 * * 4"
   workflow_dispatch:
     inputs:
       preview_date:
