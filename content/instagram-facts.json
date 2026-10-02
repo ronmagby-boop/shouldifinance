@@ -659,14 +659,12 @@
       "card": "The VA funding fee does not count toward the 36-month recoupment test.",
       "caption": "The statute counts everything other than taxes, escrow, and fees paid under the VA's own loan chapter — and the funding fee is exactly that, despite often being the largest line on an IRRRL. So the number your lender puts in the recoupment box is legitimately smaller than your closing costs. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
       "guide": "va-36-month-recoupment-rule",
-      "source": "38 U.S.C. § 3709(a); VA Circular 26-19-22 and its Exhibit B",
+      "source": "38 U.S.C. § 3709(a); VA Circular 26-19-22 and its Exhibit B (Exhibit B removed July 2020; circular rescinded July 2021; lenders continue to apply this treatment)",
       "card_source": "Source: 38 U.S.C. § 3709(a)",
       "category": "Home",
-      "shelfLife": {
-        "risk": "IRRRL lender-credit citation pending",
-        "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
-      },
-      "reviewed": null
+      "shelfLife": null,
+      "reviewed": null,
+      "layout": "statement"
     },
     {
       "id": "va-210-days",
@@ -685,16 +683,14 @@
     {
       "id": "va-lender-credit-instant",
       "card": "A lender credit big enough to cover the fees makes a VA refinance recoup instantly.",
-      "caption": "Credits come straight off the recoupable total, and Exhibit B says so directly. Two IRRRLs with identical fees can therefore recoup at very different speeds. The catch: a credit is bought with a higher rate, which shrinks the monthly saving, so it is a calculation rather than a given. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
+      "caption": "Credits come straight off the recoupable total, and Exhibit B said so directly before VA removed it in 2020. Two IRRRLs with identical fees can therefore recoup at very different speeds. The catch: a credit is bought with a higher rate, which shrinks the monthly saving, so it is a calculation rather than a given. https://shouldifinance.com/guides/va-36-month-recoupment-rule",
       "guide": "va-36-month-recoupment-rule",
-      "source": "VA Circular 26-19-22, Exhibit B, on the treatment of lender credits",
-      "card_source": "Source: VA Circular 26-19-22, Exhibit B",
+      "source": "VA Circular 26-19-22, Exhibit B (Exhibit B removed July 2020; circular rescinded July 2021; lenders continue to apply this treatment), on the treatment of lender credits",
+      "card_source": "Practice: from rescinded VA Circular 26-19-22",
       "category": "Home",
-      "shelfLife": {
-        "risk": "IRRRL lender-credit citation pending",
-        "recheck": "Before posting, once the replacement for the rescinded VA Circular 26-19-22 is chosen"
-      },
-      "reviewed": null
+      "shelfLife": null,
+      "reviewed": null,
+      "layout": "statement"
     },
     {
       "id": "va-passes-but-costs",

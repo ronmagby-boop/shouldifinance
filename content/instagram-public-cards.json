@@ -611,6 +611,18 @@
       "hash": "1ce0f56f2549074b",
       "warnings": []
     },
+    "va-funding-fee-excluded": {
+      "hash": "2ad264861460dff4",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "va-lender-credit-instant": {
+      "hash": "a750f1fe199d4013",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
     "va-no-loan-limit": {
       "hash": "c6eb0866c2d20bc3",
       "warnings": []
