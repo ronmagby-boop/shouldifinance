@@ -37,8 +37,9 @@ The number a lender puts in the recoupment box is usually smaller than the total
 on your Closing Disclosure, and the difference is not an error.
 
 The statute counts everything "other than taxes, amounts held in escrow, and
-fees paid under this chapter". VA Circular 26-19-22, Exhibit B, turns that into
-a list:
+fees paid under this chapter". VA Circular 26-19-22, Exhibit B (Exhibit B
+removed July 2020; circular rescinded July 2021; lenders continue to apply this
+treatment), turns that into a list:
 
 - **Included:** allowable fees and charges, whether financed or paid outside
   closing, plus the credit report, the appraisal fee and reasonable discount
@@ -90,8 +91,10 @@ overstate what has to recoup and can make a compliant loan look like it fails.
 
 A lender credit appears as the second line of Box J, shown as a negative — money
 the lender puts toward your costs in exchange for a higher rate. It comes
-straight off the recoupable total, and Exhibit B says so directly: credits may
-be used to offset allowable fees and charges, including discount points.
+straight off the recoupable total, and Exhibit B (Exhibit B removed July 2020;
+circular rescinded July 2021; lenders continue to apply this treatment) says so
+directly: credits may be used to offset allowable fees and charges, including
+discount points.
 
 So two IRRRLs with identical fees can recoup at very different speeds, and a
 credit large enough to cover the allowable fees recoups **immediately** —
@@ -148,7 +151,8 @@ Sources: [38 U.S.C. § 3709](https://www.law.cornell.edu/uscode/text/38/3709),
 subsection (a) for the 36-month recoupment period and the three exclusions, and
 subsection (c) for both seasoning conditions. The included and excluded fee
 lists, and the treatment of lender credits, from VA Circular 26-19-22 and its
-Exhibit B. Loan Estimate box lettering from [Regulation Z §
+Exhibit B (Exhibit B removed July 2020; circular rescinded July 2021; lenders
+continue to apply this treatment). Loan Estimate box lettering from [Regulation Z §
 1026.37](https://www.consumerfinance.gov/rules-policy/regulations/1026/37/),
 paragraphs (f) and (g). The 0.5% IRRRL funding fee from [38 U.S.C.
 § 3729](https://www.law.cornell.edu/uscode/text/38/3729), subsection (b)(2),

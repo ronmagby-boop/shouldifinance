@@ -110,9 +110,11 @@ export default function Calculator() {
      * Loan Estimate that is Box D in full, plus the recording fees inside Box
      * E — but not the taxes that share that box, and not Boxes F or G.
      *
-     * Lender credits come off the top. VA Circular 26-19-22, Exhibit B is
-     * explicit that "lender credits may be used to offset allowable fees and
-     * charges (including discount points)", so a credit-heavy IRRRL genuinely
+     * Lender credits come off the top. VA Circular 26-19-22, Exhibit B (Exhibit
+     * B removed July 2020; circular rescinded July 2021; lenders continue to
+     * apply this treatment) is explicit that "lender credits may be used to
+     * offset allowable fees and charges (including discount points)", so a
+     * credit-heavy IRRRL genuinely
      * recoups faster. Floored at zero: a credit larger than the costs does not
      * make recoupment negative, it makes it immediate.
      *
