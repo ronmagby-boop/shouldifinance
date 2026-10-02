@@ -7,18 +7,21 @@
 # has no current review sign-off, or if check:facts holds it (a constant it
 # depends on changed); other held facts are listed as warnings.
 #
-# A scheduled run (and a manual run with as_scheduled) posts only what this
-# week's preview issue showed (instagram-preview.yml): it skips if there is no
-# issue for today, or it is closed or labelled "skip", and refuses if the post
-# no longer matches the preview.
+# A scheduled run (and a manual run with as_scheduled) posts only what that
+# day's preview issue showed (instagram-preview.yml): exactly its fact, by id
+# and preview hash. It skips if there is no issue for the day, or it is closed
+# or labelled "skip", and refuses if the post no longer matches the preview.
+# So a skipped Monday never moves its fact into Wednesday: Wednesday posts the
+# fact its own issue showed, and the skipped fact is previewed again next
+# Thursday.
 #
-# Manual only for now. To turn weekly posting on, uncomment the schedule:
-# Tuesday 15:00 UTC.
+# Manual only for now. To turn posting on, uncomment the schedule: Monday,
+# Wednesday and Friday at 15:00 UTC (8am Phoenix).
 name: Instagram post
 
 on:
   # schedule:
-  #   - cron: "0 15 * * 2"
+  #   - cron: "0 15 * * 1,3,5"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -99,8 +102,15 @@ jobs:
         run: |
           set --
           if [ "$DRY_RUN" = "false" ]; then set -- --live; else set -- --dry-run; fi
-          if [ -n "$FACT_ID" ]; then set -- "$@" --fact-id "$FACT_ID"; fi
-          if [ -n "$EXPECT_FACT" ]; then set -- "$@" --expect-fact "$EXPECT_FACT" --expect-hash "$EXPECT_HASH"; fi
+          if [ -n "$EXPECT_FACT" ]; then
+            # The issue's fact, pinned by id and preview hash, not "the next one".
+            if [ -n "$FACT_ID" ] && [ "$FACT_ID" != "$EXPECT_FACT" ]; then
+              echo "FAILED: fact_id $FACT_ID is not the fact the preview issue shows ($EXPECT_FACT)."; exit 1
+            fi
+            set -- "$@" --fact-id "$EXPECT_FACT" --expect-fact "$EXPECT_FACT" --expect-hash "$EXPECT_HASH"
+          elif [ -n "$FACT_ID" ]; then
+            set -- "$@" --fact-id "$FACT_ID"
+          fi
           node scripts/instagram/publish.mjs "$@"
 
       - name: Close the preview issue

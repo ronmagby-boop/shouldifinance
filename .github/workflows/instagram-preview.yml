@@ -1,20 +1,26 @@
-# Opens (or refreshes) the GitHub issue that previews next Tuesday's
-# Instagram post: the card, caption, alt text, review status and check:facts.
-# The post goes out unless that issue is closed or labelled "skip"
-# (instagram-post.yml). Reads the account to know what is already posted;
-# never posts.
+# The weekly Instagram preview: one issue per post for the next Monday,
+# Wednesday and Friday, each showing its own card, caption, alt text and
+# preview hash. A post goes out unless its issue is closed or labelled "skip"
+# (instagram-post.yml). Each issue pins its fact, so the three are distinct and
+# never repeat a fact shown in another open issue.
+#
+# The same run counts the signed-off runway and, if fewer than six posts are
+# left before the first unreviewed fact, opens or updates the "Review needed"
+# issue with the next ten (instagram-review.yml acts on comments there).
+#
+# Reads the account to know what is already posted; never posts.
 #
 # Manual only for now. To turn the weekly preview on, uncomment the schedule:
-# Friday 15:00 UTC, previewing the post four days later, Tuesday 15:00 UTC.
+# Thursday 15:00 UTC (8am Phoenix).
 name: Instagram preview
 
 on:
   # schedule:
-  #   - cron: "0 15 * * 5"
+  #   - cron: "0 15 * * 4"
   workflow_dispatch:
     inputs:
-      post_date:
-        description: "Post date this preview is for (YYYY-MM-DD). Default: the next Tuesday."
+      preview_date:
+        description: "Preview as of this date (YYYY-MM-DD); covers the Mon/Wed/Fri of the following week. Default: today (UTC)."
         type: string
         required: false
         default: ""
@@ -32,19 +38,26 @@ concurrency:
 jobs:
   preview:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       IG_USER_ID: "17841452798031447"
-      # The publisher imports app/lib/*.ts for check:facts; this quiets Node's
+      REVIEWER: ronmagby-boop
+      # The scripts import app/lib/*.ts for check:facts; this quiets Node's
       # note that those files have no package type.
       NODE_OPTIONS: --disable-warning=MODULE_TYPELESS_PACKAGE_JSON
     steps:
       - uses: actions/checkout@v7
 
-      # Node 24: the publisher's check:facts imports app/lib/*.ts directly.
+      # Node 24 imports app/lib/*.ts directly (check:facts).
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
+          cache: npm
+
+      # sharp and playwright-core, for the card input hash that decides whether
+      # each card's recorded render warnings are current. Nothing is rendered.
+      - name: Install dependencies
+        run: npm ci
 
       - name: Mask credentials
         env:
@@ -54,20 +67,27 @@ jobs:
           if [ -n "$IG_ACCESS_TOKEN" ]; then echo "::add-mask::$IG_ACCESS_TOKEN"; fi
           if [ -n "$IG_APP_SECRET" ]; then echo "::add-mask::$IG_APP_SECRET"; fi
 
-      # Blockers (unreviewed, this fact held by check:facts, limits, image,
-      # quota) and warnings (other held facts) all come out of this step.
-      - name: Build the preview (reads the account, posts nothing)
+      # Closes issues that can never post (from before this schedule, or past
+      # their date) and works out which dates are pinned, reserved or skipped.
+      - name: Plan the week from the open preview issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PREVIEW_DATE: ${{ inputs.preview_date }}
+        run: node scripts/instagram/preview-issue.mjs plan --preview-date "${PREVIEW_DATE:-$(date -u +%F)}" --out plan.json
+
+      - name: Build the previews (reads the account, posts nothing)
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
-        run: node scripts/instagram/publish.mjs --preview --preview-out preview.json
+        run: node scripts/instagram/preview.mjs --plan plan.json --out preview.json
 
-      - name: Open or refresh the preview issue
+      - name: Open or refresh one issue per post
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          POST_DATE: ${{ inputs.post_date }}
-          PREVIEW_ASSIGNEE: ${{ github.repository_owner }}
-        run: |
-          set --
-          if [ -n "$POST_DATE" ]; then set -- --post-date "$POST_DATE"; fi
-          node scripts/instagram/preview-issue.mjs open --preview preview.json "$@"
+          PREVIEW_ASSIGNEE: ronmagby-boop
+        run: node scripts/instagram/preview-issue.mjs open --preview preview.json
+
+      - name: Open or update the Review needed issue if the runway is short
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/instagram/preview-issue.mjs review --preview preview.json
