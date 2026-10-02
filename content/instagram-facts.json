@@ -172,7 +172,10 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "d3246644648f83da"
+      }
     },
     {
       "id": "lower-rate-longer-term",
@@ -210,7 +213,10 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "74e79948a8296212"
+      }
     },
     {
       "id": "rent-vs-buy-is-a-year",
@@ -794,7 +800,10 @@
       "layout": "statement",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "8ec18a824650c01e"
+      }
     },
     {
       "id": "snowball-cost-is-rate-spread",
@@ -935,7 +944,10 @@
       "myth": "You might think one late payment ends a 0% promotion.",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "11a3f398ae91a0c5"
+      }
     },
     {
       "id": "payment-allocation-highest-rate",
@@ -1204,7 +1216,10 @@
       "hero_context": "turns a lease money factor into an approximate APR",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "d0ef09614c45bea1"
+      }
     },
     {
       "id": "lease-rent-on-the-sum",
@@ -1502,7 +1517,10 @@
       "hero_context": "from a 50% match, before any investing",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "748bbaa5d9c7c76a"
+      }
     },
     {
       "id": "your-contributions-always-vested",
@@ -1586,7 +1604,10 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "82abe4deb9dd5878"
+      }
     },
     {
       "id": "match-usually-traditional",
@@ -1776,7 +1797,10 @@
       "depends_on": [
         "NIIT_THRESHOLDS"
       ],
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "d65aba1cd6f3c38a"
+      }
     },
     {
       "id": "day-364-vs-366",
@@ -1819,7 +1843,10 @@
       "depends_on": [
         "NIIT_THRESHOLDS"
       ],
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-02",
+        "hash": "2ed25a48400a5da9"
+      }
     },
     {
       "id": "zero-percent-band",
