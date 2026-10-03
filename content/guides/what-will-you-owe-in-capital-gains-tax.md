@@ -61,8 +61,9 @@ tax applies. The formula is specific and worth getting right:
 
 The thresholds are **{{NIIT_THRESHOLD_SINGLE}}** for single and head of
 household filers and **{{NIIT_THRESHOLD_MARRIED}}** for married filing jointly.
-Unlike almost every other figure in the tax code, these are written into the
-statute and **are not adjusted for inflation** — they have been the same since
+Like a handful of other figures in the tax code (the $3,000 capital loss limit,
+the Social Security benefit thresholds), these are written into the statute and
+**are not adjusted for inflation** — they have been the same since
 the tax took effect, which means more households cross them every year without
 anything changing in their own circumstances.
 
