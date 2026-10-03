@@ -27,10 +27,10 @@ Each part is doing specific work:
 most direct defence against being underwater, because the loan starts below the
 car's value rather than at it.
 
-**Four years** keeps the loan shorter than the steep part of depreciation. The
-72- and 84-month terms that dominate new-car lending exist to make expensive
-cars produce affordable-looking payments, and they guarantee years of negative
-equity along the way. See [how fast a car loses
+**Four years** pays the balance down fast enough to keep pace with the steep
+early depreciation. The 72- and 84-month terms that dominate new-car lending
+exist to make expensive cars produce affordable-looking payments, and they make
+years of negative equity likely along the way. See [how fast a car loses
 value](/guides/how-fast-does-a-car-lose-value).
 
 **10% of gross, all-in** is the part that prevents a car from crowding out
