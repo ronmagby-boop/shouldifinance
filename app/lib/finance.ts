@@ -116,6 +116,10 @@ export const FHA_UFMIP_RATE = 1.75;
  * move every year. It has not: Handbook 4000.1 Appendix 1.0 in Update 18
  * (12 August 2026) still prints $726,200 in both tables. Check that appendix,
  * not this year's conforming limit, before changing it.
+ *
+ * Confirmed October 2026 against live lender pricing: base loans above
+ * $726,200 price at the higher annual MIP. The threshold has not followed the
+ * conforming loan limit.
  */
 export const FHA_MIP_LOAN_THRESHOLD = 726_200;
 
