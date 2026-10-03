@@ -31,7 +31,7 @@ the price rise that would leave you with the same monthly principal and interest
 
 Read that middle row carefully. A **half-point** rate cut is wiped out by
 **5.3%** appreciation. And the full point, the kind of move people are actually
-waiting for, needs an 11% price rise to cancel, which is a strong year but not a rare one.
+waiting for, needs an 11% price rise to cancel.
 
 So the bet is not "will rates fall". It is "will rates fall *faster than prices
 rise*". Those are different questions and the second is much harder.
