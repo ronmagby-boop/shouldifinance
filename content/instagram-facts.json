@@ -15,7 +15,8 @@
     "hero": "big-number only. The figure shown large; must appear exactly once in card, verbatim apart from letter case.",
     "hero_context": "big-number only, required. One short line saying what the hero figure measures.",
     "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact.",
-    "reviewed": "Required to publish. null until a person signs the fact off; then {date, hash}: the review date (YYYY-MM-DD) and a hash of exactly what was reviewed (card, caption as posted, alt text, hero, hero_context, myth, card_source; scripts/instagram/review.mjs). Set it with npm run review:mark. publish.mjs refuses a fact with no sign-off, a malformed one, or one whose hash no longer matches, in a dry run as in a live one."
+    "reviewed": "Required to publish. null until a person signs the fact off; then {date, hash}: the review date (YYYY-MM-DD) and a hash of exactly what was reviewed (card, caption as posted, alt text, hero, hero_context, myth, card_source; scripts/instagram/review.mjs). Set it with npm run review:mark. publish.mjs refuses a fact with no sign-off, a malformed one, or one whose hash no longer matches, in a dry run as in a live one.",
+    "depends_on_none": "Instead of depends_on, on a fact that cites an agency or statute but states no figure an app/lib constant holds: a one-line reason. check:facts then does not warn that it has no depends_on."
   },
   "facts": [
     {
@@ -383,7 +384,8 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "depends_on_none": "States a rule (no VA loan limit with full entitlement), not an amount; no app/lib constant holds it."
     },
     {
       "id": "va-first-vs-subsequent",
@@ -652,7 +654,8 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "depends_on_none": "The 6% and 40% are illustrations, and the Revenue Procedure is cited for tax mechanics, not a figure the card states."
     },
     {
       "id": "va-funding-fee-excluded",
@@ -664,7 +667,8 @@
       "category": "Home",
       "shelfLife": null,
       "reviewed": null,
-      "layout": "statement"
+      "layout": "statement",
+      "depends_on_none": "States the statutory exclusion of the funding fee from recoupment, not the fee amount."
     },
     {
       "id": "va-210-days",
@@ -690,7 +694,8 @@
       "category": "Home",
       "shelfLife": null,
       "reviewed": null,
-      "layout": "statement"
+      "layout": "statement",
+      "depends_on_none": "States how lender credits are treated, with no amount."
     },
     {
       "id": "va-passes-but-costs",
@@ -1627,7 +1632,8 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "depends_on_none": "Describes bracket mechanics; states no standard deduction or bracket amount."
     },
     {
       "id": "roth-five-year",
@@ -1811,7 +1817,8 @@
       "reviewed": {
         "date": "2026-10-01",
         "hash": "b2884e99f10e713c"
-      }
+      },
+      "depends_on_none": "Relies on the long-term/short-term split, not on any bracket amount; \"five figures\" is conditioned on a large gain."
     },
     {
       "id": "gain-stacks",
@@ -1823,7 +1830,8 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "depends_on_none": "States the 0%, 15% and 20% rates, fixed in statute (26 U.S.C. § 1(h)); LT_GAINS_BRACKETS holds only the indexed thresholds, which the card does not state."
     },
     {
       "id": "niit-lesser-of",
@@ -1871,7 +1879,8 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "depends_on_none": "Describes state treatment in general; states no amount."
     },
     {
       "id": "four-percent-rule-misread",

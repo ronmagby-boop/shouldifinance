@@ -19,7 +19,9 @@
  *          depends_on no longer does
  *   WARN   the lock names a fact that is gone; a fact cites HUD, the VA or an
  *          IRS revenue procedure but has no depends_on, so nothing would
- *          catch its figures changing
+ *          catch its figures changing, unless it says why not in
+ *          depends_on_none (it states no figure a constant holds); that
+ *          reason must not be empty, and a fact cannot have both
  *
  * The command fails if any fact is HELD. The publisher imports checkFacts()
  * and refuses only the fact it is about to post if that one is HELD; the
@@ -122,6 +124,12 @@ export async function checkFacts(facts, { lock = readLock(), libDir = LIB_DIR } 
     if (!byId.get(id)?.depends_on?.length) warnings.push(`lock names ${id}, which is no longer a fact with depends_on; remove it from the lock`);
   }
   for (const f of facts) {
+    // depends_on_none records that a fact states no figure a constant holds, with the reason.
+    if ("depends_on_none" in f) {
+      if (f.depends_on?.length) warnings.push(`${f.id}: has both depends_on and depends_on_none; keep one`);
+      else if (typeof f.depends_on_none !== "string" || !f.depends_on_none.trim()) warnings.push(`${f.id}: depends_on_none needs a one-line reason`);
+      continue;
+    }
     if (!f.depends_on?.length && CITES_A_SCHEDULE.test(`${f.source} ${f.card_source ?? ""}`)) {
       warnings.push(`${f.id}${f.shelfLife ? " (time-sensitive)" : ""}: cites ${f.source.match(CITES_A_SCHEDULE)?.[0] ?? f.card_source.match(CITES_A_SCHEDULE)?.[0]} but has no depends_on`);
     }

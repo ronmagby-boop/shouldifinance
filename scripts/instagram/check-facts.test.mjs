@@ -93,6 +93,24 @@ test("checkFacts() reports holds per fact, for the publisher to refuse only the 
   assert.deepEqual(r.held.get("a"), ["RATE: was 0.52, now 0.55"]);
 });
 
+test("depends_on_none with a reason silences the warning; an empty reason, or both fields, is warned about", () => {
+  const dir = setup({
+    lib: LIB,
+    facts: [
+      fact("a", ["RATE"]),
+      { id: "reasoned", source: "IRS Revenue Procedure 2025-32", card_source: "Source: IRS", depends_on_none: "States the statutory rates only." },
+      { id: "empty", source: "HUD Mortgagee Letter 2023-05", card_source: "Source: HUD", depends_on_none: " " },
+      { ...fact("both", ["RATE"]), depends_on_none: "Says none." },
+    ],
+    lock: { facts: { a: { RATE: 0.55 }, both: { RATE: 0.55 } } },
+  });
+  const r = run(dir);
+  assert.equal(r.code, 0, r.out);
+  assert.doesNotMatch(r.out, /reasoned/);
+  assert.match(r.out, /WARN {2}empty: depends_on_none needs a one-line reason/);
+  assert.match(r.out, /WARN {2}both: has both depends_on and depends_on_none; keep one/);
+});
+
 test("a fact citing HUD, the VA or a revenue procedure with no depends_on is a warning, not a failure", () => {
   const dir = setup({ lib: LIB, facts: [fact("a", ["RATE"]), { id: "hud", source: "HUD Mortgagee Letter 2023-05", card_source: "Source: HUD" }], lock: { facts: { a: { RATE: 0.55 } } } });
   const r = run(dir);
