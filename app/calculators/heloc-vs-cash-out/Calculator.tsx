@@ -12,7 +12,6 @@ import {
   borrowingLimits, breakEvenHelocRate, compare, helocCltv,
   type CashOutProgram, type Inputs, type VaUse,
 } from "../../lib/helocCashOut";
-import { fhaAnnualMipBps, fhaMipDurationMonths } from "../../lib/finance";
 
 /** "+0.25", "0", "−0.50": the sign always shown on a move. */
 const signed = (v: number) => (v === 0 ? "0" : `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(2)}`);
@@ -226,7 +225,7 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
               ]}
               hint={
                 loanType === "fha"
-                  ? `Adds FHA's upfront mortgage insurance premium, ${FHA_CASH_OUT_UFMIP}% of the loan, financed into it.`
+                  ? `Adds FHA's upfront mortgage insurance premium, ${FHA_CASH_OUT_UFMIP}% of the loan, financed into it, and the annual premium, paid monthly.`
                   : loanType === "va"
                     ? "Adds the VA funding fee, financed into the loan up to 100% of the home's value; any part over that is paid at closing."
                     : undefined
@@ -354,12 +353,21 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
                 title: "Cash-out refinance",
                 tag: `${pct(inputs.cashOutRate, 2)} fixed, ${inputs.cashOutTermYears} yrs`,
                 rows: [
-                  line("Payment, year 1", `${fmt(r.now.cashOut.payment)}/mo`),
+                  line("Payment, year 1", `${fmt(r.now.cashOut.firstPayment)}/mo`),
+                  ...(r.now.cashOut.annualMip
+                    ? [line("  of which annual MIP", `${fmt(r.now.cashOut.annualMip.firstMonth)}/mo`, "text-gray-500")]
+                    : []),
                   line("New loan", fmtK(r.now.cashOut.loanAmount), "text-gray-500"),
-                  line(`Payment ${drawLabel}`, `${fmt(inputs.drawYears * 12 < r.now.cashOut.termMonths ? r.now.cashOut.payment : 0)}/mo`),
+                  line(`Payment ${drawLabel}`, `${fmt(r.now.cashOut.paymentInMonth(Math.round(inputs.drawYears * 12) + 1))}/mo`),
                   line(`Interest over ${years} yrs`, fmtK(r.now.cashOut.interest)),
                   line(inputs.financeClosingCosts ? "Closing costs (financed)" : "Closing costs (at closing)", fmt(r.now.cashOut.closingCosts)),
                   ...programFeeRows(r.now.cashOut.programFee),
+                  ...(r.now.cashOut.annualMip
+                    ? [line(
+                        `FHA annual MIP, ${r.now.cashOut.annualMip.bps / 100}% for ${r.now.cashOut.annualMip.months / 12} yrs`,
+                        fmt(r.now.cashOut.annualMip.total),
+                      )]
+                    : []),
                   line(`Cost over ${years} yrs`, fmtK(r.now.cashOut.cost)),
                   line(`Still owed after ${years} yrs`, fmtK(r.now.cashOut.balance)),
                 ],
@@ -399,6 +407,9 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
                   segments: [
                     { label: "Interest", value: r.now.cashOut.interest, color: COLORS.blue },
                     { label: "Fees", value: r.now.cashOut.fees, color: COLORS.red },
+                    ...(r.now.cashOut.annualMip
+                      ? [{ label: "Annual MIP", value: r.now.cashOut.annualMip.total, color: COLORS.purple }]
+                      : []),
                   ],
                 },
               ]}
@@ -452,7 +463,7 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
               </table>
             </div>
             <p className="text-xs text-gray-400 mt-2">
-              Payments are the mortgage plus the HELOC. The cash-out refinance is {fmt(r.now.cashOut.payment)}/mo and{" "}
+              Payments are the mortgage plus the HELOC. The cash-out refinance is {fmt(r.now.cashOut.firstPayment)}/mo and{" "}
               {fmtK(r.now.cashOut.cost)} over {years} years in every row.
             </p>
             <div className="mt-4">
@@ -507,8 +518,8 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
                     </span>
                     {l.program === "va" && (
                       <span className="block text-xs text-gray-500 mt-1">
-                        VA allows up to {l.maxLtv}%, but many lenders set a lower maximum of their own (a lender overlay), so
-                        ask yours.
+                        VA allows up to {l.maxLtv}%, but lenders can set a lower maximum of their own (a lender overlay), so ask
+                        yours.
                       </span>
                     )}
                   </summary>
@@ -546,15 +557,6 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
               <strong>{pct(r.cltv, 1)}</strong> of the home&apos;s value across the mortgage and the HELOC (combined
               loan-to-value); each lender sets its own maximum, so ask yours.
             </p>
-            {inputs.loanType === "fha" && (
-              <p className="text-xs text-gray-500 leading-relaxed mt-2">
-                Not included: FHA&apos;s annual MIP, {fhaAnnualMipBps(r.now.cashOut.baseLoan, r.limits[0].ltv, inputs.cashOutTermYears) / 100}%
-                of the balance a year for{" "}
-                {fhaMipDurationMonths(r.limits[0].ltv, r.now.cashOut.termMonths) / 12} years on this loan, about{" "}
-                {fmt((r.now.cashOut.baseLoan * fhaAnnualMipBps(r.now.cashOut.baseLoan, r.limits[0].ltv, inputs.cashOutTermYears)) / 10000 / 12)}
-                /mo at the start (HUD Handbook 4000.1, Appendix 1.0). Add it to the cash-out side before you decide.
-              </p>
-            )}
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">

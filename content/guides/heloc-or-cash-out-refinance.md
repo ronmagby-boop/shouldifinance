@@ -108,8 +108,7 @@ of the up-front costs for a HELOC. Others may charge fees." It lists "a fee for 
 property appraisal," "an application fee, which might not be refunded if you are
 turned down," and closing costs, and it warns to check "if annual maintenance fees or
 other fees apply, even if you are not actively using the credit line." Ask too
-about early-termination fees, which some lenders charge if you close the line
-soon after opening it.
+about early-termination fees.
 
 ## Tax treatment
 
@@ -132,8 +131,8 @@ value, against {{CASH_OUT_MAX_LTV_CONVENTIONAL}} for a conventional Fannie Mae l
 and {{CASH_OUT_MAX_LTV_FHA}} for FHA. The VA limit includes the funding fee:
 "any portion of the funding fee that would cause the new loan amount to exceed
 100 percent of the reasonable value of the property must be paid in cash at the
-loan closing." VA sets that ceiling, but many lenders set a lower maximum of their
-own (a lender overlay), so ask yours.
+loan closing." VA allows up to {{CASH_OUT_MAX_LTV_VA}}, but lenders can set a lower
+maximum of their own (a lender overlay), so ask yours.
 
 The funding fee on a VA cash-out refinance is **{{VA_CASH_OUT_FEE_FIRST}}** of the
 loan the first time you use the benefit and **{{VA_CASH_OUT_FEE_SUBSEQUENT}}** after
@@ -145,7 +144,8 @@ An FHA cash-out refinance pays FHA's upfront mortgage insurance premium,
 **{{FHA_CASH_OUT_UFMIP}}** of the loan, which HUD charges on "All Mortgages" except
 a few special cases. It is financed on top of the 80% limit: HUD measures that
 limit on "the amount prior to the financing of the Upfront Mortgage Insurance
-Premium". The calculator notes, but does not add, the annual premium.
+Premium". The calculator adds the annual premium too: {{FHA_CASH_OUT_ANNUAL_MIP}} of
+the balance a year on a typical 30-year loan, for {{FHA_CASH_OUT_MIP_YEARS}} years.
 
 Each program also has conditions beyond the loan-to-value cap. Fannie Mae requires
 an existing mortgage being paid off to be at least 12 months old; FHA requires the

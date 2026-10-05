@@ -6,6 +6,7 @@ import {
   blendedRate, borrowingLimits, breakEvenHelocRate, cashOutOption, compare,
   FED_MOVES, helocCltv, helocOption, helocRateAfter,
 } from "./helocCashOut.ts";
+import * as finance from "./finance.ts";
 
 const near = (actual, expected, tol = 0.01, msg = "") =>
   assert.ok(Math.abs(actual - expected) <= tol, `${msg} expected ${expected}, got ${actual}`);
@@ -225,7 +226,7 @@ test("FHA upfront MIP: 1.75% of $300,000 is $5,250, financed on top; the 80% lim
   near(c.programFee.amount, 5250);
   near(c.programFee.financed, 5250);
   near(c.loanAmount, 305250);
-  near(c.cost, c.interest + 5000 + 5250);
+  near(c.cost, c.interest + 5000 + 5250 + c.annualMip.total);
   const fha = borrowingLimits(i).find((l) => l.program === "fha");
   near(fha.ltv, 75);
   assert.equal(fha.within, true);
@@ -246,6 +247,101 @@ test("VA borrowing limit follows the use: the most cash is $400,000 / (1 + fee) 
   near(tight.feeCash, 1450);
   near(tight.ltv, 100);
   assert.equal(borrowingLimits({ ...va, homeValue: 290000 }).find((l) => l.program === "va").within, false);
+});
+
+/*
+ * FHA annual MIP. depends_on: FHA_ANNUAL_MIP_BPS, FHA_MIP_DURATION_MONTHS,
+ * FHA_MIP_LOAN_THRESHOLD, FHA_MIP_SHORT_TERM_MAX_YEARS, FHA_MIP_DURATION_CLIFF_LTV,
+ * FHA_UFMIP_RATE (app/lib/finance.ts). The engine reads them, so a change flows
+ * into the page; the figures below were worked by hand against these values,
+ * and the snapshot test fails first if any of them moves, naming it.
+ */
+const FHA_SNAPSHOT = {
+  FHA_ANNUAL_MIP_BPS: {
+    longTerm: {
+      atOrBelowThreshold: [{ maxLtv: 95, bps: 50 }, { maxLtv: Infinity, bps: 55 }],
+      aboveThreshold: [{ maxLtv: 95, bps: 70 }, { maxLtv: Infinity, bps: 75 }],
+    },
+    shortTerm: {
+      atOrBelowThreshold: [{ maxLtv: 90, bps: 15 }, { maxLtv: Infinity, bps: 40 }],
+      aboveThreshold: [{ maxLtv: 78, bps: 15 }, { maxLtv: 90, bps: 40 }, { maxLtv: Infinity, bps: 65 }],
+    },
+  },
+  FHA_MIP_DURATION_MONTHS: { atOrBelowCliff: 132, aboveCliff: 360 },
+  FHA_MIP_LOAN_THRESHOLD: 726200,
+  FHA_MIP_SHORT_TERM_MAX_YEARS: 15,
+  FHA_MIP_DURATION_CLIFF_LTV: 90,
+  FHA_UFMIP_RATE: 1.75,
+};
+
+test("depends_on: the FHA constants are the values the MIP figures below were checked against", () => {
+  for (const [name, value] of Object.entries(FHA_SNAPSHOT)) {
+    assert.deepEqual(finance[name], value,
+      `${name} changed: re-check the FHA MIP figures in this file by hand, then update FHA_SNAPSHOT`);
+  }
+});
+
+// FHA at 0%: a $200,000 base loan ($150,000 owed + $50,000 cash) on a $400,000 home, 50% LTV.
+// The 1.75% UFMIP makes the loan $203,500; over 30 years that is $565.28 a month of principal.
+const fha0 = { ...base, mortgageBalance: 150000, cashNeeded: 50000, homeValue: 400000,
+  cashOutRate: 0, closingCosts: 0, loanType: "fha" };
+const L = 203500;
+/** Σ over months 1..k of the 0% balance after that month's payment, times the monthly MIP rate. */
+const mipAtZero = (bps, k, n = 360) => (L * bps) / 10000 / 12 * (k - (k * (k + 1)) / (2 * n));
+
+test("FHA annual MIP at 0%: 0.50% on the balance, $84.56 in month 1 and $4,656.48 over five years", () => {
+  const c = cashOutOption(fha0);
+  assert.equal(c.annualMip.bps, 50);
+  assert.equal(c.annualMip.months, 132);
+  near(c.loanAmount, L);
+  // Month 1: ($203,500 − $565.28) × 0.5% / 12.
+  near(c.annualMip.firstMonth, ((L - L / 360) * 0.005) / 12);
+  near(c.annualMip.firstMonth, 84.56);
+  near(c.firstPayment, L / 360 + 84.56);
+  // Five years: $84.79 × (60 − 60 × 61 / 720) = $84.79 × 54.917.
+  near(c.annualMip.total, mipAtZero(50, 60));
+  near(c.annualMip.total, 4656.48);
+  // It is a cost, beside the $3,500 UFMIP; interest is nil at 0%.
+  near(c.cost, 3500 + 4656.48);
+});
+
+test("FHA annual MIP stops after 11 years at 80% LTV or less: month 132 pays it, month 133 does not", () => {
+  const c = cashOutOption({ ...fha0, horizonYears: 15 });
+  near(c.annualMip.total, mipAtZero(50, 132));
+  near(c.annualMip.total, 9125.0);
+  near(c.paymentInMonth(132), L / 360 + ((L - (132 * L) / 360) * 0.005) / 12);
+  near(c.paymentInMonth(133), L / 360);
+});
+
+test("FHA annual MIP by loan amount, term and LTV, as the FHA calculator reads the table", () => {
+  const bps = (over) => cashOutOption({ ...fha0, ...over }).annualMip;
+  // Over $726,200: $800,000 base on a $1,000,000 home, 30 years: 70 bps.
+  assert.equal(bps({ mortgageBalance: 750000, homeValue: 1000000 }).bps, 70);
+  // 15 years or less, at or under $726,200: 15 bps.
+  assert.equal(bps({ cashOutTermYears: 15 }).bps, 15);
+  // 15 years, over $726,200, 80% LTV (over 78%): 40 bps.
+  assert.equal(bps({ mortgageBalance: 750000, homeValue: 1000000, cashOutTermYears: 15 }).bps, 40);
+  // Over 90% LTV (not a cash-out FHA allows, but the rule still applies): for the whole term.
+  const high = bps({ mortgageBalance: 330000, homeValue: 400000 });
+  assert.equal(high.bps, 50);
+  assert.equal(high.months, 360);
+  // The MIP rate's LTV is on the base loan: $200,000 / $400,000, not the $203,500 loan.
+  near(bps({}).ltv, 50);
+  // Conventional and VA pay none.
+  assert.equal(cashOutOption({ ...fha0, loanType: "conventional" }).annualMip, null);
+  assert.equal(cashOutOption({ ...fha0, loanType: "va" }).annualMip, null);
+});
+
+test("the FHA annual MIP enters the payment and the break-even", () => {
+  const i = { ...base, loanType: "fha" };
+  const c = cashOutOption(i);
+  near(c.firstPayment, c.payment + c.annualMip.firstMonth);
+  near(c.cost, c.interest + c.fees + c.annualMip.total);
+  const b = breakEvenHelocRate(i);
+  assert.equal(b.reason, "found");
+  near(helocOption(i, b.rate).cost, c.cost, 0.01);
+  // The premium makes the cash-out dearer, so the HELOC can cost more before it loses.
+  assert.ok(b.rate > breakEvenHelocRate({ ...i, loanType: "conventional" }).rate);
 });
 
 test("a horizon beyond both terms still counts every dollar of interest, and leaves nothing owed", () => {

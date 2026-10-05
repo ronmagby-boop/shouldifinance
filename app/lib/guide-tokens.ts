@@ -8,7 +8,7 @@ import {
   STUDENT_LOAN_INTEREST_CAP,
   TAX_YEAR,
 } from "./tax";
-import { PMI_TERMINATION_LTV } from "./finance";
+import { FHA_ANNUAL_MIP_BPS, FHA_MIP_DURATION_MONTHS, PMI_TERMINATION_LTV } from "./finance";
 import { CASH_OUT_MAX_LTV, FHA_CASH_OUT_UFMIP, VA_CASH_OUT_FUNDING_FEE } from "./helocCashOut";
 import { VA_FUNDING_FEE_UNTIL } from "./va";
 import {
@@ -89,6 +89,10 @@ export const GUIDE_TOKENS: Record<string, string> = {
   VA_CASH_OUT_FEE_FIRST: `${VA_CASH_OUT_FUNDING_FEE.firstUse}%`,
   VA_CASH_OUT_FEE_SUBSEQUENT: `${VA_CASH_OUT_FUNDING_FEE.subsequentUse}%`,
   FHA_CASH_OUT_UFMIP: `${FHA_CASH_OUT_UFMIP}%`,
+  // A 30-year FHA cash-out at or under the loan-amount threshold; at FHA's 80%
+  // cash-out limit it is always under the 90% duration cliff.
+  FHA_CASH_OUT_ANNUAL_MIP: `${FHA_ANNUAL_MIP_BPS.longTerm.atOrBelowThreshold[0].bps / 100}%`,
+  FHA_CASH_OUT_MIP_YEARS: String(FHA_MIP_DURATION_MONTHS.atOrBelowCliff / 12),
   VA_FUNDING_FEE_UNTIL,
 
   STUDENT_POLICY_AS_OF: POLICY_AS_OF,

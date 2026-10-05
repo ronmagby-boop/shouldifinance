@@ -17,7 +17,8 @@
  * is not a cost, and a loan that has paid down less shows it in the balance
  * still owed, which is reported beside the cost rather than folded into it.
  * Financed closing costs count as a cost once, as fees, whether paid at
- * closing or rolled into the loan.
+ * closing or rolled into the loan. FHA's annual MIP is a cost too, added to
+ * the cash-out side.
  *
  * ASSUMPTIONS, stated on the page as well:
  *   - the whole cash amount is drawn on day one, from both;
@@ -28,10 +29,11 @@
  *   - the cash-out rate is fixed at closing and does not move;
  *   - HELOC fees are paid once, up front; payments are made monthly;
  *   - an FHA cash-out finances its upfront MIP, and a VA cash-out its funding
- *     fee as far as VA's 100% limit allows (see upfrontFee); FHA's annual
- *     MIP is not modelled, and the page says so.
+ *     fee as far as VA's 100% limit allows (see upfrontFee);
+ *   - an FHA cash-out also pays the annual MIP, monthly, by the same rule as
+ *     the FHA-vs-conventional calculator (see fhaAnnualMip).
  */
-import { FHA_UFMIP_RATE, payment } from "./finance";
+import { FHA_UFMIP_RATE, fhaAnnualMipBps, fhaMipDurationMonths, payment } from "./finance";
 import { VA_FUNDING_FEE_PURCHASE } from "./va";
 
 /* ----------------------------------------------------------------------------
@@ -186,20 +188,34 @@ export function helocRateAfter(start: number, move: number, cap: number | null, 
 /**
  * A level-payment loan run month by month to the horizon: interest paid,
  * principal paid and balance left after `horizonMonths`. Stops when it is
- * paid off.
+ * paid off. With `insurance`, also the premium charged each month on the
+ * balance after that month's payment, for the first `months` months.
  */
-function runFixed(principal: number, rate: number, termMonths: number, horizonMonths: number) {
+function runFixed(
+  principal: number,
+  rate: number,
+  termMonths: number,
+  horizonMonths: number,
+  insurance: { annualPct: number; months: number } | null = null,
+) {
   const pmt = payment(principal, rate, termMonths);
   const r = rate / 100 / 12;
   let bal = principal;
   let interest = 0;
+  let premium = 0;
+  let firstPremium = 0;
   for (let m = 1; m <= Math.min(horizonMonths, termMonths) && bal > PAID; m++) {
     const int = bal * r;
     const principalPart = Math.min(pmt - int, bal);
     interest += int;
     bal -= principalPart;
+    if (insurance && m <= insurance.months) {
+      const ins = (Math.max(0, bal) * insurance.annualPct) / 100 / 12;
+      if (m === 1) firstPremium = ins;
+      premium += ins;
+    }
   }
-  return { payment: pmt, interest, balance: Math.max(0, bal) };
+  return { payment: pmt, interest, premium, firstPremium, balance: Math.max(0, bal) };
 }
 
 /* ----------------------------------------------------------------------------
@@ -239,25 +255,60 @@ export function upfrontFee(i: Inputs) {
   return { program, pct: 0, amount: 0, financed: 0, cash: 0 };
 }
 
+/**
+ * FHA's annual MIP on the cash-out loan, or null for other programs. Same
+ * rule as the FHA-vs-conventional calculator: the rate from
+ * fhaAnnualMipBps (FHA_ANNUAL_MIP_BPS, by base loan amount, LTV and term),
+ * for fhaMipDurationMonths (FHA_MIP_DURATION_MONTHS, by LTV), with LTV
+ * measured on the base loan before the financed UFMIP, and charged each
+ * month on the balance after that month's payment.
+ */
+export function fhaAnnualMip(i: Inputs) {
+  if ((i.loanType ?? "conventional") !== "fha") return null;
+  const base = cashOutBaseLoan(i);
+  const ltv = i.homeValue > 0 ? (base / i.homeValue) * 100 : Infinity;
+  const bps = fhaAnnualMipBps(base, ltv, i.cashOutTermYears);
+  const months = fhaMipDurationMonths(ltv, Math.round(i.cashOutTermYears * 12));
+  return { ltv, bps, months };
+}
+
 export function cashOutOption(i: Inputs) {
   const termMonths = Math.round(i.cashOutTermYears * 12);
   const horizonMonths = Math.round(i.horizonYears * 12);
   const baseLoan = cashOutBaseLoan(i);
   const fee = upfrontFee(i);
   const loanAmount = baseLoan + fee.financed;
-  const run = runFixed(loanAmount, i.cashOutRate, termMonths, horizonMonths);
+  const mip = fhaAnnualMip(i);
+  const run = runFixed(loanAmount, i.cashOutRate, termMonths, horizonMonths,
+    mip && { annualPct: mip.bps / 100, months: mip.months });
+  const r = i.cashOutRate / 100 / 12;
+  /** Principal and interest plus any annual MIP, in month `m` (1 = the first). */
+  const paymentInMonth = (m: number) => {
+    if (m > termMonths) return 0;
+    if (!mip || m > mip.months) return run.payment;
+    const bal = r === 0
+      ? loanAmount - run.payment * m
+      : loanAmount * (1 + r) ** m - run.payment * (((1 + r) ** m - 1) / r);
+    return run.payment + (Math.max(0, bal) * mip.bps) / 100 / 100 / 12;
+  };
   return {
     baseLoan,
     loanAmount,
+    /** Principal and interest. */
     payment: run.payment,
+    /** The first month's payment, with any annual MIP. */
+    firstPayment: run.payment + run.firstPremium,
+    paymentInMonth,
     /** Paid at closing, out of pocket: closing costs when not financed, and any program fee not financed. */
     upfront: (i.financeClosingCosts ? 0 : i.closingCosts) + fee.cash,
     interest: run.interest,
     closingCosts: i.closingCosts,
     /** The FHA upfront premium or the VA funding fee; zero for conventional. */
     programFee: fee,
+    /** FHA's annual MIP: its terms, and the total paid over the horizon. */
+    annualMip: mip && { ...mip, firstMonth: run.firstPremium, total: run.premium },
     fees: i.closingCosts + fee.amount,
-    cost: run.interest + i.closingCosts + fee.amount,
+    cost: run.interest + i.closingCosts + fee.amount + run.premium,
     balance: run.balance,
     termMonths,
   };
