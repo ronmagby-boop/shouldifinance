@@ -96,6 +96,11 @@ the term is not stretched further than it has to be. It is a poor one when it
 reprices cheap debt at an expensive rate to solve a cash-flow problem that will
 come back.
 
+The alternative that leaves your existing rate alone is a HELOC: the cash comes
+from a separate, usually variable-rate line, and the mortgage stays as it is. The
+[HELOC or cash-out refinance calculator](/calculators/heloc-vs-cash-out) compares
+the two on your numbers, including what a move in rates would do to the line.
+
 Sources: [IRS Publication 936, Home Mortgage Interest
 Deduction](https://www.irs.gov/publications/p936), for the acquisition-debt
 requirement and the $750,000 limit on debt incurred after 15 December 2017.

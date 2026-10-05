@@ -102,23 +102,28 @@ the small decision. The payment is the big one.
 
 ## The alternatives, briefly
 
-A HELOC is one of four ways to make card debt cheaper, and it is the one that
-puts your house behind the balance. Before choosing it, the other three are
-worth pricing:
+A HELOC is one of five ways to make card debt cheaper, and one of two that put
+your house behind the balance. Before choosing it, the other four are worth
+pricing:
 
 - [A 0% balance transfer](/guides/is-a-balance-transfer-worth-the-fee) costs a
-  fee up front and buys a fixed window with no interest. Cheapest of the four
+  fee up front and buys a fixed window with no interest. Cheapest of the five
   when you can clear the balance inside it, and no collateral is involved.
 - [A consolidation loan](/guides/does-debt-consolidation-save-money) is
   unsecured and fixed-term, so it forces an end date the way a HELOC's draw
   period does not — but the origination fee comes out of what you receive.
+- [A cash-out refinance](/calculators/heloc-vs-cash-out) raises the same cash
+  at a fixed rate, but it reprices your whole mortgage to do it, so it suits a
+  mortgage rate at or above today's and costs most when yours is low. The HELOC
+  or cash-out calculator compares the two on your numbers.
 - [Paying them off in order](/guides/snowball-or-avalanche), with no new
-  borrowing at all, costs nothing to start and is the only one of the four that
+  borrowing at all, costs nothing to start and is the only one of the five that
   cannot make the position worse.
 
 The ranking is not fixed: it depends on your rate spread, the fee, and whether
 you would actually hold the higher payment. What does not change is that a
-HELOC is the only option on the list secured against where you live.
+HELOC and a cash-out refinance are the only options on the list secured against
+where you live.
 
 Sources: [IRS Publication 936, Home Mortgage Interest
 Deduction](https://www.irs.gov/publications/p936), for the buy-build-improve
