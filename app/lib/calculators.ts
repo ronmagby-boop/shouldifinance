@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -79,6 +79,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "home-equity-to-pay-off-credit-cards",
       teaser: "What an interest-only draw period really does",
+    },
+  },
+  {
+    slug: "heloc-vs-cash-out",
+    title: "Should I get a HELOC or a cash-out refinance?",
+    nav: "HELOC or cash-out refinance?",
+    desc: "Keep your mortgage and add a line, or replace it with one bigger loan. Compare payments, cost over your horizon, and what Fed moves would do.",
+    icon: GitCompareArrows, bg: "bg-purple-50", category: "Home", kind: "should-i",
+    keywords: ["HELOC vs cash-out refinance", "cash-out refinance or HELOC", "HELOC prime rate", "home equity line vs refinance"],
+    guide: {
+      slug: "heloc-or-cash-out-refinance",
+      teaser: "Why your existing rate decides it",
     },
   },
   {
