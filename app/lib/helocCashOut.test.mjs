@@ -169,6 +169,85 @@ test("borrowing limits: 80% conventional and FHA, 100% VA; the most cash each al
   near(helocCltv(i), (250000 + 60000) / 4000);
 });
 
+// A $300,000 base loan on a $400,000 home: $250,000 owed plus $50,000 cash, closing costs paid at closing.
+const va = { ...base, homeValue: 400000, mortgageBalance: 250000, cashNeeded: 50000, loanType: "va" };
+
+test("VA funding fee, first use: 2.15% of $300,000 is $6,450, financed into a $306,450 loan", () => {
+  const c = cashOutOption({ ...va, vaUse: "first" });
+  assert.equal(c.baseLoan, 300000);
+  near(c.programFee.pct, 2.15, 1e-12);
+  near(c.programFee.amount, 6450);
+  near(c.programFee.financed, 6450);
+  near(c.programFee.cash, 0);
+  near(c.loanAmount, 306450);
+  near(c.payment, level(306450, 6.5, 360));
+  near(c.upfront, 5000);
+  near(c.fees, 5000 + 6450);
+  near(c.cost, c.interest + 11450);
+  // The first-use rate is the default when no use is given.
+  near(cashOutOption(va).programFee.amount, 6450);
+});
+
+test("VA funding fee, subsequent use: 3.3% of $300,000 is $9,900, financed into a $309,900 loan", () => {
+  const c = cashOutOption({ ...va, vaUse: "subsequent" });
+  near(c.programFee.amount, 9900);
+  near(c.loanAmount, 309900);
+  near(c.cost, c.interest + 5000 + 9900);
+});
+
+test("VA funding fee, exempt: no fee, and the loan is the $300,000 base", () => {
+  const c = cashOutOption({ ...va, vaUse: "exempt" });
+  assert.equal(c.programFee.amount, 0);
+  assert.equal(c.loanAmount, 300000);
+  near(c.cost, c.interest + 5000);
+  // Same as a conventional loan on the same numbers.
+  near(c.cost, cashOutOption({ ...va, loanType: "conventional" }).cost);
+});
+
+test("VA fee over 100% of value is paid in cash: on a $305,000 home, $5,000 is financed and $1,450 paid at closing", () => {
+  const c = cashOutOption({ ...va, homeValue: 305000, vaUse: "first" });
+  near(c.programFee.financed, 5000);
+  near(c.programFee.cash, 1450);
+  near(c.loanAmount, 305000);
+  near(c.upfront, 5000 + 1450);
+  // The whole fee is still a cost, financed or not.
+  near(c.fees, 5000 + 6450);
+  // A base loan already over 100%: none of the fee can be financed.
+  const over = cashOutOption({ ...va, homeValue: 290000 });
+  near(over.programFee.financed, 0);
+  near(over.programFee.cash, 6450);
+  near(over.loanAmount, 300000);
+});
+
+test("FHA upfront MIP: 1.75% of $300,000 is $5,250, financed on top; the 80% limit is on the $300,000 base", () => {
+  const i = { ...va, loanType: "fha" };
+  const c = cashOutOption(i);
+  near(c.programFee.amount, 5250);
+  near(c.programFee.financed, 5250);
+  near(c.loanAmount, 305250);
+  near(c.cost, c.interest + 5000 + 5250);
+  const fha = borrowingLimits(i).find((l) => l.program === "fha");
+  near(fha.ltv, 75);
+  assert.equal(fha.within, true);
+  // A conventional loan carries no program fee.
+  assert.equal(cashOutOption({ ...va, loanType: "conventional" }).programFee.amount, 0);
+});
+
+test("VA borrowing limit follows the use: the most cash is $400,000 / (1 + fee) − $250,000", () => {
+  const limit = (vaUse) => borrowingLimits({ ...va, vaUse }).find((l) => l.program === "va");
+  near(limit("first").maxCash, 400000 / 1.0215 - 250000);
+  near(limit("subsequent").maxCash, 137221.68);
+  near(limit("exempt").maxCash, 150000);
+  // Paying the fee at closing instead, the base loan alone can reach 100%: $150,000 cash.
+  near(limit("first").maxCashFeeInCash, 150000);
+  // At $305,000 the base fits, so it is within the limit; $1,450 of the fee is paid in cash and the loan is 100%.
+  const tight = borrowingLimits({ ...va, homeValue: 305000 }).find((l) => l.program === "va");
+  assert.equal(tight.within, true);
+  near(tight.feeCash, 1450);
+  near(tight.ltv, 100);
+  assert.equal(borrowingLimits({ ...va, homeValue: 290000 }).find((l) => l.program === "va").within, false);
+});
+
 test("a horizon beyond both terms still counts every dollar of interest, and leaves nothing owed", () => {
   const i = { ...base, horizonYears: 40 };
   const h = helocOption(i, 8.5);

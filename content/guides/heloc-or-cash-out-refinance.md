@@ -64,8 +64,7 @@ The margin is the part to compare between lenders.
 The prime rate is set by banks, not by the Federal Reserve. In the Fed's words:
 "Although the Federal Reserve has no direct role in setting the prime rate, many
 banks choose to set their prime rates based partly on the target level of the
-federal funds rate." That is a convention, not a rule, but it is a consistent
-one: when the Fed raised its target range on 17 September 2026, the prime rate
+federal funds rate." The convention holds: when the Fed raised its target range on 17 September 2026, the prime rate
 moved the same day, from 6.75% to 7.00%, three points above the top of the new
 range. A HELOC priced at prime plus a margin moves with it. The calculator's
 Fed-move table assumes exactly that, one for one, within any cap or floor.
@@ -126,21 +125,27 @@ principal just before the refinancing." Cash taken out for anything other than
 buying, building or substantially improving the home earns no deduction, under
 either option.
 
-## VA cash-out refinancing
+## VA and FHA cash-out refinancing
 
 VA cash-out refinances can borrow up to {{CASH_OUT_MAX_LTV_VA}} of the home's
 value, against {{CASH_OUT_MAX_LTV_CONVENTIONAL}} for a conventional Fannie Mae loan
 and {{CASH_OUT_MAX_LTV_FHA}} for FHA. The VA limit includes the funding fee:
 "any portion of the funding fee that would cause the new loan amount to exceed
 100 percent of the reasonable value of the property must be paid in cash at the
-loan closing."
+loan closing." VA sets that ceiling, but many lenders set a lower maximum of their
+own (a lender overlay), so ask yours.
 
 The funding fee on a VA cash-out refinance is **{{VA_CASH_OUT_FEE_FIRST}}** of the
 loan the first time you use the benefit and **{{VA_CASH_OUT_FEE_SUBSEQUENT}}** after
 that, unless you are exempt. Those rates apply to loans closed before
 {{VA_FUNDING_FEE_UNTIL}}, when the statute steps them down. On a $340,000 loan,
-first use, that is $7,310: a cost a HELOC does not have, and one to add to the
-closing costs when you compare.
+first use, that is $7,310, which the calculator adds when you choose VA.
+
+An FHA cash-out refinance pays FHA's upfront mortgage insurance premium,
+**{{FHA_CASH_OUT_UFMIP}}** of the loan, which HUD charges on "All Mortgages" except
+a few special cases. It is financed on top of the 80% limit: HUD measures that
+limit on "the amount prior to the financing of the Upfront Mortgage Insurance
+Premium". The calculator notes, but does not add, the annual premium.
 
 Each program also has conditions beyond the loan-to-value cap. Fannie Mae requires
 an existing mortgage being paid off to be at least 12 months old; FHA requires the
@@ -165,4 +170,4 @@ and 38 U.S.C. § 3729(b)(2) for the fee. [Fannie Mae Eligibility
 Matrix](https://singlefamily.fanniemae.com/media/20786/display) (August 2026) and
 [Selling Guide B2-1.3-03](https://selling-guide.fanniemae.com/sel/b2-1.3-03/cash-out-refinance-transactions);
 [HUD Handbook 4000.1](https://www.hud.gov/sites/default/files/Housing/documents/40001-hsgh-Update-18.pdf),
-II.A.8.d.v (Update 18).
+II.A.8.d.v and Appendix 1.0 (Update 18).

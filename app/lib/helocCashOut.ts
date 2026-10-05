@@ -26,9 +26,12 @@
  *     treated as moving prime, and the HELOC with it, one-for-one, by the
  *     prime-rate convention (see PRIME in lib/rates.ts and the guide);
  *   - the cash-out rate is fixed at closing and does not move;
- *   - HELOC fees are paid once, up front; payments are made monthly.
+ *   - HELOC fees are paid once, up front; payments are made monthly;
+ *   - an FHA cash-out finances its upfront MIP, and a VA cash-out its funding
+ *     fee as far as VA's 100% limit allows (see upfrontFee); FHA's annual
+ *     MIP is not modelled, and the page says so.
  */
-import { payment } from "./finance";
+import { FHA_UFMIP_RATE, payment } from "./finance";
 import { VA_FUNDING_FEE_PURCHASE } from "./va";
 
 /* ----------------------------------------------------------------------------
@@ -101,6 +104,26 @@ export const VA_CASH_OUT_FUNDING_FEE = (() => {
   return { firstUse: zeroDown.firstUse, subsequentUse: zeroDown.subsequentUse };
 })();
 
+/** Which VA funding fee applies: first use of the benefit, a later use, or none (exempt). */
+export type VaUse = "first" | "subsequent" | "exempt";
+
+export function vaCashOutFeePct(use: VaUse): number {
+  return use === "exempt" ? 0 : use === "subsequent" ? VA_CASH_OUT_FUNDING_FEE.subsequentUse : VA_CASH_OUT_FUNDING_FEE.firstUse;
+}
+
+/**
+ * The FHA upfront mortgage insurance premium on a cash-out refinance, percent
+ * of the base loan. HUD Handbook 4000.1 Appendix 1.0 (Update 18): "All
+ * Mortgages: 175 Basis Points (bps) (1.75%) of the Base Loan Amount", the only
+ * exceptions being streamline and simple refinances of loans endorsed on or
+ * before 31 May 2009, Hawaiian Home Lands and Indian Lands, none of which is a
+ * cash-out. II.A.8.d says LTV limits "are based upon the amount prior to the
+ * financing of the Upfront Mortgage Insurance Premium (UFMIP)" and "The total
+ * mortgage amount may be increased by the financed UFMIP amount", so the
+ * premium sits on top of the 80% limit rather than inside it.
+ */
+export const FHA_CASH_OUT_UFMIP = FHA_UFMIP_RATE;
+
 /* ----------------------------------------------------------------------------
  * Inputs.
  * ------------------------------------------------------------------------- */
@@ -127,6 +150,10 @@ export type Inputs = {
   rateCap: number | null;
   rateFloor: number | null;
   horizonYears: number;
+  /** The cash-out loan's program; conventional when not given. */
+  loanType?: CashOutProgram;
+  /** For a VA cash-out, which funding fee applies; first use when not given. */
+  vaUse?: VaUse;
 };
 
 /** The Fed moves the page tabulates, in percentage points. */
@@ -179,19 +206,58 @@ function runFixed(principal: number, rate: number, termMonths: number, horizonMo
  * The two options.
  * ------------------------------------------------------------------------- */
 
+/** The cash-out loan before any program fee: the old balance, the cash and any financed closing costs. */
+export function cashOutBaseLoan(i: Inputs) {
+  return i.mortgageBalance + i.cashNeeded + (i.financeClosingCosts ? i.closingCosts : 0);
+}
+
+/**
+ * The program's upfront fee on the cash-out loan, and how much of it is
+ * financed. Both programs charge a percent of the base loan.
+ *
+ *   conventional  none.
+ *   fha           FHA_CASH_OUT_UFMIP, financed in full on top of the base loan.
+ *   va            the funding fee for `vaUse`, financed only up to 100% of the
+ *                 home's value: 38 CFR 36.4306(a)(2), "any portion of the
+ *                 funding fee that would cause the new loan amount to exceed
+ *                 100 percent of the reasonable value of the property must be
+ *                 paid in cash at the loan closing."
+ */
+export function upfrontFee(i: Inputs) {
+  const base = cashOutBaseLoan(i);
+  const program: CashOutProgram = i.loanType ?? "conventional";
+  if (program === "fha") {
+    const amount = (base * FHA_CASH_OUT_UFMIP) / 100;
+    return { program, pct: FHA_CASH_OUT_UFMIP, amount, financed: amount, cash: 0 };
+  }
+  if (program === "va") {
+    const pct = vaCashOutFeePct(i.vaUse ?? "first");
+    const amount = (base * pct) / 100;
+    const financed = Math.min(amount, Math.max(0, (i.homeValue * CASH_OUT_MAX_LTV.va) / 100 - base));
+    return { program, pct, amount, financed, cash: amount - financed };
+  }
+  return { program, pct: 0, amount: 0, financed: 0, cash: 0 };
+}
+
 export function cashOutOption(i: Inputs) {
   const termMonths = Math.round(i.cashOutTermYears * 12);
   const horizonMonths = Math.round(i.horizonYears * 12);
-  const loanAmount = i.mortgageBalance + i.cashNeeded + (i.financeClosingCosts ? i.closingCosts : 0);
+  const baseLoan = cashOutBaseLoan(i);
+  const fee = upfrontFee(i);
+  const loanAmount = baseLoan + fee.financed;
   const run = runFixed(loanAmount, i.cashOutRate, termMonths, horizonMonths);
   return {
+    baseLoan,
     loanAmount,
     payment: run.payment,
-    /** Paid at closing, out of pocket, when not financed. */
-    upfront: i.financeClosingCosts ? 0 : i.closingCosts,
+    /** Paid at closing, out of pocket: closing costs when not financed, and any program fee not financed. */
+    upfront: (i.financeClosingCosts ? 0 : i.closingCosts) + fee.cash,
     interest: run.interest,
-    fees: i.closingCosts,
-    cost: run.interest + i.closingCosts,
+    closingCosts: i.closingCosts,
+    /** The FHA upfront premium or the VA funding fee; zero for conventional. */
+    programFee: fee,
+    fees: i.closingCosts + fee.amount,
+    cost: run.interest + i.closingCosts + fee.amount,
     balance: run.balance,
     termMonths,
   };
@@ -337,28 +403,48 @@ export function breakEvenHelocRate(i: Inputs): { rate: number | null; reason: "f
 
 /**
  * Each program's cash-out limit against this refinance, and the most cash it
- * would allow. For VA the funding fee is part of the loan the 100% limit is
- * measured on (38 CFR 36.4306(a)(2)): the loan is the base amount times
- * (1 + fee), at `vaFeePct` (first use unless given; 0 for an exempt veteran).
+ * would allow. Conventional and FHA are measured on the base loan (Handbook
+ * 4000.1 measures FHA LTV before the financed UFMIP). VA is measured on the
+ * loan with the funding fee in it, at `vaFeePct` (from `i.vaUse` unless
+ * given): the base loan must fit in 100%, and any part of the fee that does
+ * not is paid in cash at closing (38 CFR 36.4306(a)(2)).
+ *
+ * `maxCash` is the most cash with the VA fee fully financed; for VA,
+ * `maxCashFeeInCash` is the most with the fee paid at closing instead.
  */
-export function borrowingLimits(i: Inputs, vaFeePct: number = VA_CASH_OUT_FUNDING_FEE.firstUse) {
-  const base = cashOutOption(i).loanAmount;
+export function borrowingLimits(i: Inputs, vaFeePct: number = vaCashOutFeePct(i.vaUse ?? "first")) {
+  const base = cashOutBaseLoan(i);
   const financed = i.financeClosingCosts ? i.closingCosts : 0;
+  const ratio = (x: number) => (i.homeValue > 0 ? (x / i.homeValue) * 100 : Infinity);
   return (Object.keys(CASH_OUT_MAX_LTV) as CashOutProgram[]).map((program) => {
     const maxLtv = CASH_OUT_MAX_LTV[program];
-    const feeFactor = program === "va" ? 1 + vaFeePct / 100 : 1;
-    const loan = base * feeFactor;
-    const ltv = i.homeValue > 0 ? (loan / i.homeValue) * 100 : Infinity;
-    const maxBase = (i.homeValue * maxLtv) / 100 / feeFactor;
+    const maxBase = (i.homeValue * maxLtv) / 100;
+    const common = { program, maxLtv, ...CASH_OUT_LIMIT_SOURCES[program] };
+    if (program !== "va") {
+      return {
+        ...common,
+        loan: base,
+        ltv: ratio(base),
+        within: ratio(base) <= maxLtv + 1e-9,
+        maxCash: Math.max(0, maxBase - i.mortgageBalance - financed),
+        vaFeePct: null,
+        feeCash: 0,
+        maxCashFeeInCash: null,
+      };
+    }
+    const fee = (base * vaFeePct) / 100;
+    const feeFinanced = Math.min(fee, Math.max(0, maxBase - base));
+    const loan = base + feeFinanced;
     return {
-      program,
-      maxLtv,
+      ...common,
       loan,
-      ltv,
-      within: ltv <= maxLtv + 1e-9,
-      maxCash: Math.max(0, maxBase - i.mortgageBalance - financed),
-      vaFeePct: program === "va" ? vaFeePct : null,
-      ...CASH_OUT_LIMIT_SOURCES[program],
+      ltv: ratio(loan),
+      within: base <= maxBase + 1e-6,
+      maxCash: Math.max(0, maxBase / (1 + vaFeePct / 100) - i.mortgageBalance - financed),
+      vaFeePct,
+      /** The part of the funding fee over the 100% limit, paid at closing. */
+      feeCash: fee - feeFinanced,
+      maxCashFeeInCash: Math.max(0, maxBase - i.mortgageBalance - financed),
     };
   });
 }

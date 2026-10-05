@@ -9,7 +9,7 @@ import {
   TAX_YEAR,
 } from "./tax";
 import { PMI_TERMINATION_LTV } from "./finance";
-import { CASH_OUT_MAX_LTV, VA_CASH_OUT_FUNDING_FEE } from "./helocCashOut";
+import { CASH_OUT_MAX_LTV, FHA_CASH_OUT_UFMIP, VA_CASH_OUT_FUNDING_FEE } from "./helocCashOut";
 import { VA_FUNDING_FEE_UNTIL } from "./va";
 import {
   BENCHMARK_RETURN,
@@ -88,6 +88,7 @@ export const GUIDE_TOKENS: Record<string, string> = {
   CASH_OUT_MAX_LTV_VA: `${CASH_OUT_MAX_LTV.va}%`,
   VA_CASH_OUT_FEE_FIRST: `${VA_CASH_OUT_FUNDING_FEE.firstUse}%`,
   VA_CASH_OUT_FEE_SUBSEQUENT: `${VA_CASH_OUT_FUNDING_FEE.subsequentUse}%`,
+  FHA_CASH_OUT_UFMIP: `${FHA_CASH_OUT_UFMIP}%`,
   VA_FUNDING_FEE_UNTIL,
 
   STUDENT_POLICY_AS_OF: POLICY_AS_OF,

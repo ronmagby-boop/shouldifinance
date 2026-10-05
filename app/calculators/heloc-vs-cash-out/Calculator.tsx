@@ -8,9 +8,11 @@ import {
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import {
   FED_MOVES, FED_MOVE_MAX, FED_MOVE_MIN, FED_MOVE_STEP,
-  VA_CASH_OUT_FUNDING_FEE,
-  borrowingLimits, breakEvenHelocRate, compare, helocCltv, type Inputs,
+  FHA_CASH_OUT_UFMIP, VA_CASH_OUT_FUNDING_FEE,
+  borrowingLimits, breakEvenHelocRate, compare, helocCltv,
+  type CashOutProgram, type Inputs, type VaUse,
 } from "../../lib/helocCashOut";
+import { fhaAnnualMipBps, fhaMipDurationMonths } from "../../lib/finance";
 
 /** "+0.25", "0", "−0.50": the sign always shown on a move. */
 const signed = (v: number) => (v === 0 ? "0" : `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(2)}`);
@@ -31,6 +33,8 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
   const [cashOutTerm, setCashOutTerm] = useState<Num>(30);
   const [closing, setClosing] = useState<Num>("");
   const [financeClosing, setFinanceClosing] = useState(false);
+  const [loanType, setLoanType] = useState<CashOutProgram>("conventional");
+  const [vaUse, setVaUse] = useState<VaUse>("first");
   const [helocRate, setHelocRate] = useState<Num>("");
   const [drawYears, setDrawYears] = useState<Num>(10);
   const [repayYears, setRepayYears] = useState<Num>(20);
@@ -55,6 +59,8 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
     setCashOutTerm(30);
     setClosing(7500);
     setFinanceClosing(false);
+    setLoanType("conventional");
+    setVaUse("first");
     setHelocRate(8.25);
     setDrawYears(10);
     setRepayYears(20);
@@ -78,6 +84,8 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
     setCashOutTerm(30);
     setClosing("");
     setFinanceClosing(false);
+    setLoanType("conventional");
+    setVaUse("first");
     setHelocRate("");
     setDrawYears(10);
     setRepayYears(20);
@@ -115,9 +123,11 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
       rateCap: has(cap) ? n(cap) : null,
       rateFloor: has(floor) ? n(floor) : null,
       horizonYears: n(horizon),
+      loanType,
+      vaUse,
     };
   }, [balance, mortgageRate, yearsLeft, homeValue, cash, horizon, cashOutRate, cashOutTerm, closing,
-    financeClosing, helocRate, drawYears, repayYears, helocFees, plan, paydownYears, cap, floor]);
+    financeClosing, loanType, vaUse, helocRate, drawYears, repayYears, helocFees, plan, paydownYears, cap, floor]);
 
   const r = useMemo(() => {
     if (!inputs) return null;
@@ -143,6 +153,18 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
       <span className={`text-sm font-medium ${tone}`}>{v}</span>
     </div>
   );
+
+  /** The FHA upfront premium or VA funding fee, as its own line; nothing for conventional. */
+  const programFeeRows = (f: ReturnType<typeof compare>["cashOut"]["programFee"]) => {
+    if (f.program === "fha") return [line(`FHA upfront MIP, ${f.pct}% (financed)`, fmt(f.amount))];
+    if (f.program !== "va") return [];
+    if (f.pct === 0) return [line("VA funding fee (exempt)", fmt(0))];
+    if (f.cash < 0.005) return [line(`VA funding fee, ${f.pct}% (financed)`, fmt(f.amount))];
+    return [
+      line(`VA funding fee, ${f.pct}%`, fmt(f.amount)),
+      line("  paid at closing, over 100% of value", fmt(f.cash), "text-amber-700"),
+    ];
+  };
 
   return (
     <CalcShell
@@ -193,6 +215,36 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
             <Toggle checked={financeClosing} onChange={setFinanceClosing} label="Finance closing costs">
               Roll the closing costs into the new loan
             </Toggle>
+            <SelectField
+              label="Cash-out loan type"
+              value={loanType}
+              onChange={(v) => setLoanType(v as CashOutProgram)}
+              options={[
+                { value: "conventional", label: "Conventional" },
+                { value: "fha", label: "FHA" },
+                { value: "va", label: "VA" },
+              ]}
+              hint={
+                loanType === "fha"
+                  ? `Adds FHA's upfront mortgage insurance premium, ${FHA_CASH_OUT_UFMIP}% of the loan, financed into it.`
+                  : loanType === "va"
+                    ? "Adds the VA funding fee, financed into the loan up to 100% of the home's value; any part over that is paid at closing."
+                    : undefined
+              }
+            />
+            {loanType === "va" && (
+              <SelectField
+                label="VA funding fee"
+                value={vaUse}
+                onChange={(v) => setVaUse(v as VaUse)}
+                options={[
+                  { value: "first", label: `First use (${VA_CASH_OUT_FUNDING_FEE.firstUse}%)` },
+                  { value: "subsequent", label: `Subsequent use (${VA_CASH_OUT_FUNDING_FEE.subsequentUse}%)` },
+                  { value: "exempt", label: "Exempt (no fee)" },
+                ]}
+                hint="Exempt: receiving or eligible for VA disability compensation, DIC, or a Purple Heart on active duty. A 0% rating is not exempt."
+              />
+            )}
           </div>
         </Card>
         <Card title="HELOC" badge="VARIABLE" badgeTone="amber" className="h-full">
@@ -306,7 +358,8 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
                   line("New loan", fmtK(r.now.cashOut.loanAmount), "text-gray-500"),
                   line(`Payment ${drawLabel}`, `${fmt(inputs.drawYears * 12 < r.now.cashOut.termMonths ? r.now.cashOut.payment : 0)}/mo`),
                   line(`Interest over ${years} yrs`, fmtK(r.now.cashOut.interest)),
-                  line(inputs.financeClosingCosts ? "Closing costs (financed)" : "Closing costs (at closing)", fmt(r.now.cashOut.fees)),
+                  line(inputs.financeClosingCosts ? "Closing costs (financed)" : "Closing costs (at closing)", fmt(r.now.cashOut.closingCosts)),
+                  ...programFeeRows(r.now.cashOut.programFee),
                   line(`Cost over ${years} yrs`, fmtK(r.now.cashOut.cost)),
                   line(`Still owed after ${years} yrs`, fmtK(r.now.cashOut.balance)),
                 ],
@@ -430,26 +483,56 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
             <h2 className="text-sm font-medium text-gray-900 mb-1">Can you borrow this much?</h2>
             <p className="text-xs text-gray-500 leading-relaxed mb-3">
               A cash-out refinance of a one-unit main home is capped by loan-to-value: the new loan of{" "}
-              {fmtK(r.now.cashOut.loanAmount)} over the {fmtK(inputs.homeValue)} value is{" "}
-              <strong>{pct(r.limits[0].ltv, 1)}</strong>. These are the program caps only; each program also has seasoning
-              and occupancy rules, and a lender can be stricter.
+              {fmtK(r.now.cashOut.baseLoan)}
+              {r.now.cashOut.programFee.program === "fha"
+                ? ", before the upfront MIP,"
+                : r.now.cashOut.programFee.program === "va" && r.now.cashOut.programFee.amount > 0
+                  ? ", before the funding fee,"
+                  : ""}{" "}
+              over the {fmtK(inputs.homeValue)} value is <strong>{pct(r.limits[0].ltv, 1)}</strong>. These are the program
+              caps only; each program also has seasoning and occupancy rules, and a lender can be stricter.
             </p>
             <div className="space-y-2 mb-3">
               {r.limits.map((l) => (
                 <details key={l.program} className="bg-gray-50 rounded-xl px-4 py-3">
-                  <summary className="cursor-pointer flex justify-between items-baseline gap-2 list-none">
-                    <span className="text-sm text-gray-900">
-                      {l.label}: up to {l.maxLtv}%{l.program === "va" ? ` (${pct(l.ltv, 1)} with the fee)` : ""}
+                  <summary className="cursor-pointer list-none">
+                    <span className="flex justify-between items-baseline gap-2">
+                      <span className="text-sm text-gray-900">
+                        {l.label}: up to {l.maxLtv}%
+                        {l.program === "va" && l.vaFeePct ? ` (${pct(l.ltv, 1)} with the fee)` : ""}
+                      </span>
+                      <span className={`text-sm font-medium ${l.within ? "text-green-700" : "text-red-700"}`}>
+                        {l.within ? "Within the limit" : `Over: at most ${fmtK(l.maxCash)} cash`}
+                      </span>
                     </span>
-                    <span className={`text-sm font-medium ${l.within ? "text-green-700" : "text-red-700"}`}>
-                      {l.within ? "Within the limit" : `Over: at most ${fmtK(l.maxCash)} cash`}
-                    </span>
+                    {l.program === "va" && (
+                      <span className="block text-xs text-gray-500 mt-1">
+                        VA allows up to {l.maxLtv}%, but many lenders set a lower maximum of their own (a lender overlay), so
+                        ask yours.
+                      </span>
+                    )}
                   </summary>
                   <p className="text-xs text-gray-600 leading-relaxed mt-2">
+                    {l.program === "fha" && (
+                      <>
+                        Measured on the loan before the {FHA_CASH_OUT_UFMIP}% upfront MIP, which HUD lets you finance on
+                        top.{" "}
+                      </>
+                    )}
                     {l.program === "va" && (
                       <>
-                        Measured on the loan with the {l.vaFeePct}% first-use funding fee in it, {fmtK(l.loan)}; an exempt
-                        veteran pays no fee and could take more.{" "}
+                        {l.vaFeePct ? (
+                          <>
+                            Measured on the loan with the {l.vaFeePct}%{" "}
+                            {inputs.vaUse === "subsequent" ? "subsequent-use" : "first-use"} funding fee in it,{" "}
+                            {fmtK(l.loan)}
+                            {l.feeCash > 0.005 && <>; {fmt(l.feeCash)} of the fee would not fit and is paid at closing</>}
+                            . With the fee financed, the most cash is {fmtK(l.maxCash)}; paying the fee at closing,{" "}
+                            {fmtK(l.maxCashFeeInCash ?? 0)}.{" "}
+                          </>
+                        ) : (
+                          <>Exempt from the funding fee, so the loan is {fmtK(l.loan)}. </>
+                        )}
                       </>
                     )}
                     {l.quote ? <>&ldquo;{l.quote}&rdquo; </> : null}
@@ -461,10 +544,17 @@ export default function Calculator({ prime, fredNotice }: { prime: PrimeRate; fr
             <p className="text-xs text-gray-500 leading-relaxed">
               A HELOC has no program cap like these. With the line, you would owe{" "}
               <strong>{pct(r.cltv, 1)}</strong> of the home&apos;s value across the mortgage and the HELOC (combined
-              loan-to-value); each lender sets its own maximum, so ask yours. For a VA cash-out refinance, the funding fee
-              is {VA_CASH_OUT_FUNDING_FEE.firstUse}% of the loan on first use and {VA_CASH_OUT_FUNDING_FEE.subsequentUse}%
-              after, unless you are exempt; add it to the closing costs above to compare costs.
+              loan-to-value); each lender sets its own maximum, so ask yours.
             </p>
+            {inputs.loanType === "fha" && (
+              <p className="text-xs text-gray-500 leading-relaxed mt-2">
+                Not included: FHA&apos;s annual MIP, {fhaAnnualMipBps(r.now.cashOut.baseLoan, r.limits[0].ltv, inputs.cashOutTermYears) / 100}%
+                of the balance a year for{" "}
+                {fhaMipDurationMonths(r.limits[0].ltv, r.now.cashOut.termMonths) / 12} years on this loan, about{" "}
+                {fmt((r.now.cashOut.baseLoan * fhaAnnualMipBps(r.now.cashOut.baseLoan, r.limits[0].ltv, inputs.cashOutTermYears)) / 10000 / 12)}
+                /mo at the start (HUD Handbook 4000.1, Appendix 1.0). Add it to the cash-out side before you decide.
+              </p>
+            )}
           </div>
 
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
