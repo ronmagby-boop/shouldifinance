@@ -131,6 +131,12 @@ function main() {
     if (data.category && !CATEGORIES.includes(data.category)) {
       add(`category "${data.category}" is not one of ${CATEGORIES.join(", ")}`);
     }
+    // Optional search-result overrides. Google clips a title link around 60
+    // characters and a snippet around 160; past those the end is cut off.
+    if ("seo_title" in data && !data.seo_title) add("seo_title is empty; remove it or fill it in");
+    if (data.seo_title?.length > 60) add(`seo_title is ${data.seo_title.length} characters; keep it to 60 or fewer`);
+    if ("seo_description" in data && !data.seo_description) add("seo_description is empty; remove it or fill it in");
+    if (data.seo_description?.length > 160) add(`seo_description is ${data.seo_description.length} characters; keep it to 160 or fewer`);
     if (data.reviewed) {
       const t = Date.parse(data.reviewed);
       if (Number.isNaN(t)) add(`reviewed "${data.reviewed}" does not parse`);

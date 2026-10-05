@@ -2,6 +2,8 @@
 title: "What is the VA's 36-month recoupment rule?"
 slug: va-36-month-recoupment-rule
 description: "The VA requires a streamline refinance to repay its own closing costs within 36 months. Here is what counts, what is left out, and the two seasoning clocks."
+seo_title: "VA Recoupment: The 36-Month Rule for VA Refinances"
+seo_description: "How VA's 36-month recoupment test works on an IRRRL: what counts toward it, what doesn't (like the funding fee), plus a free calculator to check your refinance."
 calculator: va-recoup
 category: Home
 published: 2026-09-23

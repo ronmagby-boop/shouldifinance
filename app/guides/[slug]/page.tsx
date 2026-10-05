@@ -27,15 +27,19 @@ export async function generateMetadata({
 
   const url = `${SITE}/guides/${guide.slug}`;
   const calc = calculatorForGuide(guide);
+  // A guide may set its own search title and description (seo_title,
+  // seo_description); the h1 and intro on the page stay title and description.
+  const title = guide.seoTitle ?? guide.title;
+  const description = guide.seoDescription ?? guide.description;
   return {
-    title: pageTitle(guide.title),
-    description: guide.description,
+    title: pageTitle(title),
+    description,
     keywords: calc?.keywords,
     alternates: { canonical: url },
     openGraph: {
     images: [OG_IMAGE],
-      title: `${guide.title} | ShouldIFinance`,
-      description: guide.description,
+      title: `${title} | ShouldIFinance`,
+      description,
       url,
       siteName: "ShouldIFinance",
       type: "article",
@@ -43,8 +47,8 @@ export async function generateMetadata({
     twitter: {
     images: [OG_IMAGE.url],
       card: "summary_large_image",
-      title: `${guide.title} | ShouldIFinance`,
-      description: guide.description,
+      title: `${title} | ShouldIFinance`,
+      description,
     },
   };
 }

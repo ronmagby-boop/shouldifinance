@@ -19,6 +19,15 @@ export type Guide = {
   title: string;
   description: string;
   /**
+   * Optional search-result title and meta description (frontmatter seo_title,
+   * seo_description). The title is the page's h1 and the description its
+   * visible intro, so these let a guide tune what a search result shows
+   * without rewording the page. Only the page metadata uses them; the h1,
+   * intro, guide index and structured data keep title and description.
+   */
+  seoTitle?: string;
+  seoDescription?: string;
+  /**
    * Slug of the calculator this guide explains, when it explains one.
    *
    * Optional. Guides is the site's only content section, so a piece that does
@@ -153,6 +162,8 @@ function readGuides(): Guide[] {
         slug: data.slug,
         title: data.title,
         description: data.description,
+        seoTitle: data.seo_title || undefined,
+        seoDescription: data.seo_description || undefined,
         calculator: data.calculator || undefined,
         category: data.category as Category,
         published: data.published,
