@@ -12,6 +12,7 @@
     "check:assumptions": "node scripts/instagram/check-assumptions.mjs",
     "check:facts": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-facts.mjs",
     "cards": "node scripts/instagram/render-cards.mjs",
+    "test:calc": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs --test \"app/lib/*.test.mjs\"",
     "test:instagram": "node --test \"scripts/instagram/*.test.mjs\"",
     "cards:public": "node scripts/instagram/sync-public.mjs",
     "review:next": "node scripts/instagram/review-helper.mjs next",
