@@ -43,9 +43,11 @@ const KEY = process.env.FRED_API_KEY;
 /**
  * The series, and nothing else.
  *
- * Deliberately a closed list. Anything added here appears on the rates page,
- * so a series whose licence forbids redisplay must never be added — see the
- * note on SP500 in lib/rates.ts.
+ * Deliberately a closed list. Every series here is redisplayed somewhere —
+ * the rates page lists its own keys in lib/rates.ts, and DPRIME is shown only
+ * by the HELOC or cash-out calculator, as context for HELOC pricing — so a
+ * series whose licence forbids redisplay must never be added; see the note on
+ * SP500 in lib/rates.ts.
  */
 const SERIES = [
   { id: "DGS10", key: "treasury10" },
@@ -54,6 +56,9 @@ const SERIES = [
   { id: "TERMCBPER24NS", key: "personalLoan" },
   { id: "TERMCBAUTO48NS", key: "autoNew48" },
   { id: "NDR12MCD", key: "cd12" },
+  // Bank prime loan rate, from the Federal Reserve's H.15. Not on the rates
+  // page; lib/rates.ts exports it as PRIME for the HELOC calculator.
+  { id: "DPRIME", key: "prime" },
 ];
 
 async function latest(id) {

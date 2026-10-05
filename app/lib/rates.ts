@@ -103,6 +103,8 @@ const MAX_AGE_DAYS: Record<string, number> = {
   creditCard: 180,
   personalLoan: 180,
   autoNew48: 180,
+  // Daily (business days), like the Treasuries, so the same window.
+  prime: 5,
 };
 
 const fmtDate = (iso: string) =>
@@ -239,6 +241,21 @@ function build(): Rate[] {
 
 /** Every rate fit to show, in no particular order. Evaluated at build time. */
 export const RATES: Rate[] = build();
+
+/**
+ * The bank prime loan rate, as published (FRED DPRIME, from the Federal
+ * Reserve's H.15), with its own date. Shown by the HELOC or cash-out
+ * calculator as context for HELOC pricing and never computed with: HELOCs are
+ * usually priced at prime plus a margin, but the margin is the lender's. Not
+ * on the rates page. Null when it was not fetched or is past its window, in
+ * which case the calculator shows nothing rather than an old figure.
+ */
+export const PRIME: { text: string; date: string; dateLabel: string } | null = (() => {
+  const s = data?.ok ? data.series?.prime : undefined;
+  if (!s || typeof s.value !== "number" || !Number.isFinite(s.value) || !s.date) return null;
+  if (!fresh("prime", s.date)) return null;
+  return { text: s.text ?? String(s.value), date: s.date, dateLabel: fmtDate(s.date) };
+})();
 
 export const RATE_CATEGORIES: RateCategory[] = ["Home", "Money", "Debt", "Auto"];
 
