@@ -119,6 +119,64 @@ export const NIIT_THRESHOLDS: Record<FilingStatus, number> = {
   head: 200_000,
 };
 
+/* ----------------------------------------------------------------------------
+ * Selling a home that was your main home, then a rental.
+ *
+ * Like the NIIT thresholds, none of these is inflation-adjusted: each is
+ * written into the Code and moves only when the Code is amended, so they do
+ * not move with TAX_YEAR either.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Section 121 exclusion of gain on a main home. 26 U.S.C. 121(b)(1): "shall
+ * not exceed $250,000"; (b)(2)(A) substitutes "$500,000" on a joint return
+ * if either spouse meets the ownership test, BOTH meet the use test, and
+ * neither used the exclusion in the prior two years. "married" here means
+ * that joint case; spouses who do not both meet the use test get the sum of
+ * their separate limits under (b)(2)(B), which the page notes.
+ */
+export const SECTION_121_EXCLUSION: Record<FilingStatus, number> = {
+  single: 250_000,
+  married: 500_000,
+  head: 250_000,
+};
+
+/**
+ * The ownership and use tests of 121(a): owned and used as the main home
+ * "for periods aggregating 2 years or more" during "the 5-year period ending
+ * on the date of the sale". Publication 523 counts the 2 years as "24 months
+ * (730 days)".
+ */
+export const SECTION_121_TEST_YEARS = 5;
+export const SECTION_121_USE_DAYS = 730;
+
+/**
+ * 121(d)(9)(B): the 5-year period "shall not be extended more than 10 years"
+ * by the uniformed services, Foreign Service and intelligence community
+ * suspension. (d)(9)(C) defines qualified official extended duty as extended
+ * duty (more than 90 days, or indefinite) at a duty station "at least 50
+ * miles from such property" or "under Government orders in Government
+ * quarters".
+ */
+export const SECTION_121_MILITARY_SUSPENSION_MAX_YEARS = 10;
+
+/**
+ * Residential rental property is depreciated straight line over 27.5 years
+ * (26 U.S.C. 168(c), table; 168(b)(3)(B)) with the mid-month convention
+ * (168(d)(2)). Publication 527 Table 2-1 lists "27.5 years" under GDS.
+ */
+export const RESIDENTIAL_RENTAL_RECOVERY_YEARS = 27.5;
+
+/**
+ * Unrecaptured section 1250 gain, the depreciation part of the gain on a
+ * rental, is taxed at no more than 25%: 26 U.S.C. 1(h)(1)(E), "25 percent of
+ * the excess (if any) of (i) the unrecaptured section 1250 gain". It is
+ * stacked as ordinary income, so a filer in a lower bracket pays less.
+ * 121(d)(6) keeps it out of the home-sale exclusion for depreciation after
+ * May 6, 1997.
+ */
+export const UNRECAPTURED_1250_MAX_RATE = 25;
+
 /**
  * Federal clean vehicle credits, and when they stopped.
  *

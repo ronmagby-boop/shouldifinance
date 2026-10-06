@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -224,6 +224,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "bigger-down-payment-or-buy-sooner",
       teaser: "What mortgage insurance really costs, and when it stops",
+    },
+  },
+  {
+    slug: "rent-or-sell",
+    title: "Should I rent out my house or sell it?",
+    nav: "Rent out or sell?",
+    desc: "Compare selling now with renting it out and selling later: cash flow, the tax-free window, depreciation recapture, and your VA entitlement.",
+    icon: Signpost, bg: "bg-teal-50", category: "Home", kind: "should-i",
+    keywords: ["rent out house or sell", "should I rent my house when I move", "section 121 3 year rule", "depreciation recapture rental", "VA entitlement keep house"],
+    guide: {
+      slug: "rent-out-or-sell-your-house",
+      teaser: "The three-year clock, and what renting really pays",
     },
   },
   {

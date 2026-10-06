@@ -1,4 +1,52 @@
 /* ----------------------------------------------------------------------------
+ * VA entitlement.
+ *
+ * VA Pamphlet 26-7, Chapter 3, Topic 4 (change date 14 May 2024), and VA's
+ * home loan limits page (va.gov/housing-assistance/home-loans/loan-limits/,
+ * last updated 12 August 2025). Both were read for these values.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Basic ("first tier") entitlement. Pamphlet 26-7, Ch. 3: "VA refers to the
+ * first $36,000 of a Veteran's entitlement as their 'basic' entitlement."
+ */
+export const VA_BASIC_ENTITLEMENT = 36_000;
+
+/**
+ * The loan amount above which bonus entitlement applies, and the guaranty
+ * share above it. Ch. 3: "For Veterans with full entitlement, the maximum
+ * amount of guaranty entitlement available to the Veteran, for a loan amount
+ * above $144,000 is 25 percent of the loan amount", and for partial
+ * entitlement: "25% of the single-unit Freddie Mac Conforming Loan Limit (CLL)
+ * for the county ... reduced by the amount of unrestored entitlement."
+ */
+export const VA_BONUS_ENTITLEMENT_THRESHOLD = 144_000;
+export const VA_GUARANTY_PCT = 25;
+
+/**
+ * Table 3, "Maximum Potential Guaranty by Loan Amount", for loans up to
+ * $144,000 (above that it is VA_GUARANTY_PCT of the loan with full
+ * entitlement): "Up to $45,000: 50 percent of the loan amount"; "$45,001 to
+ * $56,250: $22,500"; "$56,251 to $144,000: 40 percent of the loan amount,
+ * with a maximum of $36,000".
+ */
+export const VA_GUARANTY_TIERS: readonly { upTo: number; pct: number | null; flat: number | null; max: number | null }[] = [
+  { upTo: 45_000, pct: 50, flat: null, max: null },
+  { upTo: 56_250, pct: null, flat: 22_500, max: null },
+  { upTo: 144_000, pct: 40, flat: null, max: 36_000 },
+];
+
+/**
+ * VA's loan limits page: "Most lenders require that your entitlement, down
+ * payment, or a combination of both covers at least 25% of your total loan
+ * amount", and "Multiply your remaining bonus entitlement by 4 ... the
+ * maximum amount most lenders would be willing to loan you without your
+ * needing to make a down payment." A lender practice VA describes, not a VA
+ * rule: Ch. 3 says "Lenders should consult with their investor".
+ */
+export const VA_LENDER_COVERAGE_PCT = 25;
+
+/* ----------------------------------------------------------------------------
  * VA funding fee.
  *
  * The fee is set in statute, not by the VA: 38 U.S.C. § 3729(b)(2) carries the

@@ -1,5 +1,18 @@
 /** Shared loan and investment math used across the calculators. */
 
+/**
+ * FHFA's baseline one-unit conforming loan limit, the limit "in most of the
+ * United States". "FHFA Announces Conforming Loan Limit Values for 2026" (25
+ * November 2025): "the 2026 CLL value for one-unit properties will be
+ * $832,750". High-cost counties are higher, up to a $1,249,125 ceiling, so
+ * pages ask for the county figure rather than assuming this one. VA uses
+ * these limits for partial entitlement (VA Pamphlet 26-7, Ch. 3).
+ * Update each November, when FHFA announces the next year's values.
+ */
+export const CONFORMING_LOAN_LIMIT_BASELINE = 832_750;
+export const CONFORMING_LOAN_LIMIT_CEILING = 1_249_125;
+export const CONFORMING_LOAN_LIMIT_YEAR = 2026;
+
 /** Level monthly payment for a fully amortizing loan. */
 export function payment(principal: number, annualRate: number, months: number): number {
   if (principal <= 0 || months <= 0) return 0;
