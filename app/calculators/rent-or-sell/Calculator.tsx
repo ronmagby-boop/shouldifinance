@@ -60,6 +60,12 @@ export default function Calculator() {
   const [yearsLived, setYearsLived] = useState<Num>("");
   const [moveOut, setMoveOut] = useState("");
   const [military, setMilitary] = useState(false);
+  const [jobMove, setJobMove] = useState(false);
+  /** Military duty is a move for work too, so selecting it turns the job-move box on; it can still be cleared. */
+  const chooseMilitary = (on: boolean) => {
+    setMilitary(on);
+    if (on) setJobMove(true);
+  };
   const [dutyYears, setDutyYears] = useState<Num>("");
   const [basis, setBasis] = useState<Num>("");
   const [landPct, setLandPct] = useState<Num>(A.landPct);
@@ -105,6 +111,7 @@ export default function Calculator() {
     setYearsLived(4);
     setMoveOut(today);
     setMilitary(false);
+    setJobMove(false);
     setDutyYears("");
     setBasis(340000);
     setIncome(150000);
@@ -131,6 +138,7 @@ export default function Calculator() {
     setYearsLived("");
     setMoveOut("");
     setMilitary(false);
+    setJobMove(false);
     setDutyYears("");
     setBasis("");
     setIncome("");
@@ -173,6 +181,7 @@ export default function Calculator() {
       yearsLived: n(yearsLived),
       moveOut,
       dutyMonths: military ? Math.round(n(dutyYears) * 12) : 0,
+      jobMove,
       adjustedBasis: n(basis),
       landPct: n(landPct),
       income: has(income) ? n(income) : null,
@@ -180,7 +189,7 @@ export default function Calculator() {
     };
   }, [homeValue, balance, rate, yearsLeft, propertyTax, insurance, hoa, sellingCostPct, repairs, rent, vacancyPct,
     management, managementPct, maintenancePct, capexPct, turnover, landlordExtra, appreciation, rentGrowth,
-    expenseGrowth, horizon, investReturn, status, yearsLived, moveOut, military, dutyYears, basis, landPct, income, today]);
+    expenseGrowth, horizon, investReturn, status, yearsLived, moveOut, military, jobMove, dutyYears, basis, landPct, income, today]);
 
   const r = useMemo(() => {
     if (!inputs) return null;
@@ -299,12 +308,20 @@ export default function Calculator() {
           <NumField label="Land share of value" value={landPct} onChange={setLandPct} min={0} max={100} suffix="%" hint={assumed("land is not depreciable; your property tax bill often splits land and building")} />
           <NumField label="Household income in a sale year (optional)" value={income} onChange={setIncome} min={0} placeholder="150000" prefix="$" hint="Sets the capital gains bracket. Left blank: gains at 15% and recapture at the 25% maximum." />
           <div className="sm:col-span-2">
-            <Toggle checked={military} onChange={setMilitary} label="Military (qualified extended duty)">
+            <Toggle checked={military} onChange={chooseMilitary} label="Military (qualified extended duty)">
               I or my spouse will be on qualified official extended duty after moving out: uniformed services, Foreign Service or intelligence community, at a duty station 50 miles or more away or in government quarters under orders (or Peace Corps service outside the US)
             </Toggle>
             {military && (
               <div className="mt-2 max-w-xs">
                 <NumField label="Years of that duty after moving out" value={dutyYears} onChange={setDutyYears} min={0} placeholder="3" suffix="yrs" step={0.25} hint={`Suspends the 5-year clock, up to ${SECTION_121_MILITARY_SUSPENSION_MAX_YEARS} years.`} />
+              </div>
+            )}
+            {has(yearsLived) && n(yearsLived) < 2 && (
+              <div className="mt-2">
+                <Toggle checked={jobMove} onChange={setJobMove} label="Moving for a new job">
+                  I am moving for a new job, and the new workplace (or duty station) is at least 50 miles farther from this
+                  home than the old one. Under 2 years lived, this allows a partial exclusion.
+                </Toggle>
               </div>
             )}
           </div>
@@ -468,10 +485,33 @@ export default function Calculator() {
                   window. This is an estimate counted to the day: leave a margin, because closings slip.
                 </p>
               </>
+            ) : r.c.sell.tax.exclusion.kind === "partial" || r.c.rent.tax.exclusion.kind === "partial" ? (
+              <>
+                <p className="text-sm text-gray-700 leading-relaxed mb-2">
+                  Living there under 2 years, you get a <strong>partial exclusion</strong> for the job move: up to{" "}
+                  <strong>{fmt(r.c.sell.tax.exclusion.limit)}</strong> on a sale now
+                  {r.c.sell.tax.exclusion.residenceMonths !== null &&
+                    ` (${r.c.sell.tax.exclusion.residenceMonths.toFixed(1)} of 24 months)`}
+                  , and {r.c.rent.tax.exclusion.limit > 0 ? <strong>{fmt(r.c.rent.tax.exclusion.limit)}</strong> : "none"} on a
+                  sale on {longDate(r.c.rent.saleDate)}.
+                </p>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  IRS Publication 523: &ldquo;You can meet the requirements for a partial exclusion if the main reason for your
+                  home sale was a change in workplace location&rdquo;, and a move qualifies if &ldquo;You took or were transferred
+                  to a new job in a work location at least 50 miles farther from the home than your old work
+                  location.&rdquo; The exclusion is the months you lived there in the 5 years before the sale, over 24, times{" "}
+                  {fmt(SECTION_121_EXCLUSION.single)}
+                  {inputs.status === "married" ? " for each spouse (this assumes you both lived there the same time)" : ""}. The
+                  longer you wait to sell, the fewer of those months stay inside the 5 years, and Publication 523 counts
+                  &ldquo;You sold your home not long after the situation arose&rdquo; among the factors for a sale to count as
+                  work-related.
+                </p>
+              </>
             ) : (
               <p className="text-sm text-gray-700 leading-relaxed">
-                Living there under 2 years, you do not meet the use test at any sale date. A reduced exclusion can apply
-                if you moved for work, health or an unforeseen circumstance; that is not modelled here (IRS Publication 523).
+                Living there under 2 years, you do not meet the use test at any sale date. A partial exclusion can apply if
+                you moved for a new job at least 50 miles farther away (tick the box above), or for health or an unforeseen
+                circumstance, which is not modelled here (IRS Publication 523).
               </p>
             )}
             {r.c.sellBy && !r.c.rent.tax.qualifies && r.c.sell.tax.qualifies && daysBetween(r.c.sellBy, r.c.rent.saleDate) <= 92 && (
@@ -535,7 +575,13 @@ export default function Calculator() {
           <div className="mt-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
               <NumField label="Entitlement charged (from your COE)" value={entitlementUsed} onChange={setEntitlementUsed} min={0} placeholder="from the COE" prefix="$" hint="The Entitlement Charged column on your Certificate of Eligibility." />
-              <NumField label="Or: the original loan amount" value={originalLoan} onChange={setOriginalLoan} min={0} placeholder="285000" prefix="$" hint="Used to estimate the entitlement if you leave the COE figure blank: 25% of a loan over $144,000." />
+              <NumField label="Or: the original loan amount" value={originalLoan} onChange={setOriginalLoan} min={0} placeholder="285000" prefix="$" hint={
+                <>
+                  Used to estimate the entitlement if you leave the COE figure blank: 25% of a loan over $144,000. On a
+                  financed funding fee, VA Pamphlet 26-7 says the guaranty &ldquo;is based on the loan amount including the
+                  funding fee portion when the fee is paid from loan proceeds.&rdquo;
+                </>
+              } />
               <NumField label="County loan limit where you're buying" value={countyLimit} onChange={setCountyLimit} min={0} prefix="$" hint={`${fmt(CONFORMING_LOAN_LIMIT_BASELINE)} in most counties for ${CONFORMING_LOAN_LIMIT_YEAR} (FHFA one-unit). High-cost counties are higher: look yours up on FHFA's site.`} />
               <NumField label="Price of the next home (optional)" value={nextPrice} onChange={setNextPrice} min={0} placeholder="550000" prefix="$" />
             </div>

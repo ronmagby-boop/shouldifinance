@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  addMonths, breakEvenAppreciation, breakEvenRent, compare, depreciableBasis, depreciationFor,
+  addMonths, breakEvenAppreciation, breakEvenRent, compare, depreciableBasis, depreciationFor, exclusionFor,
   rentOut, saleTax, sellByDate, sellNow, vaGuarantyFullEntitlement, vaNextLoan,
 } from "./rentOrSell.ts";
 import * as tax from "./tax.ts";
@@ -159,6 +159,51 @@ test("sell-by date, Publication 523's military example: duty from 28 Aug 2011, s
 test("month arithmetic clamps to the month's last day", () => {
   assert.equal(addMonths("2026-08-31", 6), "2027-02-28");
   assert.equal(addMonths("2026-10-01", 36), "2029-10-01");
+});
+
+test("partial exclusion for a job move: 12 months lived is half the exclusion, $125,000 single, $250,000 joint", () => {
+  const i = { ...base, yearsLived: 1, jobMove: true };
+  const single = exclusionFor(i, i.asOf);
+  assert.equal(single.kind, "partial");
+  near(single.residenceMonths, 12, 1e-9);
+  near(single.fraction, 0.5, 1e-9);
+  near(single.limit, 125000);
+  // Joint: Pub 523 figures each spouse at 12/24 × $250,000 and adds them.
+  near(exclusionFor({ ...i, status: "married" }, i.asOf).limit, 250000);
+  // 18 months: 18/24 = 0.75 × $250,000 = $187,500.
+  near(exclusionFor({ ...i, yearsLived: 1.5 }, i.asOf).limit, 187500);
+  // Without the job move, under two years gets nothing.
+  assert.equal(exclusionFor({ ...base, yearsLived: 1 }, base.asOf).kind, "none");
+  // Two years or more is the full exclusion, job move or not.
+  assert.equal(exclusionFor({ ...base, jobMove: true }, base.asOf).kind, "full");
+});
+
+test("partial exclusion on a sale: $200,000 of gain, $125,000 excluded, $75,000 taxed at 15% = $11,250", () => {
+  const t = saleTax({ amountRealized: 500000, adjustedBasis: 300000, depreciation: 0, status: "single", income: null,
+    exclusion: { kind: "partial", limit: 125000, fraction: 0.5, residenceMonths: 12 } });
+  near(t.excluded, 125000);
+  near(t.taxableGain, 75000);
+  near(t.gainTax, 11250);
+  assert.equal(t.qualifies, true);
+  // Through sellNow: $380,000 realized less $343,750 basis is $36,250, all inside the $125,000.
+  const s = sellNow({ ...base, yearsLived: 1, jobMove: true });
+  assert.equal(s.tax.exclusion.kind, "partial");
+  near(s.tax.excluded, 36250);
+  near(s.tax.tax, 0);
+});
+
+test("partial exclusion fades as the 12 months leave the 5-year period before the sale", () => {
+  const i = { ...base, yearsLived: 1, jobMove: true };
+  // Sold 3 years after moving out: the year lived is still inside the 5 years, so still half.
+  near(exclusionFor(i, "2029-10-01").fraction, 0.5, 1e-9);
+  // Sold 4½ years after: the period starts 2 April 2026, so only the 6 months to 1 October count: a quarter.
+  near(exclusionFor(i, "2031-04-01").fraction, 0.25, 0.005);
+  // Sold 5 years after: nothing lived inside the period.
+  assert.equal(exclusionFor(i, "2031-10-01").kind, "none");
+  // The rental's later sale still owes the recapture under a partial exclusion.
+  const r = rentOut(i);
+  assert.equal(r.tax.exclusion.kind, "partial");
+  near(r.tax.recaptureTax, 7500);
 });
 
 test("depreciation: the lesser of basis or value, less land, over 27.5 years", () => {

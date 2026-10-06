@@ -133,6 +133,59 @@ export function sellByDate(moveOut: string, yearsLived: number, dutyMonths = 0):
   return addDays(addMonths(moveOut, suspension + SECTION_121_TEST_YEARS * 12), -(SECTION_121_USE_DAYS + 1));
 }
 
+export type Exclusion = {
+  kind: "full" | "partial" | "none";
+  /** The most gain excludable on this sale. */
+  limit: number;
+  /** For a partial exclusion, the share of 24 months lived; 1 for full, 0 for none. */
+  fraction: number;
+  /** For a partial exclusion, the months of residence counted. */
+  residenceMonths: number | null;
+};
+
+/**
+ * The section 121 exclusion a sale on `saleDate` gets.
+ *
+ * FULL when the 2-of-5-year test is met (sellByDate).
+ *
+ * PARTIAL when the reader lived there under 2 years and moved for a new job.
+ * Publication 523: "You can meet the requirements for a partial exclusion if
+ * the main reason for your home sale was a change in workplace location",
+ * and the work-related safe harbor is a new job "in a work location at least
+ * 50 miles farther from the home than your old work location". Its Worksheet
+ * 1, section B: take the shortest of the residence in the 5-year period
+ * before the sale, the ownership, and the time since a prior excluded sale,
+ * "divide that number by 730 (if using days) or 24 (if using months)", and
+ * "Multiply the result ... by $250,000"; on a joint return, "Repeat Steps 1–3
+ * for your spouse and add the two results". This counts months, assumes
+ * ownership at least as long as residence and no excluded sale in the prior
+ * two years, and on a joint return assumes both spouses lived there the same
+ * time, so the sum is the fraction of $500,000. Residence is counted only
+ * inside the 5-year period before the sale, which the military suspension
+ * extends, so a sale long after moving out gets less or nothing.
+ *
+ * Applies only under 2 years lived, as asked; someone who lived there 2
+ * years but sells after the window closes is shown no exclusion.
+ */
+export function exclusionFor(i: Inputs, saleDate: string): Exclusion {
+  const sellBy = sellByDate(i.moveOut, i.yearsLived, i.dutyMonths);
+  if (sellBy !== null && saleDate <= sellBy) {
+    return { kind: "full", limit: SECTION_121_EXCLUSION[i.status], fraction: 1, residenceMonths: null };
+  }
+  if (sellBy === null && i.jobMove) {
+    const suspension = Math.min(Math.max(0, Math.round(i.dutyMonths)), SECTION_121_MILITARY_SUSPENSION_MAX_YEARS * 12);
+    // The first day of the 5-year period, counted as sellByDate counts it.
+    const periodStart = addDays(addMonths(saleDate, -(SECTION_121_TEST_YEARS * 12 + suspension)), 1);
+    const monthsInPeriod = (Math.max(0, daysBetween(periodStart, i.moveOut)) * 12) / 365.25;
+    const residenceMonths = Math.min(i.yearsLived * 12, monthsInPeriod);
+    const fraction = Math.min(1, residenceMonths / (SECTION_121_USE_DAYS / 365 * 12));
+    const spouses = i.status === "married" ? 2 : 1;
+    const limit = fraction * SECTION_121_EXCLUSION.single * spouses;
+    if (limit > 0) return { kind: "partial", limit, fraction, residenceMonths };
+  }
+  return { kind: "none", limit: 0, fraction: 0, residenceMonths: null };
+}
+
 /* ----------------------------------------------------------------------------
  * Depreciation and the tax on a sale.
  * ------------------------------------------------------------------------- */
@@ -170,6 +223,9 @@ export type SaleTax = {
   recaptureTax: number;
   gainTax: number;
   tax: number;
+  /** The exclusion this sale gets: full, partial (reduced) or none. */
+  exclusion: Exclusion;
+  /** True when any exclusion applies, full or partial. */
   qualifies: boolean;
 };
 
@@ -184,15 +240,20 @@ export function saleTax(args: {
   amountRealized: number;
   adjustedBasis: number;
   depreciation: number;
-  qualifies: boolean;
+  /** The full exclusion when true, none when false; or pass `exclusion` instead. */
+  qualifies?: boolean;
+  exclusion?: Exclusion;
   status: FilingStatus;
   income: number | null;
 }): SaleTax {
-  const { amountRealized, adjustedBasis, depreciation, qualifies, status, income } = args;
+  const { amountRealized, adjustedBasis, depreciation, status, income } = args;
+  const exclusion: Exclusion = args.exclusion ?? (args.qualifies
+    ? { kind: "full", limit: SECTION_121_EXCLUSION[status], fraction: 1, residenceMonths: null }
+    : { kind: "none", limit: 0, fraction: 0, residenceMonths: null });
   const gain = Math.max(0, amountRealized - (adjustedBasis - depreciation));
   const recaptureGain = Math.min(depreciation, gain);
   const otherGain = gain - recaptureGain;
-  const excluded = qualifies ? Math.min(SECTION_121_EXCLUSION[status], otherGain) : 0;
+  const excluded = Math.min(exclusion.limit, otherGain);
   const taxableGain = otherGain - excluded;
   let recaptureTax: number;
   let gainTax: number;
@@ -206,7 +267,10 @@ export function saleTax(args: {
     );
     gainTax = taxOnCapitalGain(income + recaptureGain, taxableGain, status).tax;
   }
-  return { gain, recaptureGain, excluded, taxableGain, recaptureTax, gainTax, tax: recaptureTax + gainTax, qualifies };
+  return {
+    gain, recaptureGain, excluded, taxableGain, recaptureTax, gainTax, tax: recaptureTax + gainTax,
+    exclusion, qualifies: exclusion.kind !== "none",
+  };
 }
 
 /* ----------------------------------------------------------------------------
@@ -252,6 +316,12 @@ export type Inputs = {
   moveOut: string;
   /** Months of qualified official extended duty after moving out; 0 for none. */
   dutyMonths: number;
+  /**
+   * The move is for a new job (a workplace at least 50 miles farther away),
+   * which allows a partial exclusion when the reader lived there under two
+   * years. False when not given.
+   */
+  jobMove?: boolean;
   /** What was paid for the home plus improvements. */
   adjustedBasis: number;
   landPct: number;
@@ -269,14 +339,12 @@ export type Inputs = {
 const grow = (pct: number, years: number) => (1 + pct / 100) ** years;
 
 export function sellNow(i: Inputs) {
-  const sellBy = sellByDate(i.moveOut, i.yearsLived, i.dutyMonths);
-  const qualifies = sellBy !== null && i.asOf <= sellBy;
   const sellingCosts = (i.homeValue * i.sellingCostPct) / 100;
   const tax = saleTax({
     amountRealized: i.homeValue - sellingCosts,
     adjustedBasis: i.adjustedBasis,
     depreciation: 0,
-    qualifies,
+    exclusion: exclusionFor(i, i.asOf),
     status: i.status,
     income: i.income,
   });
@@ -326,8 +394,6 @@ export function rentOut(i: Inputs) {
   }
 
   const saleDate = addMonths(i.asOf, months);
-  const sellBy = sellByDate(i.moveOut, i.yearsLived, i.dutyMonths);
-  const qualifies = sellBy !== null && saleDate <= sellBy;
   const price = i.homeValue * grow(i.appreciationPct, i.horizonYears);
   const sellingCosts = (price * i.sellingCostPct) / 100;
   const repairs = i.repairsToSell * grow(i.expenseGrowthPct, i.horizonYears);
@@ -337,7 +403,7 @@ export function rentOut(i: Inputs) {
     amountRealized: price - sellingCosts,
     adjustedBasis: i.adjustedBasis,
     depreciation,
-    qualifies,
+    exclusion: exclusionFor(i, saleDate),
     status: i.status,
     income: i.income,
   });

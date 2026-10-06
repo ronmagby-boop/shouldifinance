@@ -75,6 +75,11 @@ and keep the exclusion. "About" matters: count by the day, because a closing on 
 third anniversary of your move-out can miss it by a day. The calculator
 gives you the date.
 
+Lived there under 2 years? A move for a new job can still earn a partial
+exclusion. Publication 523's test is "a new job in a work location at least 50
+miles farther from the home than your old work location," and the exclusion is
+the share of 24 months you lived there: 12 months gets half.
+
 **Military and similar service.** If you or your spouse are on qualified official
 extended duty, you can elect to suspend the 5-year clock under section 121(d)(9).
 Qualifying duty is "any extended duty while serving at a duty station which is at
