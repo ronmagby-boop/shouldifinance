@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "postinstall": "node scripts/seed-rates.mjs",
     "prebuild": "node scripts/fetch-pmms.mjs && node scripts/fetch-fred.mjs",
     "build": "next build",
     "start": "next start",

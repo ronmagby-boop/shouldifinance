@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Fetches Freddie Mac's Primary Mortgage Market Survey at BUILD TIME and
- * writes app/lib/pmms.json, which the site imports as a static constant.
+ * writes app/lib/generated/pmms.json, which the site imports as a static
+ * constant. That folder is gitignored, so a build never modifies a tracked
+ * file; app/lib/pmms.fallback.json seeds it (see scripts/seed-rates.mjs).
  *
  * ┌──────────────────────────────────────────────────────────────────────┐
  * │ DO NOT ALTER THE RATE.                                               │
@@ -26,16 +28,15 @@
  * Zero dependencies. An .xlsx is a zip of XML, and node:zlib can inflate it.
  *
  * On failure this writes NOTHING and exits 0. A failed fetch must never fail a
- * build, and must never overwrite good data with nothing — yesterday's figure
- * plus the staleness gate in app/lib/pmms.ts is a better outcome than a blank.
+ * build, and must never overwrite good data with nothing — the last fetched
+ * figure, or the committed fallback on a clean machine, plus the staleness
+ * gate in app/lib/pmms.ts is a better outcome than a blank.
  */
 import fs from "node:fs";
-import path from "node:path";
 import zlib from "node:zlib";
-import { fileURLToPath } from "node:url";
+import { ratesPaths, seedRates } from "./seed-rates.mjs";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OUT = path.join(ROOT, "app", "lib", "pmms.json");
+const { out: OUT } = ratesPaths("pmms");
 const SOURCE = "https://www.freddiemac.com/pmms/docs/historicalweeklydata.xlsx";
 
 /** Pulls one file out of a zip buffer via the central directory. */
@@ -83,6 +84,8 @@ function serialToISO(serial) {
 }
 
 async function main() {
+  // Whatever happens below, the build has a file to import.
+  seedRates("pmms");
   let buf;
   try {
     const res = await fetch(SOURCE, {
@@ -149,7 +152,7 @@ async function main() {
 
   fs.writeFileSync(OUT, JSON.stringify(payload, null, 2) + "\n");
   console.log(
-    `[pmms] 30yr ${payload.rate30}%, 15yr ${payload.rate15 ?? "n/a"}% for week ending ${payload.week} → app/lib/pmms.json`,
+    `[pmms] 30yr ${payload.rate30}%, 15yr ${payload.rate15 ?? "n/a"}% for week ending ${payload.week} → app/lib/generated/pmms.json`,
   );
   return 0;
 }

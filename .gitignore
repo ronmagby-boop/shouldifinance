@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# build-time rate data (scripts/fetch-*.mjs); seeded from app/lib/*.fallback.json
+/app/lib/generated/
+
 # rendered Instagram cards (npm run cards)
 /.instagram-cards/
 # review sheets (npm run review:next)

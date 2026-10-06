@@ -1,11 +1,13 @@
-import fred from "./fred.json";
+import fred from "./generated/fred.json";
 import { PMMS } from "./pmms";
 
 /**
  * The rates page's data model.
  *
  * Seven figures from three publishers, every one fetched at build time and
- * shown exactly as published. See the alteration notes in scripts/fetch-fred.mjs
+ * shown exactly as published. The fetched data lives in the gitignored
+ * generated/ folder, seeded from fred.fallback.json and pmms.fallback.json by
+ * scripts/seed-rates.mjs. See the alteration notes in scripts/fetch-fred.mjs
  * and lib/pmms.ts before touching any of the numbers.
  *
  * ┌──────────────────────────────────────────────────────────────────────┐

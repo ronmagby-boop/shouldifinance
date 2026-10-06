@@ -1,6 +1,8 @@
 /**
  * Pulls the FRED half of the rates page at BUILD time and writes
- * app/lib/fred.json, which the site imports as a static constant.
+ * app/lib/generated/fred.json, which the site imports as a static constant.
+ * That folder is gitignored, so a build never modifies a tracked file;
+ * app/lib/fred.fallback.json seeds it (see scripts/seed-rates.mjs).
  *
  * ┌──────────────────────────────────────────────────────────────────────┐
  * │ DO NOT ALTER THE RATES.                                              │
@@ -21,7 +23,7 @@
  * no request that could carry a reader's identity to a data provider.
  *
  * NO KEY, NO PROBLEM. Without FRED_API_KEY this writes nothing and exits 0,
- * leaving whatever was committed in place. A build must never fail because a
+ * leaving the last fetched data, or the committed fallback, in place. A build must never fail because a
  * rate provider is down — the staleness gate in lib/rates.ts hides a card
  * whose data has gone old, which is the correct behaviour for a missing
  * figure and is already how the mortgage banner works.
@@ -33,11 +35,9 @@
  */
 
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { ratesPaths, seedRates } from "./seed-rates.mjs";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OUT = path.join(ROOT, "app", "lib", "fred.json");
+const { out: OUT } = ratesPaths("fred");
 const KEY = process.env.FRED_API_KEY;
 
 /**
@@ -96,8 +96,10 @@ async function latest(id) {
 }
 
 async function main() {
+  // Whatever happens below, the build has a file to import.
+  seedRates("fred");
   if (!KEY) {
-    console.warn("[fred] FRED_API_KEY is not set — leaving app/lib/fred.json as committed.");
+    console.warn("[fred] FRED_API_KEY is not set — leaving app/lib/generated/fred.json as it is.");
     return 0;
   }
 
@@ -124,7 +126,7 @@ async function main() {
     OUT,
     JSON.stringify({ ok: true, fetchedAt: new Date().toISOString(), series: out }, null, 2) + "\n",
   );
-  console.log(`[fred] wrote ${Object.keys(out).length} series (${failed} skipped) → app/lib/fred.json`);
+  console.log(`[fred] wrote ${Object.keys(out).length} series (${failed} skipped) → app/lib/generated/fred.json`);
   return 0;
 }
 
