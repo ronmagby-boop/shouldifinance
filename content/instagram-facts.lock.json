@@ -108,6 +108,19 @@
         "atOrBelowCliff": 132
       }
     },
+    "home-sale-three-year-window": {
+      "SECTION_121_EXCLUSION": {
+        "head": 250000,
+        "married": 500000,
+        "single": 250000
+      },
+      "SECTION_121_TEST_YEARS": 5,
+      "SECTION_121_USE_DAYS": 730
+    },
+    "military-duty-pauses-home-sale-clock": {
+      "SECTION_121_MILITARY_SUSPENSION_MAX_YEARS": 10,
+      "SECTION_121_TEST_YEARS": 5
+    },
     "niit-lesser-of": {
       "NIIT_THRESHOLDS": {
         "head": 200000,
@@ -187,6 +200,17 @@
         }
       ]
     },
+    "rental-depreciation-taxed-inside-exclusion": {
+      "RESIDENTIAL_RENTAL_RECOVERY_YEARS": 27.5,
+      "UNRECAPTURED_1250_MAX_RATE": 25
+    },
+    "va-cash-out-to-100": {
+      "CASH_OUT_MAX_LTV": {
+        "conventional": 80,
+        "fha": 80,
+        "va": 100
+      }
+    },
     "va-first-vs-subsequent": {
       "VA_FUNDING_FEE_IRRRL": 0.5,
       "VA_FUNDING_FEE_PURCHASE": [
@@ -209,6 +233,12 @@
     },
     "va-no-monthly-mi": {
       "PMI_TERMINATION_LTV": 0.78
+    },
+    "va-partial-entitlement-2026-limit": {
+      "CONFORMING_LOAN_LIMIT_BASELINE": 832750,
+      "CONFORMING_LOAN_LIMIT_CEILING": 1249125,
+      "VA_GUARANTY_PCT": 25,
+      "VA_LENDER_COVERAGE_PCT": 25
     },
     "va-passes-but-costs": {
       "VA_FUNDING_FEE_IRRRL": 0.5

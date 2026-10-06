@@ -34,6 +34,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+// app/lib modules import each other without extensions ("./finance"), which
+// Next's bundler resolves and plain Node does not; this lets loadConstants
+// import any of them, here and in the publisher that calls checkFacts().
+import "./ts-resolve.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // Test overrides only.

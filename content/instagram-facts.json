@@ -1,5 +1,5 @@
 {
-  "_about": "A library of one-fact-per-post Instagram cards extracted from the 45 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 47 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
   "_extracted": "2026-09-30",
   "_fields": {
     "id": "Stable handle for scheduling. Not used by any code.",
@@ -2058,6 +2058,158 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "heloc-blends-low-rate",
+      "card": "A $60,000 HELOC at 8.25% on a 3.25% mortgage blends to about 4.1%.",
+      "caption": "That is $280,000 still owed at 3.25% plus $60,000 at 8.25%, weighted by balance. A cash-out refinance at 6.5% would put all $340,000 at 6.5%. The HELOC has the higher rate on the new money, but it leaves the old rate alone, so compare what you pay on everything you owe. A HELOC rate is usually variable, so the blend moves when it does. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
+      "guide": "heloc-or-cash-out-refinance",
+      "source": "Arithmetic from the guide's worked example: ($280,000 × 3.25% + $60,000 × 8.25%) / $340,000 = 4.13%",
+      "card_source": "Arithmetic: $280,000 at 3.25%, $60,000 at 8.25%",
+      "layout": "big-number",
+      "hero": "4.1%",
+      "hero_context": "the rate across all $340,000 owed, mortgage and HELOC together",
+      "category": "Home",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "prime-follows-fed-by-convention",
+      "card": "The Fed doesn't set prime, but banks usually move it when the Fed moves.",
+      "caption": "In the Federal Reserve's words, \"many banks choose to set their prime rates based partly on the target level of the federal funds rate.\" When the Fed raised its target on 17 September 2026, prime moved the same day, from 6.75% to 7.00%. A HELOC priced at prime plus a margin moves with it; the margin is the part to compare between lenders. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
+      "guide": "heloc-or-cash-out-refinance",
+      "source": "Federal Reserve, What is the prime rate, and does the Federal Reserve set the prime rate?; bank prime loan rate from the Federal Reserve's H.15 via FRED (DPRIME)",
+      "card_source": "Source: Federal Reserve, on the prime rate",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "fed-cut-mortgage-rates-rose",
+      "card": "From September 2024 to January 2025, the Fed cut a point; mortgage rates rose.",
+      "caption": "The top of the Fed's target range fell a full point, from 5.50% to 4.50%; the average 30-year fixed rate rose from 6.20% to 6.93%. Mortgage rates are set in long-term markets, not by the Fed directly. A HELOC tied to prime does follow the Fed; a fixed cash-out refinance rate does not, so waiting for a cut is a bet on a loose link. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
+      "guide": "heloc-or-cash-out-refinance",
+      "source": "Federal funds target range (DFEDTARU) from the Federal Reserve's H.15 and the 30-year rate from Freddie Mac's Primary Mortgage Market Survey (MORTGAGE30US), both via FRED; Federal Reserve Bank of St. Louis, What Determines Mortgage Rates? (October 2026)",
+      "card_source": "Source: Federal Reserve and Freddie Mac, via FRED",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a Fed rate cut brings mortgage rates down with it.",
+      "category": "Home",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "heloc-line-can-be-frozen",
+      "card": "A lender can freeze or cut your HELOC if your home's value falls significantly.",
+      "caption": "Among other circumstances, Regulation Z lets a lender \"prohibit additional extensions of credit or reduce the credit limit\" while the home's value is significantly below its appraised value, or while it reasonably believes a material change in your finances means you cannot repay. Do not plan around money you have not drawn yet. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
+      "guide": "heloc-or-cash-out-refinance",
+      "source": "12 CFR 1026.40(f)(3)(vi) (Regulation Z), as quoted in the guide",
+      "card_source": "Source: Regulation Z, 12 CFR 1026.40",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "va-cash-out-to-100",
+      "card": "VA cash-out refinances can lend up to 100% of the home's value, fee included.",
+      "caption": "Any part of the funding fee that would push the loan past 100% has to be paid in cash at closing (38 CFR 36.4306). Conventional Fannie Mae and FHA cash-out refinances stop at 80%. VA sets the ceiling, but lenders can set a lower maximum of their own, so ask yours. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
+      "guide": "heloc-or-cash-out-refinance",
+      "source": "38 CFR 36.4306(a); Fannie Mae Eligibility Matrix (August 2026); HUD Handbook 4000.1, II.A.8.d.v (Update 18)",
+      "card_source": "Source: 38 CFR 36.4306",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on": [
+        "CASH_OUT_MAX_LTV"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "home-sale-three-year-window",
+      "card": "After moving out, you have about 3 years to sell and keep the home-sale exclusion.",
+      "caption": "The exclusion covers up to $250,000 of gain, or $500,000 on a joint return when both spouses qualify, if you owned and lived in the home for 2 of the 5 years before the sale. Once you move out, those 2 years start sliding out of the 5-year look-back, so if you lived there at least 2 years, the window closes about 3 years after you leave. Count it by the day: a closing on the third anniversary of moving out can miss it by one. https://shouldifinance.com/guides/rent-out-or-sell-your-house",
+      "guide": "rent-out-or-sell-your-house",
+      "source": "26 U.S.C. 121(a) and (b); IRS Publication 523 (2025), \"24 months (730 days) of residence during the 5-year period\"",
+      "card_source": "Source: 26 U.S.C. 121; IRS Publication 523",
+      "layout": "big-number",
+      "hero": "3 years",
+      "hero_context": "about how long the exclusion lasts after moving out, if you lived there 2 years first",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on": [
+        "SECTION_121_EXCLUSION",
+        "SECTION_121_TEST_YEARS",
+        "SECTION_121_USE_DAYS"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "rental-depreciation-taxed-inside-exclusion",
+      "card": "Rent your home before selling, and the depreciation part of the gain is still taxable.",
+      "caption": "Publication 523: \"you can't exclude the part of your gain equal to any depreciation allowed or allowable as a deduction for periods after May 6, 1997.\" It is taxed at your ordinary rate, but no more than 25%, and \"allowable\" means it is owed even on depreciation you never claimed. A $275,000 building basis depreciates $10,000 a year over 27.5 years, so two years of renting leaves $20,000 of the gain taxable. https://shouldifinance.com/guides/rent-out-or-sell-your-house",
+      "guide": "rent-out-or-sell-your-house",
+      "source": "IRS Publication 523 (2025), recapturing depreciation; 26 U.S.C. 121(d)(6); 26 U.S.C. 1(h)(1)(E) for the 25% rate; 26 U.S.C. 168(c) for 27.5 years",
+      "card_source": "Source: IRS Publication 523",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a sale inside the exclusion window is completely tax-free.",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on": [
+        "UNRECAPTURED_1250_MAX_RATE",
+        "RESIDENTIAL_RENTAL_RECOVERY_YEARS"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "military-duty-pauses-home-sale-clock",
+      "card": "Qualifying military duty can pause the home-sale exclusion clock for up to 10 years.",
+      "caption": "It covers qualified official extended duty: more than 90 days or indefinite, at a duty station at least 50 miles from the home or in government quarters under orders. The Foreign Service and intelligence community qualify too, and Peace Corps service abroad has a similar rule. In Publication 523's words, \"the 10-year suspension period and the 5-year test period can be as long as, but no more than, 15 years.\" You elect it on the return for the year of the sale, for one home at a time. https://shouldifinance.com/guides/rent-out-or-sell-your-house",
+      "guide": "rent-out-or-sell-your-house",
+      "source": "26 U.S.C. 121(d)(9) and (d)(12); IRS Publication 523 (2025), Service, Intelligence, and Peace Corps Personnel",
+      "card_source": "Source: 26 U.S.C. 121(d)(9); IRS Publication 523",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on": [
+        "SECTION_121_MILITARY_SUSPENSION_MAX_YEARS",
+        "SECTION_121_TEST_YEARS"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "va-assumption-not-restoration",
+      "card": "An assumed VA loan keeps your entitlement tied up unless a veteran buyer substitutes theirs.",
+      "caption": "Once the assumption is approved, 38 U.S.C. 3714 says you \"shall be relieved of all further liability to the Secretary with respect to the loan.\" Your entitlement comes back only if the buyer is a veteran who substitutes their own (38 U.S.C. 3702(b)), or once the loan is repaid and the home is no longer yours. https://shouldifinance.com/guides/rent-out-or-sell-your-house",
+      "guide": "rent-out-or-sell-your-house",
+      "source": "38 U.S.C. 3714(a)(1); 38 U.S.C. 3702(b)(1) and (2); VA Pamphlet 26-7, chapter 2, topic 6",
+      "card_source": "Source: 38 U.S.C. 3702 and 3714",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume that letting a buyer take over your VA loan gives your entitlement back.",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States statutory rules on liability and restoration, not an amount; no app/lib constant holds them.",
+      "reviewed": null
+    },
+    {
+      "id": "va-partial-entitlement-2026-limit",
+      "card": "For 2026, VA figures partial entitlement on a $832,750 loan limit in most counties.",
+      "caption": "Keep a VA-loan home as a rental and your next VA loan uses what is left: 25% of the county's one-unit limit, minus the entitlement still in use. With $75,000 in use, that is $208,187.50 − $75,000 = $133,187.50, and most lenders will lend four times that, $532,750, with no down payment. High-cost counties have higher limits, up to $1,249,125. https://shouldifinance.com/guides/rent-out-or-sell-your-house",
+      "guide": "rent-out-or-sell-your-house",
+      "source": "FHFA, Conforming Loan Limit Values for 2026 (25 November 2025); VA Pamphlet 26-7, chapter 3, topic 4; VA home loan limits page",
+      "card_source": "Source: FHFA; VA Pamphlet 26-7",
+      "category": "Home",
+      "shelfLife": {
+        "risk": "FHFA resets the conforming loan limits every year, and VA uses them for partial entitlement.",
+        "recheck": "Each November, against FHFA's announcement of the next year's limits"
+      },
+      "depends_on": [
+        "CONFORMING_LOAN_LIMIT_BASELINE",
+        "CONFORMING_LOAN_LIMIT_CEILING",
+        "VA_GUARANTY_PCT",
+        "VA_LENDER_COVERAGE_PCT"
+      ],
       "reviewed": null
     }
   ]

@@ -1,8 +1,9 @@
-// Test-only module resolution: lets `node --test` import the site's
-// TypeScript modules, whose relative imports are extensionless ("./finance")
-// because Next's bundler resolves them. Node 24 strips the types itself; this
-// only adds ".ts" when a relative import without an extension is not found.
-// Used by `npm run test:calc`; the site build never loads it.
+// Module resolution for scripts that import the site's TypeScript modules,
+// whose relative imports are extensionless ("./finance") because Next's
+// bundler resolves them. Node 24 strips the types itself; this only adds
+// ".ts" when a relative import without an extension is not found. Used by
+// `npm run test:calc` and by scripts/check-facts.mjs (so also the Instagram
+// publisher); the site build never loads it.
 import { register } from "node:module";
 
 register(

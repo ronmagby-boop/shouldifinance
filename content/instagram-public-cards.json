@@ -193,6 +193,10 @@
         "card text wraps to 5 lines with one word on the last"
       ]
     },
+    "fed-cut-mortgage-rates-rose": {
+      "hash": "027628e50c0cae86",
+      "warnings": []
+    },
     "fee-drag-86000": {
       "hash": "ee49e5b8dd41242d",
       "warnings": []
@@ -241,8 +245,16 @@
         "card text wraps to 3 lines with one word on the last"
       ]
     },
+    "heloc-blends-low-rate": {
+      "hash": "22e9bc10b8c71a1e",
+      "warnings": []
+    },
     "heloc-interest-only-decade": {
       "hash": "2cff858ecb4d5868",
+      "warnings": []
+    },
+    "heloc-line-can-be-frozen": {
+      "hash": "c090455476134687",
       "warnings": []
     },
     "heloc-not-deductible": {
@@ -258,6 +270,12 @@
     "heloc-payment-steps": {
       "hash": "c57630f9dacf9bb3",
       "warnings": []
+    },
+    "home-sale-three-year-window": {
+      "hash": "579d14bd82c4ea23",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
     },
     "house-is-not-retirement-income": {
       "hash": "de64671f7697aa26",
@@ -333,6 +351,12 @@
     },
     "match-usually-traditional": {
       "hash": "6ee6a2d6bb20e2ea",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "military-duty-pauses-home-sale-clock": {
+      "hash": "be942364c3a5ca6a",
       "warnings": [
         "card text wraps to 5 lines with one word on the last"
       ]
@@ -443,6 +467,10 @@
         "card text wraps to 7 lines with one word on the last"
       ]
     },
+    "prime-follows-fed-by-convention": {
+      "hash": "fc7d412fffd8a6e2",
+      "warnings": []
+    },
     "principal-beats-interest-233": {
       "hash": "ee3edc1a1ed29430",
       "warnings": []
@@ -479,6 +507,10 @@
     },
     "rent-vs-buy-is-a-year": {
       "hash": "682f1666859e2eb7",
+      "warnings": []
+    },
+    "rental-depreciation-taxed-inside-exclusion": {
+      "hash": "2a7790212bccbe0e",
       "warnings": []
     },
     "residual-not-negotiable": {
@@ -610,6 +642,18 @@
     "va-210-days": {
       "hash": "1ce0f56f2549074b",
       "warnings": []
+    },
+    "va-assumption-not-restoration": {
+      "hash": "cff35861b258625f",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "va-cash-out-to-100": {
+      "hash": "8330f18fec882acb",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
     },
     "va-funding-fee-excluded": {
       "hash": "2ad264861460dff4",

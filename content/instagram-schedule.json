@@ -139,9 +139,9 @@
     },
     {
       "n": 17,
-      "id": "va-funding-fee-excluded",
+      "id": "prime-follows-fed-by-convention",
       "category": "Home",
-      "guide": "va-36-month-recoupment-rule",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "statement"
     },
     {
@@ -227,9 +227,9 @@
     },
     {
       "n": 29,
-      "id": "loan-estimate-three-days",
+      "id": "va-funding-fee-excluded",
       "category": "Home",
-      "guide": "when-refinancing-pays-for-itself",
+      "guide": "va-36-month-recoupment-rule",
       "layout": "statement"
     },
     {
@@ -256,9 +256,9 @@
     },
     {
       "n": 33,
-      "id": "half-point-cancelled",
+      "id": "heloc-blends-low-rate",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "big-number"
     },
     {
@@ -284,9 +284,9 @@
     },
     {
       "n": 37,
-      "id": "loan-estimate-tolerances",
+      "id": "military-duty-pauses-home-sale-clock",
       "category": "Home",
-      "guide": "how-to-compare-two-mortgage-quotes",
+      "guide": "rent-out-or-sell-your-house",
       "layout": "statement"
     },
     {
@@ -312,9 +312,9 @@
     },
     {
       "n": 41,
-      "id": "va-no-monthly-mi",
+      "id": "loan-estimate-three-days",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
+      "guide": "when-refinancing-pays-for-itself",
       "layout": "statement"
     },
     {
@@ -340,9 +340,9 @@
     },
     {
       "n": 45,
-      "id": "thousand-a-month",
+      "id": "half-point-cancelled",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
       "layout": "big-number"
     },
     {
@@ -368,9 +368,9 @@
     },
     {
       "n": 49,
-      "id": "unamortized-points",
+      "id": "loan-estimate-tolerances",
       "category": "Home",
-      "guide": "are-discount-points-worth-it",
+      "guide": "how-to-compare-two-mortgage-quotes",
       "layout": "statement"
     },
     {
@@ -396,9 +396,9 @@
     },
     {
       "n": 53,
-      "id": "va-lender-credit-instant",
+      "id": "va-no-monthly-mi",
       "category": "Home",
-      "guide": "va-36-month-recoupment-rule",
+      "guide": "va-loan-vs-conventional",
       "layout": "statement"
     },
     {
@@ -424,10 +424,10 @@
     },
     {
       "n": 57,
-      "id": "fha-mip-never-comes-off",
+      "id": "thousand-a-month",
       "category": "Home",
-      "guide": "bigger-down-payment-or-buy-sooner",
-      "layout": "myth-fact"
+      "guide": "pay-off-your-house-or-invest",
+      "layout": "big-number"
     },
     {
       "n": 58,
@@ -452,9 +452,9 @@
     },
     {
       "n": 61,
-      "id": "pmi-80-78-gap",
+      "id": "unamortized-points",
       "category": "Home",
-      "guide": "whats-in-a-mortgage-payment",
+      "guide": "are-discount-points-worth-it",
       "layout": "statement"
     },
     {
@@ -480,9 +480,9 @@
     },
     {
       "n": 65,
-      "id": "car-loan-vs-down-payment",
+      "id": "va-lender-credit-instant",
       "category": "Home",
-      "guide": "how-much-house-can-you-afford",
+      "guide": "va-36-month-recoupment-rule",
       "layout": "statement"
     },
     {
@@ -508,9 +508,9 @@
     },
     {
       "n": 69,
-      "id": "extra-payments-dont-lower-payment",
+      "id": "fha-mip-never-comes-off",
       "category": "Home",
-      "guide": "do-extra-mortgage-payments-save-money",
+      "guide": "bigger-down-payment-or-buy-sooner",
       "layout": "myth-fact"
     },
     {
@@ -536,9 +536,9 @@
     },
     {
       "n": 73,
-      "id": "lower-rate-longer-term",
+      "id": "heloc-line-can-be-frozen",
       "category": "Home",
-      "guide": "refinance-to-pay-off-credit-cards",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "statement"
     },
     {
@@ -564,9 +564,9 @@
     },
     {
       "n": 77,
-      "id": "rent-vs-buy-is-a-year",
+      "id": "pmi-80-78-gap",
       "category": "Home",
-      "guide": "cheaper-to-rent-or-buy",
+      "guide": "whats-in-a-mortgage-payment",
       "layout": "statement"
     },
     {
@@ -592,9 +592,9 @@
     },
     {
       "n": 81,
-      "id": "year-one-87-percent",
+      "id": "home-sale-three-year-window",
       "category": "Home",
-      "guide": "when-refinancing-pays-for-itself",
+      "guide": "rent-out-or-sell-your-house",
       "layout": "big-number"
     },
     {
@@ -620,9 +620,9 @@
     },
     {
       "n": 85,
-      "id": "refinance-rate-not-price",
+      "id": "car-loan-vs-down-payment",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "guide": "how-much-house-can-you-afford",
       "layout": "statement"
     },
     {
@@ -648,9 +648,9 @@
     },
     {
       "n": 89,
-      "id": "va-zero-rating-not-exempt",
+      "id": "extra-payments-dont-lower-payment",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
+      "guide": "do-extra-mortgage-payments-save-money",
       "layout": "myth-fact"
     },
     {
@@ -676,10 +676,10 @@
     },
     {
       "n": 93,
-      "id": "fha-nine-vs-ten",
+      "id": "cashout-not-deductible",
       "category": "Home",
-      "guide": "bigger-down-payment-or-buy-sooner",
-      "layout": "big-number"
+      "guide": "refinance-to-pay-off-credit-cards",
+      "layout": "myth-fact"
     },
     {
       "n": 94,
@@ -697,10 +697,10 @@
     },
     {
       "n": 96,
-      "id": "points-no-fixed-rate",
+      "id": "section-121-exclusion",
       "category": "Home",
-      "guide": "are-discount-points-worth-it",
-      "layout": "myth-fact"
+      "guide": "cheaper-to-rent-or-buy",
+      "layout": "big-number"
     },
     {
       "n": 97,
@@ -711,9 +711,9 @@
     },
     {
       "n": 98,
-      "id": "compare-section-a",
+      "id": "no-cost-refinance-tell",
       "category": "Home",
-      "guide": "how-to-compare-two-mortgage-quotes",
+      "guide": "when-refinancing-pays-for-itself",
       "layout": "statement"
     },
     {
@@ -725,9 +725,9 @@
     },
     {
       "n": 100,
-      "id": "section-121-two-year-bar",
+      "id": "refinance-rate-not-price",
       "category": "Home",
-      "guide": "sell-first-or-buy-first",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
       "layout": "statement"
     },
     {
@@ -739,10 +739,10 @@
     },
     {
       "n": 102,
-      "id": "va-210-days",
+      "id": "va-zero-rating-not-exempt",
       "category": "Home",
-      "guide": "va-36-month-recoupment-rule",
-      "layout": "big-number"
+      "guide": "va-loan-vs-conventional",
+      "layout": "myth-fact"
     },
     {
       "n": 103,
@@ -753,9 +753,9 @@
     },
     {
       "n": 104,
-      "id": "prepay-returns-exactly",
+      "id": "compare-section-a",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
+      "guide": "how-to-compare-two-mortgage-quotes",
       "layout": "statement"
     },
     {
@@ -767,9 +767,9 @@
     },
     {
       "n": 106,
-      "id": "no-cost-refinance-tell",
+      "id": "section-121-two-year-bar",
       "category": "Home",
-      "guide": "when-refinancing-pays-for-itself",
+      "guide": "sell-first-or-buy-first",
       "layout": "statement"
     },
     {
@@ -781,10 +781,10 @@
     },
     {
       "n": 108,
-      "id": "pmi-original-value",
+      "id": "fha-nine-vs-ten",
       "category": "Home",
-      "guide": "whats-in-a-mortgage-payment",
-      "layout": "myth-fact"
+      "guide": "bigger-down-payment-or-buy-sooner",
+      "layout": "big-number"
     },
     {
       "n": 109,
@@ -795,9 +795,9 @@
     },
     {
       "n": 110,
-      "id": "waiting-lower-rate-more-bidders",
+      "id": "prepay-returns-exactly",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "guide": "pay-off-your-house-or-invest",
       "layout": "statement"
     },
     {
@@ -809,9 +809,9 @@
     },
     {
       "n": 112,
-      "id": "tip-page-three",
+      "id": "points-bet-on-not-refinancing",
       "category": "Home",
-      "guide": "how-to-compare-two-mortgage-quotes",
+      "guide": "are-discount-points-worth-it",
       "layout": "statement"
     },
     {
@@ -823,10 +823,10 @@
     },
     {
       "n": 114,
-      "id": "dti-43-not-the-rule",
+      "id": "va-210-days",
       "category": "Home",
-      "guide": "how-much-house-can-you-afford",
-      "layout": "myth-fact"
+      "guide": "va-36-month-recoupment-rule",
+      "layout": "big-number"
     },
     {
       "n": 115,
@@ -837,9 +837,9 @@
     },
     {
       "n": 116,
-      "id": "va-no-loan-limit",
+      "id": "va-cash-out-to-100",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "statement"
     },
     {
@@ -851,9 +851,9 @@
     },
     {
       "n": 118,
-      "id": "rent-back",
+      "id": "lower-rate-longer-term",
       "category": "Home",
-      "guide": "sell-first-or-buy-first",
+      "guide": "refinance-to-pay-off-credit-cards",
       "layout": "statement"
     },
     {
@@ -865,9 +865,9 @@
     },
     {
       "n": 120,
-      "id": "extra-payment-misapplied",
+      "id": "rental-depreciation-taxed-inside-exclusion",
       "category": "Home",
-      "guide": "do-extra-mortgage-payments-save-money",
+      "guide": "rent-out-or-sell-your-house",
       "layout": "myth-fact"
     },
     {
@@ -879,9 +879,9 @@
     },
     {
       "n": 122,
-      "id": "paid-off-house-lowers-floor",
+      "id": "rent-vs-buy-is-a-year",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
+      "guide": "cheaper-to-rent-or-buy",
       "layout": "statement"
     },
     {
@@ -893,9 +893,9 @@
     },
     {
       "n": 124,
-      "id": "points-bet-on-not-refinancing",
+      "id": "waiting-lower-rate-more-bidders",
       "category": "Home",
-      "guide": "are-discount-points-worth-it",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
       "layout": "statement"
     },
     {
@@ -907,9 +907,9 @@
     },
     {
       "n": 126,
-      "id": "cashout-not-deductible",
+      "id": "pmi-original-value",
       "category": "Home",
-      "guide": "refinance-to-pay-off-credit-cards",
+      "guide": "whats-in-a-mortgage-payment",
       "layout": "myth-fact"
     },
     {
@@ -921,9 +921,9 @@
     },
     {
       "n": 128,
-      "id": "guaranteed-vs-expected",
+      "id": "tip-page-three",
       "category": "Home",
-      "guide": "pay-off-debt-or-invest",
+      "guide": "how-to-compare-two-mortgage-quotes",
       "layout": "statement"
     },
     {
@@ -935,10 +935,10 @@
     },
     {
       "n": 130,
-      "id": "section-121-exclusion",
+      "id": "va-no-loan-limit",
       "category": "Home",
-      "guide": "cheaper-to-rent-or-buy",
-      "layout": "big-number"
+      "guide": "va-loan-vs-conventional",
+      "layout": "statement"
     },
     {
       "n": 131,
@@ -949,9 +949,9 @@
     },
     {
       "n": 132,
-      "id": "pmi-is-not-forever",
+      "id": "dti-43-not-the-rule",
       "category": "Home",
-      "guide": "bigger-down-payment-or-buy-sooner",
+      "guide": "how-much-house-can-you-afford",
       "layout": "myth-fact"
     },
     {
@@ -963,44 +963,107 @@
     },
     {
       "n": 134,
-      "id": "va-passes-but-costs",
+      "id": "rent-back",
       "category": "Home",
-      "guide": "va-36-month-recoupment-rule",
-      "layout": "big-number"
+      "guide": "sell-first-or-buy-first",
+      "layout": "statement"
     },
     {
       "n": 135,
-      "id": "state-can-exceed-federal",
-      "category": "Money",
-      "guide": "what-will-you-owe-in-capital-gains-tax",
-      "layout": "statement"
-    },
-    {
-      "n": 136,
-      "id": "unindexed-pension",
-      "category": "Money",
-      "guide": "are-you-on-track-for-retirement",
-      "layout": "statement"
-    },
-    {
-      "n": 137,
       "id": "emergency-fund-unit",
       "category": "Money",
       "guide": "how-big-should-an-emergency-fund-be",
       "layout": "myth-fact"
     },
     {
+      "n": 136,
+      "id": "paid-off-house-lowers-floor",
+      "category": "Home",
+      "guide": "pay-off-your-house-or-invest",
+      "layout": "statement"
+    },
+    {
+      "n": 137,
+      "id": "state-can-exceed-federal",
+      "category": "Money",
+      "guide": "what-will-you-owe-in-capital-gains-tax",
+      "layout": "statement"
+    },
+    {
       "n": 138,
+      "id": "extra-payment-misapplied",
+      "category": "Home",
+      "guide": "do-extra-mortgage-payments-save-money",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 139,
+      "id": "unindexed-pension",
+      "category": "Money",
+      "guide": "are-you-on-track-for-retirement",
+      "layout": "statement"
+    },
+    {
+      "n": 140,
+      "id": "guaranteed-vs-expected",
+      "category": "Home",
+      "guide": "pay-off-debt-or-invest",
+      "layout": "statement"
+    },
+    {
+      "n": 141,
       "id": "thirty-k-at-forty",
       "category": "Money",
       "guide": "what-early-retirement-withdrawal-costs",
       "layout": "big-number"
     },
     {
-      "n": 139,
+      "n": 142,
+      "id": "pmi-is-not-forever",
+      "category": "Home",
+      "guide": "bigger-down-payment-or-buy-sooner",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 143,
       "id": "traditional-balance-is-not-yours",
       "category": "Money",
       "guide": "how-to-calculate-your-net-worth",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 144,
+      "id": "year-one-87-percent",
+      "category": "Home",
+      "guide": "when-refinancing-pays-for-itself",
+      "layout": "big-number"
+    },
+    {
+      "n": 145,
+      "id": "points-no-fixed-rate",
+      "category": "Home",
+      "guide": "are-discount-points-worth-it",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 146,
+      "id": "va-passes-but-costs",
+      "category": "Home",
+      "guide": "va-36-month-recoupment-rule",
+      "layout": "big-number"
+    },
+    {
+      "n": 147,
+      "id": "fed-cut-mortgage-rates-rose",
+      "category": "Home",
+      "guide": "heloc-or-cash-out-refinance",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 148,
+      "id": "va-assumption-not-restoration",
+      "category": "Home",
+      "guide": "rent-out-or-sell-your-house",
       "layout": "myth-fact"
     }
   ]
