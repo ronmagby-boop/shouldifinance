@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   addMonths, breakEvenAppreciation, breakEvenRent, compare, depreciableBasis, depreciationFor, exclusionFor,
-  rentOut, saleTax, sellByDate, sellNow, vaGuarantyFullEntitlement, vaNextLoan,
+  rentOut, saleTax, sellByDate, sellNow, vaEntitlementInUse, vaGuarantyFullEntitlement, vaNextLoan,
 } from "./rentOrSell.ts";
 import * as tax from "./tax.ts";
 import * as va from "./va.ts";
@@ -265,6 +265,31 @@ test("VA, Pamphlet 26-7's example: $650,000 limit, $55,000 used: $107,500 left; 
   const b = vaNextLoan({ entitlementUsed: vaGuarantyFullEntitlement(300000), countyLimit: 832750, price: null });
   near(b.remaining, 133187.5);
   near(b.maxNoDown, 532750);
+});
+
+test("VA entitlement in use, estimate path: 25% of a $300,000 original loan is $75,000", () => {
+  const e = vaEntitlementInUse({ coeFigure: null, originalLoan: 300000 });
+  assert.equal(e.source, "estimate");
+  near(e.used, 75000);
+  assert.equal(vaEntitlementInUse({ coeFigure: null, originalLoan: null }), null);
+});
+
+test("VA entitlement in use, COE path: the certificate's figure replaces the estimate", () => {
+  const e = vaEntitlementInUse({ coeFigure: 71250, originalLoan: 300000 });
+  assert.equal(e.source, "coe");
+  near(e.used, 71250);
+  // It flows into the remaining entitlement: $832,750 × 25% − $71,250 = $136,937.50.
+  near(vaNextLoan({ entitlementUsed: e.used, countyLimit: 832750, price: null }).remaining, 136937.5);
+  // A COE showing $0 in use (restored) is used as $0, not ignored.
+  assert.equal(vaEntitlementInUse({ coeFigure: 0, originalLoan: 300000 }).source, "coe");
+});
+
+test("VA entitlement in use: a financed funding fee in the note amount is not added a second time", () => {
+  // $300,000 base with the 2.15% first-use fee financed: the note says $306,450.
+  // The estimate is 25% of $306,450 = $76,612.50, not 25% of $306,450 plus the fee again ($78,259.67).
+  const e = vaEntitlementInUse({ coeFigure: null, originalLoan: 306450 });
+  near(e.used, 76612.5);
+  assert.ok(Math.abs(e.used - 0.25 * 306450 * 1.0215) > 1000);
 });
 
 test("VA guaranty with full entitlement, Table 3: 50%, $22,500, 40% capped at $36,000, then 25%", () => {

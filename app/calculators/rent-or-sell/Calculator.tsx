@@ -8,7 +8,7 @@ import {
 import { ChartCard, BarChart, COLORS } from "../../components/Charts";
 import {
   ASSUMPTION_DEFAULTS as A,
-  breakEvenAppreciation, breakEvenRent, compare, daysBetween, isoDate, vaGuarantyFullEntitlement, vaNextLoan,
+  breakEvenAppreciation, breakEvenRent, compare, daysBetween, isoDate, vaEntitlementInUse, vaNextLoan,
   type Inputs,
 } from "../../lib/rentOrSell";
 import {
@@ -198,9 +198,15 @@ export default function Calculator() {
 
   const va = useMemo(() => {
     if (!vaLoan || n(countyLimit) <= 0) return null;
-    const used = has(entitlementUsed) ? n(entitlementUsed) : n(originalLoan) > 0 ? vaGuarantyFullEntitlement(n(originalLoan)) : null;
-    if (used === null) return null;
-    return { used, estimated: !has(entitlementUsed), ...vaNextLoan({ entitlementUsed: used, countyLimit: n(countyLimit), price: n(nextPrice) > 0 ? n(nextPrice) : null }) };
+    const inUse = vaEntitlementInUse({
+      coeFigure: has(entitlementUsed) ? n(entitlementUsed) : null,
+      originalLoan: has(originalLoan) ? n(originalLoan) : null,
+    });
+    if (inUse === null) return null;
+    return {
+      ...inUse,
+      ...vaNextLoan({ entitlementUsed: inUse.used, countyLimit: n(countyLimit), price: n(nextPrice) > 0 ? n(nextPrice) : null }),
+    };
   }, [vaLoan, entitlementUsed, originalLoan, countyLimit, nextPrice]);
 
   const years = n(horizon);
@@ -574,26 +580,31 @@ export default function Calculator() {
         {vaLoan && (
           <div className="mt-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-              <NumField label="Entitlement charged (from your COE)" value={entitlementUsed} onChange={setEntitlementUsed} min={0} placeholder="from the COE" prefix="$" hint="The Entitlement Charged column on your Certificate of Eligibility." />
-              <NumField label="Or: the original loan amount" value={originalLoan} onChange={setOriginalLoan} min={0} placeholder="285000" prefix="$" hint={
+              <NumField label="Original loan amount (the full amount on your note, including any funding fee you financed)" value={originalLoan} onChange={setOriginalLoan} min={0} placeholder="285000" prefix="$" hint={
                 <>
-                  Used to estimate the entitlement if you leave the COE figure blank: 25% of a loan over $144,000. On a
+                  Estimates the entitlement in use: 25% of a loan over $144,000. On a
                   financed funding fee, VA Pamphlet 26-7 says the guaranty &ldquo;is based on the loan amount including the
                   funding fee portion when the fee is paid from loan proceeds.&rdquo;
                 </>
               } />
+              <NumField label="Entitlement in use (from your Certificate of Eligibility, if you have it)" value={entitlementUsed} onChange={setEntitlementUsed} min={0} placeholder="optional" prefix="$" hint="The Entitlement Charged column on your COE. When filled, it is used instead of the estimate from the loan amount." />
               <NumField label="County loan limit where you're buying" value={countyLimit} onChange={setCountyLimit} min={0} prefix="$" hint={`${fmt(CONFORMING_LOAN_LIMIT_BASELINE)} in most counties for ${CONFORMING_LOAN_LIMIT_YEAR} (FHFA one-unit). High-cost counties are higher: look yours up on FHFA's site.`} />
               <NumField label="Price of the next home (optional)" value={nextPrice} onChange={setNextPrice} min={0} placeholder="550000" prefix="$" />
             </div>
             {va ? (
               <div className="bg-gray-50 rounded-xl px-4 py-3 space-y-2 mb-3">
-                {line(va.estimated ? "Entitlement in use (estimated)" : "Entitlement in use", fmt(va.used))}
+                {line(va.source === "coe" ? "Entitlement in use (your COE figure)" : "Entitlement in use (estimated)", fmt(va.used))}
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {va.source === "coe"
+                    ? "Based on the entitlement figure from your COE."
+                    : "An estimate: 25% of the original loan amount, the guaranty on a loan over $144,000 made with full entitlement. Your COE's figure is exact; enter it above if you have it."}
+                </p>
                 {line("Remaining entitlement", fmt(va.remaining))}
                 {line("Most lenders' no-down-payment limit", fmt(va.maxNoDown), "text-green-700")}
                 {va.downPayment !== null && line("Down payment for that price", va.downPayment > 0 ? fmt(va.downPayment) : "None", va.downPayment > 0 ? "text-amber-700" : "text-green-700")}
               </div>
             ) : (
-              <p className="text-xs text-gray-500 mb-3">Add the entitlement charged, or the original loan amount, to estimate this.</p>
+              <p className="text-xs text-gray-500 mb-3">Add the original loan amount to estimate this, or the entitlement in use from your COE.</p>
             )}
             <div className="text-xs text-gray-600 leading-relaxed space-y-2">
               <p>

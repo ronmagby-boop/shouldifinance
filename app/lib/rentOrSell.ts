@@ -491,6 +491,22 @@ export function vaGuarantyFullEntitlement(loan: number) {
 }
 
 /**
+ * The entitlement this loan uses: the reader's COE figure when they have it,
+ * otherwise estimated from the original loan amount by
+ * vaGuarantyFullEntitlement. The loan amount is taken as given, meaning the
+ * full amount on the note: Pamphlet 26-7 Ch. 3 says the guaranty "is based on
+ * the loan amount including the funding fee portion when the fee is paid from
+ * loan proceeds", and a financed fee is already in that amount, so nothing is
+ * added for it here. Null when neither is given.
+ */
+export function vaEntitlementInUse(args: { coeFigure: number | null; originalLoan: number | null }) {
+  const { coeFigure, originalLoan } = args;
+  if (coeFigure !== null && coeFigure >= 0) return { used: coeFigure, source: "coe" as const };
+  if (originalLoan !== null && originalLoan > 0) return { used: vaGuarantyFullEntitlement(originalLoan), source: "estimate" as const };
+  return null;
+}
+
+/**
  * Remaining entitlement with this loan kept, for a new loan over $144,000:
  * "25% of the single-unit ... Conforming Loan Limit (CLL) for the county ...
  * reduced by the amount of unrestored entitlement" (Pamphlet 26-7 Ch. 3), and
