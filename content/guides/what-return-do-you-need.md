@@ -84,8 +84,11 @@ expense ratio from whatever the market gives you.
 **It is before tax**, in a taxable account. Gains realized along the way are
 taxed, which raises the gross return needed to hit a net target.
 
-Stack all three and a required return of 7% quietly becomes a gross requirement
-closer to 10%, which lands in a different band than the one you started in.
+Stack them and the number moves a band. A 7% target in today's dollars, with
+2.5% inflation, is about 9.7% in nominal terms (1.07 × 1.025 = 1.097). A 1% fee
+means the market has to return about 10.7% to leave you that. In a taxable
+account, tax on gains realized along the way raises it again; by how much
+depends on your bracket and how often gains are realized.
 
 ## What to do with this
 
