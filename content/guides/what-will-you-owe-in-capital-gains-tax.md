@@ -77,6 +77,10 @@ gross income under Section 121 is also excluded from net investment income. That
 exclusion is covered in the guide on
 [renting versus buying](/guides/cheaper-to-rent-or-buy).
 
+A home you rented out before selling is different: the depreciation part of the
+gain is still taxable even when the exclusion covers the rest, which the [rent
+out or sell calculator](/calculators/rent-or-sell) estimates.
+
 ## What is actually taxed
 
 Not the sale price — the **gain**, which is proceeds minus your cost basis. Basis
