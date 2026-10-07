@@ -54,6 +54,10 @@ You can run both the payment saving and the total-interest comparison on the
 [refinance calculator](/calculators/should-i-refinance), which is the pair of
 numbers worth seeing together.
 
+If the refinance is to take cash out, compare it with keeping your mortgage and
+adding a HELOC: the [HELOC or cash-out calculator](/calculators/heloc-vs-cash-out)
+shows what repricing the whole balance costs.
+
 ## "No-cost" refinances
 
 There is no such thing as a refinance with no costs. There are refinances where
