@@ -74,7 +74,12 @@ approval number was never the answer.
 
 - **Paying off a car loan.** Removing a $450 monthly obligation frees a large
   amount of borrowing capacity — often far more than the same money added to the
-  down payment.
+  down payment. At 6.75% over 30 years, $450 a month carries about $69,000 of
+  mortgage principal and interest. If $15,000 would clear the car loan, that
+  $15,000 can raise what you can borrow by several times what it adds as a down
+  payment, as long as the debt-to-income ratio, not cash, is what limits you.
+  Property tax and insurance take some of the freed $450, so the real gain is
+  smaller than $69,000.
 - **Your credit score**, which moves the rate, which moves the payment, which
   moves the DTI.
 - **Loan type.** VA, FHA and conventional have different insurance structures
