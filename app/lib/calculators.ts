@@ -70,6 +70,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "home-equity-loan-vs-heloc",
+    title: "Should I get a fixed home equity loan or a HELOC?",
+    nav: "Home equity loan or HELOC?",
+    desc: "Compare a fixed lump-sum loan with a variable line you draw as needed: payments over time, cost over your horizon, and how far rates would have to rise.",
+    icon: Scale, bg: "bg-purple-50", category: "Home", kind: "should-i",
+    keywords: ["home equity loan vs HELOC", "fixed home equity loan or HELOC", "HELOC or home equity loan", "second mortgage vs HELOC"],
+    guide: {
+      slug: "fixed-home-equity-loan-or-heloc",
+      teaser: "A lump sum at a fixed rate, or a line you draw",
+    },
+  },
+  {
     slug: "heloc-limit",
     title: "How much can I borrow with a HELOC?",
     nav: "How much can I borrow with a HELOC?",
