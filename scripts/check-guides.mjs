@@ -17,6 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { checkQuotes, reportQuotes } from "./check-quotes.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GUIDES_DIR = path.join(ROOT, "content", "guides");
@@ -197,6 +198,11 @@ function main() {
       failures.push([`app/lib/calculators.ts`, [`${calc} points at "${guide}", which does not declare it back`]]);
     }
   }
+
+  // Every quotation against its saved source, exactly (scripts/check-quotes.mjs).
+  console.log("");
+  const quoteFailures = reportQuotes(checkQuotes());
+  if (quoteFailures) failures.push(["quotations", [`${quoteFailures} quotation${quoteFailures === 1 ? " does" : "s do"} not match the saved source exactly (see above)`]]);
 
   console.log("");
   if (!failures.length) {

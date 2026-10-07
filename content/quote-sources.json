@@ -1,0 +1,190 @@
+{
+  "_about": "Source passages for the exact-quote check (scripts/check-quotes.mjs). Each excerpt is copied, whitespace-normalized, from the source at its url as retrieved on the date given; a quotation in a guide passes only if it appears in one of these excerpts exactly, punctuation and case included. To verify a new quote, add the passage it comes from here, copied from the source, never typed from the guide.",
+  "sources": [
+    {
+      "id": "cfpb-heloc-booklet",
+      "title": "CFPB, What you should know about Home Equity Lines of Credit (2022)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_heloc-brochure.pdf",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "FFER A OFFER B 10 HOME EQUITY LINES OF CREDIT My best HELOC offer is: OFFER C How variable interest rates work Home equity lines of credit typically involve variable rather than fixed interest rates. A variable interest rate generally has two parts: the index and the margin. An index is a measure of interest rates generally that reflects trends in the overall economy Different lenders use different indexes in their loans.",
+        "An index is a measure of interest rates generally that reflects trends in the overall economy Different lenders use different indexes in their loans. Common indexes include the U.S. prime rate and the Constant Maturity Treasury (CMT) rate. Talk with your lender to find out more about the index they use.",
+        "Talk with your lender to find out more about the index they use. The margin is an extra percentage that the lender adds to the index. Lenders sometimes offer a temporarily discounted interest rate for home equity lines--an introductory or teaser rate that is unusually low for a short period, such as six months.",
+        "mplicate taxes, especially for large loans; can jeopardize important personal relationships if something goes wrong COMPARE A HELOC TO OTHER MONEY SOURCES 5 How HELOCs work PREPARE FOR UP-FRONT COSTS Some lenders waive some or all of the up-front costs for a HELOC. Others may charge fees. For example, you might get charged: A fee for a property appraisal, which is a formal estimate of the value of your home An application fee, which might not be refunded if you are turned down C",
+        "Be sure you understand if annual maintenance fees or other fees apply, even if you are not actively using the credit line. TIP If you sell your home, you are generally required to pay off your HELOC in full immediately.",
+        "MONEY SOURCE HOW MUCH CAN YOU BORROW VARIABLE OR FIXED RATE HELOC You borrow against the equity in your home Generally a percentage of the appraised value of your home, minus the amount you owe on your mortgage Variable.",
+        "Your lender may set a schedule so that you repay the full amount, often over ten or 15 years.",
+        "HOW HELOCS WORK 13 If something changes during the course of the loan HELOCs generally permit the lender to freeze or reduce your credit line if the value of your home falls or if they see a change for the worse in your financial situation. If this happens, you can: Talk with your lender."
+      ]
+    },
+    {
+      "id": "cfr-38-36-4306",
+      "title": "38 CFR 36.4306, refinancing of mortgage or other lien indebtedness",
+      "url": "https://www.ecfr.gov/current/title-38/chapter-I/part-36/subpart-B/subject-group-ECFR3cf44b6fb6dc0c3/section-36.4306",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "3729 may be included in the new loan amount, except that any portion of the funding fee that would cause the new loan amount to exceed 100 percent of the reasonable value of the property must be paid in cash at the loan closing. (3) The new loan must provide a net tangible benefit to the borrower."
+      ]
+    },
+    {
+      "id": "fed-prime-faq",
+      "title": "Federal Reserve, What is the prime rate, and does the Federal Reserve set the prime rate?",
+      "url": "https://www.federalreserve.gov/faqs/credit_12846.htm",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "On its H.15 statistical release, \" Selected Interest Rates ,\" the Board reports the prime rate posted by the majority of the largest twenty-five banks. Although the Federal Reserve has no direct role in setting the prime rate, many banks choose to set their prime rates based partly on the target level of the federal funds rate--the rate that banks charge each other for short-term loans--established by the Federal Open Market Committee."
+      ]
+    },
+    {
+      "id": "fed-sr-05-11",
+      "title": "Credit Risk Management Guidance for Home Equity Lending (SR 05-11, revised June 2026)",
+      "url": "https://www.federalreserve.gov/supervisionreg/srletters/SR0511a1.pdf",
+      "retrieved": "2026-10-07",
+      "excerpts": [
+        "Implement policies and controls to preclude \"value shopping.\" Use of several valuation tools may return different values for the same property.",
+        "These differences can result in systematic overvaluation of properties if the valuation choice becomes driven by the highest property value. If several different valuation tools or AVMs are used for the same property, the institution should adhere to a policy for selecting the most reliable method, rather than the highest value. Require sufficient documentation to support the collateral valuation in the appraisal/evaluation.",
+        "Generally, these factors should include a borrower's income and debt levels, credit score (if obtained), and credit history, as well as the loan size, collateral value (including valuation methodology), lien position, and property type and location.",
+        "s should include an evaluation of a borrower's capacity to adequately service the debt.3 Given the home equity products' long-term nature and the large credit amount typically extended to a consumer, an evaluation of repayment capacity should consider a borrower's income and debt levels and not just a credit score.4 Credit scores are based upon a borrower's historical financial performance.",
+        "Therefore, underwriting standards for interest-only and variable rate HELOCs should include an assessment of the borrower's ability to amortize the fully drawn line over the loan term and to absorb potential increases in interest rates. Third-Party Originations Financial institutions often use third parties, such as mortgage brokers or correspondents, to originate loans."
+      ]
+    },
+    {
+      "id": "hud-4000-1-update-18",
+      "title": "HUD Handbook 4000.1, Update 18 (issued 12 August 2026)",
+      "url": "https://www.hud.gov/sites/default/files/Housing/documents/40001-hsgh-Update-18.pdf",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "Financing of Upfront Mortgage Insurance Premium Unless otherwise stated in this section (Origination through Post-closing/Endorsement), restrictions to mortgage amounts and LTVs are based upon the amount prior to the financing of the Upfront Mortgage Insurance Premium (UFMIP) (Base Loan Amount)."
+      ]
+    },
+    {
+      "id": "irs-pub-523",
+      "title": "IRS Publication 523 (2025), Selling Your Home",
+      "url": "https://www.irs.gov/publications/p523",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "If you owned the home and used it as your residence for at least 24 months of the previous 5 years, you meet the residence requirement. The 24 months of residence can fall anywhere within the 5-year period, and it doesn't have to be a single block of time. All that is required is a total of 24 months (730 days) of residence during the 5-year period.",
+        "You took or were transferred to a new job in a work location at least 50 miles farther from the home than your old work location.",
+        "The period of suspension can't last more than 10 years. Together, the 10-year suspension period and the 5-year test period can be as long as, but no more than, 15 years. You can't suspend the 5-year period for more than one property at a time.",
+        "If you were entitled to take depreciation deductions because you used a portion of your home for business purposes or as rental property, you can't exclude the part of your gain equal to any depreciation allowed or allowable as a deduction for periods after May 6, 1997. If you used part of your home for business or rental after May 6, 1997, you may need to pay back (\"recapture\") some or all of the depreciation deductions you were entitled to take on your property."
+      ]
+    },
+    {
+      "id": "irs-pub-527",
+      "title": "IRS Publication 527 (2025), Residential Rental Property",
+      "url": "https://www.irs.gov/publications/p527",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "If you used the property for personal purposes before changing it to rental use, its basis for depreciation is the lesser of its adjusted basis or its FMV when you change it to rental use.",
+        "Land. You can't depreciate the cost of land because land generally doesn't wear out, become obsolete, or get used up."
+      ]
+    },
+    {
+      "id": "irs-pub-936",
+      "title": "IRS Publication 936 (2025), Home Mortgage Interest Deduction",
+      "url": "https://www.irs.gov/publications/p936",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "You can't deduct home mortgage interest unless the following conditions are met.",
+        "You file Form 1040 or 1040-SR and itemize deductions on Schedule A (Form 1040).",
+        "Note: Interest on home equity loans and lines of credit are deductible only if the borrowed funds are used to buy, build, or substantially improve the taxpayer's home that secures the loan. The loan must be secured by the taxpayer's main home or second home (qualified residence), and meet other requirements.",
+        "However, the new debt will qualify as home acquisition debt only up to the amount of the balance of the old mortgage principal just before the refinancing. Any additional debt not used to buy, build, or substantially improve a qualified home isn't home acquisition debt."
+      ]
+    },
+    {
+      "id": "reg-z-1026-30",
+      "title": "12 CFR 1026.30 (Regulation Z), limitation on rates",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.30",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "A creditor shall include in any consumer credit contract secured by a dwelling and subject to the Act and this part the maximum interest rate that may be imposed during the term of the obligation when: (a) In the case of closed-end credit, the annual percentage rate may increase after consummation, or (b) In the case of open-end credit, the annual percentage"
+      ]
+    },
+    {
+      "id": "reg-z-1026-40",
+      "title": "12 CFR 1026.40 (Regulation Z), requirements for home equity plans",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.40",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "(i) A statement that, under certain conditions, the creditor may terminate the plan and require payment of the outstanding balance in full in a single payment and impose fees upon termination; prohibit additional extensions of credit or reduce the credit limit; and, as specified in the initial agreement, implement certain changes in the plan.",
+        "(vi) Prohibit additional extensions of credit or reduce the credit limit applicable to an agreement during any period in which: (A) The value of the dwelling that secures the plan declines significantly below the dwelling's appraised value for purposes of the plan; (B) The creditor reasonably believes that the consumer will be unable to fulfill the repayment obligations under the plan because of a material change in the consumer's fina",
+        "to an agreement during any period in which: (A) The value of the dwelling that secures the plan declines significantly below the dwelling's appraised value for purposes of the plan; (B) The creditor reasonably believes that the consumer will be unable to fulfill the repayment obligations under the plan because of a material change in the consumer's financial circumstances; (C) The consumer is in default of any material obligation under the agreement; (D) The creditor is precluded by government action from imposing the annual percentage rate provided for in the agreeme"
+      ]
+    },
+    {
+      "id": "stl-fed-mortgage-rates",
+      "title": "Federal Reserve Bank of St. Louis, What Determines Mortgage Rates? (October 2026)",
+      "url": "https://www.stlouisfed.org/publications/page-one-economics/2026/oct/what-determines-mortgage-rates",
+      "retrieved": "2026-10-05",
+      "excerpts": [
+        "But when the Fed changes their monetary policy stance you don't usually see immediate movement in mortgage interest rates. The key to understanding why there is not more of a direct connection between monetary policy and mortgage rates is that mortgage rates are determined in long-term financial markets, where expectatio"
+      ]
+    },
+    {
+      "id": "usc-26-121",
+      "title": "26 U.S.C. 121, exclusion of gain from sale of principal residence",
+      "url": "https://www.law.cornell.edu/uscode/text/26/121",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "FR) prev | next (a) Exclusion Gross income shall not include gain from the sale or exchange of property if, during the 5-year period ending on the date of the sale or exchange, such property has been owned and used by the taxpayer as the taxpayer's principal residence for periods aggregating 2 years or more.",
+        "(C) Qualified official extended duty For purposes of this paragraph- (i) In general The term \" qualified official extended duty \" means any extended duty while serving at a duty station which is at least 50 miles from such property or while residing under Government orders in Government quarters. (ii) Uniformed services The term \" uniformed services \" has the meaning given such term by section 101(a)(5) of title 10 , United States Code, as in effect on the date of the enactment of this paragr"
+      ]
+    },
+    {
+      "id": "usc-38-3702",
+      "title": "38 U.S.C. 3702, basic entitlement",
+      "url": "https://www.law.cornell.edu/uscode/text/38/3702",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "(2) A veteran-transferee has agreed to assume the outstanding balance on the loan and consented to the use of the veteran-transferee's entitlement, to the extent that the entitlement of the veteran-transferor had been used originally, in place of the veteran-transferor's for the guaranteed, insured, or direct loan, and the veteran-transferee ot"
+      ]
+    },
+    {
+      "id": "usc-38-3709",
+      "title": "38 U.S.C. 3709, refinancing of housing loans",
+      "url": "https://www.law.cornell.edu/uscode/text/38/3709",
+      "retrieved": "2026-10-07",
+      "excerpts": [
+        "guaranteed or insured under this chapter unless- (1) the issuer of the refinanced loan provides the Secretary with a certification of the recoupment period for fees, closing costs, and any expenses (other than taxes, amounts held in escrow, and fees paid under this chapter) that would be incurred by the borrower in the refinancing of the loan; (2) all of the fees and incurred costs are scheduled to be recouped on or before the date that is 36 months after the date of l"
+      ]
+    },
+    {
+      "id": "usc-38-3714",
+      "title": "38 U.S.C. 3714, assumptions; release from liability",
+      "url": "https://www.law.cornell.edu/uscode/text/38/3714",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "ed, insured, or made under this chapter and the veteran or other person notifies the holder of the loan in writing before the property is disposed of, the veteran or other person, as the case may be, shall be relieved of all further liability to the Secretary with respect to the loan (including liability for any loss resulting from any default of the purchaser or any subsequent owner of the property) and the application for assumption shall be approved if the holder determines th"
+      ]
+    },
+    {
+      "id": "va-loan-limits",
+      "title": "VA, VA home loan entitlement and limits",
+      "url": "https://www.va.gov/housing-assistance/home-loans/loan-limits/",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "Multiply your remaining bonus entitlement by 4: $175,000 x 4 = $700,000 $700,000 is the maximum amount most lenders would be willing to loan you without your needing to make a down payment. If you have questions about your entitlement You can talk to your lender.",
+        "ment if I have remaining bonus entitlement? Your lender may require you to make a down payment if you don't have enough remaining bonus entitlement for a 25% VA guaranty for the loan amount you want. Most lenders require that your entitlement, down payment, or a combination of both covers at least 25% of your total loan amount. If you're able and willing to make a down payment, you may be able to borrow more than the county loan limit with a VA-backed loan."
+      ]
+    },
+    {
+      "id": "va-pamphlet-26-7-ch2",
+      "title": "VA Pamphlet 26-7, Chapter 2, Veteran's Eligibility and Entitlement",
+      "url": "https://www.knowva.ebenefits.va.gov/system/templates/selfservice/va_ssnew/help/customer/locale/en-US/portal/554400000001018/content/554400000314629/VA-Pamphlet-VAP26-7-Chapter-02-Veterans-Eligibility-and-Entitlement",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "Because of the complexity and number of exceptions, this chapter does not attempt to cover all of them.",
+        "The Veteran may obtain restoration of the entitlement used on the prior loan in order to purchase a different property, one time only."
+      ]
+    },
+    {
+      "id": "va-pamphlet-26-7-ch3",
+      "title": "VA Pamphlet 26-7, Chapter 3, The VA Loan and Guaranty",
+      "url": "https://www.knowva.ebenefits.va.gov/system/templates/selfservice/va_ssnew/help/customer/locale/en-US/portal/554400000001018/content/554400000314630/VA-Pamphlet-VAP26-7-Chapter-03-The-VA-Loan-and-Guaranty",
+      "retrieved": "2026-10-06",
+      "excerpts": [
+        "The calculation is as follows: For proposed loan amounts over $144,00011: the maximum amount of guaranty entitlement available is 25% of the single-unit Freddie Mac Conforming Loan Limit (CLL) for the county where the proposed subject property is located reduced by the amount of unrestored entitlement. Example: A Veteran with an existing VA-guaranteed loan using $55,000 of their guaranty entitlement is moving to another state and wishes to purchase a new home."
+      ]
+    }
+  ]
+}
