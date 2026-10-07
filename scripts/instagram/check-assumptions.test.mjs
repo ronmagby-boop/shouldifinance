@@ -1,7 +1,7 @@
 // Tests for check-assumptions.mjs on synthetic facts.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { assumptions, checkAssumptions, isSiteModel } from "./check-assumptions.mjs";
+import { assumptions, checkAssumptions, checkedKind, isSiteModel } from "./check-assumptions.mjs";
 
 const fact = (card, card_source, extra = {}) => ({ id: "x", card, card_source, ...extra });
 const matches = (cardSource, text) => assumptions(cardSource).map((a) => [`${a.kind} ${a.label}`, a.test.test(text)]);
@@ -11,6 +11,21 @@ test("only card_sources starting 'Site model' are site-model facts", () => {
   assert.ok(isSiteModel(fact("", "Site model; Damodaran returns data")));
   assert.ok(!isSiteModel(fact("", "Arithmetic: 2% of $1")));
   assert.ok(!isSiteModel(fact("", "Illustration: Site model")));
+});
+
+test("Site model, Arithmetic and Illustration facts are all checked, by the same rule", () => {
+  assert.equal(checkedKind(fact("", "Site model: $1 at 2%")), "Site model");
+  assert.equal(checkedKind(fact("", "Arithmetic: $280,000 at 3.25%")), "Arithmetic");
+  assert.equal(checkedKind(fact("", "illustration; $500 a month")), "Illustration");
+  assert.equal(checkedKind(fact("", "Source: IRS Publication 523")), null);
+  assert.equal(checkedKind(fact("", "Rule of thumb: 1% a year")), null);
+  // The label is stripped the same way for each, so the inputs read are the same.
+  for (const label of ["Site model", "Arithmetic", "Illustration"]) {
+    assert.deepEqual(assumptions(`${label}: $280,000 at 3.25%, 30 years`).map((a) => a.label), ["$280,000", "3.25%", "30 years"]);
+  }
+  // An Arithmetic card stating its inputs passes; one whose card_source lists none is reported, not passed.
+  assert.equal(checkAssumptions(fact("It blends to about 4.1%.", "Arithmetic: $280,000 at 3.25%, $60,000 at 8.25%")).status, "pass");
+  assert.equal(checkAssumptions(fact("It blends to 6.12%.", "Arithmetic: balance-weighted average")).status, "no-inputs");
 });
 
 test("it reads prices, rates, down payments and terms out of the card_source", () => {

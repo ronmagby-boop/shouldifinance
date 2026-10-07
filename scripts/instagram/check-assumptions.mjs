@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 /**
- * Every site-model fact must say, on the card itself, what its headline
- * figure assumes.
+ * Every computed fact must say, on the card itself, what its headline figure
+ * assumes.
  *
- *   npm run check:assumptions        exits 1 if any site-model fact fails
+ *   npm run check:assumptions        exits 1 if any checked fact fails
  *
- * A site-model fact is one whose card_source starts "Site model". Its
- * assumptions are the rates, terms and prices that card_source lists:
+ * A computed fact is one whose card_source starts with one of CHECKED_KINDS:
+ * "Site model" (the site's own code), "Arithmetic" (a sum on stated figures)
+ * or "Illustration" (a worked example). The same rule applies to all three.
+ * Its assumptions are the rates, terms and prices that card_source lists:
  * percentages ("6.5%"), terms ("30 years", "72 mo", "48 payments") and
  * prices ("$400,000"). Each must appear somewhere printed on the card: the
  * card text, the hero, the hero_context or the card_source line itself.
@@ -15,7 +17,7 @@
  *
  * Because the assumptions are read from card_source and card_source counts as
  * stating them, every fact with inputs listed passes. What the check still
- * catches: a site-model card whose card_source names no rate, term or price
+ * catches: a computed card whose card_source names no rate, term or price
  * (NOTE), and a card_source that lists an input in a form the matcher cannot
  * find again. It does not know which inputs a headline figure depends on;
  * card_source has to list them, and nothing here checks that it does.
@@ -40,9 +42,19 @@ const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const isSiteModel = (fact) => /^Site model\b/i.test(fact.card_source ?? "");
 
+/** The card_source labels whose facts are checked: each is a figure computed from inputs. */
+export const CHECKED_KINDS = ["Site model", "Arithmetic", "Illustration"];
+const KIND_PREFIX = new RegExp(`^(${CHECKED_KINDS.join("|")})\\b\\s*[:;]?\\s*`, "i");
+
+/** The CHECKED_KINDS label a fact's card_source starts with, or null when it is not checked. */
+export function checkedKind(fact) {
+  const m = (fact.card_source ?? "").match(KIND_PREFIX);
+  return m ? CHECKED_KINDS.find((k) => k.toLowerCase() === m[1].toLowerCase()) : null;
+}
+
 /** The rates, terms and prices a card_source lists, each with a test for the card. */
 export function assumptions(cardSource) {
-  const text = cardSource.replace(/^Site model\s*[:;]?\s*/i, "");
+  const text = cardSource.replace(KIND_PREFIX, "");
   const found = [];
   for (const m of text.matchAll(/\$\d{1,3}(?:,\d{3})*(?:\.\d+)?/g)) {
     const digits = m[0].replace(/[$,]/g, "");
@@ -75,10 +87,11 @@ export function checkAssumptions(fact) {
 }
 
 function main() {
-  const facts = JSON.parse(fs.readFileSync(FACTS_FILE, "utf8")).facts.filter((f) => !f.shelfLife && isSiteModel(f));
+  const facts = JSON.parse(fs.readFileSync(FACTS_FILE, "utf8")).facts.filter((f) => !f.shelfLife && checkedKind(f));
   const results = facts.map((f) => ({ f, ...checkAssumptions(f) }));
   const by = (s) => results.filter((r) => r.status === s);
-  console.log(`check:assumptions: ${facts.length} site-model facts`);
+  const kinds = CHECKED_KINDS.map((k) => `${facts.filter((f) => checkedKind(f) === k).length} ${k.toLowerCase()}`).join(", ");
+  console.log(`check:assumptions: ${facts.length} computed facts (${kinds})`);
   for (const r of by("fail")) {
     console.log(`  FAIL  ${r.f.id}: card does not state ${r.missing.join(", ")}`);
     console.log(`          card_source: ${r.f.card_source}`);
