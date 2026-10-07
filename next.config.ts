@@ -38,6 +38,20 @@ const INDEXABLE_HOST = "(www\\.)?shouldifinance\\.com";
  *   /copy-of-financed-solar-roi
  *   /post/*                    27 posts, none carried over
  *
+ * Reconfirmed October 2026 against Search Console, which still lists
+ * /copy-of-financed-solar-roi and two of the posts:
+ * /post/how-to-track-and-maximize-investment-growth (the nearest guide, on
+ * investment projections, does not cover tracking; a partial match is not a
+ * redirect target) and /post/unveiling-the-bull-and-bear-markets-their-
+ * duration-and-impact-on-your-investments (nothing here covers market
+ * cycles). They stay 404, not 410: a redirect cannot return 410, and Google
+ * drops the two at much the same pace.
+ *
+ * Three "copy-of" duplicates surfaced in Search Console that were not in the
+ * Wix sitemap this list was first built from: two go where /effectiverate
+ * and /auto-refinance already go, and /copy-of-rent-vs-buying to the rent or
+ * buy calculator. Each destination was checked in the built output.
+ *
  * Sending all of those to the home page would be the obvious move and the
  * wrong one: Google treats mass redirects to an unrelated page as soft 404s,
  * so it gains nothing and muddies what the home page is about. /blog is left
@@ -65,6 +79,7 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
   { from: "/should-i-prepay-mortgage", to: "/calculators/extra-payments" },
   { from: "/copy-of-prepay-mortgage", to: "/calculators/extra-payments" },
   { from: "/loanestimatecomparison", to: "/calculators/loan-estimate-comparison" },
+  { from: "/copy-of-rent-vs-buying", to: "/calculators/rent-vs-buy" },
 
   // -- investing and saving ------------------------------------------------
   { from: "/compound-interest", to: "/calculators/compound-interest" },
@@ -76,6 +91,7 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
   { from: "/dollarcostaveraging", to: "/calculators/dollar-cost-averaging" },
   { from: "/copy-of-dollar-cost-averaging-calculator", to: "/calculators/dollar-cost-averaging" },
   { from: "/effectiverate", to: "/calculators/effective-interest-rate" },
+  { from: "/copy-of-effective-interest-rate", to: "/calculators/effective-interest-rate" },
   { from: "/early-withdrawel", to: "/calculators/early-withdrawal" },
 
   // -- debt ----------------------------------------------------------------
@@ -89,6 +105,7 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
   { from: "/copy-of-buy-vs-leasing-car", to: "/calculators/lease-vs-buy" },
   { from: "/carloan-vs-cash", to: "/calculators/loan-vs-cash" },
   { from: "/auto-refinance", to: "/calculators/auto-loan-refinance" },
+  { from: "/copy-of-auto-refinance", to: "/calculators/auto-loan-refinance" },
   { from: "/ev-vs-gas", to: "/calculators/ev-savings" },
   { from: "/true-cost-own", to: "/calculators/total-cost-of-ownership" },
 

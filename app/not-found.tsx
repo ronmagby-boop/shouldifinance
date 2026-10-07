@@ -21,13 +21,24 @@ import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDE_COVERAGE } from "./li
  * whatever they were looking for.
  *
  * NOINDEX. A 404 must never be indexed, and this one is reachable at any URL,
- * so it would otherwise be a duplicate at every address a crawler tried.
+ * so it would otherwise be a duplicate at every address a crawler tried. Next
+ * injects <meta name="robots" content="noindex"> on every 404 response itself
+ * (docs: file-conventions/not-found). robots is set to null so that tag is the
+ * only one: setting robots here printed a second robots tag beside it, and
+ * leaving it unset inherits the root layout's "index, follow".
+ *
+ * NO CANONICAL. The root layout's alternates.canonical ("/") would otherwise
+ * be inherited, telling crawlers every dead URL is the home page.
+ *
+ * Both work because metadata merges shallowly: a key set here replaces the
+ * layout's whole value for that key.
  */
 export const metadata: Metadata = {
   title: "Page not found",
   description:
     "That page does not exist on ShouldIFinance. Browse the calculators by category, read the guides, or search for the decision you are weighing up.",
-  robots: { index: false, follow: true },
+  robots: null,
+  alternates: { canonical: null },
 };
 
 export default function NotFound() {
