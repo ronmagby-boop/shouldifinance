@@ -1,0 +1,32 @@
+{
+  "_about": "Phrases in straight quotes that are the guides' own wording, sayings, questions or labels, not quotations from a source. scripts/check-quotes.mjs skips each one for its guide and reports everything else in quotes as a quotation to verify against content/quote-sources.json. Every entry needs a one-line reason; an empty reason fails the check, and so does an entry whose phrase is no longer in its guide.",
+  "phrases": [
+    { "guide": "are-you-on-track-for-retirement", "phrase": "nest egg needed", "reason": "Names a figure the site's own retirement calculator shows; not a source quotation." },
+    { "guide": "cheaper-to-rent-or-buy", "phrase": "renting is cheaper", "reason": "A verdict the guide argues against giving; the guide's own wording." },
+    { "guide": "cheaper-to-rent-or-buy", "phrase": "buying is cheaper", "reason": "A verdict the guide argues against giving; the guide's own wording." },
+    { "guide": "does-debt-consolidation-save-money", "phrase": "cards versus consolidation loan", "reason": "Names the comparison the guide says is the wrong one; the guide's own wording." },
+    { "guide": "does-debt-consolidation-save-money", "phrase": "consolidation loan versus what I would have done otherwise", "reason": "Names the comparison the guide recommends; the guide's own wording." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "will rates fall", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "will rates fall faster than prices rise", "reason": "The guide's own restatement of the reader's question." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "marry the house, date the rate", "reason": "A common real-estate saying with no single source; the guide calls it a slogan." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "always buy now", "reason": "A position the guide disclaims; the guide's own wording." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "should I wait for rates", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "does-waiting-for-rates-to-drop-save-money", "phrase": "am I ready", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "fha-or-conventional", "phrase": "about 10% down", "reason": "The loose answer a borrower might give, which the guide says is not precise enough." },
+    { "guide": "finance-a-car-or-pay-cash", "phrase": "finance or pay cash", "reason": "Names the reader's question; the guide's own wording." },
+    { "guide": "how-is-a-lease-payment-calculated", "phrase": "cap cost reduction", "reason": "The industry term for a lease down payment, not a quotation." },
+    { "guide": "how-much-can-you-borrow-with-a-heloc", "phrase": "Everything you owe", "reason": "Refers back to the guide's own formula above it." },
+    { "guide": "how-much-house-can-you-afford", "phrase": "I'm under 43%", "reason": "What a borrower might say; the guide's own wording." },
+    { "guide": "how-much-house-can-you-afford", "phrase": "I'm over 43%", "reason": "What a borrower might say; the guide's own wording." },
+    { "guide": "reinvest-dividends-or-take-the-cash", "phrase": "with dividends reinvested", "reason": "Describes how long-run returns are labelled, not a quotation of one source." },
+    { "guide": "reinvest-dividends-or-take-the-cash", "phrase": "should I reinvest", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "rent-out-or-sell-your-house", "phrase": "pays for itself", "reason": "A claim the guide puts in doubt; the guide's own wording." },
+    { "guide": "take-the-401k-match-or-pay-down-debt", "phrase": "Up to 6%", "reason": "An example of how a match formula is commonly worded, not one plan's text." },
+    { "guide": "take-the-401k-match-or-pay-down-debt", "phrase": "50% of the first 6%", "reason": "An example of how a match formula is commonly worded, not one plan's text." },
+    { "guide": "what-does-a-savings-account-really-earn", "phrase": "what does my savings account earn", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "what-does-a-savings-account-really-earn", "phrase": "what does it earn after inflation, and is this money that needs to be here at all", "reason": "The guide's own restatement of the reader's question." },
+    { "guide": "what-rate-are-you-really-paying", "phrase": "was this a good deal", "reason": "A question the reader might ask, posed by the guide." },
+    { "guide": "what-will-you-owe-in-capital-gains-tax", "phrase": "long-term gains are taxed at 15%", "reason": "The common simplification the guide corrects; attributed to no single source." },
+    { "guide": "what-will-your-investments-be-worth", "phrase": "the market averages X%", "reason": "A generic claim with a placeholder, which the guide puts in doubt." }
+  ]
+}

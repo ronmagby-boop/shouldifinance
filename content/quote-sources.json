@@ -49,12 +49,30 @@
       ]
     },
     {
+      "id": "fpa-bengen-citation",
+      "title": "Journal of Financial Planning (FPA), Revisiting William Bengen's 'SAFEMAX' Portfolio Withdrawal Rate (November 2023), references: the 1994 paper's title",
+      "url": "https://www.financialplanningassociation.org/learning/publications/journal/NOV23-revisiting-william-bengens-safemax-portfolio-withdrawal-rate-OPEN",
+      "retrieved": "2026-10-07",
+      "excerpts": [
+        "Bengen, William P. 1994. “Determining Withdrawal Rates Using Historical Data.” Journal of Financial Planning 7 (4): 171–180."
+      ]
+    },
+    {
       "id": "hud-4000-1-update-18",
       "title": "HUD Handbook 4000.1, Update 18 (issued 12 August 2026)",
       "url": "https://www.hud.gov/sites/default/files/Housing/documents/40001-hsgh-Update-18.pdf",
       "retrieved": "2026-10-05",
       "excerpts": [
         "Financing of Upfront Mortgage Insurance Premium Unless otherwise stated in this section (Origination through Post-closing/Endorsement), restrictions to mortgage amounts and LTVs are based upon the amount prior to the financing of the Upfront Mortgage Insurance Premium (UFMIP) (Base Loan Amount)."
+      ]
+    },
+    {
+      "id": "ici-fees-2025",
+      "title": "ICI Research Perspective 32, no. 1, Trends in the Expenses and Fees of Funds, 2025 (March 2026)",
+      "url": "https://www.ici.org/files/2026/per32-01.pdf",
+      "retrieved": "2026-10-07",
+      "excerpts": [
+        "MARCH 2026 // VOL. 32, NO. 1 ICI Research Perspective Trends in the Expenses and Fees of Funds, 2025 Key Findings"
       ]
     },
     {
@@ -109,6 +127,15 @@
         "(i) A statement that, under certain conditions, the creditor may terminate the plan and require payment of the outstanding balance in full in a single payment and impose fees upon termination; prohibit additional extensions of credit or reduce the credit limit; and, as specified in the initial agreement, implement certain changes in the plan.",
         "(vi) Prohibit additional extensions of credit or reduce the credit limit applicable to an agreement during any period in which: (A) The value of the dwelling that secures the plan declines significantly below the dwelling's appraised value for purposes of the plan; (B) The creditor reasonably believes that the consumer will be unable to fulfill the repayment obligations under the plan because of a material change in the consumer's fina",
         "to an agreement during any period in which: (A) The value of the dwelling that secures the plan declines significantly below the dwelling's appraised value for purposes of the plan; (B) The creditor reasonably believes that the consumer will be unable to fulfill the repayment obligations under the plan because of a material change in the consumer's financial circumstances; (C) The consumer is in default of any material obligation under the agreement; (D) The creditor is precluded by government action from imposing the annual percentage rate provided for in the agreeme"
+      ]
+    },
+    {
+      "id": "reg-z-1026-7",
+      "title": "12 CFR 1026.7(b)(5) (Regulation Z), periodic statement for open-end plans other than home-equity plans",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.7",
+      "retrieved": "2026-10-07",
+      "excerpts": [
+        "(5) Balance on which finance charge computed. The amount of the balance to which a periodic rate was applied and an explanation of how that balance was determined, using the term Balance Subject to Interest Rate."
       ]
     },
     {

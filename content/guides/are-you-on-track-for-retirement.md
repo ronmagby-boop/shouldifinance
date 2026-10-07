@@ -31,8 +31,8 @@ the inverse of the 4% rule, and it is a starting point rather than a law.
 
 ## The 4% rule, stated properly
 
-The widely quoted version is "withdraw 4% of the portfolio in year one, then
-adjust that dollar amount for inflation each year". Note what it is **not**: it
+The widely quoted version is to withdraw 4% of the portfolio in year one, then
+adjust that dollar amount for inflation each year. Note what it is **not**: it
 is not 4% of the balance each year. The dollar figure is set once and then
 indexed.
 

@@ -2,6 +2,9 @@
 // the committed guides against the committed sources.
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { checkQuotes, classify, normalize, quotesIn } from "./check-quotes.mjs";
 
 const ex = (text, source = "src") => ({ source, text: normalize(text), lower: normalize(text).toLowerCase() });
@@ -41,6 +44,43 @@ test("curly quotes, dashes, spacing and markdown are normalized before comparing
   assert.equal(normalize("it’s “fine” — really"), `it's "fine" - really`);
   assert.deepEqual(quotesIn('---\ntitle: "Not a quote here"\n---\nIt said "an *emphasized* [linked](/x) phrase\nacross lines".'),
     ["an emphasized linked phrase across lines"]);
+});
+
+/** A throwaway guides folder, sources file and allowlist, for the whole-check tests. */
+function fixture({ guide, sources, allow }) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "quotes-"));
+  fs.mkdirSync(path.join(dir, "guides"));
+  fs.writeFileSync(path.join(dir, "guides", "g.md"), `---\ntitle: "x"\n---\n${guide}\n`);
+  fs.writeFileSync(path.join(dir, "sources.json"), JSON.stringify({ sources: [{ id: "s", excerpts: sources }] }));
+  fs.writeFileSync(path.join(dir, "allow.json"), JSON.stringify({ phrases: allow }));
+  return { guidesDir: path.join(dir, "guides"), sourcesFile: path.join(dir, "sources.json"), allowlistFile: path.join(dir, "allow.json"), tokens: { YEAR: "2025" } };
+}
+const statuses = (rows) => rows.map((r) => [r.quote, r.status]);
+
+test("an allowlisted phrase is skipped as the guide's own wording; anything else is still checked", () => {
+  const f = fixture({
+    guide: 'It is not "should I wait for rates". The report says "fees fell again this year".',
+    sources: ["Fees fell again this year."],
+    allow: [{ guide: "g", phrase: "should I wait for rates", reason: "A question posed by the guide." }],
+  });
+  assert.deepEqual(statuses(checkQuotes(f)), [["should I wait for rates", "own"], ["fees fell again this year", "fail"]]);
+});
+
+test("an allowlist entry with an empty reason fails, and so does one no longer in its guide", () => {
+  const f = fixture({
+    guide: 'Not "am I ready" at all.',
+    sources: [],
+    allow: [{ guide: "g", phrase: "am I ready", reason: "  " }, { guide: "g", phrase: "a phrase that was edited away", reason: "Gone." }],
+  });
+  const rows = checkQuotes(f);
+  assert.deepEqual(statuses(rows), [["am I ready", "fail"], ["a phrase that was edited away", "fail"]]);
+  assert.match(rows[0].reason, /empty reason/);
+  assert.match(rows[1].reason, /not found in its guide/);
+});
+
+test("{{TOKEN}} figures are resolved before a quote is compared", () => {
+  const f = fixture({ guide: 'The report, "Trends in Fees, {{YEAR}}", says so.', sources: ["Research Trends in Fees, 2025 Key Findings"], allow: [] });
+  assert.deepEqual(statuses(checkQuotes(f)), [["Trends in Fees, 2025", "pass"]]);
 });
 
 test("the committed guides have no quotation that fails against the committed sources", () => {
