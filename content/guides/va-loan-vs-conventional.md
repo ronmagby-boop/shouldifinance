@@ -89,6 +89,10 @@ only re-enter the picture for borrowers who do not have full entitlement —
 typically because another VA loan is still outstanding — where remaining
 entitlement is worked out against county limits.
 
+If you are keeping a VA-loan home as a rental and buying again, the [rent out or
+sell calculator](/calculators/rent-or-sell) estimates the entitlement you have
+left and the most lenders usually lend with no down payment.
+
 Conventional loans above the conforming limit become jumbo loans, which usually
 means tighter credit requirements and a different rate sheet.
 
