@@ -77,7 +77,7 @@ gives you the date.
 
 Lived there under 2 years? A move for a new job can still earn a partial
 exclusion. Publication 523's test is "a new job in a work location at least 50
-miles farther from the home than your old work location," and the exclusion is
+miles farther from the home than your old work location", and the exclusion is
 the share of 24 months you lived there: 12 months gets half.
 
 **Military and similar service.** If you or your spouse are on qualified official
@@ -94,14 +94,14 @@ In Publication 523's words, "Together, the 10-year suspension period and the
 Once the home is a rental, you depreciate the building, not the land, over 27.5
 years. Publication 527 says that for a home converted to rental use, "its basis for
 depreciation is the lesser of its adjusted basis or its FMV when you change it to
-rental use," and "You can't depreciate the cost of land."
+rental use", and "You can't depreciate the cost of land".
 
 Depreciation lowers your tax while you rent, but it comes back when you sell.
 Publication 523 is direct about the home-sale exclusion: "you can't exclude the
-part of your gain equal to any depreciation allowed or allowable as a deduction for
-periods after May 6, 1997." That part of the gain is taxed at your ordinary rate,
-but no more than 25%. "Allowed or allowable" means it is owed even on depreciation
-you did not claim.
+part of your gain equal to any depreciation allowed or allowable as a deduction
+for periods after May 6, 1997." That part of the gain is taxed at your ordinary
+rate, but no more than 25%. The words "allowed or allowable" mean it is owed
+even on depreciation you did not claim.
 
 So a sale inside the three-year window is not entirely tax-free. A building basis
 of $275,000 depreciates by $10,000 a year; sell after two years of renting and
@@ -129,8 +129,8 @@ total loan amount." The next loan is a subsequent use, with a
 **Restoration.** Under 38 U.S.C. 3702(b), used entitlement comes back when the
 home is disposed of and the loan repaid, or when "A veteran-transferee has agreed
 to assume the outstanding balance on the loan and consented to the use of the
-veteran-transferee's entitlement." Paying the loan off while keeping the house, by
-refinancing it, allows a restoration "one time only," the handbook says.
+veteran-transferee's entitlement". Paying the loan off while keeping the house, by
+refinancing it, allows a restoration "one time only", the handbook says.
 
 **Assumption.** VA loans can be assumed by a qualified buyer. Under 38 U.S.C. 3714
 the seller "shall be relieved of all further liability to the Secretary with

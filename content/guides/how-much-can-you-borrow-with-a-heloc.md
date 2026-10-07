@@ -19,7 +19,7 @@ A lender does not lend against your equity directly. It caps the total of
 everything secured on the home, as a percentage of the home's value. That total
 over the value is the **combined loan-to-value**, or CLTV. The CFPB's HELOC
 booklet describes how much you can borrow as "Generally a percentage of the
-appraised value of your home, minus the amount you owe on your mortgage."
+appraised value of your home, minus the amount you owe on your mortgage".
 
 So the line is:
 
@@ -53,7 +53,7 @@ your credit score or the loan amount.
 The cap applies to the value the lender accepts, which comes from an appraisal
 or a cheaper automated estimate. The federal banking agencies' guidance on home
 equity lending warns that "Use of several valuation tools may return different
-values for the same property," and tells lenders that "If several different
+values for the same property", and tells lenders that "If several different
 valuation tools or AVMs are used for the same property, the institution should
 adhere to a policy for selecting the most reliable method, rather than the
 highest value."
@@ -68,7 +68,7 @@ Equity sets the ceiling. Whether you are approved for all of it is an
 underwriting decision. The same guidance says underwriting factors "should
 include a borrower's income and debt levels, credit score (if obtained), and
 credit history, as well as the loan size, collateral value (including valuation
-methodology), lien position, and property type and location," and that "an
+methodology), lien position, and property type and location", and that "an
 evaluation of repayment capacity should consider a borrower's income and debt
 levels and not just a credit score."
 
@@ -89,12 +89,12 @@ permit the lender to freeze or reduce your credit line if the value of your
 home falls or if they see a change for the worse in your financial situation."
 
 Regulation Z sets out when a lender may "prohibit additional extensions of
-credit or reduce the credit limit." Among the circumstances it lists: "The
+credit or reduce the credit limit". Among the circumstances it lists: "The
 value of the dwelling that secures the plan declines significantly below the
-dwelling's appraised value for purposes of the plan," and "The creditor
+dwelling's appraised value for purposes of the plan", and "The creditor
 reasonably believes that the consumer will be unable to fulfill the repayment
 obligations under the plan because of a material change in the consumer's
-financial circumstances." In practice, the money you have not drawn yet is the
+financial circumstances". In practice, the money you have not drawn yet is the
 money most at risk when house prices fall, so do not plan around it.
 
 ## What to do next

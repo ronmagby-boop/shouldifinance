@@ -64,10 +64,11 @@ The margin is the part to compare between lenders.
 The prime rate is set by banks, not by the Federal Reserve. In the Fed's words:
 "Although the Federal Reserve has no direct role in setting the prime rate, many
 banks choose to set their prime rates based partly on the target level of the
-federal funds rate." The convention holds: when the Fed raised its target range on 17 September 2026, the prime rate
-moved the same day, from 6.75% to 7.00%, three points above the top of the new
-range. A HELOC priced at prime plus a margin moves with it. The calculator's
-Fed-move table assumes exactly that, one for one, within any cap or floor.
+federal funds rate". The convention holds: when the Fed raised its target range
+on 17 September 2026, the prime rate moved the same day, from 6.75% to 7.00%,
+three points above the top of the new range. A HELOC priced at prime plus a
+margin moves with it. The calculator's Fed-move table assumes exactly that, one
+for one, within any cap or floor.
 
 A cash-out refinance's fixed rate does not move after closing. Nor do new mortgage
 rates follow the Fed one for one: they are set in long-term markets. The St.
@@ -82,16 +83,16 @@ link that is loose.
 
 A HELOC's rate can move for as long as you owe on it. Federal rules require a
 dwelling-secured loan whose rate can rise to state "the maximum interest rate
-that may be imposed," so every HELOC has a lifetime cap: ask what yours is, and
+that may be imposed", so every HELOC has a lifetime cap: ask what yours is, and
 run the calculator at it.
 
 The line itself is not guaranteed either. Regulation Z lets a lender "prohibit
 additional extensions of credit or reduce the credit limit" during any period in
-which, among other things, "the value of the dwelling that secures the plan
-declines significantly below the dwelling's appraised value," or the lender
-"reasonably believes that the consumer will be unable to fulfill the repayment
-obligations under the plan because of a material change in the consumer's
-financial circumstances." Do not plan around money you have not drawn yet.
+which, among other things, the value of the dwelling "declines significantly
+below the dwelling's appraised value", or the lender "reasonably believes that
+the consumer will be unable to fulfill the repayment obligations under the plan
+because of a material change in the consumer's financial circumstances". Do not
+plan around money you have not drawn yet.
 
 Many HELOCs are interest-only during the draw period, and the payment jumps when
 repayment starts. [Using home equity to pay off credit
@@ -104,9 +105,9 @@ mortgage: lender fees, appraisal, title, recording. Rolling them into the loan
 avoids paying at closing but adds them to the balance at the new rate.
 
 HELOC costs vary by lender. In the CFPB's words: "Some lenders waive some or all
-of the up-front costs for a HELOC. Others may charge fees." It lists "a fee for a
-property appraisal," "an application fee, which might not be refunded if you are
-turned down," and closing costs, and it warns to check "if annual maintenance fees or
+of the up-front costs for a HELOC. Others may charge fees." It lists "A fee for a
+property appraisal", "An application fee, which might not be refunded if you are
+turned down", and closing costs, and it warns to check "if annual maintenance fees or
 other fees apply, even if you are not actively using the credit line." Ask too
 about early-termination fees.
 
@@ -114,7 +115,7 @@ about early-termination fees.
 
 Neither option makes interest deductible by itself. IRS Publication 936 says you
 "can't deduct home mortgage interest unless" you "itemize deductions on Schedule
-A," and that interest on home equity loans and lines is "deductible only if the
+A", and that interest on home equity loans and lines is "deductible only if the
 borrowed funds are used to buy, build, or substantially improve the taxpayer's
 home that secures the loan."
 
