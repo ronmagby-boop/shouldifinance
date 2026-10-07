@@ -17,13 +17,17 @@
  *
  * Because the assumptions are read from card_source and card_source counts as
  * stating them, every fact with inputs listed passes. What the check still
- * catches: a computed card whose card_source names no rate, term or price
- * (NOTE), and a card_source that lists an input in a form the matcher cannot
- * find again. It does not know which inputs a headline figure depends on;
- * card_source has to list them, and nothing here checks that it does.
+ * catches: a card_source that lists an input in a form the matcher cannot
+ * find again, and a card with a figure (a digit in the card or hero) whose
+ * card_source names no rate, term or price at all. That fails unless the fact
+ * has inputs_none, a one-line reason it has no computed figure to support (a
+ * general rule, or figures that are the terms named): like depends_on_none,
+ * it must not be empty, and a fact cannot both list inputs and have it. The
+ * check does not know which inputs a headline figure depends on; card_source
+ * has to list them, and nothing here checks that it lists all of them.
  *
- * Not checked, and listed: a card with no headline figure (no digit in the
- * card or hero), and a card_source that names no inputs to check against.
+ * Not checked, and listed: a card with no figure at all (no digit in the card
+ * or hero), and the inputs_none reasons.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -76,12 +80,29 @@ export function assumptions(cardSource) {
   return found;
 }
 
-/** { status: "pass" | "fail" | "no-figure" | "no-inputs", missing: [labels] } for one fact. */
+/**
+ * { status: "pass" | "fail" | "exempt" | "no-figure", missing: [labels], reason? } for one fact.
+ *
+ * "exempt" is a fact with an inputs_none reason: no computed figure to
+ * support. It fails if the reason is empty, or if card_source lists inputs
+ * too (it cannot both have inputs and have none).
+ */
 export function checkAssumptions(fact) {
   const visible = [fact.card, fact.hero, fact.hero_context, fact.card_source].filter(Boolean).join(" \n ");
-  if (!/\d/.test(`${fact.card} ${fact.hero ?? ""}`)) return { status: "no-figure", missing: [] };
   const list = assumptions(fact.card_source);
-  if (!list.length) return { status: "no-inputs", missing: [] };
+  if (Object.hasOwn(fact, "inputs_none")) {
+    if (typeof fact.inputs_none !== "string" || !fact.inputs_none.trim()) {
+      return { status: "fail", missing: [], reason: "inputs_none is empty; give a one-line reason" };
+    }
+    if (list.length) {
+      return { status: "fail", missing: [], reason: `has inputs_none but card_source lists inputs (${list.map((a) => a.label).join(", ")})` };
+    }
+    return { status: "exempt", missing: [] };
+  }
+  if (!/\d/.test(`${fact.card} ${fact.hero ?? ""}`)) return { status: "no-figure", missing: [] };
+  if (!list.length) {
+    return { status: "fail", missing: [], reason: "states a figure but card_source lists no rate, term or price, and there is no inputs_none reason" };
+  }
   const missing = list.filter((a) => !a.test.test(visible)).map((a) => `${a.kind} ${a.label}`);
   return { status: missing.length ? "fail" : "pass", missing };
 }
@@ -93,13 +114,13 @@ function main() {
   const kinds = CHECKED_KINDS.map((k) => `${facts.filter((f) => checkedKind(f) === k).length} ${k.toLowerCase()}`).join(", ");
   console.log(`check:assumptions: ${facts.length} computed facts (${kinds})`);
   for (const r of by("fail")) {
-    console.log(`  FAIL  ${r.f.id}: card does not state ${r.missing.join(", ")}`);
+    console.log(`  FAIL  ${r.f.id}: ${r.reason ?? `card does not state ${r.missing.join(", ")}`}`);
     console.log(`          card_source: ${r.f.card_source}`);
     console.log(`          card: ${r.f.card}${r.f.hero_context ? `\n          hero_context: ${r.f.hero_context}` : ""}`);
   }
-  for (const r of by("no-inputs")) console.log(`  NOTE  ${r.f.id}: card_source names no rate, term or price to check against ("${r.f.card_source}")`);
+  for (const r of by("exempt")) console.log(`  NOTE  ${r.f.id}: no inputs, by inputs_none: ${r.f.inputs_none}`);
   for (const r of by("no-figure")) console.log(`  NOTE  ${r.f.id}: no headline figure on the card, not checked`);
-  console.log(`  ${by("pass").length} pass, ${by("fail").length} fail, ${by("no-inputs").length} with no inputs listed, ${by("no-figure").length} with no headline figure`);
+  console.log(`  ${by("pass").length} pass, ${by("fail").length} fail, ${by("exempt").length} with an inputs_none reason, ${by("no-figure").length} with no headline figure`);
   if (by("fail").length) process.exit(1);
 }
 
