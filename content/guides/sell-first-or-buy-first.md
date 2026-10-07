@@ -82,6 +82,10 @@ excluded gain from another home sale during the two years before this one.**
 > timing of the sale is worth more than almost any negotiating point in the
 > contract.
 
+Keeping the old home as a rental instead of selling starts a different clock:
+the [rent out or sell calculator](/calculators/rent-or-sell) gives the date the
+exclusion runs out and what depreciation will cost.
+
 ## Ways to reduce the exposure either way
 
 - **A rent-back.** Sell, then rent your own house from the buyer for 30 to 60
