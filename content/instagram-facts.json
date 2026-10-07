@@ -16,7 +16,8 @@
     "hero_context": "big-number only, required. One short line saying what the hero figure measures.",
     "myth": "myth-fact only, required. The assumption the card corrects, phrased as one a reader might make, never as a claim about what most people believe. Shown smaller than the fact.",
     "reviewed": "Required to publish. null until a person signs the fact off; then {date, hash}: the review date (YYYY-MM-DD) and a hash of exactly what was reviewed (card, caption as posted, alt text, hero, hero_context, myth, card_source; scripts/instagram/review.mjs). Set it with npm run review:mark. publish.mjs refuses a fact with no sign-off, a malformed one, or one whose hash no longer matches, in a dry run as in a live one.",
-    "depends_on_none": "Instead of depends_on, on a fact that cites an agency or statute but states no figure an app/lib constant holds: a one-line reason. check:facts then does not warn that it has no depends_on."
+    "depends_on_none": "Instead of depends_on, on a fact that cites an agency or statute but states no figure an app/lib constant holds: a one-line reason. check:facts then does not warn that it has no depends_on.",
+    "inputs_none": "On a Site model, Arithmetic or Illustration fact whose card_source lists no rate, term or price: a one-line reason the card has no computed figure to support (a general rule, or figures that are themselves the terms named). check:assumptions fails such a fact without it, and fails an empty reason or one alongside listed inputs."
   },
   "facts": [
     {
@@ -81,10 +82,10 @@
     {
       "id": "car-loan-vs-down-payment",
       "card": "If debt-to-income caps your loan, clearing a $450 car payment can add more buying power than the same cash put down.",
-      "caption": "Underwriting divides your monthly obligations by your gross income, so removing a monthly payment frees borrowing capacity directly. A modest remaining car balance is often worth more approval than putting the same money toward the down payment. https://shouldifinance.com/guides/how-much-house-can-you-afford",
+      "caption": "Underwriting divides your monthly obligations by your gross income, so removing a monthly payment frees borrowing capacity directly. At 6.75% over 30 years, $450 a month carries about $69,000 of mortgage principal and interest, while the $15,000 that might clear the car loan adds $15,000 as a down payment. Property tax and insurance take some of the freed $450, and it only applies when the debt-to-income ratio, not cash, is what limits you. https://shouldifinance.com/guides/how-much-house-can-you-afford",
       "guide": "how-much-house-can-you-afford",
-      "source": "CFPB, General QM Final Rule; debt-to-income mechanics as described in the guide",
-      "card_source": "Arithmetic: debt-to-income ratio",
+      "source": "CFPB, General QM Final Rule; worked example in the guide, computed with the site's own payment formula: $450 / 0.006486 (6.75%, 360 months) = $69,380",
+      "card_source": "Site model: 6.75%, 30 years, $15,000 clears $450/mo",
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
@@ -756,7 +757,7 @@
       "caption": "That figure is correct — 6.12% on $302,000 is exactly the interest being paid — and it describes neither debt. The mortgage is more than 99% of the balance, so it gets more than 99% of the say in the average. Charge 36% on the card instead and the blend only moves to about 6.2%. https://shouldifinance.com/guides/what-is-your-blended-interest-rate",
       "guide": "what-is-your-blended-interest-rate",
       "source": "Arithmetic: the blended rate is the balance-weighted mean, computed in the guide from the stated balances and rates",
-      "card_source": "Arithmetic: balance-weighted average",
+      "card_source": "Arithmetic: $2,000 at 24%, $300,000 at 6%",
       "layout": "big-number",
       "hero": "6.12%",
       "hero_context": "blend of $2,000 at 24% and $300,000 at 6%",
@@ -1360,7 +1361,8 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "inputs_none": "The 72 and 84 months are the loan terms named, not a computed figure."
     },
     {
       "id": "ev-home-charging",
@@ -1466,7 +1468,8 @@
       "hero_context": "divided by your rate gives roughly the years it takes to double",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "inputs_none": "A general approximation, not a figure computed from stated inputs: 72 divided by whatever rate the reader has."
     },
     {
       "id": "balance-up-money-down",
@@ -1521,7 +1524,8 @@
       "reviewed": {
         "date": "2026-10-02",
         "hash": "748bbaa5d9c7c76a"
-      }
+      },
+      "inputs_none": "The 50% is the match rate itself (50 cents per dollar), not a figure computed from other inputs."
     },
     {
       "id": "your-contributions-always-vested",
@@ -1557,7 +1561,8 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": null,
+      "inputs_none": "Compares two match formulas by their terms; the 6% figures are the formulas, not a computed result."
     },
     {
       "id": "reinvested-dividends-taxed",
@@ -1701,14 +1706,14 @@
     },
     {
       "id": "seven-becomes-ten",
-      "card": "In a taxable account, a 7% target can need close to 10% gross after inflation, fees and tax.",
-      "caption": "A required return is nominal, before fees, and before tax in a taxable account. Stack all three and the number lands in a different band from the one you started in — which is the whole point of working it out before choosing investments rather than after. https://shouldifinance.com/guides/what-return-do-you-need",
+      "card": "A 7% goal in today's dollars needs about 10.7% from the market, before tax.",
+      "caption": "Inflation first: 1.07 × 1.025 turns a 7% target in today's dollars into about 9.7% in nominal terms. A 1% fee means the market has to return about 10.7% to leave you that. In a taxable account, tax on gains realized along the way raises it again, by an amount that depends on your bracket and how often gains are realized. Work it out before choosing investments, not after. https://shouldifinance.com/guides/what-return-do-you-need",
       "guide": "what-return-do-you-need",
-      "source": "Long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern; adjustments set out in the guide",
-      "card_source": "Arithmetic: inflation, fees and tax added",
+      "source": "Arithmetic in the guide: (1.07 × 1.025) − 1 = 9.675% nominal, plus a 1% fee = 10.675% gross, before tax; long-run returns from Aswath Damodaran's annual returns dataset, NYU Stern",
+      "card_source": "Arithmetic: 7% real, 2.5% inflation, 1% fee",
       "layout": "big-number",
-      "hero": "10%",
-      "hero_context": "gross return a 7% target can need in a taxable brokerage account",
+      "hero": "10.7%",
+      "hero_context": "with 2.5% inflation and a 1% fee; more in a taxable account",
       "category": "Money",
       "shelfLife": null,
       "reviewed": null
