@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -67,6 +67,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "refinance-to-pay-off-credit-cards",
       teaser: "What rolling card balances into a mortgage really costs",
+    },
+  },
+  {
+    slug: "heloc-limit",
+    title: "How much can I borrow with a HELOC?",
+    nav: "How much can I borrow with a HELOC?",
+    desc: "See the line your equity supports at different combined loan-to-value caps, and the payment if you draw all of it.",
+    icon: Gauge, bg: "bg-purple-50", category: "Home", kind: "what-how",
+    keywords: ["how much can I borrow with a HELOC", "HELOC calculator", "combined loan-to-value", "HELOC limit", "home equity line amount"],
+    guide: {
+      slug: "how-much-can-you-borrow-with-a-heloc",
+      teaser: "Why the cap is your lender's, not a rule",
     },
   },
   {
