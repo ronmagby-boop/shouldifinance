@@ -2062,14 +2062,14 @@
     },
     {
       "id": "heloc-blends-low-rate",
-      "card": "A $60,000 HELOC at 8.25% on a 3.25% mortgage blends to about 4.1%.",
+      "card": "A $60,000 HELOC on a $280,000 mortgage blends to about 4.1% overall.",
       "caption": "That is $280,000 still owed at 3.25% plus $60,000 at 8.25%, weighted by balance. A cash-out refinance at 6.5% would put all $340,000 at 6.5%. The HELOC has the higher rate on the new money, but it leaves the old rate alone, so compare what you pay on everything you owe. A HELOC rate is usually variable, so the blend moves when it does. https://shouldifinance.com/guides/heloc-or-cash-out-refinance",
       "guide": "heloc-or-cash-out-refinance",
       "source": "Arithmetic from the guide's worked example: ($280,000 × 3.25% + $60,000 × 8.25%) / $340,000 = 4.13%",
       "card_source": "Arithmetic: $280,000 at 3.25%, $60,000 at 8.25%",
       "layout": "big-number",
       "hero": "4.1%",
-      "hero_context": "the rate across all $340,000 owed, mortgage and HELOC together",
+      "hero_context": "with the mortgage at 3.25% and the HELOC at 8.25%, weighted by balance",
       "category": "Home",
       "shelfLife": null,
       "reviewed": null
