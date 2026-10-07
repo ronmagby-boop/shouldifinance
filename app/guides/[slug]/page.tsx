@@ -7,7 +7,8 @@ import GuideCalculatorLinks from "../../components/GuideCalculatorLinks";
 import { GuideSchema } from "../../components/JsonLd";
 import AdUnit from "../../components/AdUnit";
 import { SITE, OG_IMAGE, pageTitle } from "../../lib/calculators";
-import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug } from "../../lib/guides";
+import { calculatorForGuide, formatReviewed, GUIDES, guideBySlug, guideSectionOf } from "../../lib/guides";
+import SectionLinks from "../../components/SectionLinks";
 
 /** Every guide is known at build time; anything else is a 404, not a render. */
 export const dynamicParams = false;
@@ -59,6 +60,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   if (!guide) notFound();
 
   const calc = calculatorForGuide(guide);
+  const section = guideSectionOf(guide);
 
   return (
     <>
@@ -98,6 +100,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       {/* After the closing card, so the last thing a finished reader is offered
           is still the calculator rather than an ad. */}
       <AdUnit placement="guideEnd" />
+
+      {/* The guide's siblings in its calculator's CALC_SECTIONS section. */}
+      {section && (
+        <div className="mt-8">
+          <SectionLinks
+            title={section.section.title}
+            anchor={`/guides#${section.section.id}`}
+            items={section.guides.map((g) => ({ href: `/guides/${g.slug}`, label: g.title, current: g.slug === guide.slug }))}
+          />
+        </div>
+      )}
 
       <div className="border-t border-gray-100 mt-10 pt-4">
         <Link

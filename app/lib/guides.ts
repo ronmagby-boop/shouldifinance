@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { bySlug, CALCULATORS, GUIDED, type Category } from "./calculators";
+import { bySlug, CALCULATORS, GUIDED, sectionsOf, type CalcSection, type Category } from "./calculators";
 import { resolveTokens } from "./guide-tokens";
 
 /**
@@ -199,8 +199,33 @@ export const GUIDES: Guide[] = readGuides();
 export const guideBySlug = (slug: string): Guide | undefined =>
   GUIDES.find((g) => g.slug === slug);
 
-export const guidesByCategory = (category: Category): Guide[] =>
-  GUIDES.filter((g) => g.category === category);
+/**
+ * A category's guides grouped by the CALC_SECTIONS section of the calculator
+ * each one explains, in the same order as the calculators. A guide with no
+ * calculator in this category (none today) goes in a trailing untitled group.
+ */
+export function guideSectionsOf(category: Category): { section: CalcSection; guides: Guide[] }[] {
+  const inCategory = GUIDES.filter((g) => g.category === category);
+  const placed = new Set<string>();
+  const groups = sectionsOf(category).map(({ section, calcs }) => {
+    const guides = calcs
+      .map((c) => inCategory.find((g) => g.calculator === c.slug))
+      .filter((g): g is Guide => Boolean(g));
+    guides.forEach((g) => placed.add(g.slug));
+    return { section, guides };
+  });
+  const rest = inCategory.filter((g) => !placed.has(g.slug));
+  if (rest.length) groups.push({ section: { id: `${category.toLowerCase()}-other-guides`, title: null, slugs: [] }, guides: rest });
+  return groups.filter((g) => g.guides.length > 0);
+}
+
+/** A category's guides, in the order of guideSectionsOf. */
+export const guidesByCategory = (category: Category): Guide[] => guideSectionsOf(category).flatMap((g) => g.guides);
+
+/** The section a guide sits in, with its sibling guides in order. */
+export function guideSectionOf(guide: Guide): { section: CalcSection; guides: Guide[] } | undefined {
+  return guideSectionsOf(guide.category).find((g) => g.guides.some((x) => x.slug === guide.slug));
+}
 
 /** Categories that actually have guides, in the registry's own order. */
 export const GUIDE_CATEGORIES: Category[] = ["Home", "Debt", "Money", "Auto"].filter((c) =>

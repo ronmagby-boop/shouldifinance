@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SiteFooter from "../components/SiteFooter";
 import Link from "next/link";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS, SITE, OG_IMAGE } from "../lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, sectionsOf, SITE, OG_IMAGE } from "../lib/calculators";
 import SiteNav from "../components/SiteNav";
 import MobileBottomNav, { MobileBottomNavSpacer } from "../components/MobileBottomNav";
 
@@ -80,20 +80,33 @@ export default function AllCalculators() {
                   {byCategory(section.category).length} tools
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                {byCategory(section.category).map(calc => (
-                  <Link key={calc.slug} href={`/calculators/${calc.slug}`}
-                    className="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-lg hover:border-green-100 transition-all flex items-start gap-3">
-                    <div className={`w-10 h-10 ${calc.bg} rounded-xl flex items-center justify-center flex-shrink-0 text-gray-700`}>
-                      <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
-                        {calc.nav}
+              {/* Sections from CALC_SECTIONS, in the order a reader meets the
+                  decisions; an untitled section (Debt) is just the grid. */}
+              <div className="space-y-6">
+                {sectionsOf(section.category).map(({ section: group, calcs }) => (
+                  <div key={group.id} id={group.title ? group.id : undefined} className="scroll-mt-20">
+                    {group.title && (
+                      <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                        {group.title} <span className="text-gray-400 font-normal normal-case tracking-normal">· {calcs.length}</span>
                       </h3>
-                      <p className="text-xs text-gray-500 leading-relaxed">{calc.desc}</p>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                      {calcs.map(calc => (
+                        <Link key={calc.slug} href={`/calculators/${calc.slug}`}
+                          className="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-lg hover:border-green-100 transition-all flex items-start gap-3">
+                          <div className={`w-10 h-10 ${calc.bg} rounded-xl flex items-center justify-center flex-shrink-0 text-gray-700`}>
+                            <calc.icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
+                              {calc.nav}
+                            </h4>
+                            <p className="text-xs text-gray-500 leading-relaxed">{calc.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>

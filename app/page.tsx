@@ -240,7 +240,7 @@ export default function Home() {
             <RatesPill />
           </div>
 
-          {/* Four category doors; byCategory puts the "Should I ...?" tools first */}
+          {/* Four category doors; each shows the first four of its category in CALC_SECTIONS order */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {CATEGORY_SECTIONS.map(section => {
               const all = byCategory(section.category);

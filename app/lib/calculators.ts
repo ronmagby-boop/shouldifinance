@@ -12,8 +12,7 @@ export type Category = "Home" | "Debt" | "Money" | "Auto";
 
 /**
  * Decision tools ("Should I ...?") versus lookup tools ("What / How ...?").
- * byCategory sorts decisions first, so the ordering is the same on the
- * homepage, the /calculators index and the sidebar without anyone repeating it.
+ * Order on the page comes from CALC_SECTIONS, not from this.
  */
 export type CalcKind = "should-i" | "what-how";
 
@@ -692,21 +691,92 @@ export const bySlug = (slug: string): Calc | undefined =>
   CALCULATORS.find((c) => c.slug === slug);
 
 /**
- * Registry order, exactly as written above.
+ * Sections within each category, in the order a reader meets the decisions,
+ * and the order of calculators inside each. This is the one place order is
+ * written down: byCategory, the /calculators and /guides indexes, the sidebar,
+ * the homepage doors and the "More in this section" links all read it.
  *
- * This used to sort decision tools ahead of lookups. That rule was fine while
- * no category wanted anything else, and it stopped being fine when Home was
- * ordered deliberately: it interleaves the two kinds, putting the mortgage
- * payment lookup seventh because that is what most people arrive wanting, and
- * a decisions-first sort moved it to thirteenth. One ordering rule — the order
- * of the array — is simpler than an array order plus a sort that overrides it.
+ * `id` is the anchor on /calculators and /guides. `title` is the heading; a
+ * category with a single untitled section (Debt) is ordered without headings,
+ * because headings over two or three cards add clutter rather than structure.
  *
- * Debt, Money and Auto were rewritten above into the order they were already
- * rendering in under the sort, so removing it changed nothing visible outside
- * Home.
+ * Every calculator must appear in exactly one section of its own category;
+ * assertSections() enforces that when this module loads, so the build fails
+ * on a calculator left out or listed twice, and lib/calcSections.test.mjs
+ * checks it too. Sections change presentation only: no URL, category or
+ * structured data depends on them.
  */
-export const byCategory = (category: Category): Calc[] =>
-  CALCULATORS.filter((c) => c.category === category);
+export type CalcSection = { id: string; title: string | null; slugs: readonly string[] };
+
+export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
+  Home: [
+    { id: "buying-a-home", title: "Buying a home", slugs: [
+      "rent-vs-buy", "home-affordability", "buy-now-or-save", "buy-now-or-wait",
+      "fha-vs-conventional", "va-vs-conventional", "rate-buydown", "loan-estimate-comparison",
+    ] },
+    { id: "mortgage-payment-and-payoff", title: "Your mortgage payment and payoff", slugs: [
+      "mortgage-payment", "extra-payments", "payoff-house-vs-invest", "pay-off-debt",
+    ] },
+    { id: "refinancing", title: "Refinancing", slugs: ["should-i-refinance", "va-recoup", "refinance-to-pay-off-debt"] },
+    { id: "home-equity", title: "Home equity", slugs: ["heloc-vs-cash-out", "heloc-limit", "home-equity-loan-vs-heloc", "heloc-debt-payoff"] },
+    { id: "selling-or-moving", title: "Selling or moving", slugs: ["rent-or-sell", "sell-first-or-buy-first"] },
+  ],
+  Debt: [
+    { id: "debt-tools", title: null, slugs: [
+      "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation",
+      "effective-interest-rate", "student-loan-repayment",
+    ] },
+  ],
+  Money: [
+    { id: "saving", title: "Saving", slugs: ["net-worth", "emergency-fund", "savings-apy", "compound-interest"] },
+    { id: "investing", title: "Investing", slugs: [
+      "investment-growth", "required-rate-of-return", "dollar-cost-averaging", "dividend-reinvestment", "capital-gains",
+    ] },
+    { id: "retirement", title: "Retirement", slugs: ["retirement-savings", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
+  ],
+  Auto: [
+    { id: "choosing-a-car", title: "Choosing a car", slugs: [
+      "auto-affordability", "new-vs-used-car", "ev-savings", "total-cost-of-ownership", "depreciation",
+    ] },
+    { id: "paying-for-a-car", title: "Paying for it", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment"] },
+    { id: "after-you-buy", title: "After you buy", slugs: ["auto-loan-refinance"] },
+  ],
+};
+
+/** Every calculator in exactly one section of its own category, and every section slug a real calculator. */
+export function assertSections(calcs: readonly Calc[] = CALCULATORS, sections = CALC_SECTIONS): void {
+  const problems: string[] = [];
+  const seen = new Map<string, string>();
+  for (const [category, list] of Object.entries(sections) as [Category, readonly CalcSection[]][]) {
+    for (const section of list) {
+      for (const slug of section.slugs) {
+        const calc = calcs.find((c) => c.slug === slug);
+        if (!calc) problems.push(`section "${section.id}" lists "${slug}", which is not a calculator`);
+        else if (calc.category !== category) problems.push(`"${slug}" is in a ${category} section but its category is ${calc.category}`);
+        if (seen.has(slug)) problems.push(`"${slug}" is in both "${seen.get(slug)}" and "${section.id}"`);
+        seen.set(slug, section.id);
+      }
+    }
+  }
+  for (const c of calcs) if (!seen.has(c.slug)) problems.push(`"${c.slug}" (${c.category}) is in no section`);
+  const ids = Object.values(sections).flat().map((s) => s.id);
+  for (const id of ids) if (ids.filter((x) => x === id).length > 1) problems.push(`section id "${id}" is used twice`);
+  if (problems.length) throw new Error(`CALC_SECTIONS:\n  ${[...new Set(problems)].join("\n  ")}`);
+}
+assertSections();
+
+/** A category's sections with their calculators, in order. */
+export const sectionsOf = (category: Category): { section: CalcSection; calcs: Calc[] }[] =>
+  CALC_SECTIONS[category].map((section) => ({ section, calcs: section.slugs.map((s) => bySlug(s)!) }));
+
+/** The calculators in a category, in section order. */
+export const byCategory = (category: Category): Calc[] => sectionsOf(category).flatMap((s) => s.calcs);
+
+/** The section a calculator sits in, with its siblings in order. */
+export function sectionOf(slug: string): { section: CalcSection; calcs: Calc[] } | undefined {
+  const calc = bySlug(slug);
+  return calc ? sectionsOf(calc.category).find((s) => s.section.slugs.includes(slug)) : undefined;
+}
 
 /** Padded up to this many when a page declares fewer, so no page looks bare. */
 const RELATED_MIN = 3;
@@ -736,7 +806,7 @@ export function related(slug: string, picks: string[] = []): Calc[] {
     );
   }
   const self = bySlug(slug);
-  const pool = self ? byCategory(self.category) : CALCULATORS;
+  const pool = self ? [...(sectionOf(slug)?.calcs ?? []), ...byCategory(self.category)] : CALCULATORS;
   for (const c of [...pool, ...CALCULATORS]) {
     if (chosen.length >= RELATED_MIN) break;
     if (c.slug === slug || chosen.some((x) => x.slug === c.slug)) continue;

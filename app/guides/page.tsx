@@ -3,7 +3,7 @@ import Link from "next/link";
 import GuideShell from "../components/GuideShell";
 import { BookOpen } from "lucide-react";
 import { CATEGORY_SECTIONS, SITE, OG_IMAGE } from "../lib/calculators";
-import { calculatorForGuide, GUIDE_CATEGORIES, GUIDES, guidesByCategory } from "../lib/guides";
+import { calculatorForGuide, GUIDE_CATEGORIES, GUIDES, guideSectionsOf } from "../lib/guides";
 
 const DESCRIPTION =
   "Plain-English explanations of the rules behind the calculators — what the numbers mean, which figures are excluded, and where the answers come from.";
@@ -58,7 +58,6 @@ export default function GuidesIndex() {
               rather than rendered as empty headings. */}
           {GUIDE_CATEGORIES.map((category) => {
             const section = CATEGORY_SECTIONS.find((s) => s.category === category)!;
-            const guides = guidesByCategory(category);
             return (
               <section key={category} id={section.id} className="scroll-mt-20">
                 <div className="flex items-center gap-3 mb-3 pb-2 border-b border-gray-100">
@@ -73,8 +72,16 @@ export default function GuidesIndex() {
                   </div>
                 </div>
 
+                <div className="space-y-6">
+                {guideSectionsOf(category).map(({ section: group, guides: groupGuides }) => (
+                <div key={group.id} id={group.title ? group.id : undefined} className="scroll-mt-20">
+                {group.title && (
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                    {group.title} <span className="text-gray-400 font-normal normal-case tracking-normal">· {groupGuides.length}</span>
+                  </h3>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {guides.map((guide) => {
+                  {groupGuides.map((guide) => {
                     const calc = calculatorForGuide(guide);
                     /* A paired guide borrows its calculator's icon and tint, so
                        the two read as the same thing seen twice. An unpaired one
@@ -93,7 +100,7 @@ export default function GuidesIndex() {
                         >
                           <Icon className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                         </div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-1">{guide.title}</h3>
+                        <h4 className="text-sm font-medium text-gray-900 mb-1">{guide.title}</h4>
                         <p className="text-xs text-gray-400 leading-relaxed mb-2">
                           {guide.description}
                         </p>
@@ -105,6 +112,9 @@ export default function GuidesIndex() {
                       </Link>
                     );
                   })}
+                </div>
+                </div>
+                ))}
                 </div>
               </section>
             );

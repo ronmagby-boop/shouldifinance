@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { bySlug, categoryCrumb, CATEGORY_SECTIONS, related } from "../lib/calculators";
+import { bySlug, categoryCrumb, CATEGORY_SECTIONS, related, sectionOf } from "../lib/calculators";
+import SectionLinks from "./SectionLinks";
 import RelatedCalculators from "./RelatedCalculators";
 import SiteFooter from "./SiteFooter";
 import AdUnit from "./AdUnit";
@@ -112,6 +113,18 @@ export default function CalcShell({
           <RelatedCalculators from={slug} cards={cards} />
 
           <GuideLink slug={slug} />
+
+          {/* MORE IN THIS SECTION — the calculator's siblings in CALC_SECTIONS. */}
+          {(() => {
+            const s = sectionOf(slug);
+            return s ? (
+              <SectionLinks
+                title={s.section.title}
+                anchor={`/calculators#${s.section.id}`}
+                items={s.calcs.map((c) => ({ href: `/calculators/${c.slug}`, label: c.nav, current: c.slug === slug }))}
+              />
+            ) : null;
+          })()}
 
           {/* DISCLAIMER */}
           <div

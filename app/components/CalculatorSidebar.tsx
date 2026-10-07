@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS } from "../lib/calculators";
+import { CALCULATORS, CATEGORY_SECTIONS, sectionsOf } from "../lib/calculators";
 
 /**
  * The calculator index, rendered from the CALCULATORS registry so the list
@@ -45,19 +45,26 @@ export default function CalculatorSidebar({ activeSlug }: { activeSlug?: string 
             <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
             {section.category}
           </p>
-          {byCategory(section.category).map(calc => {
-            const isActive = calc.slug === active;
-            return (
-              <Link
-                key={calc.slug}
-                href={`/calculators/${calc.slug}`}
-                aria-current={isActive ? "page" : undefined}
-                className={itemClass(isActive)}
-              >
-                {calc.nav}
-              </Link>
-            );
-          })}
+          {sectionsOf(section.category).map(({ section: group, calcs }) => (
+            <div key={group.id}>
+              {group.title && (
+                <p className="text-[11px] font-medium text-gray-400 mt-2 mb-0.5 px-2">{group.title}</p>
+              )}
+              {calcs.map(calc => {
+                const isActive = calc.slug === active;
+                return (
+                  <Link
+                    key={calc.slug}
+                    href={`/calculators/${calc.slug}`}
+                    aria-current={isActive ? "page" : undefined}
+                    className={itemClass(isActive)}
+                  >
+                    {calc.nav}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
       ))}
       <div className="px-4 pt-3 mt-3 border-t border-gray-100">
@@ -109,20 +116,27 @@ export function CalculatorBrowseMobile({ activeSlug }: { activeSlug?: string }) 
                 <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
                 {section.category}
               </p>
-              {byCategory(section.category).map(calc => {
-                const isActive = calc.slug === active;
-                return (
-                  <Link
-                    key={calc.slug}
-                    href={`/calculators/${calc.slug}`}
-                    onClick={() => setOpen(false)}
-                    aria-current={isActive ? "page" : undefined}
-                    className={itemClass(isActive)}
-                  >
-                    {calc.nav}
-                  </Link>
-                );
-              })}
+              {sectionsOf(section.category).map(({ section: group, calcs }) => (
+                <div key={group.id}>
+                  {group.title && (
+                    <p className="text-[11px] font-medium text-gray-400 mt-2 mb-0.5 px-2">{group.title}</p>
+                  )}
+                  {calcs.map(calc => {
+                    const isActive = calc.slug === active;
+                    return (
+                      <Link
+                        key={calc.slug}
+                        href={`/calculators/${calc.slug}`}
+                        onClick={() => setOpen(false)}
+                        aria-current={isActive ? "page" : undefined}
+                        className={itemClass(isActive)}
+                      >
+                        {calc.nav}
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           ))}
           <Link
