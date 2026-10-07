@@ -43,6 +43,10 @@ So the blended rate answers one question well — what the whole pile costs, per
 dollar owed — and answers a different question badly: which parts of the pile
 are expensive. For the second question you need a different measurement.
 
+The same weighting decides whether to add a HELOC or refinance the whole
+mortgage: the [HELOC or cash-out calculator](/calculators/heloc-vs-cash-out)
+compares the blend with one new rate on everything.
+
 ## The figure that shows where the interest comes from
 
 Instead of averaging the rates, split the monthly interest. For each debt,
