@@ -85,6 +85,9 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
   { from: "/compound-interest", to: "/calculators/compound-interest" },
   { from: "/dividend-reinvestment", to: "/calculators/dividend-reinvestment" },
   { from: "/investmentgrowthcalculator", to: "/calculators/investment-growth" },
+  // In Search Console (October 2026), not in the Wix sitemap; the trailing-
+  // slash form reaches it in two steps, after Next strips the slash.
+  { from: "/monthly-investment-calculator", to: "/calculators/investment-growth" },
   { from: "/required-rate-of-return", to: "/calculators/required-rate-of-return" },
   { from: "/retirement-savings-calculator", to: "/calculators/retirement-savings" },
   { from: "/copy-of-retirement-savings-calculator", to: "/calculators/retirement-savings" },
