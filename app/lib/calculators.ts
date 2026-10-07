@@ -696,7 +696,8 @@ export const bySlug = (slug: string): Calc | undefined =>
  * written down: byCategory, the /calculators and /guides indexes, the sidebar,
  * the homepage doors and the "More in this section" links all read it.
  *
- * `id` is the anchor on /calculators and /guides. `title` is the heading; a
+ * `id` is the anchor on /calculators and /guides, and the jump links point at
+ * it. `title` is the heading; a
  * category with a single untitled section (Debt) is ordered without headings,
  * because headings over two or three cards add clutter rather than structure.
  *
@@ -706,40 +707,62 @@ export const bySlug = (slug: string): Calc | undefined =>
  * checks it too. Sections change presentation only: no URL, category or
  * structured data depends on them.
  */
-export type CalcSection = { id: string; title: string | null; slugs: readonly string[] };
+export type CalcSection = {
+  id: string;
+  /** The heading; null for a category ordered without headings. */
+  title: string | null;
+  /** The jump-link label: short enough that a category's links fit a phone in two rows. */
+  short: string | null;
+  slugs: readonly string[];
+};
+
+/**
+ * Each category's accent for its section headings: the bar beside the
+ * heading, in the same colour family and shade as the category's text colour
+ * in CATEGORY_SECTIONS. Kept out of CATEGORY_SECTIONS on purpose: the
+ * Instagram card renderer reads that block as text (render-cards.mjs,
+ * categoryColours), and these are written out in full because Tailwind only
+ * ships classes it can see in source.
+ */
+export const SECTION_ACCENT: Record<Category, string> = {
+  Home: "bg-green-700",
+  Debt: "bg-amber-700",
+  Money: "bg-blue-600",
+  Auto: "bg-teal-600",
+};
 
 export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
   Home: [
-    { id: "buying-a-home", title: "Buying a home", slugs: [
+    { id: "refinancing", title: "Refinancing", short: "Refinancing", slugs: ["should-i-refinance", "va-recoup", "refinance-to-pay-off-debt"] },
+    { id: "home-equity", title: "Home equity", short: "Home equity", slugs: ["heloc-vs-cash-out", "heloc-limit", "home-equity-loan-vs-heloc", "heloc-debt-payoff"] },
+    { id: "buying-a-home", title: "Buying a home", short: "Buying", slugs: [
       "rent-vs-buy", "home-affordability", "buy-now-or-save", "buy-now-or-wait",
       "fha-vs-conventional", "va-vs-conventional", "rate-buydown", "loan-estimate-comparison",
     ] },
-    { id: "mortgage-payment-and-payoff", title: "Your mortgage payment and payoff", slugs: [
+    { id: "mortgage-payment-and-payoff", title: "Your mortgage payment and payoff", short: "Payment & payoff", slugs: [
       "mortgage-payment", "extra-payments", "payoff-house-vs-invest", "pay-off-debt",
     ] },
-    { id: "refinancing", title: "Refinancing", slugs: ["should-i-refinance", "va-recoup", "refinance-to-pay-off-debt"] },
-    { id: "home-equity", title: "Home equity", slugs: ["heloc-vs-cash-out", "heloc-limit", "home-equity-loan-vs-heloc", "heloc-debt-payoff"] },
-    { id: "selling-or-moving", title: "Selling or moving", slugs: ["rent-or-sell", "sell-first-or-buy-first"] },
+    { id: "selling-or-moving", title: "Selling or moving", short: "Selling & moving", slugs: ["rent-or-sell", "sell-first-or-buy-first"] },
   ],
   Debt: [
-    { id: "debt-tools", title: null, slugs: [
+    { id: "debt-tools", title: null, short: null, slugs: [
       "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation",
       "effective-interest-rate", "student-loan-repayment",
     ] },
   ],
   Money: [
-    { id: "saving", title: "Saving", slugs: ["net-worth", "emergency-fund", "savings-apy", "compound-interest"] },
-    { id: "investing", title: "Investing", slugs: [
+    { id: "saving", title: "Saving", short: "Saving", slugs: ["net-worth", "emergency-fund", "savings-apy", "compound-interest"] },
+    { id: "investing", title: "Investing", short: "Investing", slugs: [
       "investment-growth", "required-rate-of-return", "dollar-cost-averaging", "dividend-reinvestment", "capital-gains",
     ] },
-    { id: "retirement", title: "Retirement", slugs: ["retirement-savings", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
+    { id: "retirement", title: "Retirement", short: "Retirement", slugs: ["retirement-savings", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
   ],
   Auto: [
-    { id: "choosing-a-car", title: "Choosing a car", slugs: [
+    { id: "choosing-a-car", title: "Choosing a car", short: "Choosing", slugs: [
       "auto-affordability", "new-vs-used-car", "ev-savings", "total-cost-of-ownership", "depreciation",
     ] },
-    { id: "paying-for-a-car", title: "Paying for it", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment"] },
-    { id: "after-you-buy", title: "After you buy", slugs: ["auto-loan-refinance"] },
+    { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment"] },
+    { id: "after-you-buy", title: "After you buy", short: "After you buy", slugs: ["auto-loan-refinance"] },
   ],
 };
 

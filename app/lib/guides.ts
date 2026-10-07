@@ -215,7 +215,7 @@ export function guideSectionsOf(category: Category): { section: CalcSection; gui
     return { section, guides };
   });
   const rest = inCategory.filter((g) => !placed.has(g.slug));
-  if (rest.length) groups.push({ section: { id: `${category.toLowerCase()}-other-guides`, title: null, slugs: [] }, guides: rest });
+  if (rest.length) groups.push({ section: { id: `${category.toLowerCase()}-other-guides`, title: null, short: null, slugs: [] }, guides: rest });
   return groups.filter((g) => g.guides.length > 0);
 }
 

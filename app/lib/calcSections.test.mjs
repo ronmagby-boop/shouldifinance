@@ -14,7 +14,7 @@ test("every calculator is in exactly one section of its own category", () => {
 
 test("the guard names a calculator left out, listed twice, or in another category's section", () => {
   const sections = structuredClone(CALC_SECTIONS);
-  sections.Home[0].slugs = sections.Home[0].slugs.filter((s) => s !== "rent-vs-buy");
+  for (const sec of sections.Home) sec.slugs = sec.slugs.filter((s) => s !== "rent-vs-buy");
   assert.throws(() => assertSections(CALCULATORS, sections), /"rent-vs-buy" \(Home\) is in no section/);
   const twice = structuredClone(CALC_SECTIONS);
   twice.Home[1].slugs = [...twice.Home[1].slugs, "rent-vs-buy"];
@@ -25,7 +25,12 @@ test("the guard names a calculator left out, listed twice, or in another categor
 });
 
 test("byCategory follows the section order", () => {
-  assert.deepEqual(byCategory("Home").slice(0, 3).map((c) => c.slug), ["rent-vs-buy", "home-affordability", "buy-now-or-save"]);
+  // Home's sections run Refinancing, Home equity, Buying a home, payment and payoff, Selling or moving.
+  assert.deepEqual(CALC_SECTIONS.Home.map((s) => s.id),
+    ["refinancing", "home-equity", "buying-a-home", "mortgage-payment-and-payoff", "selling-or-moving"]);
+  assert.deepEqual(byCategory("Home").slice(0, 4).map((c) => c.slug), ["should-i-refinance", "va-recoup", "refinance-to-pay-off-debt", "heloc-vs-cash-out"]);
+  // Every titled section has a short jump-link label; Debt's untitled one has none.
+  for (const s of Object.values(CALC_SECTIONS).flat()) assert.equal(Boolean(s.title), Boolean(s.short), s.id);
   assert.deepEqual(sectionOf("heloc-limit").calcs.map((c) => c.slug),
     ["heloc-vs-cash-out", "heloc-limit", "home-equity-loan-vs-heloc", "heloc-debt-payoff"]);
   assert.equal(sectionOf("pay-off-debt").section.id, "mortgage-payment-and-payoff");

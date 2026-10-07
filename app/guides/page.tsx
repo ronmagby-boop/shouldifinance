@@ -4,6 +4,7 @@ import GuideShell from "../components/GuideShell";
 import { BookOpen } from "lucide-react";
 import { CATEGORY_SECTIONS, SITE, OG_IMAGE } from "../lib/calculators";
 import { calculatorForGuide, GUIDE_CATEGORIES, GUIDES, guideSectionsOf } from "../lib/guides";
+import { SectionHeading, SectionJumpLinks } from "../components/SectionNav";
 
 const DESCRIPTION =
   "Plain-English explanations of the rules behind the calculators — what the numbers mean, which figures are excluded, and where the answers come from.";
@@ -72,13 +73,14 @@ export default function GuidesIndex() {
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <SectionJumpLinks category={category} />
+                <div className="space-y-8">
                 {guideSectionsOf(category).map(({ section: group, guides: groupGuides }) => (
                 <div key={group.id} id={group.title ? group.id : undefined} className="scroll-mt-20">
                 {group.title && (
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
-                    {group.title} <span className="text-gray-400 font-normal normal-case tracking-normal">· {groupGuides.length}</span>
-                  </h3>
+                  <div className="mb-3">
+                    <SectionHeading category={category} count={groupGuides.length}>{group.title}</SectionHeading>
+                  </div>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {groupGuides.map((guide) => {

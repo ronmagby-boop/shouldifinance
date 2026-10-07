@@ -119,6 +119,7 @@ export default function CalcShell({
             const s = sectionOf(slug);
             return s ? (
               <SectionLinks
+                category={bySlug(slug)!.category}
                 title={s.section.title}
                 anchor={`/calculators#${s.section.id}`}
                 items={s.calcs.map((c) => ({ href: `/calculators/${c.slug}`, label: c.nav, current: c.slug === slug }))}

@@ -105,6 +105,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       {section && (
         <div className="mt-8">
           <SectionLinks
+            category={guide.category}
             title={section.section.title}
             anchor={`/guides#${section.section.id}`}
             items={section.guides.map((g) => ({ href: `/guides/${g.slug}`, label: g.title, current: g.slug === guide.slug }))}
