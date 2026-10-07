@@ -71,6 +71,11 @@ residence for at least 24 months out of those same five years. The two periods
 do not have to be the same 24 months. You generally cannot use the exclusion if
 you already excluded gain from another home sale within the previous two years.
 
+If you move and keep the house as a rental, the exclusion lasts only about
+three years after you leave, if you lived there two of the five years (longer
+for qualifying military duty); the [rent out or sell
+calculator](/calculators/rent-or-sell) gives the exact date.
+
 > This is why the break-even year is not the whole story. Investment gains
 > elsewhere are taxable when realized. Gain on a main home, within those limits,
 > is not taxed at all. Two paths that look even on paper are not even after tax,
