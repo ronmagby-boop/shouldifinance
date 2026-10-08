@@ -249,13 +249,37 @@
       "hash": "38a62b81141b04d5",
       "warnings": []
     },
+    "heloc-cap-is-the-lenders": {
+      "hash": "a7b39a5f3e12425c",
+      "warnings": []
+    },
+    "heloc-draw-as-you-go": {
+      "hash": "f1a4dbc9f9287cd1",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "heloc-full-line-payment": {
+      "hash": "6f5de920aab6ef34",
+      "warnings": []
+    },
     "heloc-interest-only-decade": {
       "hash": "2cff858ecb4d5868",
+      "warnings": []
+    },
+    "heloc-line-90k-at-85": {
+      "hash": "a7a3e76613638f9c",
       "warnings": []
     },
     "heloc-line-can-be-frozen": {
       "hash": "c090455476134687",
       "warnings": []
+    },
+    "heloc-not-covered-by-prepay-limits": {
+      "hash": "8e8498fbf02706bc",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
     },
     "heloc-not-deductible": {
       "hash": "758edca8d01ab758",
@@ -267,9 +291,25 @@
         "card text wraps to 5 lines with one word on the last"
       ]
     },
+    "heloc-payment-moves-undrawn": {
+      "hash": "05f215d03b6304ec",
+      "warnings": []
+    },
     "heloc-payment-steps": {
       "hash": "c57630f9dacf9bb3",
       "warnings": []
+    },
+    "heloc-valuation-cuts-the-line": {
+      "hash": "97787dfdd6fdac2b",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "home-equity-prepayment-cap": {
+      "hash": "3fa54549ed5339f9",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
     },
     "home-sale-three-year-window": {
       "hash": "579d14bd82c4ea23",

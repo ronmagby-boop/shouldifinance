@@ -1,5 +1,5 @@
 {
-  "_about": "A library of one-fact-per-post Instagram cards extracted from the 47 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 49 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
   "_extracted": "2026-09-30",
   "_fields": {
     "id": "Stable handle for scheduling. Not used by any code.",
@@ -2215,6 +2215,116 @@
         "VA_GUARANTY_PCT",
         "VA_LENDER_COVERAGE_PCT"
       ],
+      "reviewed": null
+    },
+    {
+      "id": "heloc-line-90k-at-85",
+      "card": "A $400,000 home with $250,000 owed leaves a $90,000 line at an 85% cap.",
+      "caption": "A HELOC is sized by combined loan-to-value: the lender takes a percentage of the home's value and subtracts everything already owed on it, every lien. At an 80% cap the same home leaves $70,000; at 90%, $110,000. The cap is each lender's own, and your credit and income decide whether you are offered all of it. https://shouldifinance.com/guides/how-much-can-you-borrow-with-a-heloc",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
+      "source": "The guide's worked example: $400,000 × 85% = $340,000, less $250,000 owed = $90,000; the CFPB HELOC booklet for the method",
+      "card_source": "Arithmetic: $400,000 home, $250,000 owed, 85% cap",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "Arithmetic on the guide's example; the 85% cap is a comparison point the guide labels lender-specific, not a sourced figure.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-cap-is-the-lenders",
+      "card": "There is no standard HELOC cap: each lender sets its own maximum loan-to-value.",
+      "caption": "The same borrower can be offered different caps by different lenders, or by the same lender at different times, so a single \"typical\" figure is a guess. Ask each lender for its maximum combined loan-to-value, and whether it changes with your credit score or the loan amount. https://shouldifinance.com/guides/how-much-can-you-borrow-with-a-heloc",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
+      "source": "The guide, which states that no regulation sets a HELOC's CLTV cap; lender practice",
+      "card_source": "Practice: each lender's credit policy",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States lender practice, not a figure any app/lib constant holds.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-valuation-cuts-the-line",
+      "card": "Every $1,000 the lender's valuation comes in low takes $850 off an 85% line.",
+      "caption": "The cap applies to the value the lender accepts, from an appraisal or a cheaper automated estimate, not to your own estimate. The federal banking agencies tell lenders that when valuation tools disagree they should select \"the most reliable method, rather than the highest value.\" If your estimate is generous, the line will be smaller. https://shouldifinance.com/guides/how-much-can-you-borrow-with-a-heloc",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
+      "source": "Arithmetic in the guide (85% of $1,000); Credit Risk Management Guidance for Home Equity Lending (SR 05-11, revised June 2026) for the valuation quote",
+      "card_source": "Arithmetic: 85% cap",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume the line is figured on your own estimate of the home's value.",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "Arithmetic on a comparison cap; the agencies' guidance sets no figure an app/lib constant holds.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-full-line-payment",
+      "card": "$90,000 at 9% is $675 a month interest-only, about $913 repaid over 15 years.",
+      "caption": "Federal guidance tells lenders to assess \"the borrower's ability to amortize the fully drawn line over the loan term and to absorb potential increases in interest rates.\" It is a fair test to run on yourself: if the repaying figure does not fit your budget, the full line is more than you should plan to use. A variable rate can push both figures higher. https://shouldifinance.com/guides/how-much-can-you-borrow-with-a-heloc",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
+      "source": "The guide's worked example, computed with the site's own payment formula ($90,000 at 9%: $675 interest-only; $912.84 over 180 months); SR 05-11 for the quote",
+      "card_source": "Site model: $90,000 at 9%, 15 years",
+      "layout": "big-number",
+      "hero": "$913",
+      "hero_context": "a month once the full line is repaid over 15 years",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "A worked example at an illustrative rate; no app/lib constant holds these figures.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-draw-as-you-go",
+      "card": "Drawing $60,000 at 8% as $5,000 a month cuts year-one interest to $2,600 from $4,800.",
+      "caption": "A HELOC charges interest only on what you have drawn, so money spent in stages, as on a renovation, costs less than the same amount borrowed at once at the same rate. A home equity loan pays out the whole amount at closing and charges interest on all of it from the first month, like the $4,800 case, however slowly you spend it. https://shouldifinance.com/guides/fixed-home-equity-loan-or-heloc",
+      "guide": "fixed-home-equity-loan-or-heloc",
+      "source": "The guide's worked example: $5,000 × (8% ÷ 12) × (1 + 2 + … + 12) = $2,600, against $60,000 × 8% = $4,800, interest only",
+      "card_source": "Arithmetic: $60,000 at 8%, $5,000 a month",
+      "layout": "big-number",
+      "hero": "$2,600",
+      "hero_context": "first-year interest, drawn $5,000 a month and paying interest only",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "Arithmetic on the guide's illustrative rate; no app/lib constant holds these figures.",
+      "reviewed": null
+    },
+    {
+      "id": "home-equity-prepayment-cap",
+      "card": "A home equity loan's prepayment penalty is capped at 2%, and ends after three years.",
+      "caption": "Federal rules allow a prepayment penalty only on a loan whose rate cannot rise and that meets other conditions, and even then at most 2% of the balance prepaid in the first two years, 1% in the third, and none after. Those limits do not cover HELOCs. https://shouldifinance.com/guides/fixed-home-equity-loan-or-heloc",
+      "guide": "fixed-home-equity-loan-or-heloc",
+      "source": "12 CFR 1026.43(g) (Regulation Z), prepayment penalties; 1026.43(a) excludes HELOCs",
+      "card_source": "Source: Regulation Z, 12 CFR 1026.43(g)",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States regulatory limits that no app/lib constant holds.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-payment-moves-undrawn",
+      "card": "On a variable-rate HELOC, your payment can change even if you don't draw more.",
+      "caption": "The CFPB's HELOC booklet: \"If your plan has a variable interest rate, your monthly payments may change even if you don't draw more money.\" Most HELOCs are priced at prime plus a margin, and banks usually move prime when the Fed moves its target. A home equity loan's fixed rate does not move after closing. https://shouldifinance.com/guides/fixed-home-equity-loan-or-heloc",
+      "guide": "fixed-home-equity-loan-or-heloc",
+      "source": "CFPB, What you should know about Home Equity Lines of Credit (2022); Federal Reserve, on the prime rate",
+      "card_source": "Source: CFPB HELOC booklet",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States how variable rates work, not a figure an app/lib constant holds.",
+      "reviewed": null
+    },
+    {
+      "id": "heloc-not-covered-by-prepay-limits",
+      "card": "Federal prepayment-penalty limits cover home equity loans, not HELOCs: ask about early-termination fees.",
+      "caption": "Regulation Z's limits apply to dwelling-secured loans other than \"A home equity line of credit subject to § 1026.40\". The CFPB's HELOC worksheet has a line for an \"Early termination fee\", so ask whether a line you are offered carries one before you sign. https://shouldifinance.com/guides/fixed-home-equity-loan-or-heloc",
+      "guide": "fixed-home-equity-loan-or-heloc",
+      "source": "12 CFR 1026.43(a) (Regulation Z), scope; CFPB HELOC booklet, Get three HELOC estimates worksheet",
+      "card_source": "Source: Regulation Z, 12 CFR 1026.43(a)",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume the federal limits on prepayment penalties cover HELOCs too.",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States the scope of a regulation, not a figure an app/lib constant holds.",
       "reviewed": null
     }
   ]
