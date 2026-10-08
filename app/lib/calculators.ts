@@ -788,6 +788,27 @@ export function assertSections(calcs: readonly Calc[] = CALCULATORS, sections = 
 }
 assertSections();
 
+/**
+ * Hand-picked calculators for a category's box on the homepage, in display
+ * order, where the first four in CALC_SECTIONS order are not the right
+ * front door. A category not listed shows its first four. Checked on load:
+ * every slug must be a calculator in that category.
+ */
+export const HOMEPAGE_PICKS: Partial<Record<Category, readonly string[]>> = {
+  Home: ["should-i-refinance", "heloc-vs-cash-out", "home-affordability", "rent-or-sell"],
+};
+for (const [category, slugs] of Object.entries(HOMEPAGE_PICKS) as [Category, readonly string[]][]) {
+  for (const slug of slugs) {
+    if (CALCULATORS.find((c) => c.slug === slug)?.category !== category) {
+      throw new Error(`HOMEPAGE_PICKS.${category} lists "${slug}", which is not a ${category} calculator`);
+    }
+  }
+}
+
+/** The calculators a category's homepage box shows: its hand-picked list, or its first four. */
+export const homepagePicks = (category: Category): Calc[] =>
+  HOMEPAGE_PICKS[category]?.map((s) => bySlug(s)!) ?? byCategory(category).slice(0, 4);
+
 /** A category's sections with their calculators, in order. */
 export const sectionsOf = (category: Category): { section: CalcSection; calcs: Calc[] }[] =>
   CALC_SECTIONS[category].map((section) => ({ section, calcs: section.slugs.map((s) => bySlug(s)!) }));

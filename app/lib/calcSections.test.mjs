@@ -36,3 +36,12 @@ test("byCategory follows the section order", () => {
   assert.equal(sectionOf("pay-off-debt").section.id, "mortgage-payment-and-payoff");
   assert.equal(byCategory("Debt").length, 6);
 });
+
+test("the homepage's Home box shows its hand-picked four; the others show their first four", async () => {
+  const { homepagePicks } = await import("./calculators.ts");
+  assert.deepEqual(homepagePicks("Home").map((c) => c.slug), ["should-i-refinance", "heloc-vs-cash-out", "home-affordability", "rent-or-sell"]);
+  assert.deepEqual(homepagePicks("Money").map((c) => c.slug), byCategory("Money").slice(0, 4).map((c) => c.slug));
+  // The index order is unchanged by the picks.
+  assert.equal(byCategory("Home")[0].slug, "should-i-refinance");
+  assert.equal(byCategory("Home")[1].slug, "va-recoup");
+});

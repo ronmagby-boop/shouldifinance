@@ -6,7 +6,7 @@ import {
   Calculator, FileText, BadgeCheck, ShieldCheck,
   ArrowRight, CheckCircle2, Search, Compass, ClipboardCheck,
 } from "lucide-react";
-import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDE_COVERAGE } from "./lib/calculators";
+import { byCategory, CALCULATORS, CATEGORY_SECTIONS, GUIDE_COVERAGE, homepagePicks } from "./lib/calculators";
 import MobileBottomNav, { MobileBottomNavSpacer } from "./components/MobileBottomNav";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
@@ -240,11 +240,11 @@ export default function Home() {
             <RatesPill />
           </div>
 
-          {/* Four category doors; each shows the first four of its category in CALC_SECTIONS order */}
+          {/* Four category doors; each shows its homepagePicks: a hand-picked list (Home), or the first four in CALC_SECTIONS order */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {CATEGORY_SECTIONS.map(section => {
               const all = byCategory(section.category);
-              const picks = all.slice(0, 4);
+              const picks = homepagePicks(section.category);
               return (
                 <div key={section.id}
                   className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-green-100 transition-all flex flex-col">
