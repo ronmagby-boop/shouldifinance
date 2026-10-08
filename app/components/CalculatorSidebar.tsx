@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CALCULATORS, CATEGORY_SECTIONS, sectionsOf } from "../lib/calculators";
+import { SidebarSectionHeading } from "./SectionNav";
 
 /**
  * The calculator index, rendered from the CALCULATORS registry so the list
@@ -45,11 +46,9 @@ export default function CalculatorSidebar({ activeSlug }: { activeSlug?: string 
             <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
             {section.category}
           </p>
-          {sectionsOf(section.category).map(({ section: group, calcs }) => (
+          {sectionsOf(section.category).map(({ section: group, calcs }, i) => (
             <div key={group.id}>
-              {group.title && (
-                <p className="text-[11px] font-medium text-gray-400 mt-2 mb-0.5 px-2">{group.title}</p>
-              )}
+              {group.title && <SidebarSectionHeading category={section.category} title={group.title} first={i === 0} />}
               {calcs.map(calc => {
                 const isActive = calc.slug === active;
                 return (
@@ -116,11 +115,9 @@ export function CalculatorBrowseMobile({ activeSlug }: { activeSlug?: string }) 
                 <section.icon className="w-3.5 h-3.5" aria-hidden="true" />
                 {section.category}
               </p>
-              {sectionsOf(section.category).map(({ section: group, calcs }) => (
+              {sectionsOf(section.category).map(({ section: group, calcs }, i) => (
                 <div key={group.id}>
-                  {group.title && (
-                    <p className="text-[11px] font-medium text-gray-400 mt-2 mb-0.5 px-2">{group.title}</p>
-                  )}
+                  {group.title && <SidebarSectionHeading category={section.category} title={group.title} first={i === 0} />}
                   {calcs.map(calc => {
                     const isActive = calc.slug === active;
                     return (

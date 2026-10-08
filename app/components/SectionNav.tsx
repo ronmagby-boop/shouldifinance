@@ -31,6 +31,28 @@ export function SectionHeading({
 }
 
 /**
+ * A section heading in the calculator sidebar and the mobile "Browse
+ * calculators" list: the same darkest text and accent bar as SectionHeading,
+ * sized between the 12px links under it and the category heading above it
+ * (which stays the 12px uppercase line in the category colour, with its icon,
+ * so the two read as different levels rather than competing). Every section
+ * after a category's first starts with a thin rule and extra space, so each
+ * reads as a new group.
+ */
+export function SidebarSectionHeading({ category, title, first }: { category: Category; title: string; first: boolean }) {
+  return (
+    <p
+      className={`flex items-center gap-2 px-2 mb-1 text-sm font-bold text-gray-900 leading-snug ${
+        first ? "mt-2" : "mt-3 pt-3 border-t border-gray-100"
+      }`}
+    >
+      <span aria-hidden="true" className={`w-1 h-4 rounded-full flex-shrink-0 ${SECTION_ACCENT[category]}`} />
+      {title}
+    </p>
+  );
+}
+
+/**
  * The row of jump links under a category heading, one per titled section, in
  * section order, pointing at the anchors the sections already carry. Wraps
  * rather than scrolling sideways, so nothing is hidden off the edge of a
