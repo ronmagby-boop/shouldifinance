@@ -1,5 +1,5 @@
 {
-  "_about": "A library of one-fact-per-post Instagram cards extracted from the 49 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 50 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
   "_extracted": "2026-09-30",
   "_fields": {
     "id": "Stable handle for scheduling. Not used by any code.",
@@ -2325,6 +2325,66 @@
       "category": "Home",
       "shelfLife": null,
       "depends_on_none": "States the scope of a regulation, not a figure an app/lib constant holds.",
+      "reviewed": null
+    },
+    {
+      "id": "rental-plus-296-minus-439",
+      "card": "A $2,400 rental clearing $296 over mortgage, tax and insurance can lose $439 a month.",
+      "caption": "That is the guide's example: a $320,000 house bought with 25% down at 7.25% over 30 years. Against the mortgage, tax and insurance alone, the rent leaves about $296. Allow 5% of the rent for vacancy, 10% of what you collect for a manager, 1% of the price a year for maintenance and a 5% reserve for big replacements, and it loses about $439 a month. Those allowances are assumptions, not measured figures, but leaving them out is how a rental that looks positive turns out to cost money. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
+      "guide": "should-you-buy-a-rental-property",
+      "source": "The guide's worked example, computed with the site's own code (lib/rentalProperty.ts): NOI $1,198.67, mortgage $1,637.22, cash flow −$438.56; $2,400 − $1,637.22 − $466.67 = $296.11 before the other costs",
+      "card_source": "Site model: $320,000, 25% down, 7.25%, 30 years",
+      "layout": "big-number",
+      "hero": "$439",
+      "hero_context": "lost a month after vacancy, management, maintenance and a reserve",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "A worked example on editable assumptions (5% vacancy, 10% management, 1% maintenance, 5% reserve); no app/lib constant holds these figures.",
+      "reviewed": null
+    },
+    {
+      "id": "rental-dscr-073",
+      "card": "A DSCR of 0.73 means net operating income covers only 73% of the mortgage.",
+      "caption": "DSCR, the debt service coverage ratio, is net operating income divided by the mortgage payments. In the guide's example, $1,199 a month of income after running costs against a $1,637 mortgage gives 0.73; below 1, the property does not cover its own loan, and you make up the difference. Lenders that use DSCR each define it their own way, so a lender's figure can differ from yours. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
+      "guide": "should-you-buy-a-rental-property",
+      "source": "The guide's definition and worked example, computed with the site's own code: $1,198.67 ÷ $1,637.22 = 0.73",
+      "card_source": "Site model: $320,000, 25% down, 7.25%, 30 years",
+      "layout": "statement",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "A ratio from the guide's worked example on editable assumptions; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "investment-property-15-down",
+      "card": "Fannie Mae's minimum down payment to buy a one-unit investment property is 15%.",
+      "caption": "That is for a purchase underwritten through Fannie Mae's automated system, under its Eligibility Matrix of August 2026; two to four units need 25%, and many lenders ask for more than the minimum. The price is higher too: Fannie Mae adds an investment-property charge of 2.125% of the loan at 75% loan-to-value and 4.125% at 85%, which lenders usually build into a higher rate. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
+      "guide": "should-you-buy-a-rental-property",
+      "source": "Fannie Mae Eligibility Matrix (5 August 2026), Desktop Underwriter, Investment Property, Purchase: 1 Unit 85%, 2-4 Units 75%; Fannie Mae LLPA Matrix (30 September 2026), Purchase Money Loans, Investment property",
+      "card_source": "Source: Fannie Mae Eligibility Matrix",
+      "layout": "big-number",
+      "hero": "15%",
+      "hero_context": "minimum down on one unit; two to four units need 25%",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on": [
+        "INVESTMENT_MAX_LTV",
+        "INVESTMENT_PURCHASE_LLPA"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "rental-losses-passive",
+      "card": "Rental losses are generally passive. Exceptions, like a $25,000 allowance, let some offset other income.",
+      "caption": "IRS Publication 527: \"Generally, rental real estate activities are considered passive activities and losses aren't deductible unless you have income from other passive activities to offset them.\" The exception: \"If you or your spouse actively participated in a passive rental real estate activity, you may be able to deduct up to $25,000 of loss from the activity from your nonpassive income\", subject to income limits the publication sets out. How it nets out depends on the rest of your return. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
+      "guide": "should-you-buy-a-rental-property",
+      "source": "IRS Publication 527 (2025), Passive activity limits and Exception for Rental Real Estate With Active Participation",
+      "card_source": "Source: IRS Publication 527",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a rental's loss on paper can offset your salary.",
+      "category": "Home",
+      "shelfLife": null,
+      "depends_on_none": "States the passive activity rule and its $25,000 allowance from Publication 527; no app/lib constant holds them.",
       "reviewed": null
     }
   ]

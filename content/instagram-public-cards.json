@@ -319,6 +319,10 @@
       "hash": "de64671f7697aa26",
       "warnings": []
     },
+    "investment-property-15-down": {
+      "hash": "503476260cdb287a",
+      "warnings": []
+    },
     "lease-lower-payment-not-saving": {
       "hash": "ee0ac8b8ac82a350",
       "warnings": [
@@ -549,6 +553,22 @@
     },
     "rental-depreciation-taxed-inside-exclusion": {
       "hash": "2a7790212bccbe0e",
+      "warnings": []
+    },
+    "rental-dscr-073": {
+      "hash": "994aed6ace883f8d",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "rental-losses-passive": {
+      "hash": "2656d077275912cc",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
+    "rental-plus-296-minus-439": {
+      "hash": "7dbc123ebfb8fdc7",
       "warnings": []
     },
     "residual-not-negotiable": {

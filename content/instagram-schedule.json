@@ -368,9 +368,9 @@
     },
     {
       "n": 49,
-      "id": "loan-estimate-three-days",
+      "id": "rental-dscr-073",
       "category": "Home",
-      "guide": "when-refinancing-pays-for-itself",
+      "guide": "should-you-buy-a-rental-property",
       "layout": "statement"
     },
     {
@@ -396,9 +396,9 @@
     },
     {
       "n": 53,
-      "id": "refinance-rate-not-price",
+      "id": "loan-estimate-three-days",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "guide": "when-refinancing-pays-for-itself",
       "layout": "statement"
     },
     {
@@ -424,10 +424,10 @@
     },
     {
       "n": 57,
-      "id": "va-zero-rating-not-exempt",
+      "id": "half-point-cancelled",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
-      "layout": "myth-fact"
+      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "layout": "big-number"
     },
     {
       "n": 58,
@@ -480,9 +480,9 @@
     },
     {
       "n": 65,
-      "id": "prepay-returns-exactly",
+      "id": "va-no-monthly-mi",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
+      "guide": "va-loan-vs-conventional",
       "layout": "statement"
     },
     {
@@ -508,10 +508,10 @@
     },
     {
       "n": 69,
-      "id": "fha-mip-never-comes-off",
+      "id": "thousand-a-month",
       "category": "Home",
-      "guide": "bigger-down-payment-or-buy-sooner",
-      "layout": "myth-fact"
+      "guide": "pay-off-your-house-or-invest",
+      "layout": "big-number"
     },
     {
       "n": 70,
@@ -592,9 +592,9 @@
     },
     {
       "n": 81,
-      "id": "fed-cut-mortgage-rates-rose",
+      "id": "fha-mip-never-comes-off",
       "category": "Home",
-      "guide": "heloc-or-cash-out-refinance",
+      "guide": "bigger-down-payment-or-buy-sooner",
       "layout": "myth-fact"
     },
     {
@@ -620,9 +620,9 @@
     },
     {
       "n": 85,
-      "id": "heloc-cap-is-the-lenders",
+      "id": "heloc-line-can-be-frozen",
       "category": "Home",
-      "guide": "how-much-can-you-borrow-with-a-heloc",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "statement"
     },
     {
@@ -676,9 +676,9 @@
     },
     {
       "n": 93,
-      "id": "heloc-not-covered-by-prepay-limits",
+      "id": "heloc-valuation-cuts-the-line",
       "category": "Home",
-      "guide": "fixed-home-equity-loan-or-heloc",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
       "layout": "myth-fact"
     },
     {
@@ -697,9 +697,9 @@
     },
     {
       "n": 96,
-      "id": "pmi-original-value",
+      "id": "heloc-not-covered-by-prepay-limits",
       "category": "Home",
-      "guide": "whats-in-a-mortgage-payment",
+      "guide": "fixed-home-equity-loan-or-heloc",
       "layout": "myth-fact"
     },
     {
@@ -711,9 +711,9 @@
     },
     {
       "n": 98,
-      "id": "car-loan-vs-down-payment",
+      "id": "pmi-80-78-gap",
       "category": "Home",
-      "guide": "how-much-house-can-you-afford",
+      "guide": "whats-in-a-mortgage-payment",
       "layout": "statement"
     },
     {
@@ -725,9 +725,9 @@
     },
     {
       "n": 100,
-      "id": "lower-rate-longer-term",
+      "id": "car-loan-vs-down-payment",
       "category": "Home",
-      "guide": "refinance-to-pay-off-credit-cards",
+      "guide": "how-much-house-can-you-afford",
       "layout": "statement"
     },
     {
@@ -739,10 +739,10 @@
     },
     {
       "n": 102,
-      "id": "extra-payments-dont-lower-payment",
+      "id": "rental-plus-296-minus-439",
       "category": "Home",
-      "guide": "do-extra-mortgage-payments-save-money",
-      "layout": "myth-fact"
+      "guide": "should-you-buy-a-rental-property",
+      "layout": "big-number"
     },
     {
       "n": 103,
@@ -753,9 +753,9 @@
     },
     {
       "n": 104,
-      "id": "rent-vs-buy-is-a-year",
+      "id": "lower-rate-longer-term",
       "category": "Home",
-      "guide": "cheaper-to-rent-or-buy",
+      "guide": "refinance-to-pay-off-credit-cards",
       "layout": "statement"
     },
     {
@@ -767,9 +767,9 @@
     },
     {
       "n": 106,
-      "id": "no-cost-refinance-tell",
+      "id": "rent-vs-buy-is-a-year",
       "category": "Home",
-      "guide": "when-refinancing-pays-for-itself",
+      "guide": "cheaper-to-rent-or-buy",
       "layout": "statement"
     },
     {
@@ -781,10 +781,10 @@
     },
     {
       "n": 108,
-      "id": "half-point-cancelled",
+      "id": "extra-payments-dont-lower-payment",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
-      "layout": "big-number"
+      "guide": "do-extra-mortgage-payments-save-money",
+      "layout": "myth-fact"
     },
     {
       "n": 109,
@@ -795,9 +795,9 @@
     },
     {
       "n": 110,
-      "id": "compare-section-a",
+      "id": "no-cost-refinance-tell",
       "category": "Home",
-      "guide": "how-to-compare-two-mortgage-quotes",
+      "guide": "when-refinancing-pays-for-itself",
       "layout": "statement"
     },
     {
@@ -809,9 +809,9 @@
     },
     {
       "n": 112,
-      "id": "va-no-monthly-mi",
+      "id": "refinance-rate-not-price",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
       "layout": "statement"
     },
     {
@@ -823,10 +823,10 @@
     },
     {
       "n": 114,
-      "id": "thousand-a-month",
+      "id": "va-zero-rating-not-exempt",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
-      "layout": "big-number"
+      "guide": "va-loan-vs-conventional",
+      "layout": "myth-fact"
     },
     {
       "n": 115,
@@ -837,9 +837,9 @@
     },
     {
       "n": 116,
-      "id": "section-121-two-year-bar",
+      "id": "compare-section-a",
       "category": "Home",
-      "guide": "sell-first-or-buy-first",
+      "guide": "how-to-compare-two-mortgage-quotes",
       "layout": "statement"
     },
     {
@@ -851,9 +851,9 @@
     },
     {
       "n": 118,
-      "id": "points-bet-on-not-refinancing",
+      "id": "section-121-two-year-bar",
       "category": "Home",
-      "guide": "are-discount-points-worth-it",
+      "guide": "sell-first-or-buy-first",
       "layout": "statement"
     },
     {
@@ -879,9 +879,9 @@
     },
     {
       "n": 122,
-      "id": "heloc-line-can-be-frozen",
+      "id": "prepay-returns-exactly",
       "category": "Home",
-      "guide": "heloc-or-cash-out-refinance",
+      "guide": "pay-off-your-house-or-invest",
       "layout": "statement"
     },
     {
@@ -893,9 +893,9 @@
     },
     {
       "n": 124,
-      "id": "home-equity-prepayment-cap",
+      "id": "points-bet-on-not-refinancing",
       "category": "Home",
-      "guide": "fixed-home-equity-loan-or-heloc",
+      "guide": "are-discount-points-worth-it",
       "layout": "statement"
     },
     {
@@ -921,9 +921,9 @@
     },
     {
       "n": 128,
-      "id": "pmi-80-78-gap",
+      "id": "va-cash-out-to-100",
       "category": "Home",
-      "guide": "whats-in-a-mortgage-payment",
+      "guide": "heloc-or-cash-out-refinance",
       "layout": "statement"
     },
     {
@@ -935,9 +935,9 @@
     },
     {
       "n": 130,
-      "id": "waiting-lower-rate-more-bidders",
+      "id": "heloc-cap-is-the-lenders",
       "category": "Home",
-      "guide": "does-waiting-for-rates-to-drop-save-money",
+      "guide": "how-much-can-you-borrow-with-a-heloc",
       "layout": "statement"
     },
     {
@@ -963,9 +963,9 @@
     },
     {
       "n": 134,
-      "id": "tip-page-three",
+      "id": "home-equity-prepayment-cap",
       "category": "Home",
-      "guide": "how-to-compare-two-mortgage-quotes",
+      "guide": "fixed-home-equity-loan-or-heloc",
       "layout": "statement"
     },
     {
@@ -977,9 +977,9 @@
     },
     {
       "n": 136,
-      "id": "va-no-loan-limit",
+      "id": "waiting-lower-rate-more-bidders",
       "category": "Home",
-      "guide": "va-loan-vs-conventional",
+      "guide": "does-waiting-for-rates-to-drop-save-money",
       "layout": "statement"
     },
     {
@@ -991,10 +991,10 @@
     },
     {
       "n": 138,
-      "id": "heloc-valuation-cuts-the-line",
+      "id": "investment-property-15-down",
       "category": "Home",
-      "guide": "how-much-can-you-borrow-with-a-heloc",
-      "layout": "myth-fact"
+      "guide": "should-you-buy-a-rental-property",
+      "layout": "big-number"
     },
     {
       "n": 139,
@@ -1005,9 +1005,9 @@
     },
     {
       "n": 140,
-      "id": "rent-back",
+      "id": "tip-page-three",
       "category": "Home",
-      "guide": "sell-first-or-buy-first",
+      "guide": "how-to-compare-two-mortgage-quotes",
       "layout": "statement"
     },
     {
@@ -1019,9 +1019,9 @@
     },
     {
       "n": 142,
-      "id": "paid-off-house-lowers-floor",
+      "id": "va-no-loan-limit",
       "category": "Home",
-      "guide": "pay-off-your-house-or-invest",
+      "guide": "va-loan-vs-conventional",
       "layout": "statement"
     },
     {
@@ -1033,94 +1033,122 @@
     },
     {
       "n": 144,
+      "id": "rent-back",
+      "category": "Home",
+      "guide": "sell-first-or-buy-first",
+      "layout": "statement"
+    },
+    {
+      "n": 145,
+      "id": "paid-off-house-lowers-floor",
+      "category": "Home",
+      "guide": "pay-off-your-house-or-invest",
+      "layout": "statement"
+    },
+    {
+      "n": 146,
+      "id": "pmi-original-value",
+      "category": "Home",
+      "guide": "whats-in-a-mortgage-payment",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 147,
       "id": "guaranteed-vs-expected",
       "category": "Home",
       "guide": "pay-off-debt-or-invest",
       "layout": "statement"
     },
     {
-      "n": 145,
-      "id": "va-cash-out-to-100",
-      "category": "Home",
-      "guide": "heloc-or-cash-out-refinance",
-      "layout": "statement"
-    },
-    {
-      "n": 146,
-      "id": "dti-43-not-the-rule",
-      "category": "Home",
-      "guide": "how-much-house-can-you-afford",
-      "layout": "myth-fact"
-    },
-    {
-      "n": 147,
+      "n": 148,
       "id": "heloc-payment-moves-undrawn",
       "category": "Home",
       "guide": "fixed-home-equity-loan-or-heloc",
       "layout": "statement"
     },
     {
-      "n": 148,
+      "n": 149,
+      "id": "dti-43-not-the-rule",
+      "category": "Home",
+      "guide": "how-much-house-can-you-afford",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 150,
       "id": "extra-payment-misapplied",
       "category": "Home",
       "guide": "do-extra-mortgage-payments-save-money",
       "layout": "myth-fact"
     },
     {
-      "n": 149,
-      "id": "cashout-not-deductible",
-      "category": "Home",
-      "guide": "refinance-to-pay-off-credit-cards",
-      "layout": "myth-fact"
-    },
-    {
-      "n": 150,
+      "n": 151,
       "id": "section-121-exclusion",
       "category": "Home",
       "guide": "cheaper-to-rent-or-buy",
       "layout": "big-number"
     },
     {
-      "n": 151,
+      "n": 152,
+      "id": "cashout-not-deductible",
+      "category": "Home",
+      "guide": "refinance-to-pay-off-credit-cards",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 153,
       "id": "year-one-87-percent",
       "category": "Home",
       "guide": "when-refinancing-pays-for-itself",
       "layout": "big-number"
     },
     {
-      "n": 152,
+      "n": 154,
       "id": "pmi-is-not-forever",
       "category": "Home",
       "guide": "bigger-down-payment-or-buy-sooner",
       "layout": "myth-fact"
     },
     {
-      "n": 153,
+      "n": 155,
       "id": "points-no-fixed-rate",
       "category": "Home",
       "guide": "are-discount-points-worth-it",
       "layout": "myth-fact"
     },
     {
-      "n": 154,
+      "n": 156,
       "id": "va-passes-but-costs",
       "category": "Home",
       "guide": "va-36-month-recoupment-rule",
       "layout": "big-number"
     },
     {
-      "n": 155,
+      "n": 157,
+      "id": "fed-cut-mortgage-rates-rose",
+      "category": "Home",
+      "guide": "heloc-or-cash-out-refinance",
+      "layout": "myth-fact"
+    },
+    {
+      "n": 158,
       "id": "va-assumption-not-restoration",
       "category": "Home",
       "guide": "rent-out-or-sell-your-house",
       "layout": "myth-fact"
     },
     {
-      "n": 156,
+      "n": 159,
       "id": "heloc-full-line-payment",
       "category": "Home",
       "guide": "how-much-can-you-borrow-with-a-heloc",
       "layout": "big-number"
+    },
+    {
+      "n": 160,
+      "id": "rental-losses-passive",
+      "category": "Home",
+      "guide": "should-you-buy-a-rental-property",
+      "layout": "myth-fact"
     }
   ]
 }
