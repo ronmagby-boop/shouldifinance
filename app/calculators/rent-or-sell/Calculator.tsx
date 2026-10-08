@@ -225,7 +225,7 @@ export default function Calculator() {
       intro="Moving out? Compare selling now with renting the house out and selling later: what each leaves you with, the monthly cash flow as a landlord, the date the tax-free sale runs out, and the depreciation tax that comes with renting."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["sell-first-or-buy-first", "capital-gains", "va-vs-conventional", "rent-vs-buy"]}
+      relatedSlugs={["rental-property", "sell-first-or-buy-first", "capital-gains", "va-vs-conventional"]}
       disclaimer="For educational purposes only, and not tax, legal or investment advice. Tax treatment depends on your full situation; a tax professional can apply the rules to it. Rents, costs and home values are assumptions you supply, not forecasts."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

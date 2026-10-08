@@ -58,6 +58,10 @@ Keep a cash reserve too. A furnace replacement or a few months without a tenant
 can cost thousands, and a mortgage payment is due either way. Check your HOA's rules,
 since some restrict renting, and tell your insurer the home is now a rental.
 
+For the landlord's own numbers, cap rate, cash-on-cash return and DSCR, the
+[rental property calculator](/calculators/rental-property) works them out; its
+guide explains [what each one means](/guides/should-you-buy-a-rental-property).
+
 ## The 2-of-5-year rule, and the three-year window
 
 When you sell a main home, section 121 of the tax code lets you exclude up to
