@@ -2266,7 +2266,7 @@
       "card_source": "Site model: $90,000 at 9%, 15 years",
       "layout": "big-number",
       "hero": "$913",
-      "hero_context": "a month once the full line is repaid over 15 years",
+      "hero_context": "a month to repay the full line over 15 years",
       "category": "Home",
       "shelfLife": null,
       "depends_on_none": "A worked example at an illustrative rate; no app/lib constant holds these figures.",
