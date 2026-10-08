@@ -2344,7 +2344,7 @@
     },
     {
       "id": "rental-dscr-073",
-      "card": "A DSCR of 0.73 means net operating income covers only 73% of the mortgage.",
+      "card": "A DSCR of 0.73 means net operating income covers only 73% of the mortgage payment.",
       "caption": "DSCR, the debt service coverage ratio, is net operating income divided by the mortgage payments. In the guide's example, $1,199 a month of income after running costs against a $1,637 mortgage gives 0.73; below 1, the property does not cover its own loan, and you make up the difference. Lenders that use DSCR each define it their own way, so a lender's figure can differ from yours. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
       "guide": "should-you-buy-a-rental-property",
       "source": "The guide's definition and worked example, computed with the site's own code: $1,198.67 ÷ $1,637.22 = 0.73",
@@ -2358,7 +2358,7 @@
     {
       "id": "investment-property-15-down",
       "card": "Fannie Mae's minimum down payment to buy a one-unit investment property is 15%.",
-      "caption": "That is for a purchase underwritten through Fannie Mae's automated system, under its Eligibility Matrix of August 2026; two to four units need 25%, and many lenders ask for more than the minimum. The price is higher too: Fannie Mae adds an investment-property charge of 2.125% of the loan at 75% loan-to-value and 4.125% at 85%, which lenders usually build into a higher rate. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
+      "caption": "That is for a purchase underwritten through Fannie Mae's automated system, under its Eligibility Matrix of August 2026; two to four units need 25%, and lenders can ask for more than the minimum. The price is higher too: Fannie Mae adds an investment-property charge of 2.125% of the loan at 75% loan-to-value and 4.125% at 85%, which lenders usually build into a higher rate. https://shouldifinance.com/guides/should-you-buy-a-rental-property",
       "guide": "should-you-buy-a-rental-property",
       "source": "Fannie Mae Eligibility Matrix (5 August 2026), Desktop Underwriter, Investment Property, Purchase: 1 Unit 85%, 2-4 Units 75%; Fannie Mae LLPA Matrix (30 September 2026), Purchase Money Loans, Investment property",
       "card_source": "Source: Fannie Mae Eligibility Matrix",
