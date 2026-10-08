@@ -2315,7 +2315,7 @@
     },
     {
       "id": "heloc-not-covered-by-prepay-limits",
-      "card": "The federal 2%-and-three-years limit on prepayment penalties doesn't apply to HELOCs: ask about early-termination fees.",
+      "card": "The 2% federal cap on prepayment penalties doesn't cover HELOCs. Ask about early-termination fees.",
       "caption": "Regulation Z's limits apply to dwelling-secured loans other than \"A home equity line of credit subject to § 1026.40\". A HELOC that is a high-cost mortgage under 12 CFR 1026.32, though, can't carry one at all: a high-cost mortgage \"shall not include\" a prepayment penalty, which for a line means \"a charge imposed by the creditor if the consumer terminates the open-end credit plan prior to the end of its term\", apart from certain waived third-party charges. The CFPB's HELOC worksheet has a line for an \"Early termination fee\", so ask whether a line you are offered carries one. https://shouldifinance.com/guides/fixed-home-equity-loan-or-heloc",
       "guide": "fixed-home-equity-loan-or-heloc",
       "source": "12 CFR 1026.43(a) (Regulation Z), scope; 12 CFR 1026.32(b)(6)(ii) and (d)(6), high-cost mortgages; CFPB HELOC booklet, Get three HELOC estimates worksheet",

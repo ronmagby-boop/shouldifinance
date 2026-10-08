@@ -251,7 +251,9 @@
     },
     "heloc-cap-is-the-lenders": {
       "hash": "a7b39a5f3e12425c",
-      "warnings": []
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
     },
     "heloc-draw-as-you-go": {
       "hash": "f1a4dbc9f9287cd1",
@@ -276,7 +278,7 @@
       "warnings": []
     },
     "heloc-not-covered-by-prepay-limits": {
-      "hash": "ab8e751a252c4f62",
+      "hash": "020c3dcacb68bcf0",
       "warnings": []
     },
     "heloc-not-deductible": {

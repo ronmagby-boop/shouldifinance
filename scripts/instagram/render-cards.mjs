@@ -382,11 +382,15 @@ function wrapsInPage() {
   const wrap = (el) => {
     const node = el?.firstChild;
     if (!node) return null;
+    // A word's line is the line it ends on: a hyphenated word broken across
+    // lines ("early-" / "termination fees.") belongs with the words after
+    // the break, so it is not counted as leaving "fees." alone.
     const tops = [...node.textContent.matchAll(/\S+/g)].map((m) => {
       const r = document.createRange();
       r.setStart(node, m.index);
       r.setEnd(node, m.index + m[0].length);
-      return Math.round(r.getClientRects()[0].top);
+      const rects = r.getClientRects();
+      return Math.round(rects[rects.length - 1].top);
     });
     const last = Math.max(...tops);
     return { lines: new Set(tops).size, lastLineWords: tops.filter((t) => Math.abs(t - last) <= 2).length };
