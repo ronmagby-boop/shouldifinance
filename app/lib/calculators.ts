@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -247,6 +247,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "bigger-down-payment-or-buy-sooner",
       teaser: "What mortgage insurance really costs, and when it stops",
+    },
+  },
+  {
+    slug: "rental-property",
+    title: "Should I buy a rental property?",
+    nav: "Should I buy a rental?",
+    desc: "Run the numbers on a rental: monthly cash flow, cash-on-cash return, cap rate, DSCR, break-even rent and the cash you need to close.",
+    icon: Building2, bg: "bg-teal-50", category: "Home", kind: "should-i",
+    keywords: ["rental property calculator", "should I buy a rental property", "cash on cash return", "cap rate calculator", "DSCR calculator"],
+    guide: {
+      slug: "should-you-buy-a-rental-property",
+      teaser: "What the numbers mean, and why cash flow is thin",
     },
   },
   {
@@ -743,6 +755,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
       "mortgage-payment", "extra-payments", "payoff-house-vs-invest", "pay-off-debt",
     ] },
     { id: "selling-or-moving", title: "Selling or moving", short: "Selling & moving", slugs: ["rent-or-sell", "sell-first-or-buy-first"] },
+    { id: "rental-property", title: "Rental property", short: "Rentals", slugs: ["rental-property"] },
   ],
   Debt: [
     { id: "debt-tools", title: null, short: null, slugs: [

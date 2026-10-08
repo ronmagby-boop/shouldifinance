@@ -27,7 +27,7 @@ test("the guard names a calculator left out, listed twice, or in another categor
 test("byCategory follows the section order", () => {
   // Home's sections run Refinancing, Home equity, Buying a home, payment and payoff, Selling or moving.
   assert.deepEqual(CALC_SECTIONS.Home.map((s) => s.id),
-    ["refinancing", "home-equity", "buying-a-home", "mortgage-payment-and-payoff", "selling-or-moving"]);
+    ["refinancing", "home-equity", "buying-a-home", "mortgage-payment-and-payoff", "selling-or-moving", "rental-property"]);
   assert.deepEqual(byCategory("Home").slice(0, 4).map((c) => c.slug), ["should-i-refinance", "va-recoup", "refinance-to-pay-off-debt", "heloc-vs-cash-out"]);
   // Every titled section has a short jump-link label; Debt's untitled one has none.
   for (const s of Object.values(CALC_SECTIONS).flat()) assert.equal(Boolean(s.title), Boolean(s.short), s.id);
