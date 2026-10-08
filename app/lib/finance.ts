@@ -13,6 +13,37 @@ export const CONFORMING_LOAN_LIMIT_BASELINE = 832_750;
 export const CONFORMING_LOAN_LIMIT_CEILING = 1_249_125;
 export const CONFORMING_LOAN_LIMIT_YEAR = 2026;
 
+/**
+ * Fannie Mae's maximum LTV for buying an investment property, Desktop
+ * Underwriter, fixed or adjustable rate: the Eligibility Matrix of 5 August
+ * 2026 (singlefamily.fanniemae.com/media/20786/display), "Investment Property
+ * / Purchase / 1 Unit FRM/ARM: 85% / 2-4 Units FRM/ARM: 75%". So at least 15%
+ * down on one unit and 25% on two to four. Manually underwritten loans and
+ * other investors can be stricter. Recheck when the matrix is reissued.
+ */
+export const INVESTMENT_MAX_LTV = { oneUnit: 85, twoToFourUnits: 75 } as const;
+export const INVESTMENT_MATRIX_DATE = "5 August 2026";
+
+/**
+ * Fannie Mae's loan-level price adjustment for an investment property on a
+ * purchase, percent of the loan, by LTV band: the LLPA Matrix effective 30
+ * September 2026 (singlefamily.fanniemae.com/media/9391/display), "Additional
+ * LLPAs by Loan Attribute Applicable to Purchase Money Loans", row
+ * "Investment property": 1.125% to 60.00%, 1.625% to 70.00%, 2.125% to
+ * 75.00%, 3.375% to 80.00% and 4.125% to 85.00% (and above, where the
+ * matrix continues at 4.125%). This is on top of the credit-score LLPA every
+ * loan pays; lenders usually fold it into a higher rate rather than charge it
+ * up front. Each band includes its upper bound.
+ */
+export const INVESTMENT_PURCHASE_LLPA: readonly { maxLtv: number; pct: number }[] = [
+  { maxLtv: 60, pct: 1.125 },
+  { maxLtv: 70, pct: 1.625 },
+  { maxLtv: 75, pct: 2.125 },
+  { maxLtv: 80, pct: 3.375 },
+  { maxLtv: Infinity, pct: 4.125 },
+];
+export const INVESTMENT_LLPA_DATE = "30 September 2026";
+
 /** Level monthly payment for a fully amortizing loan. */
 export function payment(principal: number, annualRate: number, months: number): number {
   if (principal <= 0 || months <= 0) return 0;

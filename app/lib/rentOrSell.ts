@@ -358,22 +358,61 @@ export function sellNow(i: Inputs) {
   };
 }
 
+/**
+ * One month's operating lines for a rental, before any mortgage: rent less
+ * vacancy, management (on rent collected), a capital reserve (on scheduled
+ * rent), maintenance (a share of the home's value a year), property tax,
+ * insurance, HOA and turnover. Shared with lib/rentalProperty.ts, so the two
+ * calculators count a landlord's costs the same way. `costGrowth` scales the
+ * value-, tax-, insurance-, HOA- and turnover-based lines.
+ */
+export function rentalOperatingLines(r: {
+  scheduledRent: number;
+  vacancyPct: number;
+  management: boolean;
+  managementPct: number;
+  capexPct: number;
+  maintenancePct: number;
+  /** The home's value, which maintenance is a share of. */
+  value: number;
+  /** Annual property tax, insurance and any other fixed yearly cost. */
+  annualFixed: number;
+  /** Monthly HOA dues. */
+  hoa: number;
+  turnoverPerYear: number;
+  costGrowth: number;
+}) {
+  const { scheduledRent, costGrowth } = r;
+  const vacancy = (scheduledRent * r.vacancyPct) / 100;
+  const collected = scheduledRent - vacancy;
+  const management = r.management ? (collected * r.managementPct) / 100 : 0;
+  const capex = (scheduledRent * r.capexPct) / 100;
+  const maintenance = ((r.value * r.maintenancePct) / 100 / 12) * costGrowth;
+  const taxInsHoa = (r.annualFixed / 12 + r.hoa) * costGrowth;
+  const turnover = (r.turnoverPerYear / 12) * costGrowth;
+  const operatingIncome = collected - management - capex - maintenance - taxInsHoa - turnover;
+  return { scheduledRent, vacancy, collected, management, capex, maintenance, taxInsHoa, turnover, operatingIncome };
+}
+
 /** One month's rental cash flow, by line, in month `m` (1 = the first). */
 function monthLines(i: Inputs, m: number, mortgagePayment: number, mortgageMonths: number) {
   const year = Math.ceil(m / 12) - 1;
-  const rentGrowth = grow(i.rentGrowthPct, year);
-  const costGrowth = grow(i.expenseGrowthPct, year);
-  const scheduledRent = i.rent * rentGrowth;
-  const vacancy = (scheduledRent * i.vacancyPct) / 100;
-  const collected = scheduledRent - vacancy;
-  const management = i.management ? (collected * i.managementPct) / 100 : 0;
-  const capex = (scheduledRent * i.capexPct) / 100;
-  const maintenance = ((i.homeValue * i.maintenancePct) / 100 / 12) * costGrowth;
-  const taxInsHoa = ((i.propertyTax + i.insurance + i.landlordInsuranceExtra) / 12 + i.hoa) * costGrowth;
-  const turnover = (i.turnoverPerYear / 12) * costGrowth;
+  const ops = rentalOperatingLines({
+    scheduledRent: i.rent * grow(i.rentGrowthPct, year),
+    vacancyPct: i.vacancyPct,
+    management: i.management,
+    managementPct: i.managementPct,
+    capexPct: i.capexPct,
+    maintenancePct: i.maintenancePct,
+    value: i.homeValue,
+    annualFixed: i.propertyTax + i.insurance + i.landlordInsuranceExtra,
+    hoa: i.hoa,
+    turnoverPerYear: i.turnoverPerYear,
+    costGrowth: grow(i.expenseGrowthPct, year),
+  });
   const mortgage = m <= mortgageMonths ? mortgagePayment : 0;
-  const cashFlow = collected - management - capex - maintenance - taxInsHoa - turnover - mortgage;
-  return { scheduledRent, vacancy, management, capex, maintenance, taxInsHoa, turnover, mortgage, cashFlow };
+  const { scheduledRent, vacancy, management, capex, maintenance, taxInsHoa, turnover } = ops;
+  return { scheduledRent, vacancy, management, capex, maintenance, taxInsHoa, turnover, mortgage, cashFlow: ops.operatingIncome - mortgage };
 }
 
 export function rentOut(i: Inputs) {
