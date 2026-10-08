@@ -57,8 +57,13 @@ export default function CalcShell({
   return (
     <main className="min-h-screen bg-white font-sans flex flex-col">
       {/* Widened from max-w-5xl to make room for the sidebar rail without
-          narrowing the calculator itself (1280 - 220 rail > the old 1024). */}
-      <div className="max-w-7xl mx-auto">
+          narrowing the calculator itself (1280 - 220 rail > the old 1024).
+          w-full matters: inside <main>'s column flexbox, an mx-auto child with
+          no width shrinks to fit its content, and the one-line breadcrumb's
+          minimum width then made six long-titled pages wider than a phone,
+          clipped by the body's overflow-x: clip. With w-full the breadcrumb
+          scrolls within itself, as it was built to. */}
+      <div className="max-w-7xl mx-auto w-full">
         <SiteNav position="sticky" logo="compact" />
 
         {/* BREADCRUMB */}
