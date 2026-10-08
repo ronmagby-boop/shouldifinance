@@ -276,10 +276,8 @@
       "warnings": []
     },
     "heloc-not-covered-by-prepay-limits": {
-      "hash": "8e8498fbf02706bc",
-      "warnings": [
-        "card text wraps to 6 lines with one word on the last"
-      ]
+      "hash": "ab8e751a252c4f62",
+      "warnings": []
     },
     "heloc-not-deductible": {
       "hash": "758edca8d01ab758",
@@ -306,10 +304,8 @@
       ]
     },
     "home-equity-prepayment-cap": {
-      "hash": "3fa54549ed5339f9",
-      "warnings": [
-        "card text wraps to 5 lines with one word on the last"
-      ]
+      "hash": "ec1492fb254f0efa",
+      "warnings": []
     },
     "home-sale-three-year-window": {
       "hash": "579d14bd82c4ea23",
