@@ -91,7 +91,8 @@ export default function Calculator() {
   const r = useMemo(() => {
     const income = n(borrower) + n(coBorrower) + n(otherIncome);
     if (income <= 0) return null;
-    const housing = n(pi) + n(taxes) + n(insurance) + n(hoa) + n(mi);
+    const housingBeforeMi = n(pi) + n(taxes) + n(insurance) + n(hoa);
+    const housing = housingBeforeMi + n(mi);
     const nonStudent = n(car) + n(cards) + n(personal) + n(support) + n(otherDebt);
     const studentLoans: StudentLoan[] = loans
       .filter((l) => n(l.balance) > 0 || n(l.payment) > 0)
@@ -101,7 +102,7 @@ export default function Calculator() {
       }));
     const studentEntered = studentLoans.reduce((s, l) => s + l.payment, 0);
     const debts = nonStudent + studentEntered;
-    const rows = PROGRAMS.map((p) => programRow(p, income, housing, nonStudent, studentLoans));
+    const rows = PROGRAMS.map((p) => programRow(p, income, housingBeforeMi, n(mi), nonStudent, studentLoans));
     const vaRow = rows.find((x) => x.program === "va")!;
     const vaStudent = vaRow.studentPayment ?? studentEntered;
     const targetPct = n(target) > 0 ? n(target) : 36;
@@ -111,7 +112,7 @@ export default function Calculator() {
       ? vaResidual({
           grossIncome: income,
           federalTax: n(fedTax), stateTax: n(stateTax), socialSecurityMedicare: n(fica), retirement: n(retirement),
-          housing, squareFeet: n(sqft), debts: nonStudent + vaStudent, jobRelated: n(jobCosts),
+          housing: vaRow.housing, squareFeet: n(sqft), debts: nonStudent + vaStudent, jobRelated: n(jobCosts),
           loanAmount: n(loanAmount), region, familySize: n(family), military,
         })
       : null;
@@ -151,13 +152,18 @@ export default function Calculator() {
               <NumField label="Property taxes/mo" value={taxes} onChange={setTaxes} min={0} placeholder="350" prefix="$" />
               <NumField label="Insurance/mo" value={insurance} onChange={setInsurance} min={0} placeholder="150" prefix="$" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <NumField label="HOA/mo" value={hoa} onChange={setHoa} min={0} placeholder="0" prefix="$" />
-              <NumField label="Mortgage insurance/mo" value={mi} onChange={setMi} min={0} placeholder="0" prefix="$" />
-            </div>
+            <NumField label="HOA/mo" value={hoa} onChange={setHoa} min={0} placeholder="0" prefix="$" />
+            <NumField
+              label="Mortgage insurance/mo"
+              value={mi}
+              onChange={setMi}
+              min={0}
+              placeholder="0"
+              prefix="$"
+              hint="PMI on a conventional loan, FHA's annual premium or USDA's annual fee. Counted in the conventional, FHA and USDA rows; left out of the VA row and residual income, because VA charges no monthly mortgage insurance."
+            />
             <p className="text-xs text-gray-400 leading-relaxed">
-              Mortgage insurance is PMI on a conventional loan or the annual premium on FHA; a VA loan has none, so enter 0 when
-              checking VA. The <Link href="/calculators/mortgage-payment" className="underline">mortgage payment calculator</Link>{" "}
+              The <Link href="/calculators/mortgage-payment" className="underline">mortgage payment calculator</Link>{" "}
               works these out from a price and rate.
             </p>
           </div>
@@ -300,8 +306,8 @@ export default function Calculator() {
             </div>
             <p className="text-xs text-gray-500 leading-relaxed mt-3">
               FHA&apos;s higher tiers need a credit score of 580 or above; below that, or with no score, a manually underwritten
-              loan may not exceed 31/43. Energy-efficient homes may have stretch ratios of 33/45. Every row uses the housing
-              payment you entered, though each program&apos;s mortgage insurance differs.
+              loan may not exceed 31/43. Energy-efficient homes may have stretch ratios of 33/45. Mortgage insurance is counted
+              at the amount you entered, though each program prices it differently; the VA row leaves it out.
             </p>
           </div>
 

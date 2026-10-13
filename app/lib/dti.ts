@@ -68,6 +68,16 @@ export const FHA_HANDBOOK_DATE = "12 August 2026";
 export const VA_DTI = 41;
 export const VA_RESIDUAL_BENCHMARK_PCT = 20;
 
+/**
+ * VA charges no monthly mortgage insurance, so the VA row and residual income
+ * leave it out of the housing payment. VA's funding fee page (va.gov/housing-
+ * assistance/home-loans/funding-fee-and-closing-costs/, last updated 5 October
+ * 2026), the source the VA-vs-conventional guide cites: "the VA home loan
+ * program doesn't require down payments or monthly mortgage insurance." Its
+ * one-time funding fee is financed or paid at closing, not monthly.
+ */
+export const countsMortgageInsurance = (program: Program) => program !== "va";
+
 /* ----------------------------------------------------------------------------
  * USDA.
  *
@@ -202,6 +212,8 @@ export type ProgramRow = {
   program: Program;
   /** The student loan payment this program counts, or null where not modelled. */
   studentPayment: number | null;
+  /** The housing payment this program counts: mortgage insurance included except for VA. */
+  housing: number;
   front: number;
   back: number;
   standing: Standing;
@@ -220,10 +232,13 @@ const p0 = (v: number) => `${v}%`;
 export function programRow(
   program: Program,
   income: number,
-  housing: number,
+  /** Principal, interest, taxes, insurance and HOA: the housing payment before mortgage insurance. */
+  housingBeforeMi: number,
+  mortgageInsurance: number,
   nonHousingDebts: number,
   loans: readonly StudentLoan[],
 ): ProgramRow {
+  const housing = housingBeforeMi + (countsMortgageInsurance(program) ? mortgageInsurance : 0);
   const counted = loans.map((l) => studentLoanPayment(program, l));
   const notModelled = counted.some((c) => c === null);
   // Where a program's rule is not modelled, the reader's own payment stands in.
@@ -244,7 +259,7 @@ export function programRow(
               ? `Above ${p0(FNMA_DTI.manualMax)}: only through Desktop Underwriter, whose maximum is ${p0(FNMA_DTI.du)}.`
               : `Above Desktop Underwriter's ${p0(FNMA_DTI.du)} maximum.`;
       return {
-        program, studentPayment, front, back, standing, verdict,
+        program, studentPayment, housing, front, back, standing, verdict,
         guideline: `Total ${p0(FNMA_DTI.manual)} manual (to ${p0(FNMA_DTI.manualMax)} with score and reserves); ${p0(FNMA_DTI.du)} through DU. No housing ratio.`,
       };
     }
@@ -257,7 +272,7 @@ export function programRow(
           ? `Within ${met[0].front}/${met[0].back}, with no compensating factors needed.`
           : `Within ${met.map((t) => `${t.front}/${t.back} (${t.needs})`).join(", or ")}.`;
       return {
-        program, studentPayment, front, back, standing, verdict,
+        program, studentPayment, housing, front, back, standing, verdict,
         guideline: "Manual: 31/43, rising to 37/47, 40/40 or 40/50 with compensating factors, for scores of 580 and above. TOTAL sets no fixed ratio.",
       };
     }
@@ -265,7 +280,7 @@ export function programRow(
       const rounded = vaRoundedRatio(back);
       const standing: Standing = rounded <= VA_DTI ? "within" : "stretch";
       return {
-        program, studentPayment, front, back, standing,
+        program, studentPayment, housing, front, back, standing,
         verdict:
           rounded <= VA_DTI
             ? `${rounded}% after VA's rounding: within ${p0(VA_DTI)}.`
@@ -276,7 +291,7 @@ export function programRow(
     case "usda": {
       const ok = front <= USDA_DTI.front && back <= USDA_DTI.back;
       return {
-        program, studentPayment, front, back,
+        program, studentPayment, housing, front, back,
         standing: ok ? "within" : "stretch",
         verdict: ok
           ? `Within ${USDA_DTI.front}/${USDA_DTI.back}.`
