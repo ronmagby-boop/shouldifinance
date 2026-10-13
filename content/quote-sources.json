@@ -31,6 +31,26 @@
       ]
     },
     {
+      "id": "cfr-38-36-4340",
+      "title": "38 CFR 36.4340, underwriting standards, processing procedures, lender responsibility, and lender certification",
+      "url": "https://www.ecfr.gov/current/title-38/chapter-I/part-36/subpart-B/subject-group-ECFR3cf44b6fb6dc0c3/section-36.4340",
+      "retrieved": "2026-10-10",
+      "excerpts": [
+        "The standard is 41 percent or less.",
+        "(3) If the ratio is greater than 41 percent and the residual income exceeds the guidelines by at least 20 percent, the second level review and statement of justification are not required."
+      ]
+    },
+    {
+      "id": "cfr-7-3555-151",
+      "title": "7 CFR 3555.151, eligibility requirements (USDA Single Family Housing Guaranteed Loan Program)",
+      "url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-XXXV/part-3555/subpart-D/section-3555.151",
+      "retrieved": "2026-10-10",
+      "excerpts": [
+        "(i) An applicant is considered to have adequate repayment ability when the monthly amount required for payment of PITI, homeowners' association dues, the monthly calculation of an annual fee, as applicable, and other real estate assessments does not exceed 29 percent of the applicant's repayment income and the monthly amount of PITI plus recurring monthly debts (total debt) does not exceed 41 percent of the applicant's repayment income.",
+        "(iii) Contributions to personal income taxes, retirement accounts (including the repayment of personal loans from those retirement accounts), savings (including repayment of loans secured by such funds), the cost to commute, membership fees in unions or like organizations, childcare or other voluntary obligations will not be considered in the TD ratio."
+      ]
+    },
+    {
       "id": "fed-prime-faq",
       "title": "Federal Reserve, What is the prime rate, and does the Federal Reserve set the prime rate?",
       "url": "https://www.federalreserve.gov/faqs/credit_12846.htm",
@@ -53,6 +73,25 @@
       ]
     },
     {
+      "id": "fnma-b3-6-02",
+      "title": "Fannie Mae Selling Guide B3-6-02, Debt-to-Income Ratios (published 7 October 2026)",
+      "url": "https://selling-guide.fanniemae.com/sel/b3-6-02/debt-income-ratios",
+      "retrieved": "2026-10-10",
+      "excerpts": [
+        "Maximum DTI Ratios For manually underwritten loans, Fannie Mae's maximum total DTI ratio is 36% of the borrower's stable monthly income.",
+        "For loan casefiles underwritten through DU, the maximum allowable DTI ratio is 50%."
+      ]
+    },
+    {
+      "id": "fnma-b3-6-05",
+      "title": "Fannie Mae Selling Guide B3-6-05, Monthly Debt Obligations (published 7 October 2026)",
+      "url": "https://selling-guide.fanniemae.com/sel/b3-6-05/monthly-debt-obligations",
+      "retrieved": "2026-10-10",
+      "excerpts": [
+        "If the borrower is on an income-driven payment plan, the lender may obtain student loan documentation to verify the actual monthly payment is $0."
+      ]
+    },
+    {
       "id": "fpa-bengen-citation",
       "title": "Journal of Financial Planning (FPA), Revisiting William Bengen's 'SAFEMAX' Portfolio Withdrawal Rate (November 2023), references: the 1994 paper's title",
       "url": "https://www.financialplanningassociation.org/learning/publications/journal/NOV23-revisiting-william-bengens-safemax-portfolio-withdrawal-rate-OPEN",
@@ -67,7 +106,9 @@
       "url": "https://www.hud.gov/sites/default/files/Housing/documents/40001-hsgh-Update-18.pdf",
       "retrieved": "2026-10-05",
       "excerpts": [
-        "Financing of Upfront Mortgage Insurance Premium Unless otherwise stated in this section (Origination through Post-closing/Endorsement), restrictions to mortgage amounts and LTVs are based upon the amount prior to the financing of the Upfront Mortgage Insurance Premium (UFMIP) (Base Loan Amount)."
+        "Financing of Upfront Mortgage Insurance Premium Unless otherwise stated in this section (Origination through Post-closing/Endorsement), restrictions to mortgage amounts and LTVs are based upon the amount prior to the financing of the Upfront Mortgage Insurance Premium (UFMIP) (Base Loan Amount).",
+        "Credit Score 580 and above 31/43 Energy Efficient Homes may have stretch ratios of 33/45.",
+        "(4) Calculation of Monthly Obligation [Text was deleted in this section.] For outstanding Student Loans, regardless of the payment status, the Mortgagee must use: the payment amount reported on the credit report or the actual documented payment, when the payment amount is above zero; or 0.5 percent of the outstanding loan balance, when the monthly payment reported on the Borrower's credit report is zero."
       ]
     },
     {
@@ -241,6 +282,16 @@
       "retrieved": "2026-10-06",
       "excerpts": [
         "The calculation is as follows: For proposed loan amounts over $144,00011: the maximum amount of guaranty entitlement available is 25% of the single-unit Freddie Mac Conforming Loan Limit (CLL) for the county where the proposed subject property is located reduced by the amount of unrestored entitlement. Example: A Veteran with an existing VA-guaranteed loan using $55,000 of their guaranty entitlement is moving to another state and wishes to purchase a new home."
+      ]
+    },
+    {
+      "id": "va-pamphlet-26-7-ch4",
+      "title": "VA Pamphlet 26-7, Chapter 4, Credit Underwriting (updated 26 August 2026)",
+      "url": "https://www.knowva.ebenefits.va.gov/system/templates/selfservice/va_ssnew/help/customer/locale/en-US/portal/554400000001018/content/554400000330850/VA-Pamphlet-VAP26-7-Chapter-04-Credit-Underwriting",
+      "retrieved": "2026-10-10",
+      "excerpts": [
+        "If the borrower(s) provides written evidence that the student loan debt will be deferred at least 12 months beyond the date of closing, a monthly payment does not need to be considered.",
+        "19 Calculate maintenance and utility costs using 14¢ per square foot for the gross living area as per the appraisal."
       ]
     }
   ]

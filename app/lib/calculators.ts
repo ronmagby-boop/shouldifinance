@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -380,6 +380,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "what-rate-are-you-really-paying",
       teaser: "What a lender's APR legally leaves out",
+    },
+  },
+  {
+    slug: "debt-to-income",
+    title: "What's my debt-to-income ratio?",
+    nav: "What's my debt-to-income ratio?",
+    desc: "Your front-end and back-end ratios, how conventional, FHA, VA and USDA guidelines count them, and VA residual income.",
+    icon: Divide, bg: "bg-amber-50", category: "Debt", kind: "what-how",
+    keywords: ["debt to income ratio calculator", "DTI calculator", "front end back end ratio", "VA residual income", "student loans DTI"],
+    guide: {
+      slug: "whats-a-good-debt-to-income-ratio",
+      teaser: "What counts, and why the guideline is not the limit",
     },
   },
   // ---------- Money ----------
@@ -760,7 +772,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
   Debt: [
     { id: "debt-tools", title: null, short: null, slugs: [
       "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation",
-      "effective-interest-rate", "student-loan-repayment",
+      "effective-interest-rate", "student-loan-repayment", "debt-to-income",
     ] },
   ],
   Money: [

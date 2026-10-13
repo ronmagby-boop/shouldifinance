@@ -23,6 +23,13 @@ import {
 import { CASH_OUT_MAX_LTV, FHA_CASH_OUT_UFMIP, VA_CASH_OUT_FUNDING_FEE } from "./helocCashOut";
 import { VA_FUNDING_FEE_PURCHASE, VA_FUNDING_FEE_UNTIL } from "./va";
 import {
+  FHA_HANDBOOK_DATE,
+  FNMA_DTI,
+  FNMA_GUIDE_DATE,
+  FNMA_STUDENT_DEFERRED_PCT,
+  VA_STUDENT_ANNUAL_PCT,
+} from "./dti";
+import {
   BENCHMARK_RETURN,
   FANCIFUL_RETURN,
   FUND_FEES,
@@ -119,6 +126,13 @@ export const GUIDE_TOKENS: Record<string, string> = {
   INVESTMENT_LLPA_AT_75: `${INVESTMENT_PURCHASE_LLPA.find((b) => 75 <= b.maxLtv)!.pct}%`,
   INVESTMENT_LLPA_AT_85: `${INVESTMENT_PURCHASE_LLPA.find((b) => 85 <= b.maxLtv)!.pct}%`,
   INVESTMENT_LLPA_DATE,
+  // Debt-to-income guidelines and student loan rules (lib/dti.ts).
+  FNMA_DTI_MANUAL_MAX: `${FNMA_DTI.manualMax}%`,
+  FNMA_DTI_DU: `${FNMA_DTI.du}%`,
+  FNMA_GUIDE_DATE,
+  FNMA_STUDENT_DEFERRED_PCT: `${FNMA_STUDENT_DEFERRED_PCT}%`,
+  FHA_HANDBOOK_DATE,
+  VA_STUDENT_ANNUAL_PCT: `${VA_STUDENT_ANNUAL_PCT}%`,
 
   STUDENT_POLICY_AS_OF: POLICY_AS_OF,
   NEW_LOAN_CUTOFF,
