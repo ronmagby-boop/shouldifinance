@@ -8,13 +8,22 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
 import { payment, pmiRateForLtv } from "../../lib/finance";
+import { FHA_HANDBOOK_DATE, FHA_MANUAL_TIERS } from "../../lib/dti";
+
+const FHA_STANDARD = FHA_MANUAL_TIERS[0];
 
 type Scenario = { name: string; frontEnd: number; backEnd: number; note: string; color: string };
 
 const SCENARIOS: Scenario[] = [
   { name: "Conservative", frontEnd: 25, backEnd: 33, note: "Comfortable room for savings and the unexpected", color: COLORS.green },
   { name: "Standard", frontEnd: 28, backEnd: 36, note: "The classic 28/36 rule most lenders start from", color: COLORS.blue },
-  { name: "Maximum", frontEnd: 31, backEnd: 43, note: "The upper limit of most qualified mortgages", color: COLORS.amber },
+  // FHA's first manual-underwriting tier, read from lib/dti.ts (HUD Handbook 4000.1,
+  // "Approvable Ratio Requirements (Manual)").
+  {
+    name: "Maximum", frontEnd: FHA_STANDARD.front, backEnd: FHA_STANDARD.back,
+    note: `FHA's standard ratios for a manually underwritten loan with no compensating factors (HUD Handbook 4000.1, ${FHA_HANDBOOK_DATE})`,
+    color: COLORS.amber,
+  },
 ];
 
 export default function Calculator() {
