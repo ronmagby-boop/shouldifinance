@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
@@ -154,7 +155,7 @@ export default function Calculator() {
       intro="Lenders answer this with two ratios: how much of your income goes to housing, and how much goes to all debt combined. Here are three price points — what's comfortable, what's standard, and what's the ceiling."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["mortgage-payment", "fha-vs-conventional", "rent-vs-buy", "extra-payments"]}
+      relatedSlugs={["debt-to-income", "mortgage-payment", "fha-vs-conventional", "rent-vs-buy"]}
       disclaimer="For educational purposes only. Qualifying depends on credit score, assets, employment history, loan program, and the lender's own overlays — this is not a pre-approval. PMI figures are representative, not quotes: mortgage insurers now price each loan individually rather than from a published card, so these are calibrated against an archived rate card and assume a 700 credit score. What you can borrow and what you should borrow are different questions; leave room for maintenance, repairs, and life."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -256,6 +257,9 @@ export default function Calculator() {
                   what you can borrow.
                 </>
               )}
+              {" "}
+              The <Link href="/calculators/debt-to-income" className="underline">debt-to-income calculator</Link>{" "}
+              shows how conventional, FHA, VA and USDA guidelines read it.
             </Takeaway>
             </div>
           </div>

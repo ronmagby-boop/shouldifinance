@@ -24,6 +24,11 @@ divided by your gross monthly income. Two versions get used:
   minimum credit card payments, child support and anything else that shows up as
   a monthly obligation.
 
+The [debt-to-income calculator](/calculators/debt-to-income) works out both, and
+the guide to [what makes a good debt-to-income
+ratio](/guides/whats-a-good-debt-to-income-ratio) explains how conventional, FHA,
+VA and USDA guidelines read them, including how each counts student loans.
+
 Note what is *not* in there. Gross income, not take-home. No groceries, no
 childcare, no utilities, no retirement contributions, no health insurance
 premium. A lender is measuring the risk that you stop paying them, not whether
