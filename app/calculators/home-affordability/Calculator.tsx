@@ -20,7 +20,7 @@ const SCENARIOS: Scenario[] = [
   // FHA's first manual-underwriting tier, read from lib/dti.ts (HUD Handbook 4000.1,
   // "Approvable Ratio Requirements (Manual)").
   {
-    name: "Maximum", frontEnd: FHA_STANDARD.front, backEnd: FHA_STANDARD.back,
+    name: "FHA standard (manual)", frontEnd: FHA_STANDARD.front, backEnd: FHA_STANDARD.back,
     note: `FHA's standard ratios for a manually underwritten loan with no compensating factors (HUD Handbook 4000.1, ${FHA_HANDBOOK_DATE})`,
     color: COLORS.amber,
   },
@@ -73,7 +73,11 @@ export default function Calculator() {
      * insurance at all, which quietly inflated the affordable price at any
      * LTV above 80%; it now falls back to the same loan-to-value bands
      * buy-now-or-save and sell-first-or-buy-first use. A typed rate still
-     * wins, and a typed 0 is how a VA or USDA loan is modelled here.
+     * wins. A VA loan is a typed 0: VA charges no monthly mortgage insurance
+     * (VA's funding fee page, cited at countsMortgageInsurance in lib/dti.ts).
+     * A USDA loan is its annual fee typed as the rate: 7 CFR 3555.151(h)(1)(i)
+     * counts "the monthly calculation of an annual fee, as applicable" in the
+     * housing payment, so it belongs in the payment like any premium.
      */
     const pmiOn = (price: number, loan: number): { rate: number; monthly: number; banded: boolean } => {
       const ltv = price > 0 ? (loan / price) * 100 : 0;
@@ -161,7 +165,7 @@ export default function Calculator() {
   return (
     <CalcShell
       slug="home-affordability"
-      intro="Lenders answer this with two ratios: how much of your income goes to housing, and how much goes to all debt combined. Here are three price points — what's comfortable, what's standard, and what's the ceiling."
+      intro="Lenders answer this with two ratios: how much of your income goes to housing, and how much goes to all debt combined. Here are three price points: what's comfortable, what's standard, and FHA's standard ratios for a manually underwritten loan. None is a hard limit: lenders can approve higher ratios with compensating factors or through automated underwriting."
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["debt-to-income", "mortgage-payment", "fha-vs-conventional", "rent-vs-buy"]}
@@ -211,7 +215,7 @@ export default function Calculator() {
               placeholder={r ? `${r.standard.pmiPct}` : "0.32"}
               suffix="%"
               step={0.05}
-              hint="Charged while the loan is above 80% of the price. Leave it blank and we use a typical rate for your loan-to-value; enter 0 for a VA or USDA loan, which carry no mortgage insurance."
+              hint="Charged while the loan is above 80% of the price. Leave it blank and we use a typical rate for your loan-to-value; A VA loan carries no monthly mortgage insurance, so enter 0. A USDA loan carries an annual fee instead, which counts in the payment: enter its rate here."
             />
             {r && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
@@ -275,7 +279,7 @@ export default function Calculator() {
 
           <ChartCard title="Three price points">
             <BarChart
-              ariaLabel="Maximum home price under conservative, standard, and maximum debt-to-income ratios"
+              ariaLabel="Maximum home price under conservative, standard, and FHA standard manual debt-to-income ratios"
               height={220}
               bars={r.results.map((s) => ({
                 label: s.name,
