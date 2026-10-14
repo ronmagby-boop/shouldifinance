@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -613,6 +613,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "car-loan-payoff",
+    title: "Should I pay off my car loan early?",
+    nav: "Should I pay off my car loan early?",
+    desc: "See the payoff date and interest saved with extra payments, and whether the money does more paying the loan or invested.",
+    icon: BadgeCheck, bg: "bg-emerald-50", category: "Auto", kind: "should-i",
+    keywords: ["pay off car loan early", "car loan payoff calculator", "extra car payment calculator", "precomputed interest car loan", "rule of 78"],
+    guide: {
+      slug: "should-you-pay-off-your-car-loan-early",
+      teaser: "The guaranteed return, and the loans where it is smaller",
+    },
+  },
+  {
     slug: "ev-savings",
     title: "Should I switch to an electric car?",
     nav: "Should I switch to an EV?",
@@ -811,7 +823,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
       "auto-affordability", "new-vs-used-car", "ev-savings", "total-cost-of-ownership", "depreciation",
     ] },
     { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment"] },
-    { id: "after-you-buy", title: "After you buy", short: "After you buy", slugs: ["auto-loan-refinance"] },
+    { id: "after-you-buy", title: "After you buy", short: "After you buy", slugs: ["auto-loan-refinance", "car-loan-payoff"] },
   ],
 };
 

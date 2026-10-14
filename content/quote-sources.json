@@ -2,6 +2,55 @@
   "_about": "Source passages for the exact-quote check (scripts/check-quotes.mjs). Each excerpt is copied, whitespace-normalized, from the source at its url as retrieved on the date given; a quotation in a guide passes only if it appears in one of these excerpts exactly, punctuation and case included. To verify a new quote, add the passage it comes from here, copied from the source, never typed from the guide.",
   "sources": [
     {
+      "id": "cfpb-auto-ltv",
+      "title": "CFPB, What is a loan-to-value ratio in an auto loan? (last reviewed 7 March 2024)",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/what-is-a-loan-to-value-ratio-in-an-auto-loan-en-769/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "A loan with a high LTV is risky for you too. An LTV that exceeds the value of the vehicle means you will owe more than the car is worth - likely for a long period during the loan."
+      ]
+    },
+    {
+      "id": "cfpb-auto-precomputed",
+      "title": "CFPB, What's the difference between a simple interest rate and precomputed interest on an auto loan? (last reviewed 30 January 2024)",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/whats-the-difference-between-a-simple-interest-rate-and-precomputed-interest-on-an-auto-loan-en-841/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Precomputed interest results in the total interest due under the loan being calculated IMMEDIATELY. It is then spread equally among monthly payments. Simple interest - which is far more common - calculates the interest based on the outstanding balance of the loan either on a daily or monthly basis.",
+        "Precomputed interest is an uncommon way of calculating interest payments for your auto loan. It benefits the lender if you pay more than the minimum balance each month or pay off your loan early. If you plan to pay your loan off early, you want to make sure lenders are using a simple interest rate, which is generally more common.",
+        "With a precomputed interest rate, the interest is added to your principal at the beginning of your loan and then split into monthly payments. This formula allocates more of your payment to interest during the first part of your loan. Making extra payments does not reduce the principal amount (or interest) owed."
+      ]
+    },
+    {
+      "id": "cfpb-auto-prepay",
+      "title": "CFPB, Can I prepay my loan at any time without penalty? (last reviewed 30 January 2024)",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/can-i-prepay-my-loan-at-any-time-without-penalty-en-843/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Your contract and state law will determine whether you can pay off your auto loan early."
+      ]
+    },
+    {
+      "id": "cfpb-auto-principal",
+      "title": "CFPB, Is it better to pay off the interest or principal on my auto loan? (last reviewed 30 January 2024)",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/is-it-better-to-pay-off-the-interest-or-principal-on-my-auto-loan-en-845/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "The amount of money you're borrowing is known as your principal. The interest is the cost you pay for borrowing money. Interest and fees are generally paid before your payments go towards your loan's principal.",
+        "If you want to know more about how your payments are applied to your loan balance or read your loan documents, contact your lender or loan servicer. You can also review your monthly statement to confirm how your payment was applied. You may be able to request that your lender or servicer apply more of your payment to your loan's principal. Check your loan documents first."
+      ]
+    },
+    {
+      "id": "cfpb-gap",
+      "title": "CFPB, What is Guaranteed Asset Protection (GAP) insurance? (last reviewed 8 March 2024)",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/what-is-guaranteed-asset-protection-gap-insurance-en-797/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "GAP is an optional product that is intended to cover the difference between the amount you owe on your auto loan and the amount the insurance company pays if your car is stolen or totaled.",
+        "Also, you may be entitled to a refund if you sell, refinance, or prepay your auto loan."
+      ]
+    },
+    {
       "id": "cfpb-grace-period",
       "title": "CFPB, What is a grace period for a credit card?",
       "url": "https://www.consumerfinance.gov/ask-cfpb/what-is-a-grace-period-for-a-credit-card-en-47/",
@@ -190,6 +239,15 @@
       ]
     },
     {
+      "id": "reg-z-1026-18",
+      "title": "12 CFR 1026.18(k) (Regulation Z), closed-end disclosures: prepayment",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.18",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "(k) Prepayment. (1) When an obligation includes a finance charge computed from time to time by application of a rate to the unpaid principal balance, a statement indicating whether or not a charge may be imposed for paying all or part of a loan's principal balance before the date on which the principal is due. (2) When an obligation includes a finance charge other than the finance charge described in paragraph (k)(1) of this section, a statement indicating whether or not the consumer is entitled to a rebate of any finance charge if the obligation is prepaid in full or in part."
+      ]
+    },
+    {
       "id": "reg-z-1026-30",
       "title": "12 CFR 1026.30 (Regulation Z), limitation on rates",
       "url": "https://www.ecfr.gov/current/title-12/section-1026.30",
@@ -354,6 +412,16 @@
       "retrieved": "2026-10-05",
       "excerpts": [
         "But when the Fed changes their monetary policy stance you don't usually see immediate movement in mortgage interest rates. The key to understanding why there is not more of a direct connection between monetary policy and mortgage rates is that mortgage rates are determined in long-term financial markets, where expectatio"
+      ]
+    },
+    {
+      "id": "usc-15-1615",
+      "title": "15 U.S.C. 1615, prohibition on use of the Rule of 78s (GovInfo, most recent edition)",
+      "url": "https://www.govinfo.gov/link/uscode/15/1615?type=usc&year=mostrecent&link-type=html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "If a consumer prepays in full the financed amount under any consumer credit transaction, the creditor shall promptly refund any unearned portion of the interest charge to the consumer.",
+        "For the purpose of calculating any refund of interest required under subsection (a) for any precomputed consumer credit transaction of a term exceeding 61 months which is consummated after September 30, 1993, the creditor shall compute the refund based on a method which is at least as favorable to the consumer as the actuarial method."
       ]
     },
     {
