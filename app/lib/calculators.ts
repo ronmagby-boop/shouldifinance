@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -685,6 +685,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "lease-buyout",
+    title: "Should I buy out my lease?",
+    nav: "Should I buy out my lease?",
+    desc: "Compare buying your leased car at the contract price with handing it back: the all-in cost, your equity, and the end-of-lease charges you would avoid.",
+    icon: Handshake, bg: "bg-teal-50", category: "Auto", kind: "should-i",
+    keywords: ["lease buyout calculator", "should I buy out my lease", "lease buyout vs return", "residual value buyout", "lease equity"],
+    guide: {
+      slug: "should-you-buy-out-your-lease",
+      teaser: "Residual against market value, and what the fees change",
+    },
+  },
+  {
     slug: "depreciation",
     title: "What will my car be worth later?",
     nav: "What will my car be worth?",
@@ -822,7 +834,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
     { id: "choosing-a-car", title: "Choosing a car", short: "Choosing", slugs: [
       "auto-affordability", "new-vs-used-car", "ev-savings", "total-cost-of-ownership", "depreciation",
     ] },
-    { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment"] },
+    { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment", "lease-buyout"] },
     { id: "after-you-buy", title: "After you buy", short: "After you buy", slugs: ["auto-loan-refinance", "car-loan-payoff"] },
   ],
 };

@@ -73,6 +73,10 @@ benefit worth counting. It does not cover:
 > arrive in one lump at the worst possible moment, when you are also arranging
 > the next car.
 
+Those charges are also part of the case for buying the car at the end instead of
+returning it; the [lease buyout calculator](/calculators/lease-buyout) weighs
+them against the buyout price.
+
 ## Where leasing genuinely makes sense
 
 - **You want a new car every three years regardless.** If that is the plan, a

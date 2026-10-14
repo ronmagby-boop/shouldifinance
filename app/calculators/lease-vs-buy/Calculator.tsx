@@ -167,7 +167,7 @@ export default function Calculator() {
       intro="Leasing usually has the lower payment; buying usually has the lower cost. Compare both over the same number of years — including what the car is still worth at the end, which is the part leasing never gives you."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["lease-payment", "loan-vs-cash", "total-cost-of-ownership"]}
+      relatedSlugs={["lease-payment", "lease-buyout", "loan-vs-cash", "total-cost-of-ownership"]}
       disclaimer="For educational purposes only. Lease terms, residual values, money factors, and disposition fees vary by manufacturer and by month. Resale values are estimates — check current market data for the specific model. Excess mileage and wear charges can add substantially to a lease."
     >
       <Card title="The car and the timeframe" badge="SHARED" className="mb-4">

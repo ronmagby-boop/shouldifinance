@@ -20,7 +20,9 @@ down payment (a "cap cost reduction") and any rebates.
 
 **Residual value.** What the leasing company says the car will be worth at the
 end. Usually expressed as a percentage of MSRP and set by the finance company,
-not the dealer.
+not the dealer. It is usually also the price at which you can buy the car when
+the lease ends; [should you buy out your lease](/guides/should-you-buy-out-your-lease)
+covers that decision.
 
 **Money factor.** The financing rate, quoted as a small decimal.
 **Multiply it by 2,400 to get the approximate APR.** A money factor of 0.00275
