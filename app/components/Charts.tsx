@@ -73,6 +73,7 @@ export function LineChart({
   xUnit = "Yr",
   yFormat = axisLabel,
   baselineZero = true,
+  markers = [],
 }: {
   series: Series[];
   periodsPerYear?: number;
@@ -81,6 +82,8 @@ export function LineChart({
   xUnit?: string;
   yFormat?: (v: number) => string;
   baselineZero?: boolean;
+  /** Dashed vertical lines at data indexes, each labelled at the top: a date worth finding on the chart. */
+  markers?: { index: number; label: string }[];
 }) {
   const ref = useCanvas((ctx, w, h) => {
     const visible = series.filter((s) => s.data.length > 1);
@@ -141,6 +144,25 @@ export function LineChart({
     for (let y = 0; y <= totalYears; y += step) {
       const idx = Math.min(maxLen - 1, y * periodsPerYear);
       ctx.fillText(`${xUnit} ${y}`, xAt(idx), h - pad.bottom + 14);
+    }
+
+    // markers, under the series so a line is never hidden by one
+    ctx.font = "10px sans-serif";
+    for (const m of markers) {
+      if (m.index < 0 || m.index > maxLen - 1) continue;
+      const x = xAt(m.index);
+      ctx.strokeStyle = "#9CA3AF";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, pad.top + ch);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#6B7280";
+      // Anchored away from whichever edge is nearer, so the label stays on the canvas.
+      ctx.textAlign = x > pad.left + cw / 2 ? "right" : "left";
+      ctx.fillText(m.label, x + (ctx.textAlign === "right" ? -4 : 4), pad.top + 8);
     }
 
     // series

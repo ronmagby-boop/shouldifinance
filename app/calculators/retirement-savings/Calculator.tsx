@@ -2,11 +2,25 @@
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
-  Card, NumField, Headline, Stat, Takeaway, EmptyState,
+  Card, NumField, Toggle, Headline, Stat, Takeaway, EmptyState,
   fmt, fmtK, n, has, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, COLORS } from "../../components/Charts";
-import { growthSeries } from "../../lib/finance";
+import {
+  SS_EARLIEST_CLAIM_AGE, SS_LATEST_CREDIT_AGE, SS_FIRST_BIRTH_YEAR,
+  claimAdjustmentPct, defaultClaimAge, fullRetirementAgeMonths, project, type SocialSecurity,
+} from "../../lib/retirement";
+
+/** The year a birth year is inferred from when none is entered. Inlined at build, so server and browser agree. */
+const THIS_YEAR = Number(process.env.BUILD_YEAR) || 2026;
+
+/** An age in years and months, as SSA writes it: "66 and 8 months". */
+const ageLabel = (years: number) => {
+  const total = Math.round(years * 12);
+  const y = Math.floor(total / 12);
+  const m = total % 12;
+  return m ? `${y} and ${m} month${m === 1 ? "" : "s"}` : `${y}`;
+};
 
 export default function Calculator() {
   const [age, setAge] = useState<Num>("");
@@ -20,6 +34,9 @@ export default function Calculator() {
   const [inflation, setInflation] = useState<Num>("");
   const [lifeExp, setLifeExp] = useState<Num>("");
   const [socialSecurity, setSocialSecurity] = useState<Num>("");
+  const [birthYear, setBirthYear] = useState<Num>("");
+  const [claimAge, setClaimAge] = useState<Num>("");
+  const [asEntered, setAsEntered] = useState(false);
 
   const loadExample = () => {
     setAge(35);
@@ -33,6 +50,9 @@ export default function Calculator() {
     setInflation(2.5);
     setLifeExp(92);
     setSocialSecurity(2200);
+    setBirthYear("");
+    setClaimAge("");
+    setAsEntered(false);
   };
 
   /** Back to the page's initial state: every field, flag and row. */
@@ -48,6 +68,9 @@ export default function Calculator() {
     setInflation("");
     setLifeExp("");
     setSocialSecurity("");
+    setBirthYear("");
+    setClaimAge("");
+    setAsEntered(false);
   };
 
   /* Kept out of the main result so the render can name what is wrong
@@ -59,99 +82,43 @@ export default function Calculator() {
     return null;
   }, [age, retireAge, lifeExp]);
 
+  /* Social Security timing. A blank birth year is read off the current age;
+   * a blank claiming age is full retirement age, or the retirement age if later. */
+  const ssSetup = useMemo(() => {
+    const bornGiven = has(birthYear) && n(birthYear) >= SS_FIRST_BIRTH_YEAR;
+    const born = bornGiven ? n(birthYear) : THIS_YEAR - n(age);
+    const fraYears = fullRetirementAgeMonths(born) / 12;
+    const defaultAge = defaultClaimAge(born, n(retireAge) > 0 ? n(retireAge) : fraYears);
+    const typed = has(claimAge) ? n(claimAge) : null;
+    const claim = typed === null ? defaultAge : Math.min(SS_LATEST_CREDIT_AGE, Math.max(SS_EARLIEST_CLAIM_AGE, typed));
+    const ss: SocialSecurity = asEntered
+      ? { mode: "asEntered", benefit: n(socialSecurity), claimAge: claim }
+      : { mode: "fra", benefitAtFra: n(socialSecurity), birthYear: born, claimAge: claim };
+    return {
+      bornInferred: !bornGiven, fraYears, defaultAge, claim, ss,
+      outOfRange: typed !== null && (typed < SS_EARLIEST_CLAIM_AGE || typed > SS_LATEST_CREDIT_AGE),
+      adjustmentPct: asEntered ? null : claimAdjustmentPct(born, claim),
+    };
+  }, [age, retireAge, birthYear, claimAge, asEntered, socialSecurity]);
+
   const r = useMemo(() => {
     const yearsToRetire = n(retireAge) - n(age);
     if (n(age) <= 0 || yearsToRetire <= 0) return null;
     // A plan-through age at or before retirement used to collapse to a
     // silent one-year retirement; it now asks rather than inventing one.
     if (n(lifeExp) - n(retireAge) <= 0) return null;
-
-    const accum = growthSeries({
-      initial: n(savings),
-      contribution: n(monthly) + n(match),
-      annualRate: n(preReturn),
-      years: yearsToRetire,
-      periodsPerYear: 12,
+    const p = project({
+      age: n(age), retireAge: n(retireAge), planThroughAge: n(lifeExp),
+      savings: n(savings), contribution: n(monthly) + n(match),
+      preReturn: n(preReturn), postReturn: n(postReturn),
+      income: n(income), inflation: n(inflation), ss: ssSetup.ss,
     });
-    const nestEgg = accum.balances[accum.balances.length - 1];
-
-    // Income need in future dollars at the retirement date.
-    const infl = n(inflation) / 100;
-    const needToday = Math.max(0, n(income) - n(socialSecurity));
-    const needAtRetirement = needToday * Math.pow(1 + infl, yearsToRetire);
-
-    // Drawdown: withdraw the inflation-adjusted need each month.
-    const retirementYears = n(lifeExp) - n(retireAge);
-    const postR = n(postReturn) / 100 / 12;
-    let bal = nestEgg;
-    let draw = needAtRetirement;
-    const drawdown = [bal];
-    let monthsLasted = 0;
-    let ranOut = false;
-    for (let i = 0; i < retirementYears * 12; i++) {
-      if (i > 0 && i % 12 === 0) draw *= 1 + infl;
-      bal = bal * (1 + postR) - draw;
-      if (bal <= 0) {
-        bal = 0;
-        if (!ranOut) {
-          ranOut = true;
-          monthsLasted = i + 1;
-        }
-      }
-      drawdown.push(bal);
-    }
-    if (!ranOut) monthsLasted = retirementYears * 12;
-
-    // What the nest egg supports sustainably (4% rule), in today's dollars.
-    const safeWithdrawalMonthly = (nestEgg * 0.04) / 12;
-    const safeToday = safeWithdrawalMonthly / Math.pow(1 + infl, yearsToRetire);
-
-    /* Nest egg needed: the present value of the exact schedule the drawdown
-     * above charges, discounted at the same monthly return it earns.
-     *
-     * This used to be an annuity closed form built on an annual real rate
-     * divided by twelve. That rate does not match a loop compounding monthly
-     * and inflating the withdrawal once a year, and the mismatch showed: it
-     * asked for $1.89M where $1.85M funds the same 27 years to the dollar,
-     * overstating the target by 2.4% and understating the surplus by as much.
-     * Discounting the actual schedule cannot drift from the simulation. */
-    let needed = 0;
-    if (needAtRetirement > 0 && 1 + postR > 0) {
-      let d = needAtRetirement;
-      for (let i = 0; i < retirementYears * 12; i++) {
-        if (i > 0 && i % 12 === 0) d *= 1 + infl;
-        needed += d / Math.pow(1 + postR, i + 1);
-      }
-    }
-
-    const combined = [...accum.balances, ...drawdown.slice(1)];
-
     return {
-      yearsToRetire,
-      retirementYears,
-      nestEgg,
-      contributed: accum.contributed,
-      growth: accum.growth,
-      needAtRetirement,
-      safeWithdrawalMonthly,
-      safeToday,
-      needed,
-      gap: nestEgg - needed,
-      monthsLasted,
-      ranOut,
-      ageRanOut: n(retireAge) + monthsLasted / 12,
-      combined,
-      accumBalances: accum.balances,
-      accumLen: accum.balances.length,
-      endingBalance: drawdown[drawdown.length - 1],
-      /* Three genuinely different endings, and the narrative has to branch on
-       * which one happened rather than assuming the balance falls. */
-      stillGrowing: !ranOut && drawdown[drawdown.length - 1] > nestEgg,
-      /* What the pot earns in the first month of retirement, against the
-       * first withdrawal — the pair that decides which way the line goes. */
-      firstMonthReturn: nestEgg * postR,
+      ...p,
+      /** Where the claim falls on the chart, in months from today. */
+      claimIndex: Math.round((p.claimAge - n(age)) * 12),
     };
-  }, [age, retireAge, savings, monthly, match, preReturn, postReturn, income, inflation, lifeExp, socialSecurity]);
+  }, [age, retireAge, savings, monthly, match, preReturn, postReturn, income, inflation, lifeExp, ssSetup]);
 
 
   return (
@@ -161,7 +128,7 @@ export default function Calculator() {
       onExample={loadExample}
       onClear={clearExample}
       relatedSlugs={["investment-growth", "compound-interest", "early-withdrawal"]}
-      disclaimer="For educational purposes only. Assumes steady returns and inflation; real markets vary and a bad sequence of returns early in retirement can shorten how long savings last. Social Security estimates are yours to supply and are not verified. Consult a financial advisor before acting."
+      disclaimer="For educational purposes only. Assumes steady returns and inflation; real markets vary and a bad sequence of returns early in retirement can shorten how long savings last. Social Security estimates are yours to supply and are not verified; the claiming-age adjustment uses SSA's published rates. Consult a financial advisor before acting."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <Card title="Where you are" badge="TODAY">
@@ -203,30 +170,105 @@ export default function Calculator() {
               prefix="$"
               hint="In today's dollars — we adjust it for inflation."
             />
-            <NumField
-              label="Expected Social Security/mo"
-              value={socialSecurity}
-              onChange={setSocialSecurity}
-              min={0}
-              placeholder="2200"
-              prefix="$"
-              hint="Today's dollars, and inflated alongside the income you want — benefits carry a cost-of-living adjustment, so both sides rise together. Check your estimate at ssa.gov."
-            />
             <div className="grid grid-cols-2 gap-3">
               <NumField label="Inflation" value={inflation} onChange={setInflation} min={0} placeholder="2.5" suffix="%" step={0.1} />
               <NumField label="Plan through age" value={lifeExp} onChange={setLifeExp} min={1} placeholder="92" suffix="yrs" />
             </div>
             {r && (
-              <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center gap-2">
-                <span className="text-xs text-gray-400">Savings must cover</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {fmt(Math.max(0, n(income) - n(socialSecurity)))}/mo today
-                </span>
+              <div className="bg-gray-50 rounded-xl px-4 py-3 space-y-1">
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-xs text-gray-400">
+                    Savings must cover{r.bridgeMonths > 0 ? ` until ${ageLabel(r.claimAge)}` : ""}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {fmt(r.bridgeMonths > 0 ? n(income) : r.drawAfterClaimToday)}/mo today
+                  </span>
+                </div>
+                {r.bridgeMonths > 0 && (
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-xs text-gray-400">From {ageLabel(r.claimAge)}</span>
+                    <span className="text-sm font-medium text-gray-900">{fmt(r.drawAfterClaimToday)}/mo today</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </Card>
       </div>
+
+      <Card title="Social Security" badge="WHEN YOU CLAIM" className="mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <NumField
+              label={asEntered ? "Monthly benefit at your claiming age" : "Monthly benefit at full retirement age"}
+              value={socialSecurity}
+              onChange={setSocialSecurity}
+              min={0}
+              placeholder="2200"
+              prefix="$"
+              hint={
+                <>
+                  Today&apos;s dollars, from your Social Security Statement at{" "}
+                  <a href="https://www.ssa.gov/myaccount/" className="text-green-700 underline" target="_blank" rel="noopener noreferrer">ssa.gov</a>.
+                  It rises with inflation here, as benefits carry a cost-of-living adjustment.
+                </>
+              }
+            />
+            <Toggle checked={asEntered} onChange={setAsEntered} label="Estimate already for claiming age">
+              I already have my estimate for my claiming age: use it as entered, with no adjustment
+            </Toggle>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <NumField
+                label="Birth year"
+                value={birthYear}
+                onChange={setBirthYear}
+                placeholder={String(THIS_YEAR - (n(age) > 0 ? n(age) : 35))}
+                hint={ssSetup.bornInferred ? "Blank: read from your age." : "Sets your full retirement age."}
+              />
+              <NumField
+                label="Age you'll start"
+                value={claimAge}
+                onChange={setClaimAge}
+                placeholder={String(Math.floor(ssSetup.defaultAge))}
+                suffix="yrs"
+                step={1}
+                hint={`${SS_EARLIEST_CLAIM_AGE} to ${SS_LATEST_CREDIT_AGE}. Blank: ${ageLabel(ssSetup.defaultAge)}.`}
+              />
+            </div>
+            <div className="bg-gray-50 rounded-xl px-4 py-3 space-y-1">
+              <div className="flex justify-between items-center gap-2">
+                <span className="text-xs text-gray-400">Benefit from age {ageLabel(ssSetup.claim)}</span>
+                <span className="text-sm font-medium text-gray-900">{r ? `${fmt(r.benefit)}/mo today` : "—"}</span>
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                {ssSetup.adjustmentPct === null
+                  ? "As entered, with no adjustment for the claiming age."
+                  : ssSetup.adjustmentPct === 0
+                    ? `Your full retirement age is ${ageLabel(ssSetup.fraYears)}: no adjustment.`
+                    : `Full retirement age ${ageLabel(ssSetup.fraYears)}. Claiming ${ssSetup.adjustmentPct < 0 ? "earlier reduces" : "later raises"} the benefit ${Math.abs(ssSetup.adjustmentPct).toFixed(2).replace(/\.?0+$/, "")}%.`}
+                {ssSetup.outOfRange && ` Held to ${SS_EARLIEST_CLAIM_AGE} to ${SS_LATEST_CREDIT_AGE}.`}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 space-y-2">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            <strong>Retiring early can lower your estimate.</strong> SSA&apos;s estimates assume you keep earning until you
+            claim, and the benefit is based on your highest 35 years of earnings, so years you stop working early can
+            count as low or zero. Check your Statement. Benefits start at {SS_EARLIEST_CLAIM_AGE} at the earliest, and
+            delayed credits stop at {SS_LATEST_CREDIT_AGE}.
+          </p>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            <strong>Withdrawals before 59½</strong> generally owe an additional 10% tax unless an exception applies, which
+            this page does not model. One exception: if you leave your employer in or after the year you turn 55,
+            withdrawals from that employer&apos;s 401(k) are not hit by it (the &quot;rule of 55&quot;). IRAs generally
+            don&apos;t have it. See the{" "}
+            <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions" className="text-green-700 underline" target="_blank" rel="noopener noreferrer">IRS list of exceptions</a>.
+          </p>
+        </div>
+      </Card>
 
       {r ? (
         <>
@@ -267,12 +309,28 @@ export default function Calculator() {
                   </>
                 ) : (
                   <>
-                    <strong>✓ On track.</strong> Your savings support {fmt(r.needAtRetirement)}/mo at age{" "}
-                    {n(retireAge)} — the equivalent of {fmt(Math.max(0, n(income) - n(socialSecurity)))}/mo
-                    today — through age {n(lifeExp)}, with room left over.
+                    <strong>✓ On track.</strong> Your savings support {fmt(r.firstDraw)}/mo at age{" "}
+                    {n(retireAge)} — the equivalent of {fmt(r.bridgeMonths > 0 ? n(income) : r.drawAfterClaimToday)}/mo
+                    today{r.bridgeMonths > 0 ? `, falling to ${fmt(r.drawAfterClaimToday)}/mo once Social Security starts` : ""} —
+                    through age {n(lifeExp)}, with room left over.
                   </>
                 )}
               </Takeaway>
+              {r.bridgeMonths > 0 && r.benefit > 0 && (
+                <Takeaway tone="blue">
+                  <strong>The bridge.</strong> You retire at {n(retireAge)} and start Social Security at{" "}
+                  {ageLabel(r.claimAge)}: {(r.bridgeMonths / 12).toFixed(r.bridgeMonths % 12 ? 1 : 0)} years in which savings fund the
+                  whole {fmt(n(income))}/mo. That is {fmt(r.bridgeExtraToday)}/mo more from savings than after you claim,{" "}
+                  {fmtK(r.bridgeExtraTotalToday)} in today&apos;s dollars over the bridge, and it adds{" "}
+                  <strong>{fmtK(r.bridgeCost)}</strong> to the nest egg needed.
+                </Takeaway>
+              )}
+              {r.claimAge < n(retireAge) && r.benefit > 0 && (
+                <Takeaway tone="blue">
+                  You start Social Security at {ageLabel(r.claimAge)}, before you retire at {n(retireAge)}. Benefits received
+                  while you are still working are not added to your savings here; from retirement they cover their share.
+                </Takeaway>
+              )}
               <Takeaway tone="amber">
                 This assumes a steady {n(preReturn)}% every year to retirement and {n(postReturn)}% after.
                 Real returns arrive in a jagged order, and the order matters most in the years either side
@@ -296,11 +354,14 @@ export default function Calculator() {
                 { label: "Before you retire", color: COLORS.green, data: r.accumBalances, fill: true },
               ]}
               xUnit="Yr"
+              markers={r.benefit > 0 ? [{ index: r.claimIndex, label: `Social Security at ${ageLabel(r.claimAge)}` }] : []}
             />
             <div className="mt-4">
               <Takeaway tone="blue">
                 The shaded area ends on your retirement date — year {r.yearsToRetire} on this chart, at{" "}
-                <strong>{fmtK(r.nestEgg)}</strong>. After it, withdrawals race against returns.{" "}
+                <strong>{fmtK(r.nestEgg)}</strong>.{" "}
+                {r.benefit > 0 && <>The dashed line marks Social Security starting, at {ageLabel(r.claimAge)}. </>}
+                After retirement, withdrawals race against returns.{" "}
                 {r.ranOut ? (
                   <>
                     Withdrawals win: the balance reaches{" "}
@@ -311,7 +372,7 @@ export default function Calculator() {
                   <>
                     Returns win: {n(postReturn)}% on {fmtK(r.nestEgg)} earns{" "}
                     {fmt(r.firstMonthReturn)} in the first month against a{" "}
-                    {fmt(r.needAtRetirement)} withdrawal, so the line keeps climbing. It never reaches
+                    {fmt(r.firstDraw)} withdrawal, so the line keeps climbing. It never reaches
                     zero within your plan, ending at <strong>{fmtK(r.endingBalance)}</strong> at age{" "}
                     {n(lifeExp)}.
                   </>

@@ -5,7 +5,7 @@ description: "The honest answer needs four numbers, and most people can name two
 calculator: retirement-savings
 category: Money
 published: 2026-06-26
-reviewed: 2026-10-01
+reviewed: 2026-10-14
 ---
 
 "On track" is a comparison, so it needs something to compare against. Building
@@ -71,6 +71,40 @@ for holding a few years of spending outside equities as you approach the date.
 permanently, and it is one of the few genuinely guaranteed, inflation-indexed
 increases available. It deserves its own analysis rather than a default.
 
+## Claiming age, and the bridge years
+
+Your Social Security Statement gives a benefit at your full retirement age, which
+is 67 for anyone born in 1960 or later. The age you claim changes it. "You can
+start receiving your Social Security retirement benefits as early as age 62", and
+SSA's actuaries set out the cost: "The percentage reduction is 5/9 of 1% per month
+for the first 36 months and 5/12 of 1% for each additional month." Claiming at 62
+with a full retirement age of 67 is 60 months early, a 30% cut for life. Waiting
+past full retirement age earns delayed retirement credits of 2/3 of 1% a month, 8%
+a year, and "The benefit increase stops when you reach age 70." Claiming at 70
+instead of 67 raises the benefit 24%.
+
+Retiring and claiming are separate decisions. Retire at 55 and claim at 65, and
+for ten years your savings pay the whole income, including the part Social
+Security will later cover. Those are the **bridge years**. On a $5,000 monthly
+target with a $2,000 benefit, the bridge draws $2,000 a month more from savings
+than the years after it: $240,000 over ten years in today's dollars. A later claim
+buys a bigger benefit for life, paid for with a longer bridge.
+
+Two cautions. First, the estimate itself assumes you keep working. The Statement
+says its estimates "are based on your earnings to date and assume you continue to
+earn" at your current level "until you start your benefits", and SSA bases "the
+amount of your benefit on your highest 35 years of earnings". Stop work early and
+the years you would have added count as low or zero, so check your Statement.
+Second, money taken from retirement accounts before 59½ is usually taxed extra:
+"Individuals must pay an additional 10% early withdrawal tax unless an exception
+applies." One exception covers a 401(k) when "the employee separates from service
+during or after the year the employee reaches age 55"; the IRS lists it as not
+applying to IRAs.
+
+The [retirement calculator](/calculators/retirement-savings) adjusts your
+benefit for the age you claim, funds the bridge from savings, and marks the
+claiming age on the chart.
+
 ## What usually is not counted, and probably should not be
 
 **Your home.** It is likely your largest asset and it produces no income. It
@@ -109,4 +143,15 @@ calculator are read from the same constants documented in the guide on [what
 your investments will be worth](/guides/what-will-your-investments-be-worth).
 Social Security's annual cost-of-living adjustment is set by [42 U.S.C. §
 415(i)](https://www.law.cornell.edu/uscode/text/42/415) and announced each
-year by the [Social Security Administration](https://www.ssa.gov/cola/).
+year by the [Social Security Administration](https://www.ssa.gov/cola/). Claiming
+ages and rates: SSA, [Starting Your Retirement Benefits
+Early](https://www.ssa.gov/benefits/retirement/planner/agereduction.html),
+[Benefit Reduction for Early
+Retirement](https://www.ssa.gov/oact/quickcalc/earlyretire.html), [Delayed
+Retirement Credits](https://www.ssa.gov/benefits/retirement/planner/delayret.html),
+the [sample Social Security
+Statement](https://www.ssa.gov/myaccount/assets/materials/statement-redesign-online.pdf)
+and [Additional Work Can Increase Your Future
+Benefits](https://www.ssa.gov/myaccount/assets/materials/additional-work.pdf).
+Early withdrawals: IRS, [Retirement topics: exceptions to tax on early
+distributions](https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions).

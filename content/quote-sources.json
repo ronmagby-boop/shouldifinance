@@ -121,6 +121,16 @@
       ]
     },
     {
+      "id": "irs-early-distribution-exceptions",
+      "title": "IRS, Retirement topics: exceptions to tax on early distributions (last reviewed 11 December 2025)",
+      "url": "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Individuals must pay an additional 10% early withdrawal tax unless an exception applies.",
+        "Separation from service the employee separates from service during or after the year the employee reaches age 55 (age 50 for public safety employees of a state, or political subdivision of a state, in a governmental defined benefit or defined contribution plan) ** yes no 72(t)(2)(A)(v)"
+      ]
+    },
+    {
       "id": "irs-pub-523",
       "title": "IRS Publication 523 (2025), Selling Your Home",
       "url": "https://www.irs.gov/publications/p523",
@@ -207,6 +217,54 @@
       "retrieved": "2026-10-07",
       "excerpts": [
         "(5) Balance on which finance charge computed. The amount of the balance to which a periodic rate was applied and an explanation of how that balance was determined, using the term Balance Subject to Interest Rate."
+      ]
+    },
+    {
+      "id": "ssa-additional-work",
+      "title": "SSA, Additional Work Can Increase Your Future Benefits (Statement fact sheet)",
+      "url": "https://www.ssa.gov/myaccount/assets/materials/additional-work.pdf",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Although you need at least 10 years of work, or 40 credits, to qualify for Social Security retirement benefits, we base the amount of your benefit on your highest 35 years of earnings."
+      ]
+    },
+    {
+      "id": "ssa-delayed-credits",
+      "title": "SSA, Delayed Retirement Credits",
+      "url": "https://www.ssa.gov/benefits/retirement/planner/delayret.html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Social Security retirement benefits are increased by a certain percentage for each month you delay starting your benefits beyond full retirement age. The benefit increase stops when you reach age 70.",
+        "1943 or later 8.0% 2/3 of 1%"
+      ]
+    },
+    {
+      "id": "ssa-early-retirement",
+      "title": "SSA, Starting Your Retirement Benefits Early (Full Retirement and Age 62 Benefit By Year Of Birth)",
+      "url": "https://www.ssa.gov/benefits/retirement/planner/agereduction.html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "You can start receiving your Social Security retirement benefits as early as age 62.",
+        "1943-1954 66 48 $750 25.00% $350 30.00% 1955 66 and 2 months 50 $741 25.83% $345 30.83% 1956 66 and 4 months 52 $733 26.67% $341 31.67% 1957 66 and 6 months 54 $725 27.50% $337 32.50% 1958 66 and 8 months 56 $716 28.33% $333 33.33% 1959 66 and 10 months 58 $708 29.17% $329 34.17% 1960 and later 67 60 $700 30.00%",
+        "If you were born on January 1st, you should refer to the previous year."
+      ]
+    },
+    {
+      "id": "ssa-oact-early-retirement",
+      "title": "SSA Office of the Chief Actuary, Benefit Reduction for Early Retirement",
+      "url": "https://www.ssa.gov/oact/quickcalc/earlyretire.html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "The percentage reduction is 5/9 of 1% per month for the first 36 months and 5/12 of 1% for each additional month."
+      ]
+    },
+    {
+      "id": "ssa-statement-sample",
+      "title": "SSA, sample Social Security Statement (online version)",
+      "url": "https://www.ssa.gov/myaccount/assets/materials/statement-redesign-online.pdf",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "These personalized estimates are based on your earnings to date and assume you continue to earn $54,489 per year until you start your benefits."
       ]
     },
     {
