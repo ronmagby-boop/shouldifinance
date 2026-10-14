@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  BENEFIT_TAX_BASE, EARNINGS_TEST, benefitAt, breakEvenAge, cumulativeBy, investedBreakEvenAge, investedBy,
+  BENEFIT_TAX_BASE, EARNINGS_TEST, benefitAt, breakEvenAge, claimAgePassed, cumulativeBy, investedBreakEvenAge, investedBy,
 } from "./socialSecurity.ts";
 
 const near = (actual, expected, tol = 0.01, msg = "") =>
@@ -55,4 +55,21 @@ test("invested totals: $100 a month for 12 months at 12% (1% a month), each inve
 test("dated constants: the 2026 earnings test and Publication 915's base amounts", () => {
   assert.deepEqual({ ...EARNINGS_TEST }, { year: 2026, lower: 24480, higher: 65160 });
   assert.deepEqual({ ...BENEFIT_TAX_BASE }, { single: 25000, joint: 32000 });
+});
+
+test("claiming ages already passed, from the birth year and today's date (14 October 2026)", () => {
+  const today = new Date(2026, 9, 14);
+  // Born 1960: everyone had turned 65 by the end of 2025, so 62 to 65 have
+  // certainly passed; the 66th birthday falls this year and may not have come yet.
+  const passed1960 = [62, 63, 64, 65, 66, 67, 70].filter((a) => claimAgePassed(1960, a, today));
+  assert.deepEqual(passed1960, [62, 63, 64, 65]);
+  // Born 1964 (the example): 62 falls this year, so nothing has certainly passed.
+  assert.equal(claimAgePassed(1964, 62, today), false);
+  // A full retirement age of 66 and 6 months, born 1957: passed by mid-2024 at the latest.
+  assert.equal(claimAgePassed(1957, 66.5, today), true);
+  // Born 1955: 70 passed by the end of 2025, so every age has; born 1956, 70 is still ahead.
+  assert.equal(claimAgePassed(1955, 70, today), true);
+  assert.equal(claimAgePassed(1956, 70, today), false);
+  // On 1 January the year just ended counts in full.
+  assert.equal(claimAgePassed(1963, 62, new Date(2026, 0, 1)), true);
 });

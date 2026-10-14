@@ -10,7 +10,7 @@ import { ChartCard, LineChart, COLORS } from "../../components/Charts";
 import {
   BENEFIT_TAX_85_THRESHOLD, BENEFIT_TAX_BASE, EARNINGS_TEST, EARNINGS_TEST_NEXT,
   SS_EARLIEST_CLAIM_AGE, SS_FIRST_BIRTH_YEAR, SS_LATEST_CREDIT_AGE,
-  benefitAt, breakEvenAge, claimAdjustmentPct, cumulativeBy, fullRetirementAgeMonths, investedBreakEvenAge,
+  benefitAt, breakEvenAge, claimAdjustmentPct, claimAgePassed, cumulativeBy, fullRetirementAgeMonths, investedBreakEvenAge,
 } from "../../lib/socialSecurity";
 
 /** An age in years and months, as SSA writes it: "66 and 8 months". */
@@ -57,11 +57,20 @@ export default function Calculator() {
     const ages = [62, 63, 64, 65, 66, 67, 68, 69, 70];
     if (!ages.includes(fra)) ages.push(fra);
     ages.sort((a, z) => a - z);
+    // Ages the reader is certainly past, from the birth year and today's date.
+    const today = new Date();
+    const passed = (age: number) => claimAgePassed(born, age, today);
     const rows = ages.map((age) => {
       const monthly = benefitAt(b, born, age);
-      return { age, monthly, pct: claimAdjustmentPct(born, age), total: plan === null ? null : cumulativeBy(monthly, age, plan), isFra: age === fra };
+      return {
+        age, monthly, pct: claimAdjustmentPct(born, age), passed: passed(age),
+        total: plan === null ? null : cumulativeBy(monthly, age, plan), isFra: age === fra,
+      };
     });
-    const best = plan === null ? null : rows.reduce((m, x) => (x.total! > m.total! ? x : m), rows[0]);
+    const open = rows.filter((x) => !x.passed);
+    const best = plan === null || open.length === 0 ? null : open.reduce((m, x) => (x.total! > m.total! ? x : m), open[0]);
+    /** Past 70: every age has gone, and claiming now, at the maximum, is the only option. */
+    const allPassed = open.length === 0;
 
     const at62 = benefitAt(b, born, 62);
     const atFra = b;
@@ -84,7 +93,8 @@ export default function Calculator() {
       Array.from({ length: months + 1 }, (_, i) => cumulativeBy(monthly, claim, 62 + i / 12));
 
     return {
-      born, fra, plan, rows, best, at62, atFra, at70, be, rate, invested, end,
+      born, fra, plan, rows, best, allPassed, at62, atFra, at70, be, rate, invested, end,
+      passed62: passed(62), passedFra: passed(fra), passed70: passed(70),
       chart: { s62: series(62, at62), sFra: series(fra, atFra), s70: series(70, at70) },
     };
   }, [benefit, birthYear, planThrough, ret]);
@@ -161,7 +171,34 @@ export default function Calculator() {
         roughly level in real terms.
       </p>
 
-      {r ? (
+      {r && r.allPassed ? (
+        <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
+          <Headline label="Claiming now is the only option" value={`${fmt(r.at70)}/mo`} tone="gray" />
+          <Takeaway tone="blue">
+            Born in {r.born}, you are past {SS_LATEST_CREDIT_AGE}, so every claiming age on this page has already passed and
+            there is nothing left to compare. Delayed credits stop at {SS_LATEST_CREDIT_AGE}, so claiming now pays the
+            largest benefit there is: {fmt(r.at70)} a month on these numbers.
+          </Takeaway>
+          <div className="overflow-x-auto mt-4">
+            <table className="w-full text-sm tabular-nums">
+              <thead>
+                <tr className="text-xs text-gray-400 text-left">
+                  <th className="py-2 pr-3 font-normal">Start</th>
+                  <th className="py-2 pr-3 font-normal">Monthly</th>
+                  <th className="py-2 font-normal">vs full age</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t border-gray-100 font-medium">
+                  <td className="py-2 pr-3">Now</td>
+                  <td className="py-2 pr-3">{fmt(r.at70)}</td>
+                  <td className="py-2">+{claimAdjustmentPct(r.born, SS_LATEST_CREDIT_AGE).toFixed(1)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : r ? (
         <>
           <div className="border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50">
             <Headline label={`At 62, full retirement age (${ageLabel(r.fra)}) and 70`} value={`${fmt(r.at62)} · ${fmt(r.atFra)} · ${fmt(r.at70)}`} tone="gray" />
@@ -177,11 +214,17 @@ export default function Calculator() {
                 waiting paid more in total; die before it and claiming early did.
                 {r.best && r.plan !== null && (
                   <>
-                    {" "}Through age {r.plan}, claiming at <strong>{ageLabel(r.best.age)}</strong> pays the most:{" "}
-                    {fmtK(r.best.total!)}.
+                    {" "}Through age {r.plan}, of the ages still open to you, claiming at{" "}
+                    <strong>{ageLabel(r.best.age)}</strong> pays the most: {fmtK(r.best.total!)}.
                   </>
                 )}
               </Takeaway>
+              {r.rows.some((row) => row.passed) && (
+                <Takeaway tone="amber">
+                  Born in {r.born}, you are already past some of these ages, so they are greyed out below and left out of
+                  the comparison of totals. The break-evens still show how the choices compare.
+                </Takeaway>
+              )}
               {r.invested && (
                 <Takeaway tone="amber">
                   If every early check were invested at {r.rate}% above inflation, the break-evens move to{" "}
@@ -208,8 +251,15 @@ export default function Calculator() {
                 </thead>
                 <tbody>
                   {r.rows.map((row) => (
-                    <tr key={row.age} className={`border-t border-gray-100 ${row.isFra ? "bg-blue-50" : ""} ${r.best && row.age === r.best.age ? "font-medium" : ""}`}>
-                      <td className="py-2 pr-3 whitespace-nowrap">{ageLabel(row.age)}{row.isFra && <span className="text-xs text-blue-600"> full age</span>}</td>
+                    <tr
+                      key={row.age}
+                      className={`border-t border-gray-100 ${row.passed ? "text-gray-400" : ""} ${row.isFra && !row.passed ? "bg-blue-50" : ""} ${r.best && row.age === r.best.age ? "font-medium" : ""}`}
+                    >
+                      <td className="py-2 pr-3 whitespace-nowrap">
+                        {ageLabel(row.age)}
+                        {row.isFra && <span className={`text-xs ${row.passed ? "" : "text-blue-600"}`}> full age</span>}
+                        {row.passed && <span className="text-xs"> already passed</span>}
+                      </td>
                       <td className="py-2 pr-3">{fmt(row.monthly)}</td>
                       <td className="py-2 pr-3">{row.pct === 0 ? "—" : `${row.pct > 0 ? "+" : "−"}${Math.abs(row.pct).toFixed(1)}%`}</td>
                       <td className="py-2">{row.total === null ? "Add a plan-through age" : fmtK(row.total)}</td>
@@ -228,8 +278,8 @@ export default function Calculator() {
               xStart={62}
               markers={markers}
               series={[
-                { label: "Start at 62", color: COLORS.amber, data: r.chart.s62 },
-                { label: `Start at ${ageLabel(r.fra)}`, color: COLORS.blue, data: r.chart.sFra },
+                { label: `Start at 62${r.passed62 ? " (already passed)" : ""}`, color: r.passed62 ? COLORS.gray : COLORS.amber, data: r.chart.s62 },
+                { label: `Start at ${ageLabel(r.fra)}${r.passedFra ? " (already passed)" : ""}`, color: r.passedFra ? COLORS.gray : COLORS.blue, data: r.chart.sFra },
                 { label: "Start at 70", color: COLORS.green, data: r.chart.s70 },
               ]}
             />

@@ -79,6 +79,24 @@ export const benefitAt = (benefitAtFra: number, birthYear: number, claimAgeYears
  * Comparing claiming ages.
  * ------------------------------------------------------------------------- */
 
+/** Today as a fractional calendar year: 14 October 2026 is about 2026.79. */
+export function yearFraction(today: Date): number {
+  const y = today.getFullYear();
+  const start = new Date(y, 0, 1).getTime();
+  const next = new Date(y + 1, 0, 1).getTime();
+  return y + (today.getTime() - start) / (next - start);
+}
+
+/**
+ * True when a claiming age has certainly passed. Only the birth year is
+ * known, so someone born in year B reaches age A somewhere between B + A
+ * and B + A + 1; the age has certainly passed once today is past the later
+ * of the two. Erring this way never tells a reader an option is gone while
+ * it may still be open.
+ */
+export const claimAgePassed = (birthYear: number, claimAgeYears: number, today: Date) =>
+  Math.floor(birthYear) + claimAgeYears + 1 <= yearFraction(today);
+
 /** Benefits received by an age, claiming at `claimAge`: the benefit for every month since. */
 export const cumulativeBy = (benefit: number, claimAge: number, age: number) =>
   benefit * 12 * Math.max(0, age - claimAge);
