@@ -150,7 +150,7 @@ export default function Calculator() {
       intro="Car loans are short, so a refinance has less time to pay off than a mortgage does. Enter your current loan and the offer to see the monthly savings, the real interest savings, and whether a longer term is quietly undoing both."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["loan-vs-cash", "auto-affordability", "depreciation"]}
+      relatedSlugs={["car-loan-payoff", "loan-vs-cash", "auto-affordability", "depreciation"]}
       disclaimer="For educational purposes only and not a commitment to lend. Refinancing depends on credit, vehicle age and mileage, and loan-to-value limits. Check your current loan for prepayment penalties and confirm whether it uses simple interest or a precomputed balance."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

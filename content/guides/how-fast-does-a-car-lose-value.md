@@ -62,6 +62,10 @@ to know before signing a 72- or 84-month loan.
 > insure. Inside it, it is the difference between a total loss being an
 > inconvenience and being a five-figure debt for a car that no longer exists.
 
+Paying the loan down faster shortens the window. Whether that is the best use of
+the money is the question in [should you pay off your car loan
+early](/guides/should-you-pay-off-your-car-loan-early).
+
 ## What makes the curve steeper or shallower
 
 - **Down payment.** The most direct lever. Money down starts the loan below the
