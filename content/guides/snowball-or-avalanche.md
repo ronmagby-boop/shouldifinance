@@ -75,6 +75,10 @@ save by doing that.
 > number a card issuer is required to print, and almost nobody reads it. On a
 > mid-sized balance the minimum-only figure is frequently over a decade.
 
+For a single card, the [credit card payoff
+calculator](/calculators/credit-card-payoff) works out that box on your own
+numbers, and how much sooner a fixed payment finishes.
+
 Both methods work because both fix a **total** monthly amount and hold it
 steady, rather than letting the payment shrink. That fixed total is doing more
 work than the ordering is.

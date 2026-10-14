@@ -84,7 +84,9 @@ window until the due date.
 So a card you have just filled with transferred debt is a bad card to spend on —
 and the transferred balance sitting there is exactly what removes the grace
 period. Move the balance, then put the card away and use a different one for
-day-to-day spending.
+day-to-day spending. How the grace period is lost, and how long it takes to get
+back, is covered in [how long it takes to pay off a credit
+card](/guides/how-long-to-pay-off-a-credit-card).
 
 ## What to ask before applying
 
