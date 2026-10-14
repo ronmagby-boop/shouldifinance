@@ -15,73 +15,12 @@
  * 415(i)), so both sides rise together.
  */
 import { growthSeries } from "./finance";
+import {
+  SS_EARLIEST_CLAIM_AGE, SS_LATEST_CREDIT_AGE, benefitAt, clampClaimAgeMonths, fullRetirementAgeMonths,
+} from "./socialSecurity";
 
-/* ----------------------------------------------------------------------------
- * Social Security claiming age.
- *
- * Every figure below is from SSA's own pages, read 14 October 2026 and saved
- * in content/quote-sources.json.
- * ------------------------------------------------------------------------- */
-
-/**
- * SSA, "Starting Your Retirement Benefits Early": "You can start receiving
- * your Social Security retirement benefits as early as age 62." SSA, "Delayed
- * Retirement Credits": "The benefit increase stops when you reach age 70."
- */
-export const SS_EARLIEST_CLAIM_AGE = 62;
-export const SS_LATEST_CREDIT_AGE = 70;
-
-/**
- * Full retirement age by year of birth, in months: SSA's "Full Retirement and
- * Age 62 Benefit By Year Of Birth" table. 1943-1954: 66; 1955: 66 and 2
- * months; 1956: 66 and 4; 1957: 66 and 6; 1958: 66 and 8; 1959: 66 and 10;
- * "1960 and later": 67. SSA: "If you were born on January 1st, you should
- * refer to the previous year." Birth years before 1943 are treated as 1943:
- * they also have different delayed credit rates, and anyone born then is past
- * 70 already.
- */
-export const SS_FIRST_BIRTH_YEAR = 1943;
-export function fullRetirementAgeMonths(birthYear: number): number {
-  const y = Math.floor(birthYear);
-  if (y <= 1954) return 66 * 12;
-  if (y >= 1960) return 67 * 12;
-  return 66 * 12 + (y - 1954) * 2;
-}
-
-/**
- * SSA Office of the Chief Actuary, "Benefit Reduction for Early Retirement":
- * "The percentage reduction is 5/9 of 1% per month for the first 36 months
- * and 5/12 of 1% for each additional month."
- */
-export const SS_EARLY_REDUCTION = { firstMonths: 36, firstPctPerMonth: 5 / 9, laterPctPerMonth: 5 / 12 } as const;
-
-/**
- * SSA, "Delayed Retirement Credits", for those born "1943 or later": a
- * "12-Month Rate of Increase" of 8.0%, "Monthly Rate of Increase" "2/3 of
- * 1%", until 70.
- */
-export const SS_DELAYED_CREDIT_PCT_PER_MONTH = 2 / 3;
-
-/** A claiming age in years, held to 62-70 and to whole months. */
-export const clampClaimAgeMonths = (ageYears: number) =>
-  Math.round(Math.min(SS_LATEST_CREDIT_AGE, Math.max(SS_EARLIEST_CLAIM_AGE, ageYears)) * 12);
-
-/**
- * The percentage change from the full-retirement-age benefit for claiming at
- * a given age: negative before full retirement age, positive after it.
- * Born 1960 or later: −30% at 62 (36 × 5/9 + 24 × 5/12), +24% at 70 (36 × 2/3).
- */
-export function claimAdjustmentPct(birthYear: number, claimAgeYears: number): number {
-  const fra = fullRetirementAgeMonths(birthYear);
-  const claim = clampClaimAgeMonths(claimAgeYears);
-  if (claim < fra) {
-    const early = fra - claim;
-    const first = Math.min(early, SS_EARLY_REDUCTION.firstMonths);
-    const later = Math.max(0, early - SS_EARLY_REDUCTION.firstMonths);
-    return -(first * SS_EARLY_REDUCTION.firstPctPerMonth + later * SS_EARLY_REDUCTION.laterPctPerMonth);
-  }
-  return (claim - fra) * SS_DELAYED_CREDIT_PCT_PER_MONTH;
-}
+/* The claiming-age rules (full retirement age, early reduction, delayed
+ * credits) live in lib/socialSecurity.ts, shared with the claiming-age page. */
 
 /** The default claiming age: full retirement age, or the retirement age if later; never past 70. */
 export function defaultClaimAge(birthYear: number, retireAge: number): number {
@@ -97,7 +36,7 @@ export type SocialSecurity =
 /** The monthly benefit at the claiming age, in today's dollars. */
 export function adjustedBenefit(ss: SocialSecurity): number {
   if (ss.mode === "asEntered") return Math.max(0, ss.benefit);
-  return Math.max(0, ss.benefitAtFra) * (1 + claimAdjustmentPct(ss.birthYear, ss.claimAge) / 100);
+  return benefitAt(ss.benefitAtFra, ss.birthYear, ss.claimAge);
 }
 
 /** The claiming age the projection uses: 62-70 in whole months. */

@@ -168,6 +168,16 @@
       ]
     },
     {
+      "id": "irs-pub-915",
+      "title": "IRS Publication 915 (2025), Social Security and Equivalent Railroad Retirement Benefits",
+      "url": "https://www.irs.gov/publications/p915",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Your base amount is: $25,000 if you are single, head of household, or qualifying surviving spouse; $25,000 if you are married filing separately and lived apart from your spouse for all of 2025; $32,000 if you are married filing jointly; or $0 if you are married filing separately and lived with your spouse at any time during 2025.",
+        "Generally, up to 50% of your benefits will be taxable. However, up to 85% of your benefits can be taxable if either of the following situations applies to you. The total of one-half of your benefits and all your other income is more than $34,000 ($44,000 if you are married filing jointly)."
+      ]
+    },
+    {
       "id": "irs-pub-936",
       "title": "IRS Publication 936 (2025), Home Mortgage Interest Deduction",
       "url": "https://www.irs.gov/publications/p936",
@@ -265,6 +275,17 @@
       ]
     },
     {
+      "id": "ssa-benefits-while-working",
+      "title": "SSA, Receiving Benefits While Working",
+      "url": "https://www.ssa.gov/benefits/retirement/planner/whileworking.html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "If you are under full retirement age for the entire year, we deduct $1 from your benefit payments for every $2 you earn above the annual limit. For 2026, that limit is $24,480.",
+        "In the year you reach full retirement age, we deduct $1 in benefits for every $3 you earn above a different limit. In 2026, this limit on your earnings is $65,160. We only count your earnings up to the month before you reach your full retirement age, not your earnings for the entire year.",
+        "We will recalculate your benefit amount to give you credit for the months we reduced or withheld benefits due to your excess earnings."
+      ]
+    },
+    {
       "id": "ssa-delayed-credits",
       "title": "SSA, Delayed Retirement Credits",
       "url": "https://www.ssa.gov/benefits/retirement/planner/delayret.html",
@@ -286,6 +307,16 @@
       ]
     },
     {
+      "id": "ssa-earnings-test-amounts",
+      "title": "SSA Office of the Chief Actuary, Exempt Amounts Under the Earnings Test",
+      "url": "https://www.ssa.gov/oact/cola/rtea.html",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "For people attaining NRA after 2027, the annual exempt amount in 2027 is $25,560. For people attaining NRA in 2027, the annual exempt amount is $67,920.",
+        "2026 24,480 65,160 2027 25,560 67,920"
+      ]
+    },
+    {
       "id": "ssa-oact-early-retirement",
       "title": "SSA Office of the Chief Actuary, Benefit Reduction for Early Retirement",
       "url": "https://www.ssa.gov/oact/quickcalc/earlyretire.html",
@@ -301,6 +332,18 @@
       "retrieved": "2026-10-14",
       "excerpts": [
         "These personalized estimates are based on your earnings to date and assume you continue to earn $54,489 per year until you start your benefits."
+      ]
+    },
+    {
+      "id": "ssa-when-to-start",
+      "title": "SSA, When to Start Receiving Retirement Benefits (Publication No. 05-10147, May 2024)",
+      "url": "https://www.ssa.gov/pubs/EN-05-10147.pdf",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "Would it be better for you to start getting benefits early with a smaller monthly amount for more years or wait to receive a larger monthly payment for a shorter period of time? The answer is personal and depends on several factors, such as your current cash needs, your current health, and family longevity.",
+        "Let's say you turn 62 in 2024. Your full retirement age is 67, and your monthly benefit that starts at full retirement age is $2,000. If you start to get benefits at age 62, we'll reduce your monthly benefit 30% to $1,400 to account for the longer time you receive benefits. This decrease is usually permanent. If you choose to delay your receipt of benefits until age 70, you would increase your monthly benefit to $2,480. This increase is the result of delayed retirement credits you earn for your decision to postpone receipt of benefits past your full retirement age. The benefit at age 70 in this example is about 77% more than the benefit you would receive each month if you start to get benefits at age 62 -- a difference of $1,080 each month.",
+        "married couples at age 65 today would typically have at least a 50/50 chance that 1 member of the couple will live beyond age 90.",
+        "If you are the higher earner, and you delay when you start your retirement benefit, it will result in higher monthly benefits for the rest of your life. If you die first, it will result in higher survivor protection for your spouse."
       ]
     },
     {

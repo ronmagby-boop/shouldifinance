@@ -74,6 +74,7 @@ export function LineChart({
   yFormat = axisLabel,
   baselineZero = true,
   markers = [],
+  xStart = 0,
 }: {
   series: Series[];
   periodsPerYear?: number;
@@ -84,6 +85,8 @@ export function LineChart({
   baselineZero?: boolean;
   /** Dashed vertical lines at data indexes, each labelled at the top: a date worth finding on the chart. */
   markers?: { index: number; label: string }[];
+  /** The x-axis value at the first point: an age, say, when the series starts at 62 rather than at year 0. */
+  xStart?: number;
 }) {
   const ref = useCanvas((ctx, w, h) => {
     const visible = series.filter((s) => s.data.length > 1);
@@ -143,13 +146,14 @@ export function LineChart({
     ctx.textAlign = "center";
     for (let y = 0; y <= totalYears; y += step) {
       const idx = Math.min(maxLen - 1, y * periodsPerYear);
-      ctx.fillText(`${xUnit} ${y}`, xAt(idx), h - pad.bottom + 14);
+      ctx.fillText(`${xUnit} ${xStart + y}`, xAt(idx), h - pad.bottom + 14);
     }
 
     // markers, under the series so a line is never hidden by one
     ctx.font = "10px sans-serif";
-    for (const m of markers) {
-      if (m.index < 0 || m.index > maxLen - 1) continue;
+    // Each label sits a line below the one before, so two markers close together stay readable.
+    markers.forEach((m, k) => {
+      if (m.index < 0 || m.index > maxLen - 1) return;
       const x = xAt(m.index);
       ctx.strokeStyle = "#9CA3AF";
       ctx.lineWidth = 1;
@@ -162,8 +166,8 @@ export function LineChart({
       ctx.fillStyle = "#6B7280";
       // Anchored away from whichever edge is nearer, so the label stays on the canvas.
       ctx.textAlign = x > pad.left + cw / 2 ? "right" : "left";
-      ctx.fillText(m.label, x + (ctx.textAlign === "right" ? -4 : 4), pad.top + 8);
-    }
+      ctx.fillText(m.label, x + (ctx.textAlign === "right" ? -4 : 4), pad.top + 8 + k * 12);
+    });
 
     // series
     for (const s of visible) {

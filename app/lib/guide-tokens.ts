@@ -29,6 +29,7 @@ import {
   FNMA_STUDENT_DEFERRED_PCT,
   VA_STUDENT_ANNUAL_PCT,
 } from "./dti";
+import { EARNINGS_TEST, EARNINGS_TEST_NEXT } from "./socialSecurity";
 import {
   BENCHMARK_RETURN,
   FANCIFUL_RETURN,
@@ -133,6 +134,12 @@ export const GUIDE_TOKENS: Record<string, string> = {
   FNMA_STUDENT_DEFERRED_PCT: `${FNMA_STUDENT_DEFERRED_PCT}%`,
   FHA_HANDBOOK_DATE,
   VA_STUDENT_ANNUAL_PCT: `${VA_STUDENT_ANNUAL_PCT}%`,
+  // Social Security earnings test (lib/socialSecurity.ts); updated each year.
+  EARNINGS_TEST_YEAR: String(EARNINGS_TEST.year),
+  EARNINGS_TEST_LOWER: money(EARNINGS_TEST.lower),
+  EARNINGS_TEST_HIGHER: money(EARNINGS_TEST.higher),
+  EARNINGS_TEST_NEXT_YEAR: String(EARNINGS_TEST_NEXT.year),
+  EARNINGS_TEST_NEXT_LOWER: money(EARNINGS_TEST_NEXT.lower),
 
   STUDENT_POLICY_AS_OF: POLICY_AS_OF,
   NEW_LOAN_CUTOFF,

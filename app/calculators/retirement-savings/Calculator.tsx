@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import CalcShell from "../../components/CalcShell";
 import {
@@ -6,10 +7,10 @@ import {
   fmt, fmtK, n, has, type Num,
 } from "../../components/Inputs";
 import { ChartCard, LineChart, COLORS } from "../../components/Charts";
+import { defaultClaimAge, project, type SocialSecurity } from "../../lib/retirement";
 import {
-  SS_EARLIEST_CLAIM_AGE, SS_LATEST_CREDIT_AGE, SS_FIRST_BIRTH_YEAR,
-  claimAdjustmentPct, defaultClaimAge, fullRetirementAgeMonths, project, type SocialSecurity,
-} from "../../lib/retirement";
+  SS_EARLIEST_CLAIM_AGE, SS_LATEST_CREDIT_AGE, SS_FIRST_BIRTH_YEAR, claimAdjustmentPct, fullRetirementAgeMonths,
+} from "../../lib/socialSecurity";
 
 /** The year a birth year is inferred from when none is entered. Inlined at build, so server and browser agree. */
 const THIS_YEAR = Number(process.env.BUILD_YEAR) || 2026;
@@ -127,7 +128,7 @@ export default function Calculator() {
       intro="Two questions matter: what will you have, and how long will it last? This projects your balance to your retirement date, then spends it down at the income you want — in inflation-adjusted dollars."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["investment-growth", "compound-interest", "early-withdrawal"]}
+      relatedSlugs={["when-to-start-social-security", "investment-growth", "compound-interest", "early-withdrawal"]}
       disclaimer="For educational purposes only. Assumes steady returns and inflation; real markets vary and a bad sequence of returns early in retirement can shorten how long savings last. Social Security estimates are yours to supply and are not verified; the claiming-age adjustment uses SSA's published rates. Consult a financial advisor before acting."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -258,7 +259,8 @@ export default function Calculator() {
             <strong>Retiring early can lower your estimate.</strong> SSA&apos;s estimates assume you keep earning until you
             claim, and the benefit is based on your highest 35 years of earnings, so years you stop working early can
             count as low or zero. Check your Statement. Benefits start at {SS_EARLIEST_CLAIM_AGE} at the earliest, and
-            delayed credits stop at {SS_LATEST_CREDIT_AGE}.
+            delayed credits stop at {SS_LATEST_CREDIT_AGE}. To compare every claiming age and its break-even, use{" "}
+            <Link href="/calculators/when-to-start-social-security" className="text-green-700 underline">when should I start Social Security?</Link>
           </p>
           <p className="text-xs text-gray-500 leading-relaxed">
             <strong>Withdrawals before 59½</strong> generally owe an additional 10% tax unless an exception applies, which

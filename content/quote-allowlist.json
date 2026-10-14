@@ -27,6 +27,8 @@
     { "guide": "what-does-a-savings-account-really-earn", "phrase": "what does it earn after inflation, and is this money that needs to be here at all", "reason": "The guide's own restatement of the reader's question." },
     { "guide": "what-rate-are-you-really-paying", "phrase": "was this a good deal", "reason": "A question the reader might ask, posed by the guide." },
     { "guide": "what-will-you-owe-in-capital-gains-tax", "phrase": "long-term gains are taxed at 15%", "reason": "The common simplification the guide corrects; attributed to no single source." },
-    { "guide": "what-will-your-investments-be-worth", "phrase": "the market averages X%", "reason": "A generic claim with a placeholder, which the guide puts in doubt." }
+    { "guide": "what-will-your-investments-be-worth", "phrase": "the market averages X%", "reason": "A generic claim with a placeholder, which the guide puts in doubt." },
+    { "guide": "when-should-you-start-social-security", "phrase": "how long might I need income, and what happens if it is longer?", "reason": "A question the guide poses to the reader, not a quotation." },
+    { "guide": "when-should-you-start-social-security", "phrase": "will I beat the break-even?", "reason": "A question the guide poses to the reader, not a quotation." }
   ]
 }

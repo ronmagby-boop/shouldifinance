@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -516,6 +516,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "when-to-start-social-security",
+    title: "When should I start Social Security?",
+    nav: "When should I start Social Security?",
+    desc: "Your benefit at every age from 62 to 70, the break-even ages between them, and what you collect in total by the age you plan to.",
+    icon: CalendarClock, bg: "bg-blue-50", category: "Money", kind: "should-i",
+    keywords: ["when to take social security", "social security break even calculator", "claim social security at 62 or 70", "social security claiming age", "delayed retirement credits"],
+    guide: {
+      slug: "when-should-you-start-social-security",
+      teaser: "The break-even, and why longevity matters more",
+    },
+  },
+  {
     slug: "capital-gains",
     title: "What will I owe in capital gains tax?",
     nav: "What will I owe in capital gains?",
@@ -792,7 +804,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
     { id: "investing", title: "Investing", short: "Investing", slugs: [
       "investment-growth", "required-rate-of-return", "dollar-cost-averaging", "dividend-reinvestment", "capital-gains",
     ] },
-    { id: "retirement", title: "Retirement", short: "Retirement", slugs: ["retirement-savings", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
+    { id: "retirement", title: "Retirement", short: "Retirement", slugs: ["retirement-savings", "when-to-start-social-security", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
   ],
   Auto: [
     { id: "choosing-a-car", title: "Choosing a car", short: "Choosing", slugs: [

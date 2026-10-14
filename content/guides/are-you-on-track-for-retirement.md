@@ -103,7 +103,9 @@ applying to IRAs.
 
 The [retirement calculator](/calculators/retirement-savings) adjusts your
 benefit for the age you claim, funds the bridge from savings, and marks the
-claiming age on the chart.
+claiming age on the chart. Choosing the age itself, with the break-even between
+each pair, is covered in [when to start Social
+Security](/guides/when-should-you-start-social-security).
 
 ## What usually is not counted, and probably should not be
 

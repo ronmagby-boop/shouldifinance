@@ -2,9 +2,8 @@
 // Run with: npm run test:calc
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import {
-  adjustedBenefit, claimAdjustmentPct, defaultClaimAge, fullRetirementAgeMonths, project,
-} from "./retirement.ts";
+import { adjustedBenefit, defaultClaimAge, project } from "./retirement.ts";
+import { claimAdjustmentPct, fullRetirementAgeMonths } from "./socialSecurity.ts";
 
 const near = (actual, expected, tol = 0.01, msg = "") =>
   assert.ok(Math.abs(actual - expected) <= tol, `${msg} expected ${expected}, got ${actual}`);
