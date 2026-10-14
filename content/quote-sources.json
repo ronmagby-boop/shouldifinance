@@ -2,6 +2,17 @@
   "_about": "Source passages for the exact-quote check (scripts/check-quotes.mjs). Each excerpt is copied, whitespace-normalized, from the source at its url as retrieved on the date given; a quotation in a guide passes only if it appears in one of these excerpts exactly, punctuation and case included. To verify a new quote, add the passage it comes from here, copied from the source, never typed from the guide.",
   "sources": [
     {
+      "id": "cfpb-grace-period",
+      "title": "CFPB, What is a grace period for a credit card?",
+      "url": "https://www.consumerfinance.gov/ask-cfpb/what-is-a-grace-period-for-a-credit-card-en-47/",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "A grace period is the period between the end of a billing cycle and the date your payment is due. During this time, you may not be charged interest as long as you pay your balance in full by the due date. Credit card companies are not required to give a grace period. However, most credit cards provide a grace period on purchases.",
+        "If your card gives a grace period and you are not carrying a balance, then you can avoid paying interest on new purchases if you pay your balance in full by the due date. If you lose your grace period by not paying your balance in full by the due date, you will be charged interest on the unpaid portion of the balance. You will also be charged interest on purchases in the new billing cycle starting on the date each purchase is made.",
+        "Tip: To keep your grace period, make sure to pay your bill in full each month and on time. If you pay in full some months, and not in other months, you may lose your grace period for the month that you don't pay in full and for the month after."
+      ]
+    },
+    {
       "id": "cfpb-heloc-booklet",
       "title": "CFPB, What you should know about Home Equity Lines of Credit (2022)",
       "url": "https://files.consumerfinance.gov/f/documents/cfpb_heloc-brochure.pdf",
@@ -211,12 +222,37 @@
       ]
     },
     {
-      "id": "reg-z-1026-7",
-      "title": "12 CFR 1026.7(b)(5) (Regulation Z), periodic statement for open-end plans other than home-equity plans",
-      "url": "https://www.ecfr.gov/current/title-12/section-1026.7",
-      "retrieved": "2026-10-07",
+      "id": "reg-z-1026-5",
+      "title": "12 CFR 1026.5(b)(2)(ii)(B)(3) (Regulation Z), definition of grace period",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.5",
+      "retrieved": "2026-10-14",
       "excerpts": [
-        "(5) Balance on which finance charge computed. The amount of the balance to which a periodic rate was applied and an explanation of how that balance was determined, using the term Balance Subject to Interest Rate."
+        "(3) For purposes of paragraph (b)(2)(ii)(B) of this section, \"grace period\" means a period within which any credit extended may be repaid without incurring a finance charge due to a periodic interest rate."
+      ]
+    },
+    {
+      "id": "reg-z-1026-7",
+      "title": "12 CFR 1026.7(b) (Regulation Z), periodic statement for open-end plans other than home-equity plans: (b)(5) and (b)(12)",
+      "url": "https://www.ecfr.gov/current/title-12/section-1026.7",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "(5) Balance on which finance charge computed. The amount of the balance to which a periodic rate was applied and an explanation of how that balance was determined, using the term Balance Subject to Interest Rate.",
+        "(A) The following statement with a bold heading: \"Minimum Payment Warning: If you make only the minimum payment each period, you will pay more in interest and it will take you longer to pay off your balance;\"",
+        "(B) The minimum payment repayment estimate, as described in appendix M1 to this part. If the minimum payment repayment estimate is less than 2 years, the card issuer must disclose the estimate in months. Otherwise, the estimate must be disclosed in years and rounded to the nearest whole year;",
+        "(D) A statement that the minimum payment repayment estimate and the minimum payment total cost estimate are based on the current outstanding balance shown on the periodic statement. A statement that the minimum payment repayment estimate and the minimum payment total cost estimate are based on the assumption that only minimum payments are made and no other amounts are added to the balance;",
+        "(i) The estimated monthly payment for repayment in 36 months, as described in appendix M1 to this part. The estimated monthly payment for repayment in 36 months must be rounded either to the nearest whole dollar or to the nearest cent, at the card issuer's option;",
+        "(i) The minimum payment repayment estimate that is disclosed on the periodic statement pursuant to paragraph (b)(12)(i)(B) of this section after rounding is three years or less;",
+        "(A) The following statement: \"Minimum Payment Warning: Even if you make no more charges using this card, if you make only the minimum payment each month we estimate you will never pay off the balance shown on this statement because your payment will be less than the interest charged each month\";"
+      ]
+    },
+    {
+      "id": "reg-z-appendix-m1",
+      "title": "Appendix M1 to 12 CFR Part 1026 (Regulation Z), repayment disclosures",
+      "url": "https://www.ecfr.gov/current/title-12/part-1026/appendix-Appendix%20M1%20to%20Part%201026",
+      "retrieved": "2026-10-14",
+      "excerpts": [
+        "(vii) All months are the same length and leap year is ignored. A monthly or daily periodic rate may be assumed.",
+        "(ii) No additional extensions of credit are obtained, such as new purchases, transactions, fees, charges or other activity. No refunds or rebates are given."
       ]
     },
     {

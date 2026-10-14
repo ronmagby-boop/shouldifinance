@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -356,6 +356,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "does-debt-consolidation-save-money",
       teaser: "Where the savings go when the term gets longer",
+    },
+  },
+  {
+    slug: "credit-card-payoff",
+    title: "How long will it take to pay off my credit card?",
+    nav: "How long to pay off my card?",
+    desc: "Months and interest at the minimum payment against a fixed one, the payment that clears it by a date, and the payoff box on your statement.",
+    icon: Hourglass, bg: "bg-red-50", category: "Debt", kind: "what-how",
+    keywords: ["credit card payoff calculator", "how long to pay off credit card", "minimum payment calculator", "credit card minimum payment", "pay off credit card in 36 months"],
+    guide: {
+      slug: "how-long-to-pay-off-a-credit-card",
+      teaser: "Why minimums shrink, and what your statement already tells you",
     },
   },
   {
@@ -771,7 +783,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
   ],
   Debt: [
     { id: "debt-tools", title: null, short: null, slugs: [
-      "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation",
+      "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation", "credit-card-payoff",
       "effective-interest-rate", "student-loan-repayment", "debt-to-income",
     ] },
   ],
