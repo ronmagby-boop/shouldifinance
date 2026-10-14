@@ -177,7 +177,11 @@ export default function Calculator() {
           <Takeaway tone="blue">
             Born in {r.born}, you are past {SS_LATEST_CREDIT_AGE}, so every claiming age on this page has already passed and
             there is nothing left to compare. Delayed credits stop at {SS_LATEST_CREDIT_AGE}, so claiming now pays the
-            largest benefit there is: {fmt(r.at70)} a month on these numbers.
+            largest benefit there is: {fmt(r.at70)} a month on these numbers. SSA can start it before the month you apply,
+            within a limit:{" "}
+            <a href="https://www.ssa.gov/benefits/retirement/planner/delayret.html" className="underline" target="_blank" rel="noopener noreferrer">its rule</a>
+            {" "}is that it &quot;cannot pay retroactive benefits for any month before you reached full retirement age or more
+            than six months in the past.&quot;
           </Takeaway>
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-sm tabular-nums">
