@@ -166,19 +166,25 @@ test("dry run job Summary: media read with request count, image check, full capt
   assert.equal(writes().length, 0);
 });
 
-test("160 posts over 7 pages: reads the whole history, so the oldest posts still count", async () => {
-  // Every scheduled fact posted, plus manual posts to make 160 in all. The mock
-  // serves 25 a page although 100 are asked for, so this takes 7 requests,
-  // and the earliest scheduled facts are only on the last page.
-  const media = history(schedule.length, 160 - schedule.length);
-  assert.equal(media.length, 160);
+test("the whole history over many pages: reads every page, so the oldest posts still count", async () => {
+  // Every scheduled fact posted, plus 20 manual posts. Sized from the schedule
+  // so it keeps working as facts are added (it was a fixed 160 until the
+  // schedule itself reached 160). The mock serves 25 a page although 100 are
+  // asked for, so this takes several requests, and the earliest scheduled
+  // facts are only on the last page.
+  const manual = 20;
+  const total = schedule.length + manual;
+  const pages = Math.ceil(total / 25);
+  const media = history(schedule.length, manual);
+  assert.equal(media.length, total);
+  assert.ok(pages >= 7, `pages ${pages}`);
   reset(media, 25);
   const r = await run([]);
   assert.equal(r.code, 0, r.out);
-  assert.equal(mediaReads().length, 7);
-  assert.match(r.out, /media read: 160, the whole history, in 7 requests \(page size 100\)/);
+  assert.equal(mediaReads().length, pages);
+  assert.ok(r.out.includes(`media read: ${total}, the whole history, in ${pages} requests (page size 100)`), r.out);
   assert.match(r.out, new RegExp(`matched to facts: ${schedule.length} `));
-  assert.match(r.out, new RegExp(`not matched to any fact: ${160 - schedule.length}`));
+  assert.match(r.out, new RegExp(`not matched to any fact: ${manual}`));
   assert.match(r.out, /every scheduled fact is posted; nothing to do/);
   assert.ok(!r.out.includes(TOKEN));
   assert.equal(writes().length, 0);
