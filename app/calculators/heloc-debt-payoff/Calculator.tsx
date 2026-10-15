@@ -324,7 +324,7 @@ export default function Calculator() {
       intro="A HELOC can cut a 25% credit card rate to single digits, which is why it looks like breathing room. What it ends up costing depends more on how you pay it than on the rate. Here is what each way of paying it actually does."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["debt-consolidation", "refinance-to-pay-off-debt", "debt-payoff", "balance-transfer"]}
+      relatedSlugs={["debt-consolidation", "refinance-to-pay-off-debt", "debt-payoff", "401k-loan"]}
       disclaimer="For educational purposes only, and not a commitment to lend. HELOC rates are usually variable, so the payments shown can rise, and the rate you are offered depends on your credit and your equity."
     >
       <Card title="The debts you'd pay off" badge="TICK WHAT THE HELOC COVERS" className="mb-4">

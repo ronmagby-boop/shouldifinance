@@ -193,6 +193,16 @@
       ]
     },
     {
+      "id": "irs-considering-401k-loan",
+      "title": "IRS, Considering a loan from your 401(k) plan? (last reviewed 26 February 2026)",
+      "url": "https://www.irs.gov/retirement-plans/considering-a-loan-from-your-401k-plan",
+      "retrieved": "2026-10-15",
+      "excerpts": [
+        "If you don't repay the loan, including interest, according to the loan's terms, any unpaid amounts become a plan distribution to you. Your plan may even require you to repay the loan in full if you leave your job.",
+        "Generally, you have to include any previously untaxed amount of the distribution in your gross income in the year in which the distribution occurs. You may also have to pay an additional 10% tax on the amount of the taxable distribution, unless you:"
+      ]
+    },
+    {
       "id": "irs-early-distribution-exceptions",
       "title": "IRS, Retirement topics: exceptions to tax on early distributions (last reviewed 11 December 2025)",
       "url": "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions",
@@ -200,6 +210,17 @@
       "excerpts": [
         "Individuals must pay an additional 10% early withdrawal tax unless an exception applies.",
         "Separation from service the employee separates from service during or after the year the employee reaches age 55 (age 50 for public safety employees of a state, or political subdivision of a state, in a governmental defined benefit or defined contribution plan) ** yes no 72(t)(2)(A)(v)"
+      ]
+    },
+    {
+      "id": "irs-plan-loan-faqs",
+      "title": "IRS, Retirement plans FAQs regarding loans (last reviewed 26 February 2026)",
+      "url": "https://www.irs.gov/retirement-plans/retirement-plans-faqs-regarding-loans",
+      "retrieved": "2026-10-15",
+      "excerpts": [
+        "A qualified plan may, but is not required to provide for loans. If a plan provides for loans, the plan may limit the amount that can be taken as a loan. The maximum amount that the plan can permit as a loan is (1) the greater of $10,000 or 50% of your vested account balance, or (2) $50,000, whichever is less. For example, if a participant has an account balance of $40,000, the maximum amount that he or she can borrow from the account is $20,000.",
+        "Repayment of the loan must occur within 5 years, and payments must be made in substantially equal payments that include principal and interest and that are paid at least quarterly. Loan repayments are not plan contributions.",
+        "Effective January 1, 2018, if the plan loan offset is due to plan termination or severance from employment, instead of the usual 60-day rollover period, you have until the due date, including extensions, for filing the Federal income tax return for the taxable year in which the offset occurs."
       ]
     },
     {
@@ -248,6 +269,18 @@
         "You file Form 1040 or 1040-SR and itemize deductions on Schedule A (Form 1040).",
         "Note: Interest on home equity loans and lines of credit are deductible only if the borrowed funds are used to buy, build, or substantially improve the taxpayer's home that secures the loan. The loan must be secured by the taxpayer's main home or second home (qualified residence), and meet other requirements.",
         "However, the new debt will qualify as home acquisition debt only up to the amount of the balance of the old mortgage principal just before the refinancing. Any additional debt not used to buy, build, or substantially improve a qualified home isn't home acquisition debt."
+      ]
+    },
+    {
+      "id": "irs-retirement-topics-loans",
+      "title": "IRS, Retirement Topics: Loans (last reviewed 26 February 2026)",
+      "url": "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-loans",
+      "retrieved": "2026-10-15",
+      "excerpts": [
+        "Retirement plans may offer loans to participants, but a plan sponsor is not required to include loan provisions in its plan.",
+        "The maximum amount a participant may borrow from his or her plan is 50% of his or her vested account balance or $50,000, whichever is less. An exception to this limit is if 50% of the vested account balance is less than $10,000: in such case, the participant may borrow up to $10,000. Plans are not required to include this exception.",
+        "Generally, the employee must repay a plan loan within five years and must make payments at least quarterly. The law provides an exception to the 5-year requirement if the employee uses the loan to purchase a primary residence.",
+        "Plan sponsors may require an employee to repay the full outstanding balance of a loan if he or she terminates employment or if the plan is terminated. If the employee is unable to repay the loan, then the employer will treat it as a distribution and report it to the IRS on Form 1099-R. The employee can avoid the immediate income tax consequences by rolling over all or part of the loan's outstanding balance to an IRA or eligible retirement plan by the due date (including extensions) for filing the Federal income tax return for the year in which the loan is treated as a distribution."
       ]
     },
     {
@@ -455,6 +488,16 @@
       "excerpts": [
         "FR) prev | next (a) Exclusion Gross income shall not include gain from the sale or exchange of property if, during the 5-year period ending on the date of the sale or exchange, such property has been owned and used by the taxpayer as the taxpayer's principal residence for periods aggregating 2 years or more.",
         "(C) Qualified official extended duty For purposes of this paragraph- (i) In general The term \" qualified official extended duty \" means any extended duty while serving at a duty station which is at least 50 miles from such property or while residing under Government orders in Government quarters. (ii) Uniformed services The term \" uniformed services \" has the meaning given such term by section 101(a)(5) of title 10 , United States Code, as in effect on the date of the enactment of this paragr"
+      ]
+    },
+    {
+      "id": "usc-26-72p",
+      "title": "26 U.S.C. 72(p), loans treated as distributions (GovInfo, most recent edition)",
+      "url": "https://www.govinfo.gov/link/uscode/26/72?type=usc&year=mostrecent&link-type=html",
+      "retrieved": "2026-10-15",
+      "excerpts": [
+        "(2) Exception for certain loans (A) General rule Paragraph (1) shall not apply to any loan to the extent that such loan (when added to the outstanding balance of all other loans from such plan whether made on, before, or after August 13, 1982), does not exceed the lesser of- (i) $50,000, reduced by the excess (if any) of- (I) the highest outstanding balance of loans from the plan during the 1-year period ending on the day before the date on which such loan was made, over (II) the outstanding balance of loans from the plan on the date on which such loan was made, or (ii) the greater of (I) one-half of the present value of the nonforfeitable accrued benefit of the employee under the plan, or (II) $10,000.",
+        "(B) Requirement that loan be repayable within 5 years (i) In general Subparagraph (A) shall not apply to any loan unless such loan, by its terms, is required to be repaid within 5 years. (ii) Exception for home loans Clause (i) shall not apply to any loan used to acquire any dwelling unit which within a reasonable time is to be used (determined at the time the loan is made) as the principal residence of the participant."
       ]
     },
     {

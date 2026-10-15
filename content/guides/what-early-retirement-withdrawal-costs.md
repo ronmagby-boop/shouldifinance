@@ -103,6 +103,7 @@ Before withdrawing, these are usually cheaper:
 
 - **A 401(k) loan**, if your plan offers one. You pay yourself the interest and
   there is no distribution, though leaving the job can accelerate repayment.
+  The [401(k) loan calculator](/calculators/401k-loan) shows what it really costs.
 - **A hardship distribution**, which may qualify for an exception.
 - **Roth contributions**, which come out without tax or penalty.
 - **Almost any ordinary borrowing**, honestly. When the combined cost of a

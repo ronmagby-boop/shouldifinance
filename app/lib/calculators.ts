@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake, Undo2,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -444,6 +444,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "401k-loan",
+    title: "Should I take a 401(k) loan?",
+    nav: "Should I take a 401(k) loan?",
+    desc: "How much you can borrow, what it really costs in missed growth, what happens if you leave your job, and how it compares with a HELOC, personal loan or card.",
+    icon: Undo2, bg: "bg-amber-50", category: "Money", kind: "should-i",
+    keywords: ["401k loan calculator", "should I take a 401k loan", "401k loan vs personal loan", "401k loan limit", "401k loan leave job"],
+    guide: {
+      slug: "should-you-take-a-401k-loan",
+      teaser: "Why the rate is not the cost, and what a job change does",
+    },
+  },
+  {
     slug: "401k-vs-debt-payoff",
     title: "Should I capture my full 401(k) match or pay down debt?",
     nav: "Should I capture my full match?",
@@ -828,7 +840,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
     { id: "investing", title: "Investing", short: "Investing", slugs: [
       "investment-growth", "required-rate-of-return", "dollar-cost-averaging", "dividend-reinvestment", "capital-gains",
     ] },
-    { id: "retirement", title: "Retirement", short: "Retirement", slugs: ["retirement-savings", "when-to-start-social-security", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal"] },
+    { id: "retirement", title: "Retirement", short: "Retirement", slugs: ["retirement-savings", "when-to-start-social-security", "401k-vs-debt-payoff", "roth-vs-traditional", "early-withdrawal", "401k-loan"] },
   ],
   Auto: [
     { id: "choosing-a-car", title: "Choosing a car", short: "Choosing", slugs: [

@@ -7,7 +7,8 @@ import {
 } from "../../components/Inputs";
 import { ChartCard, BarChart, DonutChart, COLORS } from "../../components/Charts";
 import { futureValue } from "../../lib/finance";
-import { TAX_YEAR, taxOnExtraIncome, standardDeduction, type FilingStatus } from "../../lib/tax";
+import { TAX_YEAR, standardDeduction, type FilingStatus } from "../../lib/tax";
+import { EARLY_DISTRIBUTION_AGE, distributionTax } from "../../lib/distributionTax";
 
 type Account = "401k" | "traditional-ira" | "roth";
 
@@ -72,9 +73,15 @@ export default function Calculator() {
     // left is earnings, and only earnings are taxed and penalised.
     const taxablePortion = isRoth ? Math.max(0, gross - n(contributions)) : gross;
 
-    const under59 = n(age) < 59.5;
-    const penaltyApplies = under59 && !exception;
-    const penalty = penaltyApplies ? taxablePortion * 0.1 : 0;
+    /* Federal tax, state tax and the 10% additional tax come from the shared
+     * lib/distributionTax, which the 401(k) loan page uses for an unpaid
+     * balance, so the two pages tax a distribution the same way. */
+    const dt = (taxable: number) =>
+      distributionTax({ taxable, otherIncome: n(income), status, stateRatePct: n(stateRate), age: n(age), exception });
+    const own = dt(taxablePortion);
+    const under59 = n(age) < EARLY_DISTRIBUTION_AGE;
+    const penaltyApplies = own.penaltyApplies;
+    const penalty = own.penalty;
 
     /* Federal tax on the withdrawal.
      *
@@ -83,9 +90,9 @@ export default function Calculator() {
      * income already sitting inside the 22% band, so most of it is taxed at
      * 22% and only the top slice reaches 24%. A flat marginal rate always
      * overstates, and it overstates most for the people least able to check. */
-    const fed = taxOnExtraIncome(n(income), taxablePortion, status);
-    const fedTax = fed.tax;
-    const stateTax = (taxablePortion * n(stateRate)) / 100;
+    const fed = own.fed;
+    const fedTax = own.fedTax;
+    const stateTax = own.stateTax;
 
     const wh = WITHHOLDING[account];
     const withholding = (gross * wh.rate) / 100;
@@ -96,11 +103,7 @@ export default function Calculator() {
 
     /* The gross-up has to be solved rather than divided, now that the federal
      * rate moves with the size of the withdrawal. */
-    const netFrom = (w: number) => {
-      const f = taxOnExtraIncome(n(income), isRoth ? Math.max(0, w - n(contributions)) : w, status).tax;
-      const t = isRoth ? Math.max(0, w - n(contributions)) : w;
-      return w - (penaltyApplies ? t * 0.1 : 0) - f - (t * n(stateRate)) / 100;
-    };
+    const netFrom = (w: number) => w - dt(isRoth ? Math.max(0, w - n(contributions)) : w).total;
     let lo = 0;
     let hi = 2_000_000;
     for (let i = 0; i < 80; i++) {
@@ -151,7 +154,7 @@ export default function Calculator() {
       intro="Taking money out of a retirement account early costs you three times: income tax, a 10% penalty, and every dollar of growth that money would have earned. Here's the full bill."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["retirement-savings", "emergency-fund", "401k-vs-debt-payoff", "capital-gains"]}
+      relatedSlugs={["401k-loan", "retirement-savings", "emergency-fund", "401k-vs-debt-payoff"]}
       disclaimer={`For educational purposes only and not tax advice. Uses ${TAX_YEAR} federal brackets and the standard deduction, with a flat state rate — it does not model credits, phase-outs, or itemising. Exceptions to the 10% penalty are specific and fact-dependent (disability, certain medical costs, first-home purchase from an IRA, substantially equal periodic payments, and others). A 401(k) loan or hardship distribution may have different rules. Talk to a tax professional before withdrawing.`}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
