@@ -51,6 +51,11 @@ const INDEXABLE_HOST = "(www\\.)?shouldifinance\\.com";
  * Wix sitemap this list was first built from: two go where /effectiverate
  * and /auto-refinance already go, and /copy-of-rent-vs-buying to the rent or
  * buy calculator. Each destination was checked in the built output.
+ * Three more arrived in October 2026: /copy-of-investment-groth-calculator-1
+ * (misspelled in the Wix URL), /copy-of-dollar-cost-averaging and
+ * /copy-of-compound-interest, each to its calculator. No other copy-of page in
+ * the Wix sitemap or these notes has a current equivalent; the solar ones above
+ * stay 404.
  *
  * Sending all of those to the home page would be the obvious move and the
  * wrong one: Google treats mass redirects to an unrelated page as soft 404s,
@@ -83,8 +88,11 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
 
   // -- investing and saving ------------------------------------------------
   { from: "/compound-interest", to: "/calculators/compound-interest" },
+  { from: "/copy-of-compound-interest", to: "/calculators/compound-interest" },
   { from: "/dividend-reinvestment", to: "/calculators/dividend-reinvestment" },
   { from: "/investmentgrowthcalculator", to: "/calculators/investment-growth" },
+  // Misspelled ("groth") in the Wix URL itself; it is the string Search Console lists.
+  { from: "/copy-of-investment-groth-calculator-1", to: "/calculators/investment-growth" },
   // In Search Console (October 2026), not in the Wix sitemap; the trailing-
   // slash form reaches it in two steps, after Next strips the slash.
   { from: "/monthly-investment-calculator", to: "/calculators/investment-growth" },
@@ -93,6 +101,7 @@ const WIX_REDIRECTS: { from: string; to: string }[] = [
   { from: "/copy-of-retirement-savings-calculator", to: "/calculators/retirement-savings" },
   { from: "/dollarcostaveraging", to: "/calculators/dollar-cost-averaging" },
   { from: "/copy-of-dollar-cost-averaging-calculator", to: "/calculators/dollar-cost-averaging" },
+  { from: "/copy-of-dollar-cost-averaging", to: "/calculators/dollar-cost-averaging" },
   { from: "/effectiverate", to: "/calculators/effective-interest-rate" },
   { from: "/copy-of-effective-interest-rate", to: "/calculators/effective-interest-rate" },
   { from: "/early-withdrawel", to: "/calculators/early-withdrawal" },
