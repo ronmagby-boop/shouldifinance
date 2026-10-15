@@ -59,9 +59,35 @@
         "card text wraps to 4 lines with one word on the last"
       ]
     },
+    "car-150-extra-13-months": {
+      "hash": "161ad67a7b6051f7",
+      "warnings": []
+    },
     "car-loan-vs-down-payment": {
       "hash": "e58d1fee6c54a714",
       "warnings": []
+    },
+    "car-precomputed-saves-less": {
+      "hash": "9d0182310fcb6206",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "car-prepay-loan-rate": {
+      "hash": "b09590da16dc98eb",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "card-minimum-20-years": {
+      "hash": "6186e286ebfa5a3d",
+      "warnings": []
+    },
+    "card-never-pay-off-warning": {
+      "hash": "d900cd1e09b61753",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
     },
     "cash-loses-the-incentive": {
       "hash": "4f6424a554a7cecd",
@@ -143,6 +169,16 @@
       "hash": "a75c2c7626444d22",
       "warnings": [
         "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "dti-du-50": {
+      "hash": "5c29237542675eef",
+      "warnings": []
+    },
+    "dti-student-loan-three-ways": {
+      "hash": "73ee784c2fbbbd1a",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
       ]
     },
     "emergency-fund-negative-real": {
@@ -323,11 +359,37 @@
       "hash": "503476260cdb287a",
       "warnings": []
     },
+    "k401-leave-job": {
+      "hash": "f3e1cc7feba4229b",
+      "warnings": [
+        "card text wraps to 5 lines with one word on the last"
+      ]
+    },
+    "k401-loan-limit": {
+      "hash": "054305d09e5e4bc7",
+      "warnings": []
+    },
+    "k401-rate-not-cost": {
+      "hash": "d00d9e632eb30db3",
+      "warnings": []
+    },
+    "lease-buyout-price-in-lease": {
+      "hash": "164e4ef6e6b8912b",
+      "warnings": []
+    },
+    "lease-equity-lessor-keeps": {
+      "hash": "8d214a29058f882d",
+      "warnings": []
+    },
     "lease-lower-payment-not-saving": {
       "hash": "ee0ac8b8ac82a350",
       "warnings": [
         "card text wraps to 5 lines with one word on the last"
       ]
+    },
+    "lease-miles-tip-buyout": {
+      "hash": "0fa92b31421666b6",
+      "warnings": []
     },
     "lease-money-down-gone": {
       "hash": "811060468446edf5",
@@ -531,6 +593,16 @@
         "card text wraps to 6 lines with one word on the last"
       ]
     },
+    "refi-cannot-undo": {
+      "hash": "4f149f8c93a50c76",
+      "warnings": []
+    },
+    "refi-ends-pslf": {
+      "hash": "cef0b8ea95e96a9c",
+      "warnings": [
+        "card text wraps to 7 lines with one word on the last"
+      ]
+    },
     "refinance-rate-not-price": {
       "hash": "c3a25beaab2d20c0",
       "warnings": []
@@ -631,6 +703,22 @@
         "card text wraps to 4 lines with one word on the last"
       ]
     },
+    "ss-62-vs-70-1080": {
+      "hash": "6e334b583a5644e7",
+      "warnings": []
+    },
+    "ss-break-even-80": {
+      "hash": "7ce73071408b59b0",
+      "warnings": [
+        "card text wraps to 4 lines with one word on the last"
+      ]
+    },
+    "ss-higher-earner-survivor": {
+      "hash": "a9ad5d5b8d0e94f0",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
+    },
     "state-can-exceed-federal": {
       "hash": "abdd6b7883889a2f",
       "warnings": []
@@ -712,6 +800,10 @@
       "warnings": [
         "card text wraps to 5 lines with one word on the last"
       ]
+    },
+    "va-dti-above-41": {
+      "hash": "3b36dcf35039ae5b",
+      "warnings": []
     },
     "va-funding-fee-excluded": {
       "hash": "2ad264861460dff4",

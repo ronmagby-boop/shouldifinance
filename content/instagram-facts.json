@@ -1,5 +1,5 @@
 {
-  "_about": "A library of one-fact-per-post Instagram cards extracted from the 50 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
+  "_about": "A library of one-fact-per-post Instagram cards extracted from the 57 guides in content/guides. Each fact is stated as it would appear on the card, with a longer caption for the post body. Nothing here is generated at build time and nothing imports this file — it is a content source, not code.",
   "_extracted": "2026-09-30",
   "_fields": {
     "id": "Stable handle for scheduling. Not used by any code.",
@@ -2385,6 +2385,304 @@
       "category": "Home",
       "shelfLife": null,
       "depends_on_none": "States the passive activity rule and its $25,000 allowance from Publication 527; no app/lib constant holds them.",
+      "reviewed": null
+    },
+    {
+      "id": "dti-du-50",
+      "card": "Fannie Mae's automated underwriting accepts debt-to-income up to 50%. Manual underwriting starts at 36%.",
+      "caption": "Fannie Mae's Selling Guide: \"For manually underwritten loans, Fannie Mae's maximum total DTI ratio is 36% of the borrower's stable monthly income.\" It can go to 45% with the credit score and reserves its Eligibility Matrix sets, and \"For loan casefiles underwritten through DU, the maximum allowable DTI ratio is 50%.\" These are Fannie Mae's limits for the conventional loans it buys; a lender can apply stricter ones. https://shouldifinance.com/guides/whats-a-good-debt-to-income-ratio",
+      "guide": "whats-a-good-debt-to-income-ratio",
+      "source": "Fannie Mae Selling Guide B3-6-02, Debt-to-Income Ratios (published 7 October 2026)",
+      "card_source": "Source: Fannie Mae Selling Guide B3-6-02",
+      "layout": "big-number",
+      "hero": "50%",
+      "hero_context": "the most Desktop Underwriter allows, for conventional loans",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on": [
+        "FNMA_DTI"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "dti-student-loan-three-ways",
+      "card": "With a $0 income-driven payment on $30,000, student loans count as $0, $150 or $125 by loan program.",
+      "caption": "On a $30,000 balance in an income-driven plan with a $0 payment: Fannie Mae can count $0 when \"the lender may obtain student loan documentation to verify the actual monthly payment is $0.\" FHA uses \"0.5 percent of the outstanding loan balance, when the monthly payment reported on the Borrower's credit report is zero\", or $150. VA uses 5% of the balance a year divided by 12, $125, unless a servicer statement documents the lower payment. https://shouldifinance.com/guides/whats-a-good-debt-to-income-ratio",
+      "guide": "whats-a-good-debt-to-income-ratio",
+      "source": "Fannie Mae Selling Guide B3-6-05; HUD Handbook 4000.1, Student Loans; VA Pamphlet 26-7, Chapter 4",
+      "card_source": "Arithmetic: $30,000 balance; FHA 0.5%; VA 5% a year",
+      "layout": "statement",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on": [
+        "FHA_STUDENT_ZERO_PCT",
+        "VA_STUDENT_ANNUAL_PCT"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "va-dti-above-41",
+      "card": "A VA loan can be approved above 41% debt-to-income when residual income is strong.",
+      "caption": "38 CFR 36.4340: \"If the ratio is greater than 41 percent and the residual income exceeds the guidelines by at least 20 percent, the second level review and statement of justification are not required.\" Short of that, a loan above 41% can still be approved with a supervisor's written justification. Residual income is what is left of income after taxes, the housing payment, maintenance and utilities, debts and job costs. https://shouldifinance.com/guides/whats-a-good-debt-to-income-ratio",
+      "guide": "whats-a-good-debt-to-income-ratio",
+      "source": "38 CFR 36.4340(c) and (d)",
+      "card_source": "Source: 38 CFR 36.4340",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume 41% is a hard ceiling on a VA loan.",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on": [
+        "VA_DTI",
+        "VA_RESIDUAL_BENCHMARK_PCT"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "card-minimum-20-years",
+      "card": "Paying only the minimum on $6,000 at 24% takes almost 21 years.",
+      "caption": "In the guide's example it is 20 years and 9 months: a minimum of the month's interest plus 1% of the balance, never less than $25, and no new charges. It costs about $10,700 in interest. A fixed $250 a month clears the same card in 34 months for about $2,260. Minimum formulas vary by issuer, and your statement shows your own estimate. https://shouldifinance.com/guides/how-long-to-pay-off-a-credit-card",
+      "guide": "how-long-to-pay-off-a-credit-card",
+      "source": "The guide's worked example, computed with the site's own code (lib/cardPayoff.ts): 249 months, $10,684.03 interest; $250 a month: 34 months, $2,255.61",
+      "card_source": "Site model: $6,000 at 24%, interest + 1%, $25 floor",
+      "layout": "big-number",
+      "hero": "21 years",
+      "hero_context": "at the minimum, with no new charges",
+      "category": "Debt",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "card-never-pay-off-warning",
+      "card": "If your card's minimum payment never covers the interest, your statement has to tell you.",
+      "caption": "When minimum payments would never clear the balance, Regulation Z replaces the usual payoff estimate with a warning that the issuer estimates \"you will never pay off the balance shown on this statement because your payment will be less than the interest charged each month\". The statement still shows the payment that would clear the balance in three years. https://shouldifinance.com/guides/how-long-to-pay-off-a-credit-card",
+      "guide": "how-long-to-pay-off-a-credit-card",
+      "source": "12 CFR 1026.7(b)(12)(ii)(A), negative or no amortization",
+      "card_source": "Source: Regulation Z, 12 CFR 1026.7(b)(12)",
+      "layout": "statement",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on_none": "States the regulation's warning; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "ss-62-vs-70-1080",
+      "card": "In SSA's own example, claiming at 70 instead of 62 pays $1,080 more a month.",
+      "caption": "SSA's example: a $2,000 benefit at a full retirement age of 67 is $1,400 at 62, cut 30%, and $2,480 at 70, raised 24% by delayed credits. In SSA's words, \"If you choose to delay your receipt of benefits until age 70, you would increase your monthly benefit to $2,480.\" Amounts are in today's dollars; the yearly cost-of-living adjustment applies to whichever you choose. https://shouldifinance.com/guides/when-should-you-start-social-security",
+      "guide": "when-should-you-start-social-security",
+      "source": "SSA, When to Start Receiving Retirement Benefits (Publication 05-10147, May 2024); SSA Office of the Chief Actuary, early retirement reduction; SSA, Delayed Retirement Credits",
+      "card_source": "Source: SSA's example, $2,000 at full retirement age 67",
+      "layout": "big-number",
+      "hero": "$1,080",
+      "hero_context": "more a month, for life",
+      "category": "Money",
+      "shelfLife": null,
+      "depends_on": [
+        "SS_EARLY_REDUCTION",
+        "SS_DELAYED_CREDIT_PCT_PER_MONTH"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "ss-break-even-80",
+      "card": "Claiming Social Security at 70 instead of 62 pays more in total only past about age 80.",
+      "caption": "On SSA's $2,000 example, the larger checks from 70 make up for the eight years without any at about age 80 and 4 months; 62 against 67 breaks even at about 78 and 8 months. Investing the early checks pushes the break-even later. But a larger benefit that lasts as long as you do is insurance against a long life, so longevity matters more than the break-even. https://shouldifinance.com/guides/when-should-you-start-social-security",
+      "guide": "when-should-you-start-social-security",
+      "source": "The guide's break-even ages, computed with the site's own code (lib/socialSecurity.ts): (2,480 × 70 − 1,400 × 62) / 1,080 = 80.37",
+      "card_source": "Site model: $2,000 at full retirement age 67",
+      "layout": "big-number",
+      "hero": "80",
+      "hero_context": "the break-even age for claiming at 70 instead of 62",
+      "category": "Money",
+      "shelfLife": null,
+      "depends_on": [
+        "SS_EARLY_REDUCTION",
+        "SS_DELAYED_CREDIT_PCT_PER_MONTH"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "ss-earnings-test-2026",
+      "card": "Claiming before full retirement age while working? SSA withholds $1 per $2 earned over $24,480 in 2026.",
+      "caption": "SSA: \"If you are under full retirement age for the entire year, we deduct $1 from your benefit payments for every $2 you earn above the annual limit.\" The withheld money is not lost: \"We will recalculate your benefit amount to give you credit for the months we reduced or withheld benefits due to your excess earnings.\" The limit rises to $25,560 in 2027. https://shouldifinance.com/guides/when-should-you-start-social-security",
+      "guide": "when-should-you-start-social-security",
+      "source": "SSA, Receiving Benefits While Working; SSA Office of the Chief Actuary, Exempt Amounts Under the Earnings Test",
+      "card_source": "Source: SSA, Receiving Benefits While Working",
+      "category": "Money",
+      "shelfLife": {
+        "risk": "The exempt amount is indexed to wages and changes every January; SSA has already announced $25,560 for 2027.",
+        "recheck": "Each autumn, against ssa.gov/oact/cola/rtea.html"
+      },
+      "depends_on": [
+        "EARNINGS_TEST"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "ss-higher-earner-survivor",
+      "card": "If you are the higher earner in a couple, delaying Social Security also protects your spouse.",
+      "caption": "SSA: \"If you are the higher earner, and you delay when you start your retirement benefit, it will result in higher monthly benefits for the rest of your life. If you die first, it will result in higher survivor protection for your spouse.\" The claiming age of the higher earner can set a surviving spouse's income long after they are gone. https://shouldifinance.com/guides/when-should-you-start-social-security",
+      "guide": "when-should-you-start-social-security",
+      "source": "SSA, When to Start Receiving Retirement Benefits (Publication 05-10147, May 2024)",
+      "card_source": "Source: SSA, When to Start Receiving Retirement Benefits",
+      "layout": "statement",
+      "category": "Money",
+      "shelfLife": null,
+      "depends_on_none": "States SSA's survivor rule in words; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "car-prepay-loan-rate",
+      "card": "Extra payments on a simple-interest car loan earn exactly the loan's rate, guaranteed.",
+      "caption": "The CFPB: \"Simple interest – which is far more common - calculates the interest based on the outstanding balance of the loan either on a daily or monthly basis.\" So each extra dollar of principal stops costing interest, as long as there is no prepayment penalty. A precomputed loan saves less, and if your car loan interest is deductible (a 2025 to 2028 exception for some new, US-assembled cars), the after-tax figure is a little lower. https://shouldifinance.com/guides/should-you-pay-off-your-car-loan-early",
+      "guide": "should-you-pay-off-your-car-loan-early",
+      "source": "CFPB, What's the difference between a simple interest rate and precomputed interest on an auto loan?; 26 U.S.C. 163(h)",
+      "card_source": "Reasoning: interest is charged on the balance still owed",
+      "layout": "statement",
+      "category": "Auto",
+      "shelfLife": null,
+      "depends_on_none": "A structural point about simple interest; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "car-150-extra-13-months",
+      "card": "$150 extra a month pays off an $18,000 car loan at 7.5% 13 months early.",
+      "caption": "With 48 months left the payment is $435.22 and $2,891 of interest is still to come. Add $150 a month and it ends in 35 months, saving about $838. Whether that beats investing depends on the return: against 4.5%, prepaying leaves about $361 more by the original end date; against a steady 10%, investing leaves about $329 more, if the 10% arrives. https://shouldifinance.com/guides/should-you-pay-off-your-car-loan-early",
+      "guide": "should-you-pay-off-your-car-loan-early",
+      "source": "The guide's worked example, computed with the site's own code (lib/carPayoff.ts)",
+      "card_source": "Site model: $18,000 at 7.5%, 48 months, $150 extra",
+      "layout": "big-number",
+      "hero": "13 months",
+      "hero_context": "sooner, saving about $838 of interest",
+      "category": "Auto",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "car-precomputed-saves-less",
+      "card": "On a precomputed car loan, paying early saves less than the usual math suggests.",
+      "caption": "The CFPB on precomputed interest: \"Making extra payments does not reduce the principal amount (or interest) owed.\" Federal law does require a refund of unearned interest if you pay the loan off in full, and bars the Rule of 78s on precomputed loans longer than 61 months. Your Truth in Lending disclosure tells you which kind of loan you have. https://shouldifinance.com/guides/should-you-pay-off-your-car-loan-early",
+      "guide": "should-you-pay-off-your-car-loan-early",
+      "source": "CFPB, simple and precomputed interest; 15 U.S.C. 1615; 12 CFR 1026.18(k)",
+      "card_source": "Source: CFPB; 15 U.S.C. 1615",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume every car loan charges interest on what you still owe.",
+      "category": "Auto",
+      "shelfLife": null,
+      "depends_on_none": "States how precomputed interest works; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "lease-buyout-price-in-lease",
+      "card": "Your lease buyout price was set the day you signed, and the lease has to state it.",
+      "caption": "Regulation M requires a lease to say whether you can buy the car and, \"If at the end of the lease term, the purchase price\". The CFPB describes the residual value as \"what you will pay for the car if a purchase option is included.\" Any purchase option fee, sales tax and title costs come on top. https://shouldifinance.com/guides/should-you-buy-out-your-lease",
+      "guide": "should-you-buy-out-your-lease",
+      "source": "12 CFR 1013.4(i) (Regulation M); CFPB, What should I know about leasing versus buying a car?",
+      "card_source": "Source: Regulation M, 12 CFR 1013.4",
+      "layout": "statement",
+      "category": "Auto",
+      "shelfLife": null,
+      "depends_on_none": "States a disclosure rule; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "lease-miles-tip-buyout",
+      "card": "Worth $650 less than its buyout, a leased car 6,000 miles over can still be $1,250 cheaper to buy.",
+      "caption": "The guide's example: a $21,650 buyout (price, fee, tax and title) on a car worth $21,000 is $650 under water, so with only a $400 disposition fee, handing it back is $250 better. Add 6,000 miles over the allowance at 25 cents a mile, and buying it avoids $1,900 of turn-in charges and comes out $1,250 ahead. Your lease sets the per-mile charge. https://shouldifinance.com/guides/should-you-buy-out-your-lease",
+      "guide": "should-you-buy-out-your-lease",
+      "source": "The guide's worked example, computed with the site's own code (lib/leaseBuyout.ts)",
+      "card_source": "Arithmetic: $21,650 buyout, $21,000 value, $0.25 a mile",
+      "layout": "big-number",
+      "hero": "$1,250",
+      "hero_context": "better than handing it back, with a $400 turn-in fee",
+      "category": "Auto",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "lease-equity-lessor-keeps",
+      "card": "A leased car worth more than its buyout is equity. Hand it back and the lessor keeps it.",
+      "caption": "Equity is the car's market value less the all-in buyout cost: price, any option fee, sales tax and title. In the guide's example a car worth $24,000 against a $21,650 buyout is $2,350 of equity. Buying it out captures that value, whether you keep the car or sell it; returning it gives it up. https://shouldifinance.com/guides/should-you-buy-out-your-lease",
+      "guide": "should-you-buy-out-your-lease",
+      "source": "The guide's worked example, computed with the site's own code (lib/leaseBuyout.ts)",
+      "card_source": "Reasoning: market value minus the buyout total",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume a leased car's value is the lessor's problem, not yours.",
+      "category": "Auto",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "k401-loan-limit",
+      "card": "A 401(k) loan can be at most half your vested balance or $50,000, whichever is less.",
+      "caption": "IRS: \"The maximum amount a participant may borrow from his or her plan is 50% of his or her vested account balance or $50,000, whichever is less.\" A plan may allow up to $10,000 when half the balance is less, but \"Plans are not required to include this exception.\" Loans in the past year lower the limit, and not every plan offers loans at all. https://shouldifinance.com/guides/should-you-take-a-401k-loan",
+      "guide": "should-you-take-a-401k-loan",
+      "source": "IRS, Retirement Topics: Loans (26 February 2026); 26 U.S.C. 72(p)(2)(A)",
+      "card_source": "Source: IRS, Retirement Topics: Loans",
+      "layout": "big-number",
+      "hero": "$50,000",
+      "hero_context": "the most any plan can lend you",
+      "category": "Money",
+      "shelfLife": null,
+      "depends_on": [
+        "KLOAN_DOLLAR_CAP",
+        "KLOAN_VESTED_SHARE",
+        "KLOAN_SMALL_BALANCE_FLOOR"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "k401-rate-not-cost",
+      "card": "A 401(k) loan's rate is not its cost. The cost is the growth the money misses.",
+      "caption": "$10,000 at 8.5% over five years means $2,310 of interest, paid back into your own account. At a 7% return the account even ends $512 ahead, but you paid that $2,310 from take-home pay: the real cost is $1,798, the growth the money would have earned while it was out. At a 0% return it costs nothing; in a strong market, more. https://shouldifinance.com/guides/should-you-take-a-401k-loan",
+      "guide": "should-you-take-a-401k-loan",
+      "source": "The guide's worked example, computed with the site's own code (lib/k401Loan.ts)",
+      "card_source": "Site model: $10,000 at 8.5% over 5 years, 7% return",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume paying interest to yourself makes a 401(k) loan free.",
+      "category": "Money",
+      "shelfLife": null,
+      "reviewed": null
+    },
+    {
+      "id": "k401-leave-job",
+      "card": "Leave your job with a 401(k) loan unpaid and the balance can become taxable income.",
+      "caption": "IRS: \"Plan sponsors may require an employee to repay the full outstanding balance of a loan if he or she terminates employment or if the plan is terminated.\" If it is not repaid, it is taxed as a distribution, with a 10% additional tax under 59½, unless you roll the same amount into an IRA or other plan \"by the due date (including extensions) for filing the Federal income tax return for the year in which the loan is treated as a distribution.\" https://shouldifinance.com/guides/should-you-take-a-401k-loan",
+      "guide": "should-you-take-a-401k-loan",
+      "source": "IRS, Retirement Topics: Loans (26 February 2026); IRS, Retirement topics: exceptions to tax on early distributions",
+      "card_source": "Source: IRS, Retirement Topics: Loans",
+      "layout": "statement",
+      "category": "Money",
+      "shelfLife": null,
+      "depends_on": [
+        "EARLY_DISTRIBUTION_ADDITIONAL_TAX_PCT"
+      ],
+      "reviewed": null
+    },
+    {
+      "id": "refi-ends-pslf",
+      "card": "Refinance federal student loans privately and Public Service Loan Forgiveness no longer applies to them.",
+      "caption": "The CFPB: \"If you refinance your federal loan with a new private student loan, you will no longer be eligible to participate in these federal loan forgiveness programs.\" PSLF covers only Direct Loans, and a private loan is not one, however much lower its rate. https://shouldifinance.com/guides/should-you-refinance-federal-student-loans",
+      "guide": "should-you-refinance-federal-student-loans",
+      "source": "CFPB, Should I consolidate or refinance my student loans?; 34 CFR 685.219(b)(7)",
+      "card_source": "Source: CFPB; 34 CFR 685.219",
+      "layout": "statement",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on_none": "States an eligibility rule; no app/lib constant holds it.",
+      "reviewed": null
+    },
+    {
+      "id": "refi-cannot-undo",
+      "card": "Refinancing federal student loans into a private loan cannot be undone.",
+      "caption": "The CFPB: \"you will lose the federal loan's benefits and protections. Weigh the benefits and risks since this type of consolidation can't be reversed.\" That means income-driven repayment, federal deferment and forbearance, forgiveness, and possibly death and disability discharge. You can always refinance later; you can never move back. https://shouldifinance.com/guides/should-you-refinance-federal-student-loans",
+      "guide": "should-you-refinance-federal-student-loans",
+      "source": "CFPB, Should I consolidate or refinance my student loans? (last reviewed 3 December 2024)",
+      "card_source": "Source: CFPB",
+      "layout": "myth-fact",
+      "myth": "It is easy to assume you could move back to a federal loan later if you needed to.",
+      "category": "Debt",
+      "shelfLife": null,
+      "depends_on_none": "States a consequence of refinancing; no app/lib constant holds it.",
       "reviewed": null
     }
   ]

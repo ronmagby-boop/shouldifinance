@@ -4,6 +4,17 @@
     "card-and-car-interest-deductibility": {
       "STUDENT_LOAN_INTEREST_CAP": 2500
     },
+    "dti-du-50": {
+      "FNMA_DTI": {
+        "du": 50,
+        "manual": 36,
+        "manualMax": 45
+      }
+    },
+    "dti-student-loan-three-ways": {
+      "FHA_STUDENT_ZERO_PCT": 0.5,
+      "VA_STUDENT_ANNUAL_PCT": 5
+    },
     "ev-credits-ended": {
       "CLEAN_VEHICLE_CREDITS": {
         "chargerCutoff": "1 July 2026",
@@ -147,6 +158,14 @@
         }
       ]
     },
+    "k401-leave-job": {
+      "EARLY_DISTRIBUTION_ADDITIONAL_TAX_PCT": 10
+    },
+    "k401-loan-limit": {
+      "KLOAN_DOLLAR_CAP": 50000,
+      "KLOAN_SMALL_BALANCE_FLOOR": 10000,
+      "KLOAN_VESTED_SHARE": 0.5
+    },
     "military-duty-pauses-home-sale-clock": {
       "SECTION_121_MILITARY_SUSPENSION_MAX_YEARS": 10,
       "SECTION_121_TEST_YEARS": 5
@@ -234,12 +253,39 @@
       "RESIDENTIAL_RENTAL_RECOVERY_YEARS": 27.5,
       "UNRECAPTURED_1250_MAX_RATE": 25
     },
+    "ss-62-vs-70-1080": {
+      "SS_DELAYED_CREDIT_PCT_PER_MONTH": 0.6666666666666666,
+      "SS_EARLY_REDUCTION": {
+        "firstMonths": 36,
+        "firstPctPerMonth": 0.5555555555555556,
+        "laterPctPerMonth": 0.4166666666666667
+      }
+    },
+    "ss-break-even-80": {
+      "SS_DELAYED_CREDIT_PCT_PER_MONTH": 0.6666666666666666,
+      "SS_EARLY_REDUCTION": {
+        "firstMonths": 36,
+        "firstPctPerMonth": 0.5555555555555556,
+        "laterPctPerMonth": 0.4166666666666667
+      }
+    },
+    "ss-earnings-test-2026": {
+      "EARNINGS_TEST": {
+        "higher": 65160,
+        "lower": 24480,
+        "year": 2026
+      }
+    },
     "va-cash-out-to-100": {
       "CASH_OUT_MAX_LTV": {
         "conventional": 80,
         "fha": 80,
         "va": 100
       }
+    },
+    "va-dti-above-41": {
+      "VA_DTI": 41,
+      "VA_RESIDUAL_BENCHMARK_PCT": 20
     },
     "va-first-vs-subsequent": {
       "VA_FUNDING_FEE_IRRRL": 0.5,
