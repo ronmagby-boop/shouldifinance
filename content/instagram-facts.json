@@ -2389,7 +2389,7 @@
     },
     {
       "id": "dti-du-50",
-      "card": "Fannie Mae's automated underwriting accepts debt-to-income up to 50%. Manual underwriting starts at 36%.",
+      "card": "Fannie Mae's automated underwriting allows DTI up to 50%; manual underwriting tops out at 36%, or 45% with strong credit and reserves.",
       "caption": "Fannie Mae's Selling Guide: \"For manually underwritten loans, Fannie Mae's maximum total DTI ratio is 36% of the borrower's stable monthly income.\" It can go to 45% with the credit score and reserves its Eligibility Matrix sets, and \"For loan casefiles underwritten through DU, the maximum allowable DTI ratio is 50%.\" These are Fannie Mae's limits for the conventional loans it buys; a lender can apply stricter ones. https://shouldifinance.com/guides/whats-a-good-debt-to-income-ratio",
       "guide": "whats-a-good-debt-to-income-ratio",
       "source": "Fannie Mae Selling Guide B3-6-02, Debt-to-Income Ratios (published 7 October 2026)",
@@ -2600,8 +2600,8 @@
     },
     {
       "id": "lease-equity-lessor-keeps",
-      "card": "A leased car worth more than its buyout is equity. Hand it back and the lessor keeps it.",
-      "caption": "Equity is the car's market value less the all-in buyout cost: price, any option fee, sales tax and title. In the guide's example a car worth $24,000 against a $21,650 buyout is $2,350 of equity. Buying it out captures that value, whether you keep the car or sell it; returning it gives it up. https://shouldifinance.com/guides/should-you-buy-out-your-lease",
+      "card": "Return a car worth more than its buyout without buying or trading it, and you leave that equity behind.",
+      "caption": "Equity is the car's market value less the all-in buyout cost: price, any option fee, sales tax and title. In the guide's example a car worth $24,000 against a $21,650 buyout is $2,350 of equity. Buying it out captures that value, whether you keep the car or sell it; returning it gives it up. Lessors' policies on third-party and dealer buyouts vary, so ask yours before you decide. https://shouldifinance.com/guides/should-you-buy-out-your-lease",
       "guide": "should-you-buy-out-your-lease",
       "source": "The guide's worked example, computed with the site's own code (lib/leaseBuyout.ts)",
       "card_source": "Reasoning: market value minus the buyout total",

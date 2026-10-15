@@ -172,7 +172,7 @@
       ]
     },
     "dti-du-50": {
-      "hash": "5c29237542675eef",
+      "hash": "3dcc0468a2c7266c",
       "warnings": []
     },
     "dti-student-loan-three-ways": {
@@ -378,8 +378,10 @@
       "warnings": []
     },
     "lease-equity-lessor-keeps": {
-      "hash": "8d214a29058f882d",
-      "warnings": []
+      "hash": "56747096334cd99c",
+      "warnings": [
+        "card text wraps to 6 lines with one word on the last"
+      ]
     },
     "lease-lower-payment-not-saving": {
       "hash": "ee0ac8b8ac82a350",
