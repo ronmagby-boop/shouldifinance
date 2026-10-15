@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake, Undo2,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake, Undo2, School,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -344,6 +344,18 @@ export const CALCULATORS: Calc[] = [
     guide: {
       slug: "which-student-loan-repayment-plan",
       teaser: "What RAP changed, and which plans you can still pick",
+    },
+  },
+  {
+    slug: "student-loan-refinance",
+    title: "Should I refinance my federal student loans?",
+    nav: "Should I refinance federal student loans?",
+    desc: "Compare your federal payment and interest with a private refinance offer, see the income-driven payment you would give up, and what else leaving the federal program costs.",
+    icon: School, bg: "bg-purple-50", category: "Debt", kind: "should-i",
+    keywords: ["refinance federal student loans", "student loan refinance calculator", "private student loan refinance", "PSLF refinance", "student loan refinancing pros and cons"],
+    guide: {
+      slug: "should-you-refinance-federal-student-loans",
+      teaser: "The lower rate, and the federal protections it costs",
     },
   },
   {
@@ -832,7 +844,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
   Debt: [
     { id: "debt-tools", title: null, short: null, slugs: [
       "blended-interest-rate", "debt-payoff", "balance-transfer", "debt-consolidation", "credit-card-payoff",
-      "effective-interest-rate", "student-loan-repayment", "debt-to-income",
+      "effective-interest-rate", "student-loan-repayment", "student-loan-refinance", "debt-to-income",
     ] },
   ],
   Money: [

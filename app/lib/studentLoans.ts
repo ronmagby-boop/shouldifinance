@@ -135,6 +135,16 @@ export const IBR_PRIOR_FORGIVE_MONTHS = 300;
 /** Discretionary income for IBR is AGI above this multiple of the guideline. */
 export const IBR_POVERTY_MULTIPLE = 1.5;
 
+/**
+ * The IBR monthly payment: a percentage of discretionary income (AGI above
+ * IBR_POVERTY_MULTIPLE times the poverty line for the family size), by the
+ * month. Shared by the plans and refinance calculators. The poverty line is
+ * defined further down; function declarations are hoisted.
+ */
+export function ibrMonthlyPayment(agi: number, familySize: number, pctOfDiscretionary: number): number {
+  return ((Math.max(0, agi - povertyLine(familySize) * IBR_POVERTY_MULTIPLE) * pctOfDiscretionary) / 100) / 12;
+}
+
 /* --------------------------------------------- Marriage and filing status -- */
 
 export type FilingStatus = "single" | "joint" | "separate";

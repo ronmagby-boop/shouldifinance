@@ -34,7 +34,7 @@ test("byCategory follows the section order", () => {
   assert.deepEqual(sectionOf("heloc-limit").calcs.map((c) => c.slug),
     ["heloc-vs-cash-out", "heloc-limit", "home-equity-loan-vs-heloc", "heloc-debt-payoff"]);
   assert.equal(sectionOf("pay-off-debt").section.id, "mortgage-payment-and-payoff");
-  assert.equal(byCategory("Debt").length, 8);
+  assert.equal(byCategory("Debt").length, 9);
 });
 
 test("the homepage's Home box shows its hand-picked four; the others show their first four", async () => {

@@ -112,7 +112,8 @@ one year. That is worth saving for rather than being surprised by.
 - **Check whether Public Service Loan Forgiveness applies to you.** It is a
   different and much shorter clock, and it changes the answer completely.
 - **Remember private loans qualify for none of this.** No federal plan, no
-  forgiveness.
+  forgiveness. Before refinancing federal loans privately, see [should you
+  refinance federal student loans](/guides/should-you-refinance-federal-student-loans).
 
 Sources: RAP payment table, dependent reduction, minimum payment, interest
 waiver, principal match and 360-month forgiveness from 20 U.S.C. 1087e(q) as

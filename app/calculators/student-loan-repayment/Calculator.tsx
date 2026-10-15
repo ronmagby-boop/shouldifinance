@@ -13,7 +13,7 @@ import {
   RAP_DEPENDENT_DEDUCTION, rapMonthlyPayment, rapBandLabel,
   standardTermYears, standardTierLabel,
   IBR_NEW_PCT, IBR_NEW_FORGIVE_MONTHS, IBR_PRIOR_PCT, IBR_PRIOR_FORGIVE_MONTHS,
-  IBR_NEW_BORROWER_FROM, IBR_POVERTY_MULTIPLE,
+  IBR_NEW_BORROWER_FROM, IBR_POVERTY_MULTIPLE, ibrMonthlyPayment,
   FPL_YEAR, povertyLine,
   FILING_OPTIONS, householdAgi, type FilingStatus,
   SPOUSAL_DEBT_NOTE, RAP_DEPENDENTS_SEPARATE_NOTE, FILING_SEPARATELY_TAX_WARNING,
@@ -104,13 +104,13 @@ export default function Calculator() {
       let interestTotal = 0;
       let paid = 0;
       let inc = agi;
-      let pmt = ((Math.max(0, inc - poverty * IBR_POVERTY_MULTIPLE) * pctOfDiscretionary) / 100) / 12;
+      let pmt = ibrMonthlyPayment(inc, n(familySize), pctOfDiscretionary);
       const startPayment = pmt;
       let monthsTaken = 0;
       for (let m = 1; m <= forgiveAt; m++) {
         if (m > 1 && (m - 1) % 12 === 0) {
           inc *= 1 + n(incomeGrowth) / 100;
-          pmt = ((Math.max(0, inc - poverty * IBR_POVERTY_MULTIPLE) * pctOfDiscretionary) / 100) / 12;
+          pmt = ibrMonthlyPayment(inc, n(familySize), pctOfDiscretionary);
         }
         const interest = b * monthlyRate;
         interestTotal += interest;
@@ -270,7 +270,7 @@ export default function Calculator() {
       intro="The lowest payment and the lowest cost are almost never the same plan. Compare the plans you are actually eligible for — which now depends on when your loans were disbursed — including what gets forgiven and what that costs in interest."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["debt-payoff", "pay-off-debt", "emergency-fund"]}
+      relatedSlugs={["student-loan-refinance", "debt-payoff", "pay-off-debt", "emergency-fund"]}
       disclaimer="For educational purposes only. Federal repayment plans, their formulas, and forgiveness timelines change with legislation and regulation — verify current terms at studentaid.gov. Income-driven plans require annual recertification. Private loans do not qualify for federal plans or forgiveness. This is not advice about your specific loans."
     >
       <Card title="When were your loans disbursed?" badge="DECIDES YOUR OPTIONS" badgeTone="blue" className="mb-4">
