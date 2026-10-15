@@ -150,7 +150,7 @@ export default function Calculator() {
       intro="A new car costs more and loses value fastest in year one. A used one is cheaper but borrows at a higher rate and needs more repairs. Depreciation is usually the biggest number of the three, and the one nobody puts on the invoice."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["total-cost-of-ownership", "depreciation", "lease-vs-buy"]}
+      relatedSlugs={["total-cost-of-ownership", "depreciation", "lease-vs-buy", "trade-in-or-sell"]}
       disclaimer="For educational purposes only. Depreciation varies enormously by make, model and mileage, and repair costs on a used car are unpredictable by nature. Treat the residual values here as estimates, and check model-specific data before committing."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

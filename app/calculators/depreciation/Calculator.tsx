@@ -135,7 +135,7 @@ export default function Calculator() {
       intro="Depreciation is the largest cost of owning a car and the only one that never sends a bill. Track what your vehicle is worth each year — and see exactly when the loan balance finally drops below it."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["total-cost-of-ownership", "auto-loan-refinance", "lease-vs-buy"]}
+      relatedSlugs={["trade-in-or-sell", "total-cost-of-ownership", "auto-loan-refinance", "lease-vs-buy"]}
       disclaimer="For educational purposes only. Depreciation varies enormously by make, model, condition, mileage, and market conditions — trucks and some hybrids hold value far better than average, while luxury sedans and EVs have historically fallen faster. Check current listings for the real number on your vehicle."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

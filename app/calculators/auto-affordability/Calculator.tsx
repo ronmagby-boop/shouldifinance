@@ -157,7 +157,7 @@ export default function Calculator() {
       intro="A car payment is only part of the cost — insurance, fuel, and maintenance ride along with it. This works out a price range from your whole transportation budget, not just what a lender will approve."
       onExample={loadExample}
       onClear={clearExample}
-      relatedSlugs={["total-cost-of-ownership", "loan-vs-cash", "lease-vs-buy"]}
+      relatedSlugs={["total-cost-of-ownership", "loan-vs-cash", "lease-vs-buy", "trade-in-or-sell"]}
       disclaimer="For educational purposes only. Actual approval depends on credit score, income verification, and the lender's own limits. Insurance quotes vary widely by vehicle, so get a quote on the specific model before committing — a sports car and a sedan at the same price can differ by hundreds a month."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

@@ -5,7 +5,7 @@ import {
   Target, AlertTriangle, Car, CreditCard, Repeat, KeyRound, Calculator,
   FileText, Plug, TrendingDown, Snowflake, LifeBuoy, GraduationCap, Trophy,
   ShieldCheck, Percent, Clock, Coins, ArrowLeftRight, Combine, ShieldAlert, Shuffle,
-  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake, Undo2, School,
+  Scale3d, Split, HandCoins, CarFront, Merge, Layers, Blend, GitCompareArrows, Signpost, Gauge, Building2, Divide, Hourglass, CalendarClock, BadgeCheck, Handshake, Undo2, School, Tag,
 } from "lucide-react";
 
 export type Category = "Home" | "Debt" | "Money" | "Auto";
@@ -721,6 +721,18 @@ export const CALCULATORS: Calc[] = [
     },
   },
   {
+    slug: "trade-in-or-sell",
+    title: "Should I trade in my car or sell it privately?",
+    nav: "Should I trade in or sell privately?",
+    desc: "Compare a trade-in offer, with any sales tax it saves, against selling it yourself after costs, and see the private price you would need to come out ahead.",
+    icon: Tag, bg: "bg-amber-50", category: "Auto", kind: "should-i",
+    keywords: ["trade in or sell privately", "trade-in calculator", "trade-in sales tax credit", "sell car privately vs trade in", "negative equity trade in"],
+    guide: {
+      slug: "trade-in-or-sell-your-car-privately",
+      teaser: "The tax credit, the convenience, and a loan still on the car",
+    },
+  },
+  {
     slug: "depreciation",
     title: "What will my car be worth later?",
     nav: "What will my car be worth?",
@@ -858,7 +870,7 @@ export const CALC_SECTIONS: Record<Category, readonly CalcSection[]> = {
     { id: "choosing-a-car", title: "Choosing a car", short: "Choosing", slugs: [
       "auto-affordability", "new-vs-used-car", "ev-savings", "total-cost-of-ownership", "depreciation",
     ] },
-    { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment", "lease-buyout"] },
+    { id: "paying-for-a-car", title: "Paying for it", short: "Paying", slugs: ["loan-vs-cash", "lease-vs-buy", "lease-payment", "lease-buyout", "trade-in-or-sell"] },
     { id: "after-you-buy", title: "After you buy", short: "After you buy", slugs: ["auto-loan-refinance", "car-loan-payoff"] },
   ],
 };

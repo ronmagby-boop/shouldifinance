@@ -91,7 +91,8 @@ early](/guides/should-you-pay-off-your-car-loan-early).
    not. Paying for it after the lines cross is buying cover for a gap that does
    not exist.
 4. **Do not roll negative equity forward** if you can avoid it. It is the
-   fastest way to turn one underwater car into two.
+   fastest way to turn one underwater car into two. [Trading in or selling
+   privately](/guides/trade-in-or-sell-your-car-privately) covers the choices.
 5. **Treat depreciation as a cost**, not an afterthought. Over a typical
    ownership period it is usually larger than fuel, insurance or repairs on
    their own — see
