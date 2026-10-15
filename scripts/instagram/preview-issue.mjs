@@ -14,9 +14,11 @@
  *   open --preview preview.json
  *       open one issue per post, or refresh it if it is still open. A closed
  *       issue is left closed: closing it is how a post is skipped.
- *   review --preview preview.json
+ *   review --preview preview.json [--force]
  *       if fewer than MIN_RUNWAY signed-off posts remain, open or update the
- *       "Review needed" issue with the next ten unreviewed facts.
+ *       "Review needed" issue with the next ten unreviewed facts. --force
+ *       does so whatever the runway (the workflow's force_review_issue input,
+ *       for a review on demand).
  *   gate --post-date YYYY-MM-DD
  *       decide whether that date's post goes out, and with what. Writes
  *       decision=post|skip, reason, issue, expect_fact, expect_hash to
@@ -318,12 +320,13 @@ export function readStatuses(body) {
 }
 
 async function review(argv) {
-  const opt = parse(argv, ["--preview"]);
+  const force = argv.includes("--force");
+  const opt = parse(argv.filter((a) => a !== "--force"), ["--preview"]);
   if (!opt["--preview"]) fail("review needs --preview <file>");
   const preview = JSON.parse(fs.readFileSync(opt["--preview"], "utf8"));
   const { runway } = preview;
   const open = (await botIssues(REVIEW_LABEL)).find((i) => i.state === "open" && (i.body ?? "").includes(REVIEW_ISSUE_MARKER));
-  if (runway.count >= MIN_RUNWAY) {
+  if (runway.count >= MIN_RUNWAY && !force) {
     console.log(`Runway ${runway.count} (at least ${MIN_RUNWAY}): no review issue needed.`);
     summary(`- Runway: ${runway.count} signed-off posts; no review needed.`);
     return;
@@ -339,7 +342,7 @@ async function review(argv) {
     ? await gh("PATCH", `/repos/${REPO}/issues/${open.number}`, { title, body })
     : await gh("POST", `/repos/${REPO}/issues`, { title, body, labels: [REVIEW_LABEL] });
   await assign(issue.number, process.env.REVIEWER);
-  console.log(`${open ? "Updated" : "Opened"} review issue #${issue.number}: runway ${runway.count}, ${preview.reviewQueue.length} facts listed.`);
+  console.log(`${open ? "Updated" : "Opened"} review issue #${issue.number}: runway ${runway.count}, ${preview.reviewQueue.length} facts listed${force && runway.count >= MIN_RUNWAY ? " (forced; the runway is not short)" : ""}.`);
   summary(`- Review needed: [#${issue.number}](${issue.html_url}), runway ${runway.count}.`);
 }
 

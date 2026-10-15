@@ -212,6 +212,17 @@ test("review does nothing with six or more signed-off posts left", async () => {
   assert.equal(gh.state.issues.length, 0);
 });
 
+test("review --force opens the issue even with six or more signed-off posts left", async () => {
+  gh.reset();
+  const queue = ["r1", "r2"].map((id) => reviewFact(id));
+  const r = await run(["review", "--preview", previewFile([], { runway: { count: 15, blockedBy: "r1", blockedAt: 16 }, reviewQueue: queue }), "--force"]);
+  assert.equal(r.code, 0, r.out);
+  assert.equal(gh.state.issues.length, 1);
+  assert.equal(gh.state.issues[0].title, "Review needed: 15 signed-off Instagram posts left");
+  assert.deepEqual(gh.state.assigned, [{ issue: 1, assignees: ["ronmagby-boop"] }]);
+  assert.match(r.out, /forced; the runway is not short/);
+});
+
 test("review updates the open issue, keeping approvals whose content is unchanged and resetting changed ones", async () => {
   gh.reset();
   await run(["review", "--preview", previewFile([], { runway: { count: 1, blockedBy: "r1", blockedAt: 7 }, reviewQueue: [reviewFact("r1"), reviewFact("r2")] })]);

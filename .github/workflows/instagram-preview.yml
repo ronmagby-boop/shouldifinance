@@ -10,7 +10,8 @@
 #
 # Reads the account to know what is already posted; never posts.
 #
-# Runs every Thursday at 15:00 UTC (8am Phoenix), and on demand.
+# Runs every Thursday at 15:00 UTC (8am Phoenix), and on demand; a manual run
+# can force the Review needed issue with the force_review_issue input.
 name: Instagram preview
 
 on:
@@ -23,6 +24,11 @@ on:
         type: string
         required: false
         default: ""
+      force_review_issue:
+        description: "Open or update the Review needed issue now, even if the signed-off runway is not short."
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -86,7 +92,10 @@ jobs:
           PREVIEW_ASSIGNEE: ronmagby-boop
         run: node scripts/instagram/preview-issue.mjs open --preview preview.json
 
+      # On a manual run with force_review_issue, the issue is opened whatever
+      # the runway; on the Thursday schedule the input is empty and it is not.
       - name: Open or update the Review needed issue if the runway is short
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/instagram/preview-issue.mjs review --preview preview.json
+          FORCE_REVIEW: ${{ inputs.force_review_issue && '--force' || '' }}
+        run: node scripts/instagram/preview-issue.mjs review --preview preview.json $FORCE_REVIEW
