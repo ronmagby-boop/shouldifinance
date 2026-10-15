@@ -667,7 +667,10 @@
       "card_source": "Source: 38 U.S.C. § 3709(a)",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null,
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "c28a065f1f11ad0d"
+      },
       "layout": "statement",
       "depends_on_none": "States the statutory exclusion of the funding fee from recoupment, not the fee amount."
     },
@@ -725,7 +728,10 @@
       "layout": "statement",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "357aac1f0193135e"
+      }
     },
     {
       "id": "fees-are-a-bet-on-time",
@@ -817,7 +823,10 @@
       "layout": "statement",
       "category": "Debt",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "45fd92ea8b135421"
+      }
     },
     {
       "id": "minimums-shrink",
@@ -1090,7 +1099,10 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "aad552c3bdcdd3a1"
+      }
     },
     {
       "id": "buy-the-depreciation-not-the-rate",
@@ -1155,7 +1167,10 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "416eaefa65cf1515"
+      }
     },
     {
       "id": "negative-equity-rollforward",
@@ -1250,7 +1265,10 @@
       "hero_context": "cost of rolling $5,000 into a 36-month lease at a 0.00275 money factor",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "eff58efd15f7339f"
+      }
     },
     {
       "id": "lease-money-down-gone",
@@ -1312,7 +1330,10 @@
       "layout": "statement",
       "category": "Auto",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "1f8f014f1a173b8f"
+      }
     },
     {
       "id": "auto-refi-cancels-gap",
@@ -1676,7 +1697,10 @@
       "layout": "statement",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "86e0f0b0fd68cb8b"
+      }
     },
     {
       "id": "projection-is-sensitivity",
@@ -1765,7 +1789,10 @@
       "myth": "It is easy to assume investing every paycheck is dollar-cost averaging.",
       "category": "Money",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "eb096b4628138e0b"
+      }
     },
     {
       "id": "dca-is-insurance",
@@ -2089,7 +2116,10 @@
       "layout": "statement",
       "category": "Home",
       "shelfLife": null,
-      "reviewed": null
+      "reviewed": {
+        "date": "2026-10-15",
+        "hash": "b01d9b435a571ba3"
+      }
     },
     {
       "id": "fed-cut-mortgage-rates-rose",
